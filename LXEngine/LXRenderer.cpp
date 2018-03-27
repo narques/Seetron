@@ -9,6 +9,7 @@
 #include "stdafx.h"
 #include "LXAnimationManager.h"
 #include "LXConsoleManager.h"
+#include "LXConstantBufferD3D11.h"
 #include "LXController.h"
 #include "LXCore.h"
 #include "LXMaterial.h"
@@ -16,13 +17,7 @@
 #include "LXProject.h"
 #include "LXRenderClusterManager.h"
 #include "LXRenderCommandList.h"
-#include "LXRenderPassShadow.h"
-#include "LXRenderPassDownsample.h"
-#include "LXRenderPassDynamicTexture.h"
-#include "LXRenderPassGBuffer.h"
-#include "LXRenderPassAux.h"
-#include "LXRenderPassLighting.h"
-#include "LXRenderPassToneMapping.h"
+#include "LXRenderPipelineDeferred.h"
 #include "LXRenderer.h"
 #include "LXScene.h"
 #include "LXShaderManager.h"
@@ -31,8 +26,8 @@
 #include "LXTrackBallCameraManipulator.h"
 #include "LXViewport.h"
 #include "LXStatManager.h"
-#include "LXRenderPassTransparency.h"
 #include "LXMemory.h" // --- Must be the last included ---
+
 
 //------------------------------------------------------------------------------------------------------
 // Console commands and Settings
@@ -63,35 +58,6 @@ LXConsoleCommandT<bool> CCToogleDrawImmediate(L"ToggleDrawImmediate", &gToogleDr
 LXConsoleCommandNoArg CCResolution(L"Resolution", []()
 {
 	LogI(Viewport, L"Viewport size: %ix%i", GetCore().GetViewport()->GetWidth(), GetCore().GetViewport()->GetHeight());
-});
-
-LXConsoleCommand1S CCShowBuffer(L"ShowBuffer", [](const LXString& inBufferName)
-{
-	if (inBufferName.IsEmpty())
-	{
-		// List the buffers
-		LogI(Renderer, L"ShowBuffer [BufferName]");
-		LogI(Renderer, L"Buffers:");
-		LogI(Renderer, L"-Default");
-		LogI(Renderer, L"-Depth");
-		LogI(Renderer, L"-Color");
-		LogI(Renderer, L"-Normal");
-		LogI(Renderer, L"-Shadow");
-	}
-	else
-	{
-		LXString BufferName = inBufferName.ToLower();
-		if (BufferName == L"depth")
-			GetCore().GetRenderer()->ShowBuffer = EShowBuffer::Depth;
-		else if (BufferName == L"color")
-			GetCore().GetRenderer()->ShowBuffer = EShowBuffer::Color;
-		else if (BufferName == L"normal")
-			GetCore().GetRenderer()->ShowBuffer = EShowBuffer::Normal;
-		else if (BufferName == L"shadow")
-			GetCore().GetRenderer()->ShowBuffer = EShowBuffer::Shadow;
-		else
-			GetCore().GetRenderer()->ShowBuffer = EShowBuffer::Default;
-	}
 });
 
 bool LXRenderer::gUseRenderThread = true;
@@ -154,11 +120,6 @@ void LXRenderer::Init()
 	DirectX11 = new LXDirectX11(_hWND);
 
 	RenderCommandList = new LXRenderCommandList();
-
-	// ConstantBuffers
-	CBViewProjection = new LXConstantBufferD3D11();
-	LXConstantBufferData0 Foo;
-	CBViewProjection->CreateConstantBuffer(&Foo, sizeof(LXConstantBufferData0));
 		
 	//
 	// Rasterizers
@@ -217,42 +178,17 @@ void LXRenderer::Init()
 
 #endif
 
-	// Passes
-	RenderPassShadow = new LXRenderPassShadow(this);
-	RenderPassDynamicTexture = new LXRenderPassDynamicTexture(this);
-	RenderPassGBuffer = new LXRenderPassGBuffer(this);
-	RenderPassAux = new LXRenderPassAux(this);
-	RenderPassTransparent = new LXRenderPassTransparency(this);
-	RenderPassLighting = new LXRenderPassLighting(this);
-	RenderPassToneMapping = new LXRenderPassToneMapping(this);
-	RenderPassDownsample = new LXRenderPassDownsample(this, EDownsampleFunction::Downsample_HalfRes);
-
-	RenderPasses.push_back(RenderPassShadow);
-	RenderPasses.push_back(RenderPassDynamicTexture);
-	RenderPasses.push_back(RenderPassGBuffer);
-	//RenderPasses.push_back(RenderPassAux);
-	RenderPasses.push_back(RenderPassLighting);
-	RenderPasses.push_back(RenderPassTransparent);
-	//RenderPasses.push_back(RenderPassDownsample);
-	RenderPasses.push_back(RenderPassToneMapping);
-
 	// Misc
 	ShaderManager = new LXShaderManager();
 	RenderClusterManager = new LXRenderClusterManager();
-
+	RenderCommandList->Renderer = this;
+	RenderCommandList->ShaderManager = ShaderManager;
+	
 	// ScreenSpace Triangle
 	SSTriangle = new LXPrimitiveD3D11();
 	SSTriangle->CreateSSTriangle();
-
-	// Links between objects
-	RenderPassGBuffer->Viewport = Viewport;
-	RenderPassGBuffer->RenderPassShadow = RenderPassShadow;
-	RenderPassAux->Viewport = Viewport;
-	RenderPassLighting->RenderPassGBuffer = RenderPassGBuffer;
-	RenderPassLighting->RenderPassShadow = RenderPassShadow;
-	RenderPassLighting->TextureShadow = RenderPassShadow->TextureDepth.get();
-	RenderCommandList->Renderer = this;
-	RenderCommandList->ShaderManager = ShaderManager;
+	
+	_RenderPipeline = new LXRenderPipelineDeferred(this);
 }
 
 void LXRenderer::Run()
@@ -280,18 +216,10 @@ void LXRenderer::Run()
 void LXRenderer::DeleteObjects()
 {
 	CHK(IsRenderThread())
-	LX_SAFE_DELETE(CBViewProjection);
 	LX_SAFE_DELETE(ShaderManager);
 	LX_SAFE_DELETE(RenderClusterManager);
 	LX_SAFE_DELETE(SSTriangle);
-	LX_SAFE_DELETE(RenderPassShadow);
-	LX_SAFE_DELETE(RenderPassDynamicTexture);
-	LX_SAFE_DELETE(RenderPassGBuffer);
-	LX_SAFE_DELETE(RenderPassAux);
-	LX_SAFE_DELETE(RenderPassTransparent);
-	LX_SAFE_DELETE(RenderPassLighting);
-	LX_SAFE_DELETE(RenderPassToneMapping);
-	LX_SAFE_DELETE(RenderPassDownsample);
+	LX_SAFE_DELETE(_RenderPipeline);
 	LX_SAFE_DELETE(RenderCommandList);
 	LX_SAFE_RELEASE(D3D11RasterizerState);
 	LX_SAFE_RELEASE(D3D11RasterizerStateTwoSided);
@@ -325,31 +253,6 @@ void LXRenderer::DrawScreenSpacePrimitive(LXRenderCommandList* RCL)
 {
 	if (SSTriangle)
 		SSTriangle->Render(RCL);
-}
-
-const LXTextureD3D11* LXRenderer::GetDepthBuffer() const
-{
-	return RenderPassGBuffer->TextureDepth;
-}
-
-const LXTextureD3D11* LXRenderer::GetColorBuffer() const
-{
-	return RenderPassGBuffer->TextureColor;
-}
-
-const LXTextureD3D11* LXRenderer::GetNormalBuffer() const
-{
-	return RenderPassGBuffer->TextureNormal;
-}
-
-const LXTextureD3D11* LXRenderer::GetMRULBuffer() const
-{
-	return RenderPassGBuffer->TextureSpecular;
-}
-
-const LXTextureD3D11* LXRenderer::GetEmissiveBuffer() const
-{
-	return RenderPassGBuffer->TextureEmissive;
 }
 
 void LXRenderer::SetDocument(LXProject* Project)
@@ -422,17 +325,11 @@ void LXRenderer::Render()
 	// "Tick" the ShaderManager
 	// Maybe it has things to delete/release
 	ShaderManager->Run();
-	
-	
+		
 	if (gResetShaders)
 	{
 		ShaderManager->RebuildShaders();
-
-		for (LXRenderPass* RenderPass : RenderPasses)
-		{
-			RenderPass->RebuildShaders();
-		}
-		
+		_RenderPipeline->RebuildShaders();
 		gResetShaders = false;
 	}
 
@@ -452,12 +349,8 @@ void LXRenderer::Render()
 		CHK(Height > 0);
 
 		DirectX11->Resize(Width, Height);
-		//DirectX11->Resize(Viewport->GetWidth(), Viewport->GetHeight());
-		
-		for (LXRenderPass* RenderPass : RenderPasses)
-		{
-			RenderPass->Resize(Width, Height);
-		}
+						
+		_RenderPipeline->Resize(Width, Height);
 	}
 	
 	// Update the RenderClusters according the World/Scene content
@@ -482,26 +375,7 @@ void LXRenderer::Render()
 	
 	// Clear the command list
 	RenderCommandList->Empty();
-
-	bool ValidRenderPasses = true;
-
-	for (LXRenderPass* RenderPass : RenderPasses)
-	{
-		if (RenderPass->IsValid())
-		{
-			RenderPass->Render(RenderCommandList);
-			PreviousRenderPass = RenderPass;
-		}
-		else
-		{
-			ValidRenderPasses = false;
-			//LogOneTimeE(LXRenderer, L"RenderPass not valid");
-			#pragma  message("Enable a screen message")
-			break;
-		}
-	}
-	
-	PreviousRenderPass = nullptr;
+	_RenderPipeline->Render(RenderCommandList);
 
 	//
 	// To back buffer.
@@ -509,7 +383,7 @@ void LXRenderer::Render()
 
 	if(1)
 	{
-		const LXTextureD3D11* Color = RenderPassToneMapping->GetOutputTexture();
+		const LXTextureD3D11* Color = _RenderPipeline->GetOutput();
 		
 		RenderCommandList->BeginEvent(L"DrawToBackBuffer");
 		RenderCommandList->RSSetViewports(Viewport->GetWidth(), Viewport->GetHeight());
@@ -522,20 +396,6 @@ void LXRenderer::Render()
 		RenderCommandList->VSSetShader(ShaderManager->VSDrawToBackBuffer);
 		RenderCommandList->PSSetShader(ShaderManager->PSDrawToBackBuffer);
 		
-	// 		if (gShowDynamicTexture && RenderPassDynamicTexture->GetTexture())
-// 			Color = RenderPassDynamicTexture->GetTexture();
-
-		if (ShowBuffer != EShowBuffer::Default)
-		{
-			switch (ShowBuffer)
-			{
-			case EShowBuffer::Color: Color = RenderPassGBuffer->TextureColor; break;
-			case EShowBuffer::Depth: Color = RenderPassGBuffer->TextureDepth; break;
-			case EShowBuffer::Normal: Color = RenderPassGBuffer->TextureNormal; break;
-			case EShowBuffer::Shadow: Color = RenderPassShadow->TextureDepth.get(); break;
-			}
-		}
-		
 		RenderCommandList->PSSetShaderResources(0, 1, (LXTextureD3D11*)Color);
 		RenderCommandList->PSSetSamplers(0, 1, (LXTextureD3D11*)Color);
 		SSTriangle->Render(RenderCommandList);
@@ -544,12 +404,9 @@ void LXRenderer::Render()
 		RenderCommandList->EndEvent();
 	}
 			
-	// TODO Create a thread to Execute...
 	// Execute the command list
-
 	LXTimeD3D11 TimeGPU;
 	double ElapsedGPU = 0.;
-	
 	RenderCommandList->Execute();
 	ElapsedGPU = TimeGPU.Update();
 	LX_COUNT(L"GPU (Execute commands): %.2f MS", ElapsedGPU);

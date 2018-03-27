@@ -10,6 +10,7 @@
 #include "LXRenderPassDownsample.h"
 #include "LXRenderer.h"
 #include "LXRenderPassToneMapping.h"
+#include "LXRenderPipeline.h"
 #include "LXRenderTarget.h"
 #include "LXRenderCommandList.h"
 #include "LXShaderD3D11.h"
@@ -102,7 +103,7 @@ void LXRenderPassDownsample::Render(LXRenderCommandList* r)
 		const LXTextureD3D11* Texture;
 		if (i == 0)
 		{
-			const LXRenderPass* RenderPass = Renderer->GetPreviousRenderPass();
+			const LXRenderPass* RenderPass = Renderer->GetRenderPipeline()->GetPreviousRenderPass();
 			Texture = RenderPass->GetOutputTexture();
 			CHK(Texture);
 		}

@@ -47,7 +47,6 @@ public:
 	LXRenderTargetViewD3D11* RenderTargetEmissive = nullptr;
 		
 	// Object list
-	list<LXRenderCluster*> ListRenderClusterOpaques;
-	list<LXRenderCluster*> ListRenderClusterTransparents;
+	list<LXRenderCluster*>* _ListRenderClusterOpaques = nullptr;
 };
 

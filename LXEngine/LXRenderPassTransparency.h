@@ -29,6 +29,8 @@ private:
 	
 public:
 
+	list<LXRenderCluster*>* _ListRenderClusterTransparents = nullptr;
+
 #if LX_DEDICATED_TRANSPARENCY_BUFFER
 
 	LXTextureD3D11* TextureColor = nullptr;

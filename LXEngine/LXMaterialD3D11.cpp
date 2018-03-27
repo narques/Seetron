@@ -327,7 +327,8 @@ LXTextureD3D11* LXMaterialD3D11::CreateTexture(LXMaterialNodeTextureSampler* Tex
 	else if (Texture->TextureSource == ETextureSource::TextureSourceDynamic)
 	{
 		CHK(Texture->GetGraph());
-		TextureD3D11 = GetCore().GetRenderer()->RenderPassDynamicTexture->AddGraph(Texture);
+		CHK(0); // Find a more generic way to access the rendered texture
+		//TextureD3D11 = GetCore().GetRenderer()->RenderPassDynamicTexture->AddGraph(Texture);
 	}
 	else
 	{

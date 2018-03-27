@@ -17,6 +17,7 @@
 #include "LXRenderPassGBuffer.h"
 #include "LXRenderPassLighting.h"
 #include "LXRenderPassShadow.h"
+#include "LXRenderPipelineDeferred.h"
 #include "LXRenderTargetViewD3D11.h"
 #include "LXRenderer.h"
 #include "LXScene.h"
@@ -71,8 +72,11 @@ void LXRenderPassLighting::Render(LXRenderCommandList* r)
 	if (!Renderer->GetProject())
 		return;
 
+	LXRenderPipelineDeferred* RenderPipelineDeferred = dynamic_cast<LXRenderPipelineDeferred*>(Renderer->GetRenderPipeline());
+	CHK(RenderPipelineDeferred);
+
 	const LXActorSceneCapture* SceneCapture = GetCore().GetProject()->GetSceneCapture() ? GetCore().GetProject()->GetSceneCapture() : nullptr;
-	LXRenderPassShadow* RenderPassShadow = Renderer->RenderPassShadow;
+	LXRenderPassShadow* RenderPassShadow = RenderPipelineDeferred->RenderPassShadow;
 
 	r->BeginEvent(L"Lighting");
 	
@@ -85,7 +89,7 @@ void LXRenderPassLighting::Render(LXRenderCommandList* r)
 	r->IASetInputLayout(Renderer->GetShaderManager()->VSLighting);
 	r->VSSetShader(Renderer->GetShaderManager()->VSLighting);
 	r->PSSetShader(Renderer->GetShaderManager()->PSLighting);
-	r->PSSetConstantBuffers(0, 1, Renderer->CBViewProjection);
+	r->PSSetConstantBuffers(0, 1, RenderPipelineDeferred->_CBViewProjection);
 	r->PSSetConstantBuffers(1, 1, RenderPassShadow->ConstantBufferSpotLight.get());
 
 	LXTextureD3D11* Depth = RenderPassGBuffer->TextureDepth;
@@ -119,7 +123,7 @@ void LXRenderPassLighting::Render(LXRenderCommandList* r)
 	if (TextureShadow)
 		r->PSSetSamplers(6, 1, (LXTextureD3D11*)TextureShadow);
 
-	Renderer->SSTriangle->Render(r);
+	Renderer->GetSSTriangle()->Render(r);
 	
 	r->PSSetShaderResources(0, 1, nullptr); // Depth
 	r->PSSetShaderResources(1, 1, nullptr); // Color

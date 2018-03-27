@@ -28,18 +28,5 @@ public:
 
 	// Ref.
 	LXViewport* Viewport;
-
-	// D3D11 Basic Objects
-	//LXTextureD3D11* TextureDepth = nullptr;
-	LXDepthStencilViewD3D11* DepthStencilView = nullptr;
-
-	std::unique_ptr<LXTextureD3D11> TextureDepth;
-	//std::unique_ptr<LXDepthStencilViewD3D11> DepthStencilView;
-
-	uint _Width;
-	uint _Height;
-
-	// Object list
-	list<LXRenderCluster*> ListRenderClusterOpaques;
 };
 

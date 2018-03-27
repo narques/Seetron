@@ -23,16 +23,8 @@ class LXRenderCluster;
 class LXRenderClusterJobTexture;
 class LXRenderClusterManager;
 class LXRenderCommandList;
-class LXRenderPass;
-class LXRenderPassAux;
-class LXRenderPassDownsample;
-class LXRenderPassDynamicTexture;
-class LXRenderPassGBuffer;
-class LXRenderPassLighting;
-class LXRenderPassShadow;
-class LXRenderPassToneMapping;
-class LXRenderPassTransparency;
 class LXShaderManager;
+class LXRenderPipeline;
 class LXString;
 class LXSyncEvent;
 class LXTextureD3D11;
@@ -46,27 +38,13 @@ struct ID3D11BlendState;
 
 extern bool ShowWireframe;
 
-enum class EShowBuffer
-{
-	Default,
-	Depth,
-	Color,
-	Normal,
-	Shadow
-};
-
 class LXRenderer : public LXObject
 {
-	friend LXRenderPassShadow;
-	friend LXRenderPassGBuffer;
-	friend LXRenderPassAux;
-	friend LXRenderPassLighting;
-	friend LXRenderPassToneMapping;
-	friend LXRenderPassDynamicTexture;
+	friend class LXRenderPipelineDeferred;
 	friend LXMaterialD3D11;
 	friend LXRenderCluster;
 	friend LXRenderClusterJobTexture;
-	friend LXRenderPassTransparency;
+
 
 public:
 
@@ -76,7 +54,7 @@ public:
 	void SetDocument(LXProject* InDocument);
 	const LXProject* GetProject() const;
 	void SetViewport(LXViewport* InViewport) { Viewport = InViewport; }
-	
+
 	// Thread management
 	LXThread* GetThread() const { return Thread; }
 	LXSyncEvent* GetBeginEvent() const;
@@ -89,25 +67,19 @@ public:
 	// Resources
 	LXMaterialD3D11* GetMaterialD3D11(const LXMaterial* Material);
 
+	// Shared objects
+	ID3D11RasterizerState* GetDefaultRasterizerState () const { return D3D11RasterizerState; }
+	ID3D11BlendState* GetBlendStateOpaque() const { return D3D11BlendStateNoBlend; }
+	ID3D11BlendState* GetBlendStateTransparent() const { return D3D11BlendStateBlend; }
+	LXPrimitiveD3D11* GetSSTriangle() const { return SSTriangle; }
+	
 	// Misc
 	LXShaderManager* GetShaderManager() const { return ShaderManager; }
 	void ResetShaders();
 	const LXTime& GetTime() { return Time; }
-	LXPrimitiveD3D11* GetSSTriangle() const { return SSTriangle; }
 	void Render_MainThread();
-	const LXRenderPassGBuffer* GetRenderPassGBuffer() const { return RenderPassGBuffer; }
 	void DrawScreenSpacePrimitive(LXRenderCommandList* RCL);
-	const LXRenderPass* GetPreviousRenderPass() const  { return PreviousRenderPass; }
-
-	// Default Pipeline Buffers 
-
-	// G-Buffer
-	const LXTextureD3D11* GetDepthBuffer() const;
-	const LXTextureD3D11* GetColorBuffer() const;
-	const LXTextureD3D11* GetNormalBuffer() const;
-	const LXTextureD3D11* GetMRULBuffer() const;
-	const LXTextureD3D11* GetEmissiveBuffer() const;
-
+	LXRenderPipeline* GetRenderPipeline() const { return _RenderPipeline; }
 
 private:
 
@@ -117,11 +89,11 @@ private:
 	void Render();
 	void DeleteObjects();
 	void Empty();
-		
+
 	void UpdateStates();
 	void AddActor(LXActor* Actor);
 	void RemoveActor(LXActor* Actor);
-	
+
 	// RenderCluster management
 	bool SetShaders(LXRenderClusterJobTexture* RenderCluster);
 
@@ -129,21 +101,20 @@ private:
 	const LXWorldTransformation& GetWorldTransform() const;
 	const LXMatrix& GetMatrixView() const;
 	const LXMatrix& GetMatrixProjection() const;
-	
+
 public:
+
+	LXRenderClusterManager * RenderClusterManager = nullptr;
 
 	UINT Width = 1920;
 	UINT Height = 1080;
 
-	// Dev
-	EShowBuffer ShowBuffer = EShowBuffer::Default;
-
 	static bool gUseRenderThread;
 
 private:
-		
+
 	HWND _hWND = NULL;
-	
+
 	// RenderThread Management
 	LXThread* Thread = nullptr;
 	LXSyncEvent* EventBeginFrame = nullptr;
@@ -154,28 +125,13 @@ private:
 
 	// Without RenderThread. Needed to init the Renderer in the Render_MainThread function
 	bool _bInit = false;
-	
+
 	// RenderThread objects
 	LXDirectX11* DirectX11 = nullptr;
-	
+
 	LXRenderCommandList* RenderCommandList = nullptr;
 
-	LXConstantBufferD3D11* CBViewProjection = nullptr;
-	
-	// Render passes 
-	LXRenderPassDynamicTexture* RenderPassDynamicTexture = nullptr;
-	LXRenderPassGBuffer* RenderPassGBuffer = nullptr;
-	LXRenderPassAux* RenderPassAux = nullptr;
-	LXRenderPassShadow* RenderPassShadow = nullptr;
-	LXRenderPassTransparency* RenderPassTransparent = nullptr;
-	LXRenderPassLighting* RenderPassLighting = nullptr;
-	LXRenderPassToneMapping* RenderPassToneMapping = nullptr;
-	LXRenderPassDownsample* RenderPassDownsample = nullptr;
-
 	// Misc
-	LXRenderPass* PreviousRenderPass = nullptr;
-	vector<LXRenderPass*> RenderPasses;
-	
 	LXPrimitiveD3D11* SSTriangle = nullptr;
 
 	ID3D11RasterizerState* D3D11RasterizerState = nullptr;
@@ -191,7 +147,7 @@ private:
 	ID2D1SolidColorBrush* pGrayBrush = nullptr;
 	ID2D1SolidColorBrush* pDarkBlue = nullptr;
 	ID2D1SolidColorBrush* pConsoleBackgroundBrush = nullptr;
-	
+
 	// Scene & Document
 	LXProject* _Project = nullptr;
 	LXProject* _NewProject = nullptr;
@@ -206,11 +162,13 @@ private:
 	// Actions
 	bool DoShowBounds = false;
 	bool DoHideBounds = false;
-	
+
+	// Managers
+	LXShaderManager* ShaderManager = nullptr;
+	LXRenderPipeline* _RenderPipeline = nullptr;
+
 	// Misc
 	LXTime Time;
 	unsigned __int64 Frame = 0;
-	LXShaderManager* ShaderManager = nullptr;
-	LXRenderClusterManager* RenderClusterManager = nullptr;
 };
 

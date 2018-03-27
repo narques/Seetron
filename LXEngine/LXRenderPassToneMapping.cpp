@@ -13,6 +13,7 @@
 #include "LXTextureD3D11.h"
 #include "LXRenderCommandList.h"
 #include "LXRenderPassLighting.h"
+#include "LXRenderPipelineDeferred.h"
 #include "LXShaderD3D11.h"
 #include "LXInputElementDescD3D11Factory.h"
 #include "LXSettings.h"
@@ -73,12 +74,15 @@ void LXRenderPassToneMapping::DeleteBuffers()
 
 void LXRenderPassToneMapping::Render(LXRenderCommandList* r)
 {
+	LXRenderPipelineDeferred* RenderPipelineDeferred = dynamic_cast<LXRenderPipelineDeferred*>(Renderer->GetRenderPipeline());
+	CHK(RenderPipelineDeferred);
+
 	r->BeginEvent(L"ToneMapping");
 	r->OMSetRenderTargets2(_RenderTarget->_RenderTargetViewD3D11, nullptr);
 	r->IASetInputLayout(_VertexShader);
 	r->VSSetShader(_VertexShader);
 	r->PSSetShader(_PixelShader);
-	LXTextureD3D11* Texture = Renderer->RenderPassLighting->TextureColor;
+	LXTextureD3D11* Texture = RenderPipelineDeferred->RenderPassLighting->TextureColor;
 	r->PSSetShaderResources(0, 1, Texture);
 	r->PSSetSamplers(0, 1, Texture);
 	Renderer->DrawScreenSpacePrimitive(r);

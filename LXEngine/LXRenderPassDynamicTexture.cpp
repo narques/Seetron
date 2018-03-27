@@ -86,7 +86,6 @@ void LXRenderPassDynamicTexture::Render(LXRenderCommandList* RCL)
 		{
 			RenderCluster->Index = 0;
 		}
-		Renderer->Frame = 0;
 		gResetSimulation = false;
 	}
 

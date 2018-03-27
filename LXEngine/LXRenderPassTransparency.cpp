@@ -15,6 +15,7 @@
 #include "LXRenderCommandList.h"
 #include "LXRenderPassGBuffer.h"
 #include "LXRenderPassLighting.h"
+#include "LXRenderPipelineDeferred.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXRenderPassTransparency::LXRenderPassTransparency(LXRenderer* Renderer):LXRenderPass(Renderer)
@@ -54,11 +55,12 @@ void LXRenderPassTransparency::Resize(uint Width, uint Height)
 
 void LXRenderPassTransparency::Render(LXRenderCommandList* RCL)
 {
-	auto ListRenderClusterTransparents = &Renderer->GetRenderPassGBuffer()->ListRenderClusterTransparents;
+	LXRenderPipelineDeferred* RenderPipelineDeferred = dynamic_cast<LXRenderPipelineDeferred*>(Renderer->GetRenderPipeline());
+	CHK(RenderPipelineDeferred);
 
 	RCL->BeginEvent(L"Transparency");
 
-	if (ListRenderClusterTransparents->empty())
+	if (_ListRenderClusterTransparents->empty())
 	{
 		return;
 	}
@@ -66,13 +68,13 @@ void LXRenderPassTransparency::Render(LXRenderCommandList* RCL)
 #if LX_DEDICATED_TRANSPARENCY_BUFFER
 	RCL->OMSetRenderTargets2(RenderTargetColor, Renderer->RenderPassGBuffer->DepthStencilView);
 #else
-	RCL->OMSetRenderTargets2(Renderer->RenderPassLighting->RenderTargetColor, Renderer->RenderPassGBuffer->DepthStencilView);
-	RCL->OMSetBlendState(Renderer->D3D11BlendStateBlend);
+	RCL->OMSetRenderTargets2(RenderPipelineDeferred->RenderPassLighting->RenderTargetColor, RenderPipelineDeferred->RenderPassGBuffer->DepthStencilView);
+	RCL->OMSetBlendState(Renderer->GetBlendStateTransparent());
 #endif
 	RCL->RSSetViewports(Renderer->Width, Renderer->Height);
 	//RCL->ClearRenderTargetView(RenderTargetColor);
 			
-	for (LXRenderCluster* RenderCluster : *ListRenderClusterTransparents)
+	for (LXRenderCluster* RenderCluster : *_ListRenderClusterTransparents)
 	{
 		RenderCluster->Render(ERenderPass::GBuffer, RCL);
 	}
@@ -89,8 +91,8 @@ void LXRenderPassTransparency::Render(LXRenderCommandList* RCL)
 	RCL->PSSetShader(nullptr);
 
 	// Restore the default rasterizer state
-	RCL->RSSetState(Renderer->D3D11RasterizerState);
-	RCL->OMSetBlendState(Renderer->D3D11BlendStateNoBlend);
+	RCL->RSSetState(Renderer->GetDefaultRasterizerState());
+	RCL->OMSetBlendState(Renderer->GetBlendStateOpaque());
 
 
 	RCL->EndEvent();

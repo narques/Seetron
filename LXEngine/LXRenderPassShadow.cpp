@@ -20,6 +20,7 @@
 #include "LXRenderCommandList.h"
 #include "LXRenderPass.h"
 #include "LXRenderPassShadow.h"
+#include "LXRenderPipelineDeferred.h"
 #include "LXRenderTargetViewD3D11.h"
 #include "LXRenderer.h"
 #include "LXScene.h"
@@ -49,6 +50,9 @@ void LXRenderPassShadow::Render(LXRenderCommandList* RCL)
 {
 	if (!GetProject())
 		return;
+
+	LXRenderPipelineDeferred* RenderPipelineDeferred = dynamic_cast<LXRenderPipelineDeferred*>(Renderer->GetRenderPipeline());
+	CHK(RenderPipelineDeferred);
 
 	ArrayLights& Lights = GetProject()->GetLights();
 	if (Lights.size() == 0)
@@ -113,8 +117,8 @@ void LXRenderPassShadow::Render(LXRenderCommandList* RCL)
 		CB0.ProjectionInv = Transpose(WorldTransformation.GetMatrixProjectionInv());
 		CB0.ViewInv = Transpose(WorldTransformation.GetMatrixViewInv());
 		CB0.CameraPosition = Camera.GetPosition();
-		RCL->CBViewProjection = Renderer->CBViewProjection;
-		RCL->UpdateSubresource4(Renderer->CBViewProjection->D3D11Buffer, &CB0);
+		RCL->CBViewProjection = RenderPipelineDeferred->_CBViewProjection;
+		RCL->UpdateSubresource4(RenderPipelineDeferred->_CBViewProjection->D3D11Buffer, &CB0);
 	}
 
 	for (LXRenderCluster* RenderCluster : ListRenderClusterOpaques)

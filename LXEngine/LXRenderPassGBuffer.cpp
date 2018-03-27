@@ -7,23 +7,13 @@
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
-#include "LXActorCamera.h"
-#include "LXConstantBufferD3D11.h"
-#include "LXDirectX11.h"
-#include "LXFrustum.h"
-#include "LXPrimitiveD3D11.h"
-#include "LXProject.h"
-#include "LXRenderCluster.h"
-#include "LXRenderClusterManager.h"
-#include "LXRenderCommandList.h"
 #include "LXRenderPassGBuffer.h"
-#include "LXRenderPassShadow.h"
+#include "LXRenderCluster.h"
+#include "LXRenderCommandList.h"
+#include "LXRenderPipelineDeferred.h"
 #include "LXRenderTargetViewD3D11.h"
 #include "LXRenderer.h"
-#include "LXSettings.h"
 #include "LXTextureD3D11.h"
-#include "LXViewport.h"
-#include "LXWorldTransformation.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXRenderPassGBuffer::LXRenderPassGBuffer(LXRenderer* InRenderer):LXRenderPass(InRenderer)
@@ -78,57 +68,8 @@ void LXRenderPassGBuffer::DeleteBuffers()
 
 void LXRenderPassGBuffer::Render(LXRenderCommandList* RCL)
 {
-	ListRenderClusterOpaques.clear();
-	ListRenderClusterTransparents.clear();
-
-	const LXProject* Project = Renderer->GetProject();
-
-	if (!Project)
-		return;
-
-	//
-	// Common
-	//
-
-	LXActorCamera* Camera = const_cast<LXActorCamera*>(Project->GetCamera());
-	if (!Camera)
-		return;
-
-	LXWorldTransformation* WorldTransformation = &Viewport->WorldTransformation;
-
-	// Compute ViewMatrix
-	Camera->LookAt(Viewport->GetAspectRatio());
-
-	// Compute ProjectionMatrix
-	WorldTransformation->FromCamera(Camera, Renderer->Width, Renderer->Height);
-
-	//LXMatrix MatrixVP = WorldTransformation->GetMatrixProjection() * WorldTransformation->GetMatrixView();
-	LXMatrix MatrixVP = WorldTransformation->GetMatrixVP();
-
-	//
-	// Frustum Culling
-	//
-
-	if (1)
-	{
-		LXFrustum Frustum;
-		Frustum.Update(MatrixVP);
-
-		for (LXRenderCluster* RenderCluster : Renderer->RenderClusterManager->ListRenderClusters)
-		{
-			if (Frustum.IsBoxIn(RenderCluster->BBoxWorld.GetMin(), RenderCluster->BBoxWorld.GetMax()))
-			{
-				if (RenderCluster->IsTransparent())
-				{
-					ListRenderClusterTransparents.push_back(RenderCluster);
-				}
-				else
-				{
-					ListRenderClusterOpaques.push_back(RenderCluster);
-				}
-			}
-		}
-	}
+	LXRenderPipelineDeferred* RenderPipelineDeferred = dynamic_cast<LXRenderPipelineDeferred*>(Renderer->GetRenderPipeline());
+	CHK(RenderPipelineDeferred);
 		
 	//
 	// MainPass
@@ -152,19 +93,10 @@ void LXRenderPassGBuffer::Render(LXRenderCommandList* RCL)
 	RCL->ClearRenderTargetView(RenderTargetEmissive);
 			
 	// ConstantBuffers per Frame (View, Projection)
-	{
-		RCL->CBViewProjection = Renderer->CBViewProjection;
-		static LXConstantBufferData0 CB0;
-		CB0.View = Transpose(WorldTransformation->GetMatrixView());
-		CB0.Projection = Transpose(WorldTransformation->GetMatrixProjection());
-		CB0.ViewProjectionInv = Transpose(WorldTransformation->GetMatrixVPInv());
-		CB0.ProjectionInv = Transpose(WorldTransformation->GetMatrixProjectionInv());
-		CB0.ViewInv = Transpose(WorldTransformation->GetMatrixViewInv());
-		CB0.CameraPosition = Camera->GetPosition();
-		RCL->UpdateSubresource4(Renderer->CBViewProjection->D3D11Buffer, &CB0);
-	}
+	RCL->CBViewProjection = RenderPipelineDeferred->_CBViewProjection;
+	RCL->UpdateSubresource4(RenderPipelineDeferred->_CBViewProjection->D3D11Buffer, &RenderPipelineDeferred->_CBViewProjectionData);
 
-	for (LXRenderCluster* RenderCluster : ListRenderClusterOpaques)
+	for (LXRenderCluster* RenderCluster : *_ListRenderClusterOpaques)
 	{
 		RenderCluster->Render(ERenderPass::GBuffer, RCL);
 	}
@@ -181,7 +113,7 @@ void LXRenderPassGBuffer::Render(LXRenderCommandList* RCL)
 	RCL->PSSetShader(nullptr);
 
 	// Restore the default rasterizer state
-	RCL->RSSetState(Renderer->D3D11RasterizerState);
+	RCL->RSSetState(Renderer->GetDefaultRasterizerState());
 
 	RCL->EndEvent();
 }
