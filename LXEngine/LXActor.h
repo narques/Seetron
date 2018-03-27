@@ -108,6 +108,7 @@ public:
 	// World hierarchy
 	void				SetParent(LXActor* pGroup) { _Parent = pGroup; }
 	LXActor*			GetParent() { return _Parent; }
+	LXActor*			GetPreviousParent() { return _LastKnownParent; }
 	ListActors&			GetChildren() { return _Children; }
 	void				AddChild(LXActor* Actor);
 	void				RemoveChild(LXActor* Actor);
@@ -150,6 +151,7 @@ protected:
 
 	// Hierarchy
 	LXActor*			_Parent = nullptr;
+	LXActor*			_LastKnownParent = nullptr;
 	ListActors			_Children;
 
 	// Transformation

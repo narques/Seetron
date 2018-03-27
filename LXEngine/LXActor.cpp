@@ -315,6 +315,7 @@ void LXActor::RemoveChild(LXActor* Actor)
 		// InvalidateRenderState before
 		Actor->InvalidateRenderState(); 
 		_Children.erase(It);
+		Actor->_LastKnownParent = Actor->_Parent;
 		Actor->SetParent(nullptr);
 		InvalidateWorldBounds(true);
 

@@ -55,8 +55,8 @@ bool LXCommandDeleteActor::Undo()
 	for (SetActors::iterator It=_setActors.begin(); It!=_setActors.end(); It++)
 	{
 		LXActor* pActor = *It;
-		LXActor* pGroup = pActor->GetParent();
-		pActor->SetParent(NULL);	// Avoid CHK in LXActor::AddChild
+		LXActor* pGroup = pActor->GetPreviousParent();
+		pActor->SetParent(NULL); // Avoid CHK in LXActor::AddChild
 		pGroup->AddChild(pActor);
 		pActor->OnRecycled();
 	}
