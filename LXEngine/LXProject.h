@@ -13,7 +13,6 @@
 
 class LXAnimationManager;
 class LXActorMesh;
-class LXActorCamera;
 class LXActor;
 class LXActorLight;
 class LXQueryManager;
@@ -27,6 +26,7 @@ class LXViewState;
 class LXViewStateManager;
 class LXPrimitive;
 class LXActorSceneCapture;
+class LXActorCamera;
 
 typedef list<LXString> ListUID;
 typedef map<LXFilepath, LXActor*> MapFilepathGroup;
@@ -105,10 +105,8 @@ public:
 	LXPrimitive*				CreatePrimitive			( );
 
 	LXScene*					GetScene				( ) { return m_pScene; }
+	LXActorCamera*				GetCamera				( ) const;
 	
-	LXActorCamera*				GetCamera				( ) const { return m_pCamera; }
-	void						SetCamera				( LXActorCamera* Camera) { m_pCamera = Camera; }
-
 	LXActorSceneCapture*		GetSceneCapture			( ) { return m_pSceneCapture;}
 	void						SetSceneCapture			( LXActorSceneCapture* ActorSceneCapture ) { m_pSceneCapture = ActorSceneCapture; }
 	
@@ -173,7 +171,6 @@ private:
 	//
 
 	LXScene*						m_pScene;			
-	LXActorCamera*					m_pCamera = nullptr;		// Shortcut ( Owned by Scene )
 	LXActorSceneCapture*			m_pSceneCapture = nullptr;	// Shortcut ( Owned by Scene )
 	ArrayLights						m_lights;
 

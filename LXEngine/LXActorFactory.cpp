@@ -84,12 +84,6 @@ LXActor* LXActorFactory::CreateActor(const LXString& ClassName)
 	else if (ClassName == L"LXActorCamera")
 	{
 		Actor = new LXActorCamera(Project);
-		Project->SetCamera((LXActorCamera*)Actor);
-	}
-	else if (ClassName == L"LXCamera")
-	{
-		Actor = new LXActorCamera(Project);
-		Project->SetCamera((LXActorCamera*)Actor);
 	}
 	else if (ClassName == L"LXActorLight")
 	{

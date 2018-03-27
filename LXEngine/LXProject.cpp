@@ -103,9 +103,9 @@ bool LXProject::InitializeNewProject( const LXString& strName )
 	// Default Camera
 	//
 
-	m_pCamera = new LXActorCamera(this);
-	m_pCamera->SetName(L"Camera");
-	m_pScene->AddChild(m_pCamera);
+	LXActorCamera* ActorCamera = new LXActorCamera(this);
+	ActorCamera->SetName(L"Camera");
+	m_pScene->AddChild(ActorCamera);
 
 	//
 	// Default Lighting
@@ -181,9 +181,9 @@ bool LXProject::LoadFile( const LXFilepath& strFilepath )
 			SetPersistent(false);
 
 			// Default Camera
-			m_pCamera = new LXActorCamera(this);
-			m_pCamera->SetName(L"Camera");
-			m_pScene->AddChild(m_pCamera);
+			LXActorCamera* ActorCamera = new LXActorCamera(this);
+			ActorCamera->SetName(L"Camera");
+			m_pScene->AddChild(ActorCamera);
 
 			// Default Lighting
 			LXActorLight* pLight = new LXActorLight(this);
@@ -225,13 +225,10 @@ void LXProject::OnFilesLoaded( bool Success )
 	if (!m_pMainView)
 	{
 		m_pMainView = m_pViewStateManager->CreateViewState(this);
-		m_pMainView->SetCamera(m_pCamera);
 		m_pMainView->SetName(L"MainView");
 		if (!GetPersistent())
 			m_pMainView->ZoomOnBBoxAnimated(m_pScene->GetBBoxWorld());
 	}
-	else
-		m_pMainView->SetCamera(m_pCamera);
 		
 	// Default active view is MainView
 	m_pActiveView = m_pMainView;
@@ -281,6 +278,11 @@ LXActorMesh*  LXProject::CreateMesh( )
 LXPrimitive* LXProject::CreatePrimitive( )
 {
 	return new LXPrimitive;
+}
+
+LXActorCamera* LXProject::GetCamera() const
+{
+	return m_pScene ? m_pScene->GetCamera() : nullptr;
 }
 
 // TODO: Move to a SceneManager

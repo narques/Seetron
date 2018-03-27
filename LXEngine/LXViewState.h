@@ -11,7 +11,6 @@
 #include "LXSmartObject.h"
 
 class LXProject;
-class LXActorCamera;
 class LXBBox;
 class LXTexture;
 
@@ -74,12 +73,6 @@ public:
 	virtual bool			OnSaveChild( const TSaveContext& saveContext  ) override;
 	virtual bool			OnLoadChild( const TLoadContext& loadContext ) override;
 
-	//
-	// Camera
-	//
-
-	LXActorCamera*			GetCamera( ) const { return _Camera; }
-	void					SetCamera( LXActorCamera* m_pCamera );
 	void					ZoomOnBBoxAnimated( const LXBBox& box, bool bAnimated = true );
 	
 private:
@@ -87,7 +80,6 @@ private:
 	// External objects
 
 	LXProject*				_Project;
-	LXActorCamera*			_Camera;
 
 	//
 	// Rendering options

@@ -16,9 +16,7 @@
 #include "LXProject.h"
 #include "LXActorLight.h"
 #include "LXAnimation.h"
-
 #include "LXMSXMLNode.h"
-
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXViewState::LXViewState(LXProject* pDocument):
@@ -37,8 +35,7 @@ m_fSSAORadius(-1.0f), // Undefined TODO
 m_bSSAOSmooth(true),
 m_fHour(14.f),
 m_bFXAA(false),
-m_bLayered(true),
-_Camera(NULL)
+m_bLayered(true)
 {
 //	_renderingLayer0.SetName(L"Rendering Layer 0"); 
 //	_renderingLayer0.SetUID(LX_UID_RENDERINGLAYER_0);
@@ -263,20 +260,22 @@ void LXViewState::ZoomOnBBoxAnimated(const LXBBox& box, bool bAnimated)
 	CHK(_Project);
 	if (!_Project)
 		return;
+
+	LXActorCamera* ActorCamera = GetProject()->GetCamera();
 	
-	vec3f vDir = _Camera->GetDirection();
+	vec3f vDir = ActorCamera->GetDirection();
 	vDir.Normalize();
 
 	vec3f vNewTarget;
 	vNewTarget.Set(box.GetCenter().x, box.GetCenter().y, box.GetCenter().z);
-	vec3f vNewPosition = vNewTarget - vDir * box.GetDiag() * (90.0f / GetCamera()->GetFov()) * 0.5f;
+	vec3f vNewPosition = vNewTarget - vDir * box.GetDiag() * (90.0f / ActorCamera->GetFov()) * 0.5f;
 	float fNewHeight = box.GetDiag() * 1.5f;
 
 	if (bAnimated)
 	{
-		LXProperty* pPropPosition = _Camera->GetProperty(LXPropertyID::POSITION);
-		LXProperty* pPropTarget = _Camera->GetProperty(LXPropertyID::CAMERA_TARGET);
-		LXProperty* pPropHeight = _Camera->GetProperty(LXPropertyID::CAMERA_HEIGHT);
+		LXProperty* pPropPosition = ActorCamera->GetProperty(LXPropertyID::POSITION);
+		LXProperty* pPropTarget = ActorCamera->GetProperty(LXPropertyID::CAMERA_TARGET);
+		LXProperty* pPropHeight = ActorCamera->GetProperty(LXPropertyID::CAMERA_HEIGHT);
 
 		CHK(pPropPosition && pPropTarget && pPropHeight);
 
@@ -291,15 +290,10 @@ void LXViewState::ZoomOnBBoxAnimated(const LXBBox& box, bool bAnimated)
 	{
 		CHK(IsValid(vNewPosition));
 		CHK(IsValid(vNewTarget));
-		_Camera->SetPosition(vNewPosition);
-		_Camera->SetTarget(vNewTarget);
-		_Camera->SetHeight(fNewHeight);
+		ActorCamera->SetPosition(vNewPosition);
+		ActorCamera->SetTarget(vNewTarget);
+		ActorCamera->SetHeight(fNewHeight);
 	}
-}
-
-void LXViewState::SetCamera(LXActorCamera* pCamera)
-{
-	_Camera = pCamera;
 }
 
 LXRenderingLayer::LXRenderingLayer()

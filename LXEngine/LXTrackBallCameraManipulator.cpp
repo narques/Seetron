@@ -13,7 +13,6 @@
 #include "LXWorldTransformation.h"
 #include "LXActorCamera.h"
 #include "LXScene.h"
-#include "LXViewState.h"
 #include "LXPropertyManager.h"
 #include "LXProject.h"
 #include "LXAnimationManager.h"
@@ -45,18 +44,11 @@ LXTrackBallCameraManipulator::~LXTrackBallCameraManipulator(void)
 
 LXActorCamera* LXTrackBallCameraManipulator::GetCamera()
 {
-	if (!_Viewport)
-		return NULL;
-
-	LXProject* pDocument = _Viewport->GetDocument();
-	if (!pDocument)
-		return NULL;
-
-	LXViewState* pViewState = pDocument->GetActiveView();
-	if (!pViewState)
-		return NULL;
-
-	return pViewState->GetCamera();
+	LXProject* project = GetCore().GetProject();
+	if (!project)
+		return nullptr;
+	
+	return project->GetCamera();
 }
 
 LXScene* LXTrackBallCameraManipulator::GetScene()

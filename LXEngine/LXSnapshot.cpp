@@ -12,7 +12,6 @@
 #include "LXSnapshotManager.h"
 #include "LXProject.h"
 #include "LXActorCamera.h"
-#include "LXViewState.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXSnapshot::LXSnapshot()
@@ -47,7 +46,7 @@ void LXSnapshot::AddProperty(LXProperty* pProperty)
 void LXSnapshot::CaptureCurrentCamera(LXProject* Project)
 {
 	LX_CHK_RET(Project);
-	LXActorCamera* pCamera = Project->GetActiveView()->GetCamera();
+	LXActorCamera* pCamera = Project->GetCamera();
 	LX_CHK_RET(pCamera);
 	const ListProperties& lp = pCamera->GetProperties();
 	

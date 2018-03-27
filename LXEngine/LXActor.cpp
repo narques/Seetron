@@ -15,6 +15,7 @@
 #include "LXMSXMLNode.h"
 #include "LXMath.h"
 #include "LXProject.h"
+#include "LXScene.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXActor::LXActor()
@@ -296,24 +297,28 @@ void LXActor::AddChild(LXActor* Actor)
 	_Children.push_back(Actor);
 	InvalidateWorldBounds(true);
 	Actor->InvalidateRenderState();
+
+	GetScene()->OnActorAdded(Actor);
 }
 
-void LXActor::RemoveChild(LXActor* pNode)
+void LXActor::RemoveChild(LXActor* Actor)
 {
-	CHK(pNode);
-	if (!pNode)
+	CHK(Actor);
+	if (!Actor)
 		return;
 
-	CHK(pNode->GetParent());
+	CHK(Actor->GetParent());
 
-	ListActors::iterator It = find(_Children.begin(), _Children.end(), pNode);
+	ListActors::iterator It = find(_Children.begin(), _Children.end(), Actor);
 	if (It != _Children.end())
 	{
 		// InvalidateRenderState before
-		pNode->InvalidateRenderState(); 
+		Actor->InvalidateRenderState(); 
 		_Children.erase(It);
-		pNode->SetParent(NULL);
+		Actor->SetParent(nullptr);
 		InvalidateWorldBounds(true);
+
+		GetScene()->OnActorRemoved(Actor);
 	}
 	else
 		CHK(0);
