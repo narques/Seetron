@@ -164,7 +164,7 @@ public:
 		return m_str.compare(&str);
 	}
 
-	int size()
+	int size() const
 	{
 		return (int)m_str.size();
 	}

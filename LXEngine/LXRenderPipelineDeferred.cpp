@@ -13,6 +13,7 @@
 #include "LXProject.h"
 #include "LXRenderCluster.h"
 #include "LXRenderClusterManager.h"
+#include "LXRenderer.h"
 #include "LXRenderPassAux.h"
 #include "LXRenderPassDownsample.h"
 #include "LXRenderPassDynamicTexture.h"
@@ -21,7 +22,7 @@
 #include "LXRenderPassShadow.h"
 #include "LXRenderPassToneMapping.h"
 #include "LXRenderPassTransparency.h"
-#include "LXRenderer.h"
+#include "LXRenderPassUI.h"
 #include "LXViewport.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
@@ -41,6 +42,7 @@ LXRenderPipelineDeferred::LXRenderPipelineDeferred(LXRenderer* Renderer):_Render
 	RenderPassLighting = new LXRenderPassLighting(Renderer);
 	RenderPassToneMapping = new LXRenderPassToneMapping(Renderer);
 	RenderPassDownsample = new LXRenderPassDownsample(Renderer, EDownsampleFunction::Downsample_HalfRes);
+	RenderPassUI = new LXRenderPassUI(Renderer);
 
 	_RenderPasses.push_back(RenderPassShadow);
 	_RenderPasses.push_back(RenderPassDynamicTexture);
@@ -50,7 +52,7 @@ LXRenderPipelineDeferred::LXRenderPipelineDeferred(LXRenderer* Renderer):_Render
 	_RenderPasses.push_back(RenderPassTransparent);
 	//RenderPasses.push_back(RenderPassDownsample);
 	_RenderPasses.push_back(RenderPassToneMapping);
-	
+		
 	// Links and references between objects
 	RenderPassGBuffer->Viewport = Renderer->Viewport;
 	RenderPassGBuffer->RenderPassShadow = RenderPassShadow;
@@ -72,6 +74,7 @@ LXRenderPipelineDeferred::~LXRenderPipelineDeferred()
 	LX_SAFE_DELETE(RenderPassLighting);
 	LX_SAFE_DELETE(RenderPassToneMapping);
 	LX_SAFE_DELETE(RenderPassDownsample);
+	LX_SAFE_DELETE(RenderPassUI);
 	LX_SAFE_DELETE(_CBViewProjection);
 }
 
@@ -157,6 +160,11 @@ void LXRenderPipelineDeferred::Render(LXRenderCommandList* RenderCommandList)
 	
 	
 	__super::Render(RenderCommandList);
+}
+
+void LXRenderPipelineDeferred::PostRender()
+{
+	RenderPassUI->Render(nullptr);
 }
 
 const LXTextureD3D11* LXRenderPipelineDeferred::GetDepthBuffer() const

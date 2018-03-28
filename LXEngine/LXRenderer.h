@@ -44,8 +44,7 @@ class LXRenderer : public LXObject
 	friend LXMaterialD3D11;
 	friend LXRenderCluster;
 	friend LXRenderClusterJobTexture;
-
-
+	
 public:
 
 	LXRenderer(HWND hWND);
@@ -72,7 +71,8 @@ public:
 	ID3D11BlendState* GetBlendStateOpaque() const { return D3D11BlendStateNoBlend; }
 	ID3D11BlendState* GetBlendStateTransparent() const { return D3D11BlendStateBlend; }
 	LXPrimitiveD3D11* GetSSTriangle() const { return SSTriangle; }
-	
+	const LXDirectX11* GetDirectX11() const { return DirectX11; }
+		
 	// Misc
 	LXShaderManager* GetShaderManager() const { return ShaderManager; }
 	void ResetShaders();
@@ -80,7 +80,9 @@ public:
 	void Render_MainThread();
 	void DrawScreenSpacePrimitive(LXRenderCommandList* RCL);
 	LXRenderPipeline* GetRenderPipeline() const { return _RenderPipeline; }
-
+	const list<LXString>& GetConsoleBuffer() const { return ConsoleBuffer; }
+	const LXViewport* GetViewport() const {	return Viewport; }
+		
 private:
 
 	static int RenderFunc(void* pData);
@@ -139,14 +141,6 @@ private:
 	ID3D11RasterizerState* D3D11RasterizerStateWireframe = nullptr;
 	ID3D11BlendState* D3D11BlendStateNoBlend = nullptr;
 	ID3D11BlendState* D3D11BlendStateBlend = nullptr;
-
-	ID2D1SolidColorBrush* pRedBrush = nullptr;
-	ID2D1SolidColorBrush* pWhiteBrush = nullptr;
-	ID2D1SolidColorBrush* pYellowBrush = nullptr;
-	ID2D1SolidColorBrush* pBlackBrush = nullptr;
-	ID2D1SolidColorBrush* pGrayBrush = nullptr;
-	ID2D1SolidColorBrush* pDarkBlue = nullptr;
-	ID2D1SolidColorBrush* pConsoleBackgroundBrush = nullptr;
 
 	// Scene & Document
 	LXProject* _Project = nullptr;

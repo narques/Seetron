@@ -22,6 +22,7 @@ public:
 	virtual void RebuildShaders() = 0;
 	virtual void Resize(uint Width, uint Height) = 0;
 	virtual void Render(LXRenderCommandList* RenderCommandList);
+	virtual void PostRender() {};
 	virtual const LXRenderPass* GetPreviousRenderPass() const = 0;
 	virtual const LXTextureD3D11* GetOutput() const = 0;
 

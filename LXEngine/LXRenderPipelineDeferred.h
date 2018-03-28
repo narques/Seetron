@@ -13,6 +13,7 @@
 
 class LXRenderCluster;
 class LXRenderCommandList;
+class LXRenderer;
 class LXRenderPass;
 class LXRenderPassAux;
 class LXRenderPassDownsample;
@@ -22,7 +23,7 @@ class LXRenderPassLighting;
 class LXRenderPassShadow;
 class LXRenderPassToneMapping;
 class LXRenderPassTransparency;
-class LXRenderer;
+class LXRenderPassUI;
 
 class LXRenderPipelineDeferred : public LXRenderPipeline
 {
@@ -41,6 +42,7 @@ public:
 	void RebuildShaders() override;
 	void Resize(uint Width, uint Height) override;
 	void Render(LXRenderCommandList* RenderCommandList) override;
+	void PostRender() override;
 		
 	const LXRenderPassGBuffer* GetRenderPassGBuffer() const { return RenderPassGBuffer; }
 	const LXRenderPass* GetPreviousRenderPass() const override { return _PreviousRenderPass; }
@@ -71,6 +73,7 @@ private:
 	LXRenderPassLighting* RenderPassLighting = nullptr;
 	LXRenderPassToneMapping* RenderPassToneMapping = nullptr;
 	LXRenderPassDownsample* RenderPassDownsample = nullptr;
+	LXRenderPassUI* RenderPassUI = nullptr;
 	
 	// View ConstantBuffer
 	LXConstantBufferD3D11* _CBViewProjection = nullptr;
