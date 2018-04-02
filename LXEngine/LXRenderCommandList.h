@@ -118,23 +118,19 @@ public:
 	CMD0_CLASS(Present)
 	CMD0_CLASS(EndEvent)
 	CMD3_CLASS(VSSetConstantBuffers, UINT, StartSlot, UINT, NumBuffers, LXConstantBufferD3D11*, ConstantBuffer)
-	CMD3_CLASS(PSSetConstantBuffers, UINT, StartSlot, UINT, NumBuffers, LXConstantBufferD3D11*, ConstantBuffer)
+	CMD3_CLASS(PSSetConstantBuffers, UINT, StartSlot, UINT, NumBuffers, const LXConstantBufferD3D11*, ConstantBuffer)
 	CMD1_CLASS(ClearDepthStencilView, LXDepthStencilViewD3D11*, DepthStencilView)
 	CMD1_CLASS(ClearRenderTargetView, LXRenderTargetViewD3D11*, RenderTargetView)
+	CMD2_CLASS(ClearRenderTargetView2, LXRenderTargetViewD3D11*, RenderTargetView, vec4f, Color)
 	CMD1_CLASS(IASetInputLayout, LXShaderD3D11*, VertexShader)
-
-	//	CMD1_CLASS(OMSetRenderTargets, LXRenderTargetViewD3D11*, RenderTarget)
 	CMD1_CLASS(OMSetRenderTargets, ID3D11RenderTargetView*, RenderTarget)
 	CMD2_CLASS(OMSetRenderTargets2, LXRenderTargetViewD3D11*, RenderTargetView, LXDepthStencilViewD3D11*, DepthStencilView)
 	CMD3_CLASS(OMSetRenderTargets3, UINT, NumViews, ID3D11RenderTargetView**, RenderTargetViews, ID3D11DepthStencilView*, DepthStencilView)
 	CMD1_CLASS(OMSetBlendState, ID3D11BlendState*, D3D11BlendState);
-	
 	CMD1_CLASS(RSSetState, ID3D11RasterizerState*, RasterizerState)
-
 	CMD2_CLASS(Map, ID3D11Resource*, Resource, D3D11_MAPPED_SUBRESOURCE*, MappedResource)
 	CMD1_CLASS(Unmap, ID3D11Resource*, Resource)
 	CMD2_CLASS(CopyResource, ID3D11Resource*, DstResource, ID3D11Resource*, SrcResource)
-
 	CMD1_CLASS(GenerateMips, ID3D11ShaderResourceView*, pShaderResourceView)
 
 
@@ -155,7 +151,8 @@ public:
 	LXRenderer* Renderer;
 	LXShaderManager* ShaderManager;
 
-	//Misc
+	//Debug purpose. Default value is false. 
+	//Set true to immediately call the command.
 	bool DirectMode = false;
 
 #if LX_CHECK_BINDED_OBJECT
