@@ -161,7 +161,10 @@ bool IntersectRayTriangle(LXAxis& ray, const vec3f& p0, const vec3f& p1, const v
 	vec3f w0 = ray.GetOrigin() - p0;
 	float a = - n.DotProduct(w0);
 	float b = n.DotProduct(dir);
-	if (fabs(b) < LX_SMALL_NUMBER6)
+	
+	// 1e-6 is not enought efficient, set to 1e-7
+	// TODO: test with 1e-8 if it rejects less triangles
+	if (fabs(b) < 0.00000001 /*LX_SMALL_NUMBER6*/)
 	{
 		// ray is parallel to triangle plane
 		if (a == 0)
