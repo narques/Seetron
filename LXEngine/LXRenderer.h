@@ -24,6 +24,7 @@ class LXRenderClusterJobTexture;
 class LXRenderClusterManager;
 class LXRenderCommandList;
 class LXShaderManager;
+class LXTextureManager;
 class LXRenderPipeline;
 class LXString;
 class LXSyncEvent;
@@ -65,6 +66,9 @@ public:
 
 	// Resources
 	LXMaterialD3D11* GetMaterialD3D11(const LXMaterial* Material);
+	LXShaderManager* GetShaderManager() const { return ShaderManager; }
+	LXTextureManager* GetTextureManager() const { return TextureManager; }
+	LXRenderPipeline* GetRenderPipeline() const { return _RenderPipeline; }
 
 	// Shared objects
 	ID3D11RasterizerState* GetDefaultRasterizerState () const { return D3D11RasterizerState; }
@@ -72,17 +76,15 @@ public:
 	ID3D11BlendState* GetBlendStateTransparent() const { return D3D11BlendStateBlend; }
 	LXPrimitiveD3D11* GetSSTriangle() const { return SSTriangle; }
 	const LXDirectX11* GetDirectX11() const { return DirectX11; }
-		
+	
 	// Misc
-	LXShaderManager* GetShaderManager() const { return ShaderManager; }
 	void ResetShaders();
 	const LXTime& GetTime() { return Time; }
 	void Render_MainThread();
 	void DrawScreenSpacePrimitive(LXRenderCommandList* RCL);
-	LXRenderPipeline* GetRenderPipeline() const { return _RenderPipeline; }
 	const list<LXString>& GetConsoleBuffer() const { return ConsoleBuffer; }
 	const LXViewport* GetViewport() const {	return Viewport; }
-		
+			
 private:
 
 	static int RenderFunc(void* pData);
@@ -159,6 +161,7 @@ private:
 
 	// Managers
 	LXShaderManager* ShaderManager = nullptr;
+	LXTextureManager* TextureManager = nullptr;
 	LXRenderPipeline* _RenderPipeline = nullptr;
 
 	// Misc

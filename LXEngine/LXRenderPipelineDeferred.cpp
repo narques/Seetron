@@ -8,23 +8,28 @@
 
 #include "stdafx.h"
 #include "LXRenderPipelineDeferred.h"
+#include "LXAssetManager.h"
 #include "LXActorCamera.h"
 #include "LXFrustum.h"
 #include "LXProject.h"
 #include "LXRenderCluster.h"
 #include "LXRenderClusterManager.h"
 #include "LXRenderer.h"
+//#include "LXRenderPassAA.h"
 #include "LXRenderPassAux.h"
 #include "LXRenderPassDownsample.h"
 #include "LXRenderPassDynamicTexture.h"
 #include "LXRenderPassGBuffer.h"
 #include "LXRenderPassLighting.h"
 #include "LXRenderPassShadow.h"
+#include "LXRenderPassSSAO.h"
 #include "LXRenderPassToneMapping.h"
 #include "LXRenderPassTransparency.h"
 #include "LXRenderPassUI.h"
+#include "LXTextureManager.h"
 #include "LXViewport.h"
 #include "LXMemory.h" // --- Must be the last included ---
+#include "LXRenderCommandList.h"
 
 LXRenderPipelineDeferred::LXRenderPipelineDeferred(LXRenderer* Renderer):_Renderer(Renderer)
 {
@@ -34,6 +39,7 @@ LXRenderPipelineDeferred::LXRenderPipelineDeferred(LXRenderer* Renderer):_Render
 	_CBViewProjection->CreateConstantBuffer(&Foo, sizeof(LXConstantBufferData0));
 	
 	// Passes
+	//RenderPassAA = new LXRenderPassAA(Renderer);
 	RenderPassShadow = new LXRenderPassShadow(Renderer);
 	RenderPassDynamicTexture = new LXRenderPassDynamicTexture(Renderer);
 	RenderPassGBuffer = new LXRenderPassGBuffer(Renderer);
@@ -43,15 +49,18 @@ LXRenderPipelineDeferred::LXRenderPipelineDeferred(LXRenderer* Renderer):_Render
 	RenderPassToneMapping = new LXRenderPassToneMapping(Renderer);
 	RenderPassDownsample = new LXRenderPassDownsample(Renderer, EDownsampleFunction::Downsample_HalfRes);
 	RenderPassUI = new LXRenderPassUI(Renderer);
+	RenderPassSSAO = new LXRenderPassSSAO(Renderer);
 
 	_RenderPasses.push_back(RenderPassShadow);
 	_RenderPasses.push_back(RenderPassDynamicTexture);
 	_RenderPasses.push_back(RenderPassGBuffer);
+	_RenderPasses.push_back(RenderPassSSAO);
 	//RenderPasses.push_back(RenderPassAux);
 	_RenderPasses.push_back(RenderPassLighting);
 	_RenderPasses.push_back(RenderPassTransparent);
 	//RenderPasses.push_back(RenderPassDownsample);
 	_RenderPasses.push_back(RenderPassToneMapping);
+	//_RenderPasses.push_back(RenderPassAA);
 		
 	// Links and references between objects
 	RenderPassGBuffer->Viewport = Renderer->Viewport;
@@ -60,8 +69,10 @@ LXRenderPipelineDeferred::LXRenderPipelineDeferred(LXRenderer* Renderer):_Render
 	RenderPassAux->Viewport = Renderer->Viewport;
 	RenderPassLighting->RenderPassGBuffer = RenderPassGBuffer;
 	RenderPassLighting->RenderPassShadow = RenderPassShadow;
+	RenderPassLighting->RenderPassSSAO = RenderPassSSAO;
 	RenderPassLighting->TextureShadow = RenderPassShadow->TextureDepth.get();
 	RenderPassTransparent->_ListRenderClusterTransparents = &_ListRenderClusterTransparents;
+	RenderPassSSAO->RenderPassGBuffer = RenderPassGBuffer;
 }
 
 LXRenderPipelineDeferred::~LXRenderPipelineDeferred()
@@ -75,6 +86,8 @@ LXRenderPipelineDeferred::~LXRenderPipelineDeferred()
 	LX_SAFE_DELETE(RenderPassToneMapping);
 	LX_SAFE_DELETE(RenderPassDownsample);
 	LX_SAFE_DELETE(RenderPassUI);
+	//LX_SAFE_DELETE(RenderPassAA);
+	LX_SAFE_DELETE(RenderPassSSAO);
 	LX_SAFE_DELETE(_CBViewProjection);
 }
 
@@ -149,16 +162,28 @@ void LXRenderPipelineDeferred::BuildRenderClusterLists()
 	_CBViewProjectionData.ViewProjectionInv = Transpose(WorldTransformation->GetMatrixVPInv());
 	_CBViewProjectionData.ProjectionInv = Transpose(WorldTransformation->GetMatrixProjectionInv());
 	_CBViewProjectionData.ViewInv = Transpose(WorldTransformation->GetMatrixViewInv());
-	_CBViewProjectionData.CameraPosition = Camera->GetPosition();
-
+	_CBViewProjectionData.CameraPosition = vec4f(Camera->GetPosition(), 0.f);
+	_CBViewProjectionData.RendererSize = vec2f(_Renderer->Width, _Renderer->Height);
 }
 
 void LXRenderPipelineDeferred::Render(LXRenderCommandList* RenderCommandList)
 {
 	// Creates and sorts the RenderCluster lists
+	// Prepare the ViewState (Camera) data
 	BuildRenderClusterLists();
-	
-	
+
+
+	if (GetProject())
+	{
+		if (LXTexture* Texture = GetAssetManager()->GetTexture(L"Textures/jittering4x4.stex"))
+		{
+			if (!_TextureNoise4x4)
+			{
+				_TextureNoise4x4 = RenderCommandList->Renderer->GetTextureManager()->GetTexture(Texture).get();
+			}
+		}
+	}
+			
 	__super::Render(RenderCommandList);
 }
 

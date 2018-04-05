@@ -26,86 +26,13 @@ LXTextureD3D11::LXTextureD3D11(uint Width, uint Height, DXGI_FORMAT Format, bool
 	Create(Format, Width, Height, bSupportAutoMipmap);
 }
 
-LXTextureD3D11::LXTextureD3D11(uint Width, uint Height, DXGI_FORMAT Format, void* Buffer, uint PixelSize)
-{
-	LX_COUNTSCOPEINC(LXTextureD3D11)
-	
-	ID3D11Device* D3D11Device = LXDirectX11::GetCurrentDevice();
-	ID3D11DeviceContext* D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();
-
-	D3D11_SUBRESOURCE_DATA SubresourceData;;
-	ZeroMemory(&SubresourceData, sizeof(D3D11_SUBRESOURCE_DATA));
-	SubresourceData.pSysMem = Buffer;
-	SubresourceData.SysMemPitch = Width * PixelSize;
-	SubresourceData.SysMemSlicePitch = Width * Height * PixelSize;
-
-	D3D11_TEXTURE2D_DESC desc = { 0 };
-	desc.Width = Width;
-	desc.Height = Height;
-	desc.MipLevels = 1;
-	desc.ArraySize = 1;
-	desc.Format = (DXGI_FORMAT)Format;
-	desc.SampleDesc.Count = 1;
-	desc.SampleDesc.Quality = 0;
-	desc.Usage = D3D11_USAGE_DEFAULT;
-	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE; // D3D11_BIND_RENDER_TARGET Needed for GenerateMips
-	desc.CPUAccessFlags = 0;
-	desc.MiscFlags = 0;
-
-	HRESULT hr = D3D11Device->CreateTexture2D(&desc, &SubresourceData, &D3D11Texture2D);
-	if (FAILED(hr))
-		CHK(0);
-
-	D3D11DeviceContext->UpdateSubresource(D3D11Texture2D, 0, NULL, Buffer, Width * PixelSize, 0);
-
-	// Create the sampler state
-	D3D11_SAMPLER_DESC sampDesc;
-	ZeroMemory(&sampDesc, sizeof(D3D11_SAMPLER_DESC));
-	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;// D3D11_FILTER_ANISOTROPIC;// D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	sampDesc.MaxAnisotropy = 8;
-	sampDesc.MinLOD = 0;
-	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	hr = D3D11Device->CreateSamplerState(&sampDesc, &D3D11SamplerState);
-	if (FAILED(hr))
-		CHK(0);
-
-	// 	D3D11_TEXTURE2D_DESC TextureDesc;
-	// 	D3D11Texture2D->GetDesc(&TextureDesc);
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC ShaderResourceViewDesc;
-	ZeroMemory(&ShaderResourceViewDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
-	ShaderResourceViewDesc.Format = desc.Format;
-	ShaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	ShaderResourceViewDesc.Texture2D.MipLevels = -1;// desc.MipLevels;
-	ShaderResourceViewDesc.Texture2D.MostDetailedMip = 0;//desc.MipLevels - 1;
-
-	hr = D3D11Device->CreateShaderResourceView(D3D11Texture2D, &ShaderResourceViewDesc, &D3D11ShaderResouceView);
-	if (FAILED(hr))
-		CHK(0);
-}
-
-LXTextureD3D11::LXTextureD3D11(uint Width, uint Height, DXGI_FORMAT Format, void* Buffer, uint PixelSize, uint MipLevels)
+LXTextureD3D11::LXTextureD3D11(uint Width, uint Height, DXGI_FORMAT Format, void* Buffer, uint PixelSize, uint MipLevels, D3D11_FILTER Filter)
 {
 	LX_COUNTSCOPEINC(LXTextureD3D11)
 
 	ID3D11Device* D3D11Device = LXDirectX11::GetCurrentDevice();
 	ID3D11DeviceContext* D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();
 		
-// 	D3D11_SUBRESOURCE_DATA SubresourceData = { 0 };
-// 	SubresourceData.pSysMem = Buffer;
-// 	SubresourceData.SysMemPitch = Width * PixelSize; 
-// 	SubresourceData.SysMemSlicePitch = Width * Height * PixelSize;
-
-// 	D3D11_SUBRESOURCE_DATA* SubresourceDataArray = new D3D11_SUBRESOURCE_DATA[MipLevels];
-// 	ZeroMemory(SubresourceDataArray, sizeof(D3D11_SUBRESOURCE_DATA) * MipLevels);
-// 	SubresourceDataArray[0].pSysMem = Buffer;
-// 	SubresourceDataArray[0].SysMemPitch = Width * PixelSize;
-// 	SubresourceDataArray[0].SysMemSlicePitch = Width * Height * PixelSize;
-
 	D3D11_TEXTURE2D_DESC desc = { 0 };
 	desc.Width = Width;
 	desc.Height = Height;
@@ -137,7 +64,7 @@ LXTextureD3D11::LXTextureD3D11(uint Width, uint Height, DXGI_FORMAT Format, void
 	// Create the sampler state
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(D3D11_SAMPLER_DESC));
-	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;// D3D11_FILTER_ANISOTROPIC;// D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sampDesc.Filter = Filter;
 	sampDesc.AddressU =  D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -148,15 +75,12 @@ LXTextureD3D11::LXTextureD3D11(uint Width, uint Height, DXGI_FORMAT Format, void
 	if (FAILED(hr))
 		CHK(0);
 
-// 	D3D11_TEXTURE2D_DESC TextureDesc;
-// 	D3D11Texture2D->GetDesc(&TextureDesc);
-
 	D3D11_SHADER_RESOURCE_VIEW_DESC ShaderResourceViewDesc;
 	ZeroMemory(&ShaderResourceViewDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
 	ShaderResourceViewDesc.Format = GetFormatSRV(desc.Format);
 	ShaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	ShaderResourceViewDesc.Texture2D.MipLevels = -1;// desc.MipLevels;
-	ShaderResourceViewDesc.Texture2D.MostDetailedMip = 0;//desc.MipLevels - 1;
+	ShaderResourceViewDesc.Texture2D.MipLevels = -1;
+	ShaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
 	
 	hr = D3D11Device->CreateShaderResourceView(D3D11Texture2D, &ShaderResourceViewDesc, &D3D11ShaderResouceView);
 	if (FAILED(hr))
@@ -164,8 +88,6 @@ LXTextureD3D11::LXTextureD3D11(uint Width, uint Height, DXGI_FORMAT Format, void
 
 	if (MipLevels > 1)
 		D3D11DeviceContext->GenerateMips(D3D11ShaderResouceView); 
-
-	//delete SubresourceDataArray;
 }
 
 LXTextureD3D11* LXTextureD3D11::CreateFromTexture(LXTexture* InTexture)

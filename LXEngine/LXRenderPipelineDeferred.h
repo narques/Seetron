@@ -15,12 +15,14 @@ class LXRenderCluster;
 class LXRenderCommandList;
 class LXRenderer;
 class LXRenderPass;
+class LXRenderPassAA;
 class LXRenderPassAux;
 class LXRenderPassDownsample;
 class LXRenderPassDynamicTexture;
 class LXRenderPassGBuffer;
 class LXRenderPassLighting;
 class LXRenderPassShadow;
+class LXRenderPassSSAO;
 class LXRenderPassToneMapping;
 class LXRenderPassTransparency;
 class LXRenderPassUI;
@@ -45,6 +47,7 @@ public:
 	void PostRender() override;
 		
 	const LXRenderPassGBuffer* GetRenderPassGBuffer() const { return RenderPassGBuffer; }
+	const LXRenderPassLighting* GetRenderPassLighting() const { return RenderPassLighting; }
 	const LXRenderPass* GetPreviousRenderPass() const override { return _PreviousRenderPass; }
 
 	// G-Buffer
@@ -54,7 +57,10 @@ public:
 	const LXTextureD3D11* GetMRULBuffer() const;
 	const LXTextureD3D11* GetEmissiveBuffer() const;
 	
+	// Misc
+	const LXConstantBufferD3D11* GetCBViewProjection() const { return _CBViewProjection; }
 	const LXTextureD3D11* GetOutput() const override;
+	const LXTextureD3D11* GetTextureNoise4x4() const { return _TextureNoise4x4; }
 
 private:
 
@@ -74,7 +80,9 @@ private:
 	LXRenderPassToneMapping* RenderPassToneMapping = nullptr;
 	LXRenderPassDownsample* RenderPassDownsample = nullptr;
 	LXRenderPassUI* RenderPassUI = nullptr;
-	
+	LXRenderPassSSAO* RenderPassSSAO = nullptr;
+	LXRenderPassAA* RenderPassAA = nullptr;
+		
 	// View ConstantBuffer
 	LXConstantBufferD3D11* _CBViewProjection = nullptr;
 	LXConstantBufferData0 _CBViewProjectionData;
@@ -82,5 +90,9 @@ private:
 	// Object list
 	list<LXRenderCluster*> _ListRenderClusterOpaques;
 	list<LXRenderCluster*> _ListRenderClusterTransparents;
+
+	// Global textures
+	LXTextureD3D11* _TextureD3D11IBL = nullptr;
+	LXTextureD3D11* _TextureNoise4x4 = nullptr;
 };
 

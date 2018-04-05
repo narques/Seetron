@@ -39,6 +39,7 @@ using namespace std;
 #include "LXDebug.h"
 #include "LXTypes.h"
 #include "LXString.h"
+#include "LXVec2.h"
 #include "LXVec3.h"
 #include "LXVec4.h"
 #include "LXMatrix.h"

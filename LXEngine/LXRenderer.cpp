@@ -21,6 +21,7 @@
 #include "LXRenderer.h"
 #include "LXScene.h"
 #include "LXShaderManager.h"
+#include "LXTextureManager.h"
 #include "LXThread.h"
 #include "LXTimeD3D11.h"
 #include "LXTrackBallCameraManipulator.h"
@@ -160,6 +161,7 @@ void LXRenderer::Init()
 
 	// Misc
 	ShaderManager = new LXShaderManager();
+	TextureManager = new LXTextureManager();
 	RenderClusterManager = new LXRenderClusterManager();
 	RenderCommandList->Renderer = this;
 	RenderCommandList->ShaderManager = ShaderManager;
@@ -197,6 +199,7 @@ void LXRenderer::DeleteObjects()
 {
 	CHK(IsRenderThread())
 	LX_SAFE_DELETE(ShaderManager);
+	LX_SAFE_DELETE(TextureManager);
 	LX_SAFE_DELETE(RenderClusterManager);
 	LX_SAFE_DELETE(SSTriangle);
 	LX_SAFE_DELETE(_RenderPipeline);

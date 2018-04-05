@@ -17,6 +17,7 @@
 #include "LXRenderPassGBuffer.h"
 #include "LXRenderPassLighting.h"
 #include "LXRenderPassShadow.h"
+#include "LXRenderPassSSAO.h"
 #include "LXRenderPipelineDeferred.h"
 #include "LXRenderTargetViewD3D11.h"
 #include "LXRenderer.h"
@@ -38,7 +39,7 @@ LXRenderPassLighting::LXRenderPassLighting(LXRenderer* InRenderer) :LXRenderPass
 LXRenderPassLighting::~LXRenderPassLighting()
 {
 	DeleteBuffers();
-	delete TextureReflection;
+	delete TextureIBL;
 }
 
 void LXRenderPassLighting::CreateBuffers(uint Width, uint Height)
@@ -84,6 +85,7 @@ void LXRenderPassLighting::Render(LXRenderCommandList* r)
 	r->UpdateSubresource4(RenderPassShadow->ConstantBufferSpotLight->D3D11Buffer, &RenderPassShadow->ConstantBufferDataSpotLight);
 	
 	r->OMSetRenderTargets2(RenderTargetColor, nullptr);
+	r->RSSetViewports(Renderer->Width, Renderer->Height);
 
 	// Render a triangle : GBuffer TextureColor
 	r->IASetInputLayout(Renderer->GetShaderManager()->VSLighting);
@@ -97,10 +99,11 @@ void LXRenderPassLighting::Render(LXRenderCommandList* r)
 	LXTextureD3D11* Normal = RenderPassGBuffer->TextureNormal;
 	LXTextureD3D11* Specular = RenderPassGBuffer->TextureSpecular;
 	LXTextureD3D11* Emissive = RenderPassGBuffer->TextureEmissive;
-	if (!TextureReflection && SceneCapture && SceneCapture->GetTexture())
+	const LXTextureD3D11* TextureSSAO = RenderPassSSAO->GetOutputTexture();
+	if (!TextureIBL && SceneCapture && SceneCapture->GetTexture())
 	{
 		const LXTexture* Texture = SceneCapture->GetTexture();
-		TextureReflection = LXTextureD3D11::CreateFromTexture(const_cast<LXTexture*>(Texture));
+		TextureIBL = LXTextureD3D11::CreateFromTexture(const_cast<LXTexture*>(Texture));
 	}
 		
 	r->PSSetShaderResources(0, 1, (LXTextureD3D11*)Depth);
@@ -108,20 +111,18 @@ void LXRenderPassLighting::Render(LXRenderCommandList* r)
 	r->PSSetShaderResources(2, 1, (LXTextureD3D11*)Normal);
 	r->PSSetShaderResources(3, 1, (LXTextureD3D11*)Specular);
 	r->PSSetShaderResources(4, 1, (LXTextureD3D11*)Emissive);
-	r->PSSetShaderResources(5, 1, (LXTextureD3D11*)TextureReflection);
+	r->PSSetShaderResources(5, 1, (LXTextureD3D11*)TextureIBL);
 	r->PSSetShaderResources(6, 1, (LXTextureD3D11*)TextureShadow);
+	r->PSSetShaderResources(7, 1, (LXTextureD3D11*)TextureSSAO);
 			
 	r->PSSetSamplers(0, 1, (LXTextureD3D11*)Depth);
 	r->PSSetSamplers(1, 1, (LXTextureD3D11*)Color);
 	r->PSSetSamplers(2, 1, (LXTextureD3D11*)Normal);
 	r->PSSetSamplers(3, 1, (LXTextureD3D11*)Specular);
 	r->PSSetSamplers(4, 1, (LXTextureD3D11*)Emissive);
-
-	if (TextureReflection)
-		r->PSSetSamplers(5, 1, (LXTextureD3D11*)TextureReflection);
-
-	if (TextureShadow)
-		r->PSSetSamplers(6, 1, (LXTextureD3D11*)TextureShadow);
+	if (TextureIBL) r->PSSetSamplers(5, 1, (LXTextureD3D11*)TextureIBL);
+	if (TextureShadow) r->PSSetSamplers(6, 1, (LXTextureD3D11*)TextureShadow);
+	r->PSSetSamplers(7, 1, (LXTextureD3D11*)Emissive);
 
 	Renderer->GetSSTriangle()->Render(r);
 	
@@ -132,6 +133,7 @@ void LXRenderPassLighting::Render(LXRenderCommandList* r)
 	r->PSSetShaderResources(4, 1, nullptr); // Emissive
 	r->PSSetShaderResources(5, 1, nullptr); // Reflection
 	r->PSSetShaderResources(6, 1, nullptr); // Shadows
+	r->PSSetShaderResources(7, 1, nullptr); // SSAO
 		
 	r->EndEvent();
 }

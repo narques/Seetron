@@ -116,7 +116,8 @@ void LXRenderPassShadow::Render(LXRenderCommandList* RCL)
 		CB0.ViewProjectionInv = Transpose(WorldTransformation.GetMatrixVPInv());
 		CB0.ProjectionInv = Transpose(WorldTransformation.GetMatrixProjectionInv());
 		CB0.ViewInv = Transpose(WorldTransformation.GetMatrixViewInv());
-		CB0.CameraPosition = Camera.GetPosition();
+		CB0.CameraPosition = vec4f(Camera.GetPosition(), 0.0f);
+		CB0.RendererSize = vec2f(Renderer->Width, Renderer->Height);
 		RCL->CBViewProjection = RenderPipelineDeferred->_CBViewProjection;
 		RCL->UpdateSubresource4(RenderPipelineDeferred->_CBViewProjection->D3D11Buffer, &CB0);
 	}
