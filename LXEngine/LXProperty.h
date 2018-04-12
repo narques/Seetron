@@ -227,9 +227,13 @@ class LXCORE_API LXPropertyEnum : public LXPropertyT<uint>
 
 public:
 
-	LXPropertyEnum(void):LXPropertyT<uint>(){}
-	virtual ~LXPropertyEnum(void){}
-	
+	LXPropertyEnum(void) :LXPropertyT<uint>() {}
+	virtual ~LXPropertyEnum(void) {}
+
+	// Optional callback for a dynamic choices filling
+	// If serialized result is undetermined: ID loaded and no choice available.
+	void SetBuildChoicesFunc(std::function<void(LXPropertyEnum*)> func) { _funcBuildChoices = func; }
+
 	void AddChoice(const LXString& strChoice, uint nValue) { _arrayChoices.push_back(strChoice); _arrayValues.push_back(nValue); }
 	
 	const LXString& GetChoice() const 
@@ -246,7 +250,7 @@ public:
 		return strInvalidChoice;
 	}
 	
-	const ArrayStrings&		GetChoices()	const { return _arrayChoices; }
+	const ArrayStrings&		GetChoices()	const;
 	const ArrayUint&		GetValues()		const { return _arrayValues; }
 	void SetBitmask			(bool b) { _bBitmask = b; }
 	bool IsBitmask			() const { return _bBitmask;}
@@ -256,8 +260,9 @@ public:
 private:
 
 	bool _bBitmask = false;
-	ArrayStrings _arrayChoices;
-	ArrayUint    _arrayValues;
+	mutable ArrayStrings _arrayChoices;
+	mutable ArrayUint    _arrayValues;
+	std::function<void(LXPropertyEnum*)> _funcBuildChoices;
 	
 };
 

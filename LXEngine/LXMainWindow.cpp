@@ -7,14 +7,24 @@
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
+#include "resource.h"
 #include "LXMainWindow.h"
 #include "LXViewport.h"
 #include "LXRenderer.h"
 #include "LXCore.h"
 #include "LXConsoleManager.h"
-#include "resource.h"
-#include "LXMemory.h" // --- Must be the last included ---
 #include "LXConsoleCommands.h"
+#include "LXEventManager.h"
+#include "LXProject.h"
+#include "LXViewState.h"
+#include "LXMemory.h" // --- Must be the last included ---
+
+namespace
+{
+	const uint ConsoleCommandStartID = 1000;
+	const uint PropertyStartID = 2000;
+
+}
 
 LXCoreWindow::LXCoreWindow()
 {
@@ -45,6 +55,34 @@ LXCoreWindow::~LXCoreWindow()
 void LXCoreWindow::OnCreate()
 {
 	BuildMenu();
+		
+	GetEventManager()->RegisterEvent(EEventType::ProjectLoaded, [this](LXEvent* Event)
+	{
+		LXEventResult* EventResult = static_cast<LXEventResult*>(Event);
+		if (EventResult->Success)
+		{
+			// Update UI
+			LXViewState* viewState = GetProject()->GetActiveView();
+			LXPropertyEnum* propertyEnum = dynamic_cast<LXPropertyEnum*>(viewState->GetProperty(L"ShowBuffer"));
+			CHK(propertyEnum);
+			
+			const ArrayUint& arrayValues = propertyEnum->GetValues();
+			int i = 0;
+			for (const LXString& str : propertyEnum->GetChoices())
+			{
+				AppendMenu(_hMenuViewBuffer, str.GetBuffer(), propertyEnum, arrayValues[i++]);
+			}
+		}
+	});
+
+	GetEventManager()->RegisterEvent(EEventType::ProjectClosed, [this](LXEvent* Event)
+	{
+		int itemCount = GetMenuItemCount(_hMenuViewBuffer);
+		for (int i = 0; i < itemCount; i++)
+		{
+			::RemoveMenu(_hMenuViewBuffer, 0, MF_BYPOSITION);
+		}
+	});
 }
 
 void LXCoreWindow::OnClose()
@@ -156,6 +194,18 @@ bool LXCoreWindow::OnCommand(UINT CommandID)
 		vector<LXString> Args;
 		ConsoleCommand->Execute(Args);
 	}
+	else
+	{
+		auto It2 = _MenuProperties.find(CommandID);
+		if (It2 != _MenuProperties.end())
+		{
+			LXProperty* Property = It2->second.first;
+			if (LXPropertyEnum* PropertyEnum = dynamic_cast<LXPropertyEnum*>(Property))
+			{
+				PropertyEnum->SetValue(It2->second.second, true);
+			}
+		}
+	}
 
 	return true;
 }
@@ -170,28 +220,42 @@ void LXCoreWindow::BuildMenu()
 	HMENU hMenuView = ::CreateMenu();
 	::AppendMenu(hMenu, MF_POPUP | MF_STRING, (UINT_PTR)hMenuView, L"&View");
 
+	_hMenuViewBuffer = ::CreateMenu();
+	::AppendMenu(hMenuView, MF_POPUP | MF_STRING, (UINT_PTR)_hMenuViewBuffer, L"Buffer");
+	
 	HMENU hMenuDebug = ::CreateMenu();
 	::AppendMenu(hMenu, MF_POPUP | MF_STRING, (UINT_PTR)hMenuDebug, L"&Debug");
 	
-	uint i = 1000;
-
 	for (LXConsoleCommand* ConsoleCommand : GetConsoleManager().ListCommands)
 	{
 		if (ConsoleCommand->Name.Find(L"File.") >= 0)
 		{
-			::AppendMenu(hMenuFile, MF_ENABLED | MF_STRING, i, ConsoleCommand->Name.Right(L".").GetBuffer());
+			AppendMenu(hMenuFile, ConsoleCommand->Name.Right(L".").GetBuffer(), ConsoleCommand);
 		}
 		else
 		{
-			::AppendMenu(hMenuDebug, MF_ENABLED | MF_STRING, i, ConsoleCommand->Name.GetBuffer());
+			AppendMenu(hMenuDebug, ConsoleCommand->Name.Right(L".").GetBuffer(), ConsoleCommand);
 		}
-
-		_MenuCommands[i] = ConsoleCommand;
-		ConsoleCommand->MenuID = i;
-		i++;
 	}
 		
 	::SetMenu(_hWND, hMenu);
+}
+
+void LXCoreWindow::AppendMenu(HMENU hMenu, const wchar_t* Caption, LXConsoleCommand* ConsoleCommand)
+{
+	static uint i = ConsoleCommandStartID;
+	::AppendMenu(hMenu, MF_ENABLED | MF_STRING, i, Caption);
+	_MenuCommands[i] = ConsoleCommand;
+	ConsoleCommand->MenuID = i;
+	i++;
+}
+
+void  LXCoreWindow::AppendMenu(HMENU hMenu, const wchar_t* Caption, LXProperty* Property, uint UserData)
+{
+	static uint i = PropertyStartID;
+	::AppendMenu(hMenu, MF_ENABLED | MF_STRING, i, Caption);
+	_MenuProperties[i] = pair<LXProperty*,uint>(Property, UserData);
+	i++;
 }
 
 //-------------------------------------------------------------------------

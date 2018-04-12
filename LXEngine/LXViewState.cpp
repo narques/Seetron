@@ -14,10 +14,13 @@
 #include "LXPropertyManager.h"
 #include "LXAnimationManager.h"
 #include "LXProject.h"
+#include "LXRenderer.h"
 #include "LXActorLight.h"
 #include "LXAnimation.h"
 #include "LXMSXMLNode.h"
 #include "LXMemory.h" // --- Must be the last included ---
+#include "LXRenderPipeline.h"
+#include "LXCore.h"
 
 LXViewState::LXViewState(LXProject* pDocument):
 _Project(pDocument),
@@ -211,6 +214,22 @@ void LXViewState::DefineProperties( )
 			
 		});
 	}
+
+	//  Buffer to Visualize
+	{
+		LXPropertyEnum* PropBufferToVisualize = DefinePropertyEnum(L"ShowBuffer", GetAutomaticPropertyID(), &_BufferToVisualize);
+		// Choices are dynamics
+		PropBufferToVisualize->SetBuildChoicesFunc([](LXPropertyEnum* Property)
+		{
+			const TDebuggableTextures& textures = GetRenderer()->GetRenderPipeline()->GetDebugTextures();
+			Property->AddChoice(L"Default", 0);
+			uint i = 1;
+			for (auto It : textures)
+			{
+				Property->AddChoice(It.Name.GetBuffer(), i++);
+			}
+		});
+	}
 }
 
 /*virtual*/ 
@@ -301,3 +320,4 @@ LXRenderingLayer::LXRenderingLayer()
 	//m_bSaveUIDInObjectTag = true;
 	DefineProperties();
 }
+

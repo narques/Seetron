@@ -11,6 +11,7 @@
 class LXViewport;
 class LXRenderer;
 class LXConsoleCommand;
+class LXProperty;
 
 class LXCORE_API LXCoreWindow : public LXWindow 
 {
@@ -46,6 +47,8 @@ private:
 
 	void Init();
 	void BuildMenu();
+	void AppendMenu(HMENU hMenu, const wchar_t* Caption, LXConsoleCommand* ConsoleCommand);
+	void AppendMenu(HMENU hMenu, const wchar_t* Caption, LXProperty* Property, uint UserData);
 
 protected:
 
@@ -53,9 +56,10 @@ protected:
 	LXViewport* _Viewport = nullptr;
 
 private:
-
+		
+	HMENU _hMenuViewBuffer = 0;
 	map<uint, LXConsoleCommand*> _MenuCommands;
-
+	map<uint, pair<LXProperty*, uint>> _MenuProperties;
 };
 
 class LXCORE_API LXMainWindow : public LXCoreWindow

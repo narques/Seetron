@@ -626,8 +626,22 @@ void LXProperty::SetCurrentGroup(const LXString& strGroup)
 	}
 }
 
+const ArrayStrings& LXPropertyEnum::GetChoices() const
+{
+	if (_funcBuildChoices)
+	{
+		_arrayChoices.clear();
+		_arrayValues.clear();
+		_funcBuildChoices(const_cast<LXPropertyEnum*>(this));
+	}
+
+	return _arrayChoices; 
+}
+
 void LXPropertyEnum::LoadXML(const TLoadContext& LoadContext)
 {
+	CHK(!_funcBuildChoices);
+
 	uint val;
 	GetValueFromXML2(LoadContext, val);
 

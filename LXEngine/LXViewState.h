@@ -74,7 +74,9 @@ public:
 	virtual bool			OnLoadChild( const TLoadContext& loadContext ) override;
 
 	void					ZoomOnBBoxAnimated( const LXBBox& box, bool bAnimated = true );
-	
+
+	uint					GetBufferToVisualize() const { return _BufferToVisualize; }
+		
 private:
 
 	// External objects
@@ -132,6 +134,9 @@ private:
 
 	// Advanced 
 	GetSetDef(LXDistributionFunction, _disributionFunc, DistributionFunc, Beckmann);
+
+	// Debug purpose.
+	uint _BufferToVisualize = 0;
 	
 };
 

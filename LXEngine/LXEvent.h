@@ -15,8 +15,8 @@ enum class EEventType			// Known emitters
 	// Event
 	SelectionChanged,			// SelectionManager
 	
-	// EventResult
-	ProjectLoaded,				// ProjectManager
+	ProjectLoaded,				// ProjectManager  ( EventResult )
+	ProjectClosed,
 
 	// Specialized Event
 	MouseMoveOnActor,			// Viewport

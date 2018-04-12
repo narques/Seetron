@@ -19,8 +19,3 @@ LXRenderPass::~LXRenderPass()
 {
 }
 
-void LXRenderPass::AddToViewDebugger(const LXString& Name, const LXTextureD3D11* TextureD3D11, ETextureChannel TextureChannel)
-{
-	_DebugTextures[Name] = pair<const LXTextureD3D11*,ETextureChannel>(TextureD3D11, TextureChannel);
-}
-

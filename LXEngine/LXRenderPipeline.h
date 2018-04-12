@@ -8,9 +8,25 @@
 
 #pragma once
 
+#include "LXFormats.h"
+
 class LXRenderCommandList;
 class LXRenderPass;
 class LXTextureD3D11;
+
+struct TVisualizableBuffer
+{
+	TVisualizableBuffer(const LXString& InName, const LXTextureD3D11* InTextureD3D11, ETextureChannel InTextureChannel):
+		Name(InName), TextureD3D11(InTextureD3D11), TextureChannel(InTextureChannel)
+	{
+	}
+
+	LXString Name;
+	const LXTextureD3D11* TextureD3D11;
+	ETextureChannel TextureChannel;
+};
+
+typedef vector<TVisualizableBuffer> TDebuggableTextures;
 
 class LXRenderPipeline 
 {
@@ -25,10 +41,14 @@ public:
 	virtual void PostRender() {};
 	virtual const LXRenderPass* GetPreviousRenderPass() const = 0;
 	virtual const LXTextureD3D11* GetOutput() const = 0;
+	
+	const TDebuggableTextures& GetDebugTextures() const { return _DebugTextures; }
+	void AddToViewDebugger(const LXString& Name, const LXTextureD3D11* TextureD3D11, ETextureChannel TextureChannel);
 
 protected:
 
 	vector<LXRenderPass*> _RenderPasses;
 	LXRenderPass* _PreviousRenderPass = nullptr;
+	TDebuggableTextures _DebugTextures;
 };
 

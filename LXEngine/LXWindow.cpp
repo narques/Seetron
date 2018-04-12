@@ -70,7 +70,11 @@ ATOM registerClass(HINSTANCE hInstance)
 
 HWND createWindow(void* lpParam)
 {
+#ifdef LX_CORE_STATIC
+	HINSTANCE hInstance = GetModuleHandle(nullptr);
+#else
 	HINSTANCE hInstance = GetModuleHandle(L"LXCore.dll");
+#endif
 	CHK(hInstance);
 	registerClass(hInstance);
 

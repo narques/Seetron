@@ -383,6 +383,7 @@ void LXCore::CloseProject()
 	LXProject* Project = m_documentManager->GetDocument();
 	SetDocument(nullptr);
 	LX_SAFE_DELETE(Project);
+	GetEventManager()->BroadCastEvent(EEventType::ProjectClosed);
 }
 
 void LXCore::SetPlayMode(bool bPlay)
