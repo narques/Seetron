@@ -11,6 +11,7 @@
 #include "LXRenderPass.h"
 
 class LXDirectX11;
+struct LXStat;
 struct ID2D1DeviceContext;
 
 class LXRenderPassUI : public LXRenderPass
@@ -27,6 +28,7 @@ public:
 private:
 
 	void DrawStats();
+	void DrawStats(const LXStat* Stat, float X, float& Y);
 	void DrawConsole();
 
 private:

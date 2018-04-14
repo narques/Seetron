@@ -10,8 +10,11 @@
 
 struct LXStat
 {
+	wstring Name;
 	double Time = 0.0;
 	uint64 Hits = 0;
+	LXStat* Parent = nullptr;
+	set<LXStat*> Children;
 };
 
 class LXStatManager
@@ -29,22 +32,35 @@ public:
 
 	const map<wstring, int>& GetCounters() const
 	{
-		return Counters;
+		return _Counters;
 	}
 
 	// Performances
 
 	void Reset();
 	
-	void UpdateStat(const wstring& Name, double Value);
+	void OpenStat(const wstring& Name);
+	void UpdateAndCloseStat(const wstring& Name, double Value);
 	
 	const map<wstring, LXStat>& GetPerfomances() const
 	{
-		return Stats;
+		return _Stats;
+	}
+
+	const map<DWORD, LXStat*>& GetPerformanceByThread() const
+	{
+		return _StatRoots;
 	}
 
 private:
 
-	map<wstring, LXStat> Stats;
-	map<wstring, int> Counters;
+
+	// All stats
+	map<wstring, LXStat> _Stats;
+
+	// Stats hierarchy
+	map<DWORD, LXStat*> _StatRoots;
+	map<DWORD, LXStat*> _StatCurrents;
+
+	map<wstring, int> _Counters;
 };

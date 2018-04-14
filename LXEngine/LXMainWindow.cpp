@@ -232,6 +232,10 @@ void LXCoreWindow::BuildMenu()
 		{
 			AppendMenu(hMenuFile, ConsoleCommand->Name.Right(L".").GetBuffer(), ConsoleCommand);
 		}
+		if (ConsoleCommand->Name.Find(L"View.") >= 0)
+		{
+			AppendMenu(hMenuView, ConsoleCommand->Name.Right(L".").GetBuffer(), ConsoleCommand);
+		}
 		else
 		{
 			AppendMenu(hMenuDebug, ConsoleCommand->Name.Right(L".").GetBuffer(), ConsoleCommand);

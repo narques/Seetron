@@ -180,6 +180,8 @@ void LXRenderer::Run()
 	// Render !
 	while (!ExitRenderThread)
 	{
+		LX_PERFOSCOPE(RenderThread);
+
 		// Do not remove the brackets, needed to measure the wait time.
 		{
 			LX_PERFOSCOPE(RenderThread_WaitTime);
@@ -283,10 +285,11 @@ void LXRenderer::ResetShaders()
 
 void LXRenderer::Render()
 {
+	LX_PERFOSCOPE(RenderThread_Render);
+
 	// RenderThread time ate
 	Time.Update();
-	LX_COUNT("RenderThread (Full cylce): %.2f MS\n", Time.DeltaTime());
-	
+		
 	//
 	// Commands & Tasks
 	//

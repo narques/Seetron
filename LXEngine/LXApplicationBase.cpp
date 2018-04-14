@@ -27,6 +27,8 @@ int LXApplicationBase::run()
 	bool Quit = false;
 	while (!Quit)
 	{
+		LX_PERFOSCOPE(MainThread);
+
 		while (PeekMessage(&msg, NULL, NULL, NULL, PM_REMOVE) == TRUE)
 		{
 			if (msg.message == WM_QUIT)

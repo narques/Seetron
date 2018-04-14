@@ -70,6 +70,8 @@ void LXRenderPassGBuffer::DeleteBuffers()
 
 void LXRenderPassGBuffer::Render(LXRenderCommandList* RCL)
 {
+	LX_PERFOSCOPE(RenderThread_RenderPassGBuffer);
+
 	LXRenderPipelineDeferred* RenderPipelineDeferred = dynamic_cast<LXRenderPipelineDeferred*>(Renderer->GetRenderPipeline());
 	CHK(RenderPipelineDeferred);
 		

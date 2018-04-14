@@ -431,9 +431,10 @@ void LXCore::SetDocument(LXProject* Document)
 
 void LXCore::Run()
 {
-	Time.Update();
-	LX_COUNT("MainThread (Full cycle): %.2f MS", Time.DeltaTime());
+	LX_PERFOSCOPE(MainThread_Run);
 
+	Time.Update();
+	
 	// Broadcast events posted outside the MainThread
 	GetEventManager()->BroadCastEvents();
 	

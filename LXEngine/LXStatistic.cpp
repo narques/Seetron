@@ -34,12 +34,13 @@ LXString LXCounter::GetSentence()
 
 LXPerformanceScope::LXPerformanceScope(const wchar_t* Name):_Name(Name)
 {
+	GetStatManager()->OpenStat(_Name);
 }
 
 LXPerformanceScope::~LXPerformanceScope()
 {
 	double ElapsedTime = GetTime();
-	GetStatManager()->UpdateStat(_Name, ElapsedTime);
+	GetStatManager()->UpdateAndCloseStat(_Name, ElapsedTime);
 }
 
 LXCountScopeIncrement::LXCountScopeIncrement(const wchar_t* Name)

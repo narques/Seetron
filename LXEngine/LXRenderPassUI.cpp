@@ -23,7 +23,7 @@
 //------------------------------------------------------------------------------------------------------
 
 bool ShowFPS = false;
-LXConsoleCommandT<bool> CCShowFPS(L"ShowFPS", &ShowFPS);
+LXConsoleCommandT<bool> CCShowFPS(L"View.ShowFPS", &ShowFPS);
 
 LXRenderPassUI::LXRenderPassUI(LXRenderer* InRenderer):LXRenderPass(InRenderer)
 {
@@ -55,20 +55,42 @@ void LXRenderPassUI::Resize(uint Width, uint Height)
 
 }
 
+void LXRenderPassUI::DrawStats(const LXStat* Stat, float X, float& Y)
+{
+	const LXDirectX11* DirectX11 = Renderer->GetDirectX11();
+	ID2D1DeviceContext* dc = DirectX11->_D2D1DeviceContext;
+	float Bottom = Y + LX_CONSOLE_FONT_SIZE;
+	LXString Str = LXString::Format(L"%s : %.2f MS : %i Hit(s)\n",
+		Stat->Name.c_str(),
+		Stat->Time,
+		Stat->Hits);
+	dc->DrawText(Str.GetBuffer(), Str.GetLength(), DirectX11->_DWriteTextFormat, D2D1::RectF(X, Y, 600, Bottom), pWhiteBrush);
+	Y += LX_CONSOLE_FONT_SIZE;
+
+	for (const LXStat* Child : Stat->Children)
+	{
+		DrawStats(Child, X + 10, Y);
+	}
+
+}
+
 void LXRenderPassUI::DrawStats()
 {
 
 #if LX_D2D1
 
 	if (!ShowFPS)
+	{
+		GetStatManager()->Reset();
 		return;
+	}
 
 	const LXDirectX11* DirectX11 = Renderer->GetDirectX11();
 	ID2D1DeviceContext* dc = DirectX11->_D2D1DeviceContext;
 
 	const int LineHeight = LX_CONSOLE_FONT_SIZE;
 
-	int PositionY = 0;
+	float PositionY = 0.f;
 	ArrayCounters& arrayCounters = GetCore().GetCounters();
 	for (LXCounter* Counter : arrayCounters)
 	{
@@ -82,18 +104,11 @@ void LXRenderPassUI::DrawStats()
 	// A Line space
 	PositionY += LineHeight;
 
-	// Performances
-	for (auto &Stat : GetStatManager()->GetPerfomances())
+	// Performance Counters
+	for (auto &StatsByThread : GetStatManager()->GetPerformanceByThread())
 	{
-		float Top = (float)PositionY;
-		float Bottom = Top + (float)LineHeight;
-		LXString Str = LXString::Format(L"%s : %.2f MS : %i Hit(s)\n",
-			Stat.first.c_str(),
-			Stat.second.Time,
-			Stat.second.Hits);
-
-		dc->DrawText(Str.GetBuffer(), Str.GetLength(), DirectX11->_DWriteTextFormat, D2D1::RectF(0.0f, Top, 600, Bottom), pWhiteBrush);
-		PositionY += LineHeight;
+		DrawStats(StatsByThread.second, 0.f, PositionY);
+		PositionY += LX_CONSOLE_FONT_SIZE;
 	}
 
 	// A Line space
