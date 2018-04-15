@@ -35,6 +35,11 @@
 #include "LXWorldTransformation.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
+namespace
+{
+	const wchar_t PointOfIntersectionObjectName[] = L"PointOfIntersection";
+}
+
 LXViewport::LXViewport():
 	m_vPickedPoint(0.0f, 0.0f, 0.0f),
 	m_fPickedZ(1.0f),
@@ -726,9 +731,9 @@ bool LXViewport::PickPoint(float x, float y, vec3f& vPoint)
 		vec3f* p = t.GetNearestPOI();
 		if (p)
 		{
-			if (LXActor* Actor = pScene->GetActor(L"PointOfIntersection"))
+			if (LXActor* Actor = pScene->GetActor(PointOfIntersectionObjectName))
 			{
-				//Actor->SetOrigin(*p);
+				Actor->SetPosition(*p);
 			}
 			
 			vPoint = *p;
@@ -780,9 +785,9 @@ LXActor* LXViewport::PickActor( int x, int y, vec3f* intersection, LXPrimitive**
 // 			LogD(LXViewport, L"Unproject %.2f %.2f %.2f to %.2f %.2f %.2f", winx, winy, winz, px, py, pz);
 
 
-			if (LXActor* Actor = pScene->GetActor(L"PointOfIntersection"))
+			if (LXActor* Actor = pScene->GetActor(PointOfIntersectionObjectName))
 			{
-				//Actor->SetOrigin(*intersection);
+				Actor->SetPosition(*intersection);
 			}
 		}
 

@@ -32,6 +32,8 @@ LXConstantBufferD3D11::~LXConstantBufferD3D11()
 
 bool LXConstantBufferD3D11::CreateConstantBuffer(void* Buffer, int BufferSize)
 {
+	CHK(((16 - (BufferSize % 16)) % 16) == 0);
+
 	auto *D3D11Device = LXDirectX11::GetCurrentDevice();
 	auto *D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();
 

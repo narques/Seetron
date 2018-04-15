@@ -27,6 +27,18 @@ class LXRenderPassToneMapping;
 class LXRenderPassTransparency;
 class LXRenderPassUI;
 
+enum class LXTextureSlot
+{
+	//0-9 reserved for the user textures
+	Material_IBL = 10 // Radiance and Irradiance
+};
+
+enum class LXConstantBufferSlot
+{
+	CB_Material_Data = 2,
+	CB_Material_IBL = 3
+};
+
 class LXRenderPipelineDeferred : public LXRenderPipeline
 {
 	
@@ -48,8 +60,9 @@ public:
 		
 	const LXRenderPassGBuffer* GetRenderPassGBuffer() const { return RenderPassGBuffer; }
 	const LXRenderPassLighting* GetRenderPassLighting() const { return RenderPassLighting; }
+	const LXRenderPassTransparency* GetRenderPassTransparency() const { return RenderPassTransparent; }
 	const LXRenderPass* GetPreviousRenderPass() const override { return _PreviousRenderPass; }
-
+	
 	// G-Buffer
 	const LXTextureD3D11* GetDepthBuffer() const;
 	const LXTextureD3D11* GetColorBuffer() const;

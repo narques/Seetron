@@ -18,6 +18,9 @@
 #include "LXCore.h"
 #include "LXShaderManager.h"
 #include "LXRenderPassDynamicTexture.h"
+#include "LXRenderPassLighting.h"
+#include "LXRenderPassTransparency.h"
+#include "LXRenderPipelineDeferred.h"
 #include "LXRenderCluster.h"
 #include "LXRenderTargetViewD3D11.h"
 #include "LXTextureD3D11.h"
@@ -91,8 +94,8 @@ void LXMaterialD3D11::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 			RCL->UpdateSubresource4(CBMaterialParemetersPS->D3D11Buffer, ConstantBufferPS.GetData());
 			ConstantBufferPS.ValueHasChanged = false;
 		}
-		RCL->VSSetConstantBuffers(2, 1, CBMaterialParemetersPS);
-		RCL->PSSetConstantBuffers(2, 1, CBMaterialParemetersPS);
+		RCL->VSSetConstantBuffers((uint)LXConstantBufferSlot::CB_Material_Data, 1, CBMaterialParemetersPS);
+		RCL->PSSetConstantBuffers((uint)LXConstantBufferSlot::CB_Material_Data, 1, CBMaterialParemetersPS);
 	}
 
 	// Rasterizer states
@@ -115,6 +118,7 @@ void LXMaterialD3D11::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 		
 	if (RenderPass == ERenderPass::GBuffer)
 	{
+		// User Textures
 		for (LXTextureD3D11* Texture : ListPSTextures)
 		{
 			if (Texture)
@@ -123,6 +127,23 @@ void LXMaterialD3D11::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 				RCL->PSSetSamplers(Slot, 1, Texture);
 				RCL->PSSetShaderResources(Slot, 1, Texture);
 			}
+		}
+
+		// "System" textures (IBL,...) requested by the current pipeline
+		// TODO: Binded only when needed
+		//if (RenderPass == ERenderPass::Transparency)
+		{
+			// TODO: To Replace by a function like GetPassAdditionnalTexture or Pipeline->GetAdditionnalTextureToBind() or GetCurrentIBL()
+			LXRenderPipelineDeferred* RenderPipelineDeferred = dynamic_cast<LXRenderPipelineDeferred*>(Renderer->GetRenderPipeline());
+
+			if (const LXTextureD3D11* Texture = RenderPipelineDeferred->GetRenderPassLighting()->GetTextureIBL())
+			{
+				uint Slot = (uint)LXTextureSlot::Material_IBL;
+				RCL->PSSetSamplers(Slot, 1, Texture);
+				RCL->PSSetShaderResources(Slot, 1, Texture);
+			}
+
+			RCL->PSSetConstantBuffers((uint)LXConstantBufferSlot::CB_Material_IBL, 1, RenderPipelineDeferred->GetRenderPassTransparency()->CBImageBaseLighting.get());
 		}
 	}
 }

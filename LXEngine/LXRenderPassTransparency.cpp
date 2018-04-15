@@ -8,6 +8,7 @@
 
 #include "stdafx.h"
 #include "LXRenderPassTransparency.h"
+#include "LXConstantBufferD3D11.h"
 #include "LXRenderer.h"
 #include "LXTextureD3D11.h"
 #include "LXRenderTargetViewD3D11.h"
@@ -22,6 +23,9 @@ LXRenderPassTransparency::LXRenderPassTransparency(LXRenderer* Renderer):LXRende
 {
 	// Textures and Samplers
 	CreateBuffers(Renderer->Width, Renderer->Height);
+
+	CBImageBaseLightingData.Intensity = 1.f;
+	CBImageBaseLighting = make_unique<LXConstantBufferD3D11>(&CBImageBaseLightingData, (int)sizeof(CBImageBaseLightingData));
 }
 
 LXRenderPassTransparency::~LXRenderPassTransparency()

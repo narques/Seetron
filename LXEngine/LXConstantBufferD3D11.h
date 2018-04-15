@@ -19,8 +19,9 @@ struct LXConstantBufferData0 // Updated per Frame
 	LXMatrix ViewProjectionInv;
 	LXMatrix ProjectionInv;
 	LXMatrix ViewInv;
-	vec4f CameraPosition;
+	vec4f CameraPosition; 
 	vec2f RendererSize;
+	vec2f Pad;
 };
 
 struct LXConstantBufferData1 // Volatile, Updated at cluster creation
@@ -32,7 +33,7 @@ struct LXConstantBufferData1 // Volatile, Updated at cluster creation
 struct LXConstantBufferData2
 {
 	float Time;
-	LXMatrix foo;
+	vec3f pad;
 };
 
 class LXConstantBufferD3D11

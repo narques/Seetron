@@ -12,6 +12,8 @@
 
 #define LX_DEDICATED_TRANSPARENCY_BUFFER 0
 
+class LXConstantBufferD3D11;
+
 class LXRenderPassTransparency : public LXRenderPass
 {
 
@@ -37,6 +39,15 @@ public:
 	LXRenderTargetViewD3D11* RenderTargetColor = nullptr;
 
 #endif
+
+	unique_ptr<LXConstantBufferD3D11> CBImageBaseLighting;
+	
+	struct
+	{
+		float Intensity;
+		vec3f Pad;
+
+	} CBImageBaseLightingData;
 
 };
 

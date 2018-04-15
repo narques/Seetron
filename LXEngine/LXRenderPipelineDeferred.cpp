@@ -30,9 +30,13 @@
 #include "LXViewport.h"
 #include "LXMemory.h" // --- Must be the last included ---
 #include "LXRenderCommandList.h"
+#include "LXActorSceneCapture.h"
+#include "LXViewState.h"
 
 LXRenderPipelineDeferred::LXRenderPipelineDeferred(LXRenderer* Renderer):_Renderer(Renderer)
 {
+	_Renderer->_RenderPipeline = this;
+
 	// ConstantBuffers
 	_CBViewProjection = new LXConstantBufferD3D11();
 	LXConstantBufferData0 Foo;
@@ -154,7 +158,7 @@ void LXRenderPipelineDeferred::BuildRenderClusterLists()
 	}
 
 	//
-	// Prepare
+	// Prepare ConstantBuffer Data
 	// 
 
 	_CBViewProjectionData.View = Transpose(WorldTransformation->GetMatrixView());
@@ -163,7 +167,12 @@ void LXRenderPipelineDeferred::BuildRenderClusterLists()
 	_CBViewProjectionData.ProjectionInv = Transpose(WorldTransformation->GetMatrixProjectionInv());
 	_CBViewProjectionData.ViewInv = Transpose(WorldTransformation->GetMatrixViewInv());
 	_CBViewProjectionData.CameraPosition = vec4f(Camera->GetPosition(), 0.f);
-	_CBViewProjectionData.RendererSize = vec2f(_Renderer->Width, _Renderer->Height);
+	_CBViewProjectionData.RendererSize = vec2f((float)_Renderer->Width, (float)_Renderer->Height);
+
+	if (const LXActorSceneCapture* SceneCapture = GetCore().GetProject()->GetSceneCapture())
+	{
+		RenderPassTransparent->CBImageBaseLightingData.Intensity = SceneCapture->GetIntensity();
+	}
 }
 
 void LXRenderPipelineDeferred::Render(LXRenderCommandList* RenderCommandList)
@@ -183,6 +192,9 @@ void LXRenderPipelineDeferred::Render(LXRenderCommandList* RenderCommandList)
 			}
 		}
 	}
+
+	// Update shared constant buffers
+	RenderCommandList->UpdateSubresource4(RenderPassTransparent->CBImageBaseLighting->D3D11Buffer, &RenderPassTransparent->CBImageBaseLightingData);
 			
 	__super::Render(RenderCommandList);
 }
@@ -219,6 +231,20 @@ const LXTextureD3D11* LXRenderPipelineDeferred::GetEmissiveBuffer() const
 
 const LXTextureD3D11* LXRenderPipelineDeferred::GetOutput() const
 {
-	return RenderPassToneMapping->GetOutputTexture();
+	const LXTextureD3D11* Texture = RenderPassToneMapping->GetOutputTexture();
+	
+	if (GetProject())
+	{
+		if (LXViewState* ViewState = GetProject()->GetActiveView())
+		{
+			uint BufferID = ViewState->GetBufferToVisualize();
+			if (BufferID > 0)
+			{
+				return _DebugTextures[BufferID - 1].TextureD3D11;
+			}
+		}
+	}
+	
+	return Texture;
 }
 
