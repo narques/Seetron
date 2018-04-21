@@ -22,6 +22,13 @@ enum class EHLSLType
 	HLSL_Matrix
 };
 
+struct LXVariableDeclaration
+{
+	EHLSLType Type;
+	LXStringA Name;
+	uint Offset;
+};
+
 class LXConstantBuffer 
 {
 
@@ -38,11 +45,10 @@ public:
 	bool AddFloat4(const LXString& Name, const vec4f& Value);
 	bool AddMatrix(const LXString& Name, const LXMatrix& Value);
 
-	bool  BuilldHLSL();
-	const LXStringA& GetHLSLDeclaration() const { return HLSLDeclaration; }
-
+	const list<LXVariableDeclaration>&  GetVariables() const { return VariableDeclarations; }
 	void* GetData() { return &*Buffer.begin(); }
 	bool HasData() const;
+
 	uint GetSize();
 
 	void Update(const LXString& Name, const float& Value);
@@ -51,19 +57,11 @@ public:
 private:
 
 	bool IsNameFree(const LXStringA& Name);
-	void DoPad();
-
+	void AddPad();
+	void RemovePad();
+	
 	template<typename T>
 	bool AddVariable(EHLSLType inType, const LXString& Name, const T& Value);
-
-private:
-
-	struct LXVariableDeclaration
-	{
-		EHLSLType Type;
-		LXStringA Name;
-		uint Offset;
-	};
 
 public:
 
@@ -73,6 +71,6 @@ private:
 
 	list<LXVariableDeclaration> VariableDeclarations;
 	std::vector<unsigned char> Buffer;
-	LXStringA HLSLDeclaration;
+	uint _PadSize = 0;
 };
 

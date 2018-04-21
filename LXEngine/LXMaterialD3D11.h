@@ -35,7 +35,9 @@ public:
 	bool DoComputeNormals() const { return ComputeNormals; }
 	bool HasDisplacement() const { return Displacement; }
 	bool IsTransparent() const { return Transparent; }
-		
+
+	const LXConstantBuffer& GetConstantBufferPS() const { return ConstantBufferPS; }
+			
 private:
 
 	void Release();

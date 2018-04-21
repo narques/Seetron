@@ -148,21 +148,6 @@ private:
 		
 	void CreateLightingVSShader(LXShaderD3D11* Shader);
 	void CreateLightingPSShader(LXShaderD3D11* Shader);
-
-	/*
-	Generate a HLSL shader file according the signature and role.
-	*/
-	LXString GenerateDefaultVShader(const LXVSSignature& VSSignature);
-
-	void GenerateVertexShader(const LXFilepath& Filename, const LXString& FileToInclude, const LXVSSignature& VSSignature);
-	
-	/*
-	Helpful functions to create the generated shader filename.
-	*/
-	static LXString GetRenderPassName(ERenderPass RenderPass);
-	static LXString GetShaderName(EShader Shader);
-	static LXString GetLayoutName(int LayoutMask);
-	static LXString BuildShaderFilename(const LXString& BaseName, ERenderPass RenderPass, int LayoutMask, EShader Shader);
 	
 public:
 

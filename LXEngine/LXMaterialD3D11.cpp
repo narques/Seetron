@@ -32,6 +32,7 @@
 #include "LXConstantBuffer.h"
 #include "LXFile.h"
 #include "LXStatistic.h"
+#include "LXShaderFactory.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXMaterialD3D11::LXMaterialD3D11(const LXMaterial* InMaterial)
@@ -191,14 +192,6 @@ bool LXMaterialD3D11::Create(const LXMaterial* InMaterial)
 	Transparent = Material->IsTransparent();
 
 	//
-	// 
-	//
-
-	// Generated HLSL Code to inject into shader file
-	LXStringA HLSLCodeVS;
-	LXStringA HLSLCodePS;
-		
-	//
 	// Build the VS Constant Buffer 
 	//
 
@@ -233,9 +226,6 @@ bool LXMaterialD3D11::Create(const LXMaterial* InMaterial)
 
 	if (ConstantBufferPS.HasData() && Material->PixelShader)
 	{
-		VRF(ConstantBufferPS.BuilldHLSL());
-		HLSLCodePS += ConstantBufferPS.GetHLSLDeclaration();
-		
 		// Create the D3D11 Constant Buffer
 		CBMaterialParemetersPS = new LXConstantBufferD3D11();
 		CBMaterialParemetersPS->CreateConstantBuffer(ConstantBufferPS.GetData(), ConstantBufferPS.GetSize());
@@ -244,12 +234,6 @@ bool LXMaterialD3D11::Create(const LXMaterial* InMaterial)
 	//
 	// Textures and TextureSamplers
 	//
-
-	LXStringA HLSLTextureDeclarationVS;
-	//int TextureCountVS = 0;
-
-	LXStringA HLSLTextureDeclarationPS;
-	//int TextureCountPS = 0;
 
 	list<LXMaterialNodeTextureSampler*> listTextureSamplers;
 	Material->GetTextureSamplers(listTextureSamplers);
@@ -264,53 +248,20 @@ bool LXMaterialD3D11::Create(const LXMaterial* InMaterial)
 		if (TextureSampler->AffectedShaders & EShader::VertexShader)
 		{
 			ListVSTextures.push_back(CreateTexture(TextureSampler));
-			//LXStringA n = LXStringA::Number(++TextureCountVS);
-			LXStringA n = LXStringA::Number(TextureSampler->Slot);
-			LXStringA HLSLTexture = "Texture2D texture" + n + " : register(vs, t" + n + ");\n";
-			LXStringA HLSLSampler = "SamplerState sampler" + n + " : register(vs, s" + n + ");\n\n";
-			HLSLTextureDeclarationVS += HLSLTexture;
-			HLSLTextureDeclarationVS += HLSLSampler;
 		}
 
 		// PixelShader 
 		if (TextureSampler->AffectedShaders & EShader::PixelShader)
 		{
 			ListPSTextures.push_back(CreateTexture(TextureSampler));
-			//LXStringA n = LXStringA::Number(++TextureCountPS);
-			LXStringA n = LXStringA::Number(TextureSampler->Slot);
-			LXStringA HLSLTexture = "Texture2D texture" + n + " : register(ps, t" + n + ");\n";
-			LXStringA HLSLSampler = "SamplerState sampler" + n + " : register(ps, s" + n + ");\n\n";
-			HLSLTextureDeclarationPS += HLSLTexture;
-			HLSLTextureDeclarationPS += HLSLSampler;
 		}
 	}
 
-	HLSLCodeVS += HLSLTextureDeclarationVS;
-	HLSLCodePS += HLSLTextureDeclarationPS;
-
-	//
-	// Inject
-	// 
-
-	// Only in custom shader. In the default Shader, declarations are hardcoded.
+	// Only in custom shader. In the default Shader, declarations are hard-coded.
 	if (Material->PixelShader)
 	{
-		const LXFilepath Filepath = Material->PixelShader->GetFilepath();
-		LXStringA FileData;
-		VRF(LXFileUtility::ReadTextFile(Filepath.GetBuffer(), FileData));
-		int Start = FileData.Find("//BEGIN_GENERATED");
-		int End = FileData.Find("//END_GENERATED");
-		if (Start == -1 || End == -1)
-		{
-			LogW(MaterialD3D11, L"Unable to find //BEGIN_GENERATED or //END_GENERATED in shader %s.", Material->PixelShader->GetRelativeFilename().GetBuffer());
-		}
-		else
-		{
-			Start += 18; // the size of //BEGIN_GENERATED
-			FileData.Erase(Start, End - Start);
-			FileData.Insert(Start, HLSLCodePS.GetBuffer());
-			VRF(LXFileUtility::WriteTextFile(Filepath.GetBuffer(), FileData));
-		}
+		const LXFilepath& Filepath = Material->PixelShader->GetFilepath();
+		LXShaderFactory::UpdateShader(Filepath, this);
 	}
 		
 	LogI(MaterialD3D11, L"Successful create %s", Material->GetName().GetBuffer());

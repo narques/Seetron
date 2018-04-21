@@ -21,7 +21,6 @@ LXConstantBuffer::~LXConstantBuffer()
 void LXConstantBuffer::Release()
 {
 	Buffer.clear();
-	HLSLDeclaration = "";
 	VariableDeclarations.clear();
 }
 
@@ -115,12 +114,15 @@ bool LXConstantBuffer::AddVariable(EHLSLType inType, const LXString& Name, const
 
 	if (!IsNameFree(NameA))
 		return false;
+
+	RemovePad();
  
 	uint Offset = (uint)Buffer.size();
 	Buffer.resize(Offset + sizeof(T));
- 
-	T* p = (T*)&Buffer[Offset];
+ T* p = (T*)&Buffer[Offset];
 	*p = Value;
+
+	AddPad();
 
 	LXVariableDeclaration NewVariable;
 	NewVariable.Type = inType;
@@ -142,39 +144,24 @@ uint LXConstantBuffer::GetSize()
 	return (uint)Buffer.size();
 }
 
-void LXConstantBuffer::DoPad()
+void LXConstantBuffer::RemovePad()
 {
 	uint Size = (uint)Buffer.size();
-	uint PadSize = (16 - (Size % 16)) % 16;
-	if (PadSize > 0)
+	if (_PadSize > 0)
 	{
-		Buffer.resize(Size + PadSize);
+		Buffer.resize(Size - _PadSize);
+		_PadSize = 0;
 	}
 }
 
-bool LXConstantBuffer::BuilldHLSL()
+void LXConstantBuffer::AddPad()
 {
-	DoPad();
+	CHK(_PadSize == 0); // Pad already pushed
 
-	HLSLDeclaration += "cbuffer ConstantBuffer_001\n";
-	HLSLDeclaration += "{\n";
-	
-	for (const auto& VD : VariableDeclarations)
+	uint Size = (uint)Buffer.size();
+	_PadSize = (16 - (Size % 16)) % 16;
+	if (_PadSize > 0)
 	{
-		LXStringA TypeName;
-		switch (VD.Type)
-		{
-		case EHLSLType::HLSL_float: TypeName = "float"; break;
-		case EHLSLType::HLSL_float2: TypeName = "float2"; break;
-		case EHLSLType::HLSL_float3: TypeName = "float3"; break;
-		case EHLSLType::HLSL_float4: TypeName = "float4"; break;
-		case EHLSLType::HLSL_Matrix: TypeName = "matrix"; break;
-		default: CHK(0); return false;
-		}
-
-		HLSLDeclaration += "  " + TypeName + " " + VD.Name + ";\n";
+		Buffer.resize(Size + _PadSize);
 	}
-			
-	HLSLDeclaration += "};\n";
-	return true;
 }
