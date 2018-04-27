@@ -146,16 +146,10 @@ private:
 	bool CreateShader(const LXGSSignature& GSSignature, LXShaderD3D11* Shader);
 	bool CreateShader(const LXPSSignature& PSSignature, LXShaderD3D11* Shader);
 		
-	void CreateLightingVSShader(LXShaderD3D11* Shader);
-	void CreateLightingPSShader(LXShaderD3D11* Shader);
-	
 public:
 
 	LXShaderD3D11* VSDrawToBackBuffer;
 	LXShaderD3D11* PSDrawToBackBuffer;
-
-	LXShaderD3D11* VSLighting;
-	LXShaderD3D11* PSLighting;
 
 	MapVertexShaders VertexShaders;
 	MapHullShaders HullShaders;

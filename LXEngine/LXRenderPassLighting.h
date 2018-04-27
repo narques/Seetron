@@ -22,12 +22,13 @@ public:
 
 	LXRenderPassLighting(LXRenderer* InRenderer);
 	virtual ~LXRenderPassLighting();
+	void RebuildShaders() override;
 	void Render(LXRenderCommandList* RenderCommandList) override;
 	void Resize(uint Width, uint Height) override;
+	bool IsValid() const override;
 	const LXTextureD3D11* GetOutputTexture() const { return TextureColor; }
 	const LXTextureD3D11* GetTextureIBL() const { return TextureIBL; }
-	bool IsValid() const override;
-		
+			
 private:
 
 	void CreateBuffers(uint Width, uint Height);
@@ -47,5 +48,11 @@ public:
 	LXRenderPassGBuffer* RenderPassGBuffer;
 	LXRenderPassShadow* RenderPassShadow;
 	LXRenderPassSSAO* RenderPassSSAO;
+
+private:
+
+	LXShaderD3D11* _VertexShader;
+	LXShaderD3D11* _PixelShader;
+
 };
 

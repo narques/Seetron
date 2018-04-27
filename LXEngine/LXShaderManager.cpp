@@ -29,7 +29,6 @@
 
 #define DEFAULT_SHADER L"Default.hlsl"
 #define DRAWTOBACKBUFFER_SHADER L"DrawToBackBuffer.hlsl"
-#define LIGHTING_SHADER L"Lighting.hlsl"
 
 
 LXShaderManager::LXShaderManager()
@@ -45,24 +44,6 @@ LXShaderManager::LXShaderManager()
 		VSDrawToBackBuffer->CreateVertexShader(GetSettings().GetShadersFolder() + DRAWTOBACKBUFFER_SHADER, &Layout[0], (uint)Layout.size());
 		PSDrawToBackBuffer->CreatePixelShader(GetSettings().GetShadersFolder() + DRAWTOBACKBUFFER_SHADER);
 	}
-
-	//
-	// Lighting
-	//
-
-	{
-		VSLighting = new LXShaderD3D11();
-		PSLighting = new LXShaderD3D11();
-		CreateLightingVSShader(VSLighting);
-		CreateLightingPSShader(PSLighting);
-	}
-
-	{
-		//VSToneMapping = new LXShaderD3D11();
-		//PSToneMapping = new LXShaderD3D11();
-		//CreateToneMappingVSShader(VSToneMapping);
-		//CreateToneMappingPSShader(PSToneMapping);
-	}
 }
 
 
@@ -72,10 +53,6 @@ LXShaderManager::~LXShaderManager()
 
 	LX_SAFE_DELETE(VSDrawToBackBuffer);
 	LX_SAFE_DELETE(PSDrawToBackBuffer);
-	LX_SAFE_DELETE(VSLighting);
-	LX_SAFE_DELETE(PSLighting);
-	//LX_SAFE_DELETE(VSToneMapping);
-	//LX_SAFE_DELETE(PSToneMapping);
 }
 
 void LXShaderManager::RebuildShaders()
@@ -109,12 +86,6 @@ void LXShaderManager::RebuildShaders()
 		LXShaderD3D11* Shader = It->second.get();
 		CreateShader(It->first, Shader);
 	}
-
-	CreateLightingVSShader(VSLighting);
-	CreateLightingPSShader(PSLighting);
-
-	//CreateToneMappingVSShader(VSToneMapping);
-	//CreateToneMappingPSShader(PSToneMapping);
 }
 
 void LXShaderManager::DeleteShaders()
@@ -352,15 +323,4 @@ bool LXShaderManager::CreateShader(const LXPSSignature& PSSignature, LXShaderD3D
 		default: CHK(0); return false; break;
 		}
 	}
-}
-
-void LXShaderManager::CreateLightingVSShader(LXShaderD3D11* Shader)
-{
-	const LXArrayInputElementDesc& Layout = GetInputElementDescD3D11Factory().GetInputElement_PT();
-	Shader->CreateVertexShader(GetSettings().GetShadersFolder() + LIGHTING_SHADER, &Layout[0], (uint)Layout.size());
-}
-
-void LXShaderManager::CreateLightingPSShader(LXShaderD3D11* Shader)
-{
-	Shader->CreatePixelShader(GetSettings().GetShadersFolder() + LIGHTING_SHADER);
 }

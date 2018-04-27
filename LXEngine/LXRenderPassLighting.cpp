@@ -30,16 +30,27 @@
 #include "LXWorldTransformation.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
+namespace
+{
+	const wchar_t kShaderFilename[] = L"Lighting.hlsl";
+};
+
 LXRenderPassLighting::LXRenderPassLighting(LXRenderer* InRenderer) :LXRenderPass(InRenderer)
 {
 	// Textures and Samplers
 	CreateBuffers(Renderer->Width, Renderer->Height);
+
+	_VertexShader = new LXShaderD3D11();
+	_PixelShader = new LXShaderD3D11();
+	RebuildShaders();
 }
 
 LXRenderPassLighting::~LXRenderPassLighting()
 {
 	DeleteBuffers();
-	delete TextureIBL;
+	LX_SAFE_DELETE(TextureIBL);
+	LX_SAFE_DELETE(_VertexShader);
+	LX_SAFE_DELETE(_PixelShader);
 }
 
 void LXRenderPassLighting::CreateBuffers(uint Width, uint Height)
@@ -49,6 +60,13 @@ void LXRenderPassLighting::CreateBuffers(uint Width, uint Height)
 
 	// RenderTargetViews and ShaderResourceViews (in TextureD3D11 objects)
 	RenderTargetColor = new LXRenderTargetViewD3D11(TextureColor);
+}
+
+void LXRenderPassLighting::RebuildShaders()
+{
+	const LXArrayInputElementDesc& Layout = GetInputElementDescD3D11Factory().GetInputElement_PT();
+	_VertexShader->CreateVertexShader(GetSettings().GetShadersFolder() + kShaderFilename, &Layout[0], (uint)Layout.size());
+	_PixelShader->CreatePixelShader(GetSettings().GetShadersFolder() + kShaderFilename);
 }
 
 void LXRenderPassLighting::DeleteBuffers()
@@ -64,8 +82,7 @@ void LXRenderPassLighting::Resize(uint Width, uint Height)
 
 bool LXRenderPassLighting::IsValid() const
 {
-	#pragma message("TODO LXRenderPassLighting::IsValid()")
-	return true;
+	return _PixelShader->IsValid() && _VertexShader->IsValid();
 }
 
 void LXRenderPassLighting::Render(LXRenderCommandList* r)
@@ -88,9 +105,9 @@ void LXRenderPassLighting::Render(LXRenderCommandList* r)
 	r->RSSetViewports(Renderer->Width, Renderer->Height);
 
 	// Render a triangle : GBuffer TextureColor
-	r->IASetInputLayout(Renderer->GetShaderManager()->VSLighting);
-	r->VSSetShader(Renderer->GetShaderManager()->VSLighting);
-	r->PSSetShader(Renderer->GetShaderManager()->PSLighting);
+	r->IASetInputLayout(_VertexShader);
+	r->VSSetShader(_VertexShader);
+	r->PSSetShader(_PixelShader);
 	r->PSSetConstantBuffers(0, 1, RenderPipelineDeferred->_CBViewProjection);
 	r->PSSetConstantBuffers(1, 1, RenderPassShadow->ConstantBufferSpotLight.get());
 
