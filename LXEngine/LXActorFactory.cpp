@@ -25,12 +25,61 @@
 // Console commands
 //
 
-LXConsoleCommandNoArg CCCreateTerrain(L"CreateTerrain", []()
+LXConsoleCommandNoArg CCCreateCylinder(L"Create.Cylinder", []()
 {
-	GetCore().GetProject()->CreateTerrainActor();
+	if (LXProject* Project = GetProject())
+	{
+		LXActorMesh* Actor = new LXActorMeshCylinder(Project);
+		Project->GetScene()->AddChild(Actor);
+	}
 });
 
-LXConsoleCommandNoArg CCCreateActorSceneCapture(L"CreateActorSceneCapture", []()
+LXConsoleCommandNoArg CCCreateCube(L"Create.Cube", []()
+{
+	if (LXProject* Project = GetProject())
+	{
+		LXActorMesh* Actor = new LXActorMeshCube(Project);
+		Project->GetScene()->AddChild(Actor);
+	}
+});
+
+LXConsoleCommandNoArg CCCreateCone(L"Create.Cone", []()
+{
+	if (LXProject* Project = GetProject())
+	{
+		LXActor* Actor = new LXActorMeshCone();
+		Project->GetScene()->AddChild(Actor);
+	}
+});
+
+LXConsoleCommandNoArg CCCreateSphere(L"Create.Sphere", []()
+{
+	if (LXProject* Project = GetProject())
+	{
+		LXActorMesh* Actor = new LXActorMeshSphere(Project);
+		Project->GetScene()->AddChild(Actor);
+	}
+});
+
+LXConsoleCommandNoArg CCCreatePlane(L"Create.Plane", []()
+{
+	if (LXProject* Project = GetProject())
+	{
+		LXActor* Actor = new LXActorMeshPlane(Project);
+		Project->GetScene()->AddChild(Actor);
+	}
+});
+
+LXConsoleCommandNoArg CCCreateLight(L"Create.Light", []()
+{
+	if (LXProject* Project = GetProject())
+	{
+		LXActor* Actor = new LXActorLight(Project);
+		Project->GetScene()->AddChild(Actor);
+	}
+});
+
+LXConsoleCommandNoArg CCCreateSceneCapture(L"Create.SceneCapture", []()
 {
 	if (LXProject* Project = GetProject())
 	{
@@ -39,7 +88,16 @@ LXConsoleCommandNoArg CCCreateActorSceneCapture(L"CreateActorSceneCapture", []()
 	}
 });
 
-LXConsoleCommandNoArg CCCreateActorForest(L"CreateActorForest", []()
+LXConsoleCommandNoArg CCCreateTerrain(L"Create.Terrain", []()
+{
+	if (LXProject* Project = GetProject())
+	{
+		LXTerrain* Actor = new LXTerrain(Project);
+		Project->GetScene()->AddChild(Actor);
+	}
+});
+
+LXConsoleCommandNoArg CCCreateForest(L"Create.Forest", []()
 {
 	if (LXProject* Project = GetProject())
 	{
@@ -76,6 +134,10 @@ LXActor* LXActorFactory::CreateActor(const LXString& ClassName)
 	else if (ClassName == L"LXActorMeshCube")
 	{
 		Actor = new LXActorMeshCube(Project);
+	}
+	else if (ClassName == L"LXActorMeshCylinder")
+	{
+		Actor = new LXActorMeshCylinder(Project);
 	}
 	else if (ClassName == L"LXActorMeshPlane")
 	{

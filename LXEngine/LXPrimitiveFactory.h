@@ -24,6 +24,9 @@ public:
 
 	void DeleteAllPrimitives();
 
+	// Create cone 
+	const shared_ptr<LXPrimitive>& CreateCone(float radius, float height);
+
 	// Creates an Indexed Sphere with UVs and Normals
 	const shared_ptr<LXPrimitive>& CreateSphere(float radius);
 

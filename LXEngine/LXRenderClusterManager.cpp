@@ -90,14 +90,9 @@ void LXRenderClusterManager::AddActor(LXActor* Actor)
 	if (Actor->GetCID() & LX_NODETYPE_ANCHOR)
 		return;
 
-	//if (Actor->GetCID() & LX_NODETYPE_LIGHT)
-		//return;
-
 	if (Actor->GetCID() & LX_NODETYPE_CAMERA)
 		return;
 
-	LXRenderer* Renderer = GetCore().GetRenderer();
-	
 	if (LXActorMesh* ActorMesh = LXCast<LXActorMesh>(Actor))
 	{
 		const TWorldPrimitives& WorldPrimitives = ActorMesh->GetAllPrimitives();
@@ -115,8 +110,17 @@ void LXRenderClusterManager::AddActor(LXActor* Actor)
 				// Create and add
 				LXRenderCluster* RenderCluster = CreateRenderCluster(ActorMesh, PrimitiveInstance, MatrixWCS, BBoxWorld, PrimitiveInstance->Primitive.get(), PrimitiveInstance->Primitive->GetMaterial());
 				
-				if (RenderCluster)
+				// Cluster specialization
+				if (RenderCluster && (Actor->GetCID() & LX_NODETYPE_LIGHT))
+				{
+					RenderCluster->Flags = ERenderClusterType::Light;
+					RenderCluster->SetLightParameters(ActorMesh);
+				}
+				else
+				{	
+					// Surface
 					RenderCluster->CastShadow = ActorMesh->GetCastShadows();
+				}
 
 				// Create and add primitive bounds
 				if (0)

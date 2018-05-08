@@ -11,22 +11,6 @@
 #include "LXRenderPass.h"
 #include "LXConstantBufferD3D11.h"
 
-struct LXConstantBufferDataSpotLight
-{
-	LXMatrix MatrixLightView;		// Row-major
-	LXMatrix MatrixLightProjection; // Row-major
-	vec3f LightPosition;
-	float LightIntensity;
-	float Angle;
-	float AmbientIntensity;
-};
-
-struct LXRenderSpotLight
-{
-	LXConstantBufferDataSpotLight ConstantBufferData;
-	unique_ptr<LXConstantBufferD3D11> ConstantBufferD3D11;
-};
-
 class LXRenderPassShadow : 	public LXRenderPass
 {
 
@@ -42,9 +26,5 @@ public:
 
 	// SpotLight
 	unique_ptr<LXConstantBufferD3D11> ConstantBufferSpotLight;
-	LXConstantBufferDataSpotLight ConstantBufferDataSpotLight;
-
-	// SpotLights
-	list<unique_ptr<LXConstantBufferD3D11>> SpotLights;
 };
 

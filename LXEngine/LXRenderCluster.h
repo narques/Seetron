@@ -13,6 +13,7 @@
 #include "LXConstantBufferD3D11.h"
 #include "LXShaderProgramD3D11.h"
 #include "LXRenderPass.h"
+#include "LXFlags.h"
 
 class LXActor;
 class LXActorMesh;
@@ -24,6 +25,16 @@ class LXPrimitiveInstance;
 class LXRenderClusterManager;
 class LXRenderCommandList;
 class LXShaderD3D11;
+
+enum class ERenderClusterType
+{
+	Surface = LX_BIT(0),
+	Light = LX_BIT(1)
+};
+
+typedef LXFlags<ERenderClusterType> LXFlagsRenderCluster;
+
+struct LXConstantBufferDataSpotLight;
 
 class LXRenderCluster
 {
@@ -43,6 +54,10 @@ public:
 	
 	void Render(ERenderPass RenderPass, LXRenderCommandList* RCL);
 
+	// Cluster Specialization according the type
+	void SetLightParameters(LXActor* Actor);
+	void UpdateLightParameters(LXActor* Actor);
+
 public:
 
 	LXActor* Actor = nullptr;
@@ -50,7 +65,10 @@ public:
 
 	LXConstantBufferD3D11* CBWorld = nullptr;
 	LXConstantBufferData1 cb1;
-	
+
+	LXConstantBufferDataSpotLight* ConstantBufferDataSpotLight = nullptr;
+	LXConstantBufferData0* LightView = nullptr;
+		
 	shared_ptr<LXMaterialD3D11> Material;
 	shared_ptr<LXPrimitiveD3D11> Primitive;
 		
@@ -62,9 +80,9 @@ public:
 	LXMatrix Matrix;
 	bool ValidConstantBufferMatrix = false;
 	
-
 	bool CastShadow = false;
 
+	LXFlagsRenderCluster Flags = ERenderClusterType::Surface;
 };
 
 static bool SortRenderCluster(const LXRenderCluster& RC0, const LXRenderCluster& RC1)

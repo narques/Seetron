@@ -32,3 +32,47 @@ private:
 	
 };
 
+//------------------------------------------------------------------------------------------------------
+
+class LXCORE_API LXActorMeshCylinder : public LXActorMesh
+{
+
+public:
+
+	LXActorMeshCylinder(LXProject*);
+	virtual ~LXActorMeshCylinder();
+
+private:
+
+	void OnPropertyChanged(LXProperty* Property) override;
+
+private:
+
+	LXMaterial * _Material = nullptr;
+	int Slices = 64;
+	int Stacks = 64;
+
+};
+
+//------------------------------------------------------------------------------------------------------
+
+class LXCORE_API LXActorMeshCone : public LXActorMesh
+{
+
+public:
+
+	LXActorMeshCone();
+	virtual ~LXActorMeshCone();
+
+private:
+
+	void OnPropertyChanged(LXProperty* Property) override;
+
+private:
+
+	LXMaterial * _Material = nullptr;
+	int Slices = 64;
+	int Stacks = 64;
+
+};
+

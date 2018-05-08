@@ -12,6 +12,23 @@
 
 struct ID3D11Buffer;
 
+struct LXConstantBufferDataSpotLight
+{
+	LXMatrix MatrixLightView;		// Row-major
+	LXMatrix MatrixLightProjection; // Row-major
+	vec4f ShadowMapCoords;
+	vec3f LightPosition;
+	float LightIntensity;
+	float Angle;
+	bool CastShadow;
+};
+
+struct LXConstantBufferDataIBL
+{
+	float AmbientIntensity;
+	vec3f Pad;
+};
+
 struct LXConstantBufferData0 // Updated per Frame
 {
 	LXMatrix View;

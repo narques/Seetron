@@ -150,14 +150,24 @@ void LXRenderer::Init()
 	// BlendStates
 	//
 
+	// No Blend
 	D3D11_BLEND_DESC BlendState = CD3D11_BLEND_DESC(CD3D11_DEFAULT());
 	hr = DirectX11->GetCurrentDevice()->CreateBlendState(&BlendState, &D3D11BlendStateNoBlend);
 	
+	// Alpha blending
 	BlendState.RenderTarget[0].BlendEnable = TRUE;
 	BlendState.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 	BlendState.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 	BlendState.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 	hr = DirectX11->GetCurrentDevice()->CreateBlendState(&BlendState, &D3D11BlendStateBlend);
+
+	// Deferred lighting accumulation (ADD)
+	D3D11_BLEND_DESC BlendStateAdd = CD3D11_BLEND_DESC(CD3D11_DEFAULT());
+	BlendStateAdd.RenderTarget[0].BlendEnable = TRUE;
+	BlendStateAdd.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	BlendStateAdd.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	BlendStateAdd.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	hr = DirectX11->GetCurrentDevice()->CreateBlendState(&BlendStateAdd, &D3D11BlendStateAdd);
 
 	// Misc
 	ShaderManager = new LXShaderManager();
@@ -211,6 +221,7 @@ void LXRenderer::DeleteObjects()
 	LX_SAFE_RELEASE(D3D11RasterizerStateWireframe);
 	LX_SAFE_RELEASE(D3D11BlendStateNoBlend);
 	LX_SAFE_RELEASE(D3D11BlendStateBlend);
+	LX_SAFE_RELEASE(D3D11BlendStateAdd);
 	LX_SAFE_DELETE(DirectX11);
 }
 

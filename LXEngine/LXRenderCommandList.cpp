@@ -155,6 +155,19 @@ EXECUTE(RSSetViewports)
 	D3D11DeviceContext->RSSetViewports(1, &vp);
 }
 
+EXECUTE(RSSetViewports2)
+{
+	ID3D11DeviceContext* D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();
+	D3D11_VIEWPORT vp;
+	vp.Width = Width;
+	vp.Height = Height;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+	vp.TopLeftX = TopLeftX;
+	vp.TopLeftY = TopLeftY;
+	D3D11DeviceContext->RSSetViewports(1, &vp);
+}
+
 EXECUTE(HSSetShader)
 {
 	ID3D11DeviceContext* D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();

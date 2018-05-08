@@ -35,6 +35,13 @@ LXActorMesh(pDocument)
 	_bLight = true;
 	_eLightType = LX_LIGHT_SPOT;
 
+	
+	const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCone(50.0f, 100.0f);
+	Primitive->SetPersistent(false);
+	Primitive->ComputeTangents();
+	AddPrimitive(Primitive);
+
+
 	/*
 	LXPrimitive* Primitive = GetPrimitiveFactory()->CreateQuadXY(100.f, 100.f, true);
 	Primitive->SetMaterial(L"Materials/M_UILight.smat");

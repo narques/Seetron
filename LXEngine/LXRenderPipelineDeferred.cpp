@@ -75,6 +75,7 @@ LXRenderPipelineDeferred::LXRenderPipelineDeferred(LXRenderer* Renderer):_Render
 	RenderPassLighting->RenderPassShadow = RenderPassShadow;
 	RenderPassLighting->RenderPassSSAO = RenderPassSSAO;
 	RenderPassLighting->TextureShadow = RenderPassShadow->TextureDepth.get();
+	RenderPassLighting->_ListRenderClusterLights = &_ListRenderClusterLights;
 	RenderPassTransparent->_ListRenderClusterTransparents = &_ListRenderClusterTransparents;
 	RenderPassSSAO->RenderPassGBuffer = RenderPassGBuffer;
 }
@@ -115,6 +116,7 @@ void LXRenderPipelineDeferred::BuildRenderClusterLists()
 {
 	_ListRenderClusterOpaques.clear();
 	_ListRenderClusterTransparents.clear();
+	_ListRenderClusterLights.clear();
 
 	const LXProject* Project = _Renderer->GetProject();
 	if (!Project)
@@ -144,9 +146,23 @@ void LXRenderPipelineDeferred::BuildRenderClusterLists()
 
 	for (LXRenderCluster* RenderCluster : _Renderer->RenderClusterManager->ListRenderClusters)
 	{
-		if (Frustum.IsBoxIn(RenderCluster->BBoxWorld.GetMin(), RenderCluster->BBoxWorld.GetMax()))
+		const bool IsLight = RenderCluster->Flags & ERenderClusterType::Light;
+
+		if (IsLight || Frustum.IsBoxIn(RenderCluster->BBoxWorld.GetMin(), RenderCluster->BBoxWorld.GetMax()))
 		{
-			if (RenderCluster->IsTransparent())
+			if (IsLight)
+			{
+				_ListRenderClusterLights.push_back(RenderCluster);
+				if (RenderCluster->ConstantBufferDataSpotLight->CastShadow)
+				{
+					// Define the Shadow map position in the shadowAtlas
+					GetTextureCoordinatesInAtlas(RenderCluster, RenderCluster->ConstantBufferDataSpotLight->ShadowMapCoords);
+				}
+
+				// FOR DEBUG
+				//_ListRenderClusterOpaques.push_back(RenderCluster);
+			}
+			else if (RenderCluster->IsTransparent())
 			{
 				_ListRenderClusterTransparents.push_back(RenderCluster);
 			}
@@ -246,5 +262,33 @@ const LXTextureD3D11* LXRenderPipelineDeferred::GetOutput() const
 	}
 	
 	return Texture;
+}
+
+void LXRenderPipelineDeferred::GetTextureCoordinatesInAtlas(LXRenderCluster* RenderCluster, vec4f& outTextureCoordinates)
+{
+	static map < LXActor*, uint> mapActors;
+	static bool IndexStatus[16] = { true };
+	int static indices = 0;
+	int index;
+
+	if (mapActors.find(RenderCluster->Actor) == mapActors.end())
+	{
+		index = indices;
+		mapActors[RenderCluster->Actor] = index;
+		indices++;
+	}
+	else 
+	{
+		index = mapActors[RenderCluster->Actor];
+	}
+		
+	const float kShadowMapWidth = 512.f;
+	const float kShadowMapHeight = 512.f;
+	const float AtlasWidth = 2048.f;
+	const float AtlasHeight = 2048.f;
+	float y = index / 4;
+	float x = index - (y * 4);
+	outTextureCoordinates.x = x * kShadowMapWidth;
+	outTextureCoordinates.y = y * kShadowMapHeight;
 }
 

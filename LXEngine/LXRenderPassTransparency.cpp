@@ -17,6 +17,7 @@
 #include "LXRenderPassGBuffer.h"
 #include "LXRenderPassLighting.h"
 #include "LXRenderPipelineDeferred.h"
+#include "LXRenderTarget.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXRenderPassTransparency::LXRenderPassTransparency(LXRenderer* Renderer):LXRenderPass(Renderer)
@@ -72,7 +73,7 @@ void LXRenderPassTransparency::Render(LXRenderCommandList* RCL)
 #if LX_DEDICATED_TRANSPARENCY_BUFFER
 	RCL->OMSetRenderTargets2(RenderTargetColor, Renderer->RenderPassGBuffer->DepthStencilView);
 #else
-	RCL->OMSetRenderTargets2(RenderPipelineDeferred->RenderPassLighting->RenderTargetColor, RenderPipelineDeferred->RenderPassGBuffer->DepthStencilView);
+	RCL->OMSetRenderTargets2(RenderPipelineDeferred->RenderPassLighting->RenderTargetCompose->_RenderTargetViewD3D11, RenderPipelineDeferred->RenderPassGBuffer->DepthStencilView);
 	RCL->OMSetBlendState(Renderer->GetBlendStateTransparent());
 #endif
 	RCL->RSSetViewports(Renderer->Width, Renderer->Height);

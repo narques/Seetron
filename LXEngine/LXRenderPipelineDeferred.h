@@ -73,6 +73,7 @@ public:
 	// Misc
 	const LXConstantBufferD3D11* GetCBViewProjection() const { return _CBViewProjection; }
 	const LXTextureD3D11* GetOutput() const override;
+	void GetTextureCoordinatesInAtlas(LXRenderCluster* RenderCluster, vec4f& outTextureCoordinates);
 	const LXTextureD3D11* GetTextureNoise4x4() const { return _TextureNoise4x4; }
 
 private:
@@ -100,9 +101,10 @@ private:
 	LXConstantBufferD3D11* _CBViewProjection = nullptr;
 	LXConstantBufferData0 _CBViewProjectionData;
 
-	// Object list
+	// Visible clusters in the main view frustum
 	list<LXRenderCluster*> _ListRenderClusterOpaques;
 	list<LXRenderCluster*> _ListRenderClusterTransparents;
+	list<LXRenderCluster*> _ListRenderClusterLights;
 
 	// Global textures
 	LXTextureD3D11* _TextureD3D11IBL = nullptr;

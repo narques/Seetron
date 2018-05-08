@@ -82,7 +82,7 @@ void LXRenderPassToneMapping::Render(LXRenderCommandList* r)
 	r->IASetInputLayout(_VertexShader);
 	r->VSSetShader(_VertexShader);
 	r->PSSetShader(_PixelShader);
-	LXTextureD3D11* Texture = RenderPipelineDeferred->RenderPassLighting->TextureColor;
+	const LXTextureD3D11* Texture = RenderPipelineDeferred->RenderPassLighting->GetOutputTexture();
 	r->PSSetShaderResources(0, 1, Texture);
 	r->PSSetSamplers(0, 1, Texture);
 	Renderer->DrawScreenSpacePrimitive(r);

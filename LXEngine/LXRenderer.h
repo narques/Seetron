@@ -74,6 +74,7 @@ public:
 	ID3D11RasterizerState* GetDefaultRasterizerState () const { return D3D11RasterizerState; }
 	ID3D11BlendState* GetBlendStateOpaque() const { return D3D11BlendStateNoBlend; }
 	ID3D11BlendState* GetBlendStateTransparent() const { return D3D11BlendStateBlend; }
+	ID3D11BlendState* GetBlendStateAdd() const { return D3D11BlendStateAdd; }
 	LXPrimitiveD3D11* GetSSTriangle() const { return SSTriangle; }
 	const LXDirectX11* GetDirectX11() const { return DirectX11; }
 	
@@ -143,6 +144,7 @@ private:
 	ID3D11RasterizerState* D3D11RasterizerStateWireframe = nullptr;
 	ID3D11BlendState* D3D11BlendStateNoBlend = nullptr;
 	ID3D11BlendState* D3D11BlendStateBlend = nullptr;
+	ID3D11BlendState* D3D11BlendStateAdd = nullptr;
 
 	// Scene & Document
 	LXProject* _Project = nullptr;

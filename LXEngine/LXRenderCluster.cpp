@@ -8,20 +8,24 @@
 
 #include "stdafx.h"
 #include "LXRenderCluster.h"
-#include "LXRenderCommandList.h"
-#include "LXMaterialD3D11.h"
-#include "LXPrimitiveD3D11.h"
-#include "LXConstantBufferD3D11.h"
-#include "LXPrimitiveInstance.h"
-#include "LXCore.h"
-#include "LXMaterial.h"
+#include "LXActorCamera.h"
+#include "LXActorLight.h"
 #include "LXActorMesh.h"
-#include "LXRenderer.h"
+#include "LXConstantBufferD3D11.h"
+#include "LXCore.h"
 #include "LXDirectX11.h"
 #include "LXLogger.h"
+#include "LXMaterial.h"
+#include "LXMaterialD3D11.h"
+#include "LXPrimitiveD3D11.h"
+#include "LXPrimitiveInstance.h"
 #include "LXRenderClusterManager.h"
-#include "LXStatistic.h"
+#include "LXRenderCommandList.h"
+#include "LXRenderer.h"
+#include "LXRenderPassShadow.h"
 #include "LXShaderProgramD3D11.h"
+#include "LXStatistic.h"
+#include "LXWorldTransformation.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXRenderCluster::LXRenderCluster(LXRenderClusterManager* RenderClusterManager, LXActor* InActor, const LXMatrix& MatrixWCS)
@@ -57,6 +61,8 @@ LXRenderCluster::~LXRenderCluster()
 {
 	LX_COUNTSCOPEDEC(LXRenderCluster)
 	LX_SAFE_DELETE(CBWorld);
+	LX_SAFE_DELETE(ConstantBufferDataSpotLight);
+	LX_SAFE_DELETE(LightView);
 }
 
 bool LXRenderCluster::SetMaterial(shared_ptr<LXMaterialD3D11>& InMaterial)
@@ -100,6 +106,10 @@ void LXRenderCluster::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 		ValidConstantBufferMatrix = true;
 	}
 
+	if (ConstantBufferDataSpotLight)
+		UpdateLightParameters(Actor);
+	
+
 	// Vertex Shader
 	if (ShaderProgram->VertexShader)
 	{
@@ -131,5 +141,48 @@ void LXRenderCluster::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 		Material->Render(RenderPass, RCL);
 
 	Primitive->Render(RCL);
+}
+
+void LXRenderCluster::SetLightParameters(LXActor* Actor)
+{
+	CHK(!ConstantBufferDataSpotLight);
+	CHK(Flags & ERenderClusterType::Light);
+	LXActorLight* ActorLight = dynamic_cast<LXActorLight*>(Actor);
+	CHK(ActorLight);
+	ConstantBufferDataSpotLight = new LXConstantBufferDataSpotLight();
+	LightView = new LXConstantBufferData0;
+
+	UpdateLightParameters(Actor);
+}
+
+void LXRenderCluster::UpdateLightParameters(LXActor* Actor)
+{
+	LXActorLight* ActorLight = dynamic_cast<LXActorLight*>(Actor);
+	CHK(ActorLight);
+
+	vec3f LightPosition = ActorLight->GetMatrixWCS().GetOrigin();
+	vec3f LightDirection = ActorLight->GetMatrixWCS().GetVz() * -1.f;
+
+	#pragma message("move actor volatile: move depuis le thread RT")
+	LXActorCamera Camera(nullptr);
+	Camera.SetPosition(LightPosition);
+	Camera.SetDirection(LightDirection);
+	Camera.SetFov(ActorLight->GetSpotAngle());
+	Camera.LookAt(1.0);
+
+	// Camera to WorlTransformation
+	LXWorldTransformation WorldTransformation;
+	WorldTransformation.FromCamera(&Camera, -1, -1);
+
+	// Also updated in RenderPassShadow
+	LXMatrix MatrixLightView = WorldTransformation.GetMatrixView();
+	LXMatrix MatrixLightProjection = WorldTransformation.GetMatrixProjection();
+	
+	ConstantBufferDataSpotLight->MatrixLightView = Transpose(MatrixLightView);
+	ConstantBufferDataSpotLight->MatrixLightProjection = Transpose(MatrixLightProjection);
+	ConstantBufferDataSpotLight->LightPosition = LightPosition;
+	ConstantBufferDataSpotLight->LightIntensity = ActorLight->GetIntensity();
+	ConstantBufferDataSpotLight->Angle = LX_DEGTORAD(ActorLight->GetSpotAngle()) * 0.5f;
+	ConstantBufferDataSpotLight->CastShadow = ActorLight->GetCastShadow();
 }
 

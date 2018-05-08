@@ -46,6 +46,70 @@ void LXPrimitiveFactory::DeleteAllPrimitives()
 	ListPrimitives.clear();
 }
 
+const std::shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateCone(float radius, float height)
+{
+	int slices = 8; // Min : 3
+	int stacks = 2; // Min : 2 
+
+	const shared_ptr<LXPrimitive>& p = CreatePrimitive();
+
+	p->SetTopology(LX_TRIANGLES);
+
+	for (int i = 0; i < stacks; i++)
+	{
+
+		for (int j = 0; j < slices; j++)
+		{
+			float angle = LX_2PI * (float)j / (float)slices;
+			float cos1 = cos(angle);
+			float sin1 = sin(angle);
+
+			vec3f vertex;
+			if (i == 0)
+				vertex = vec3f(0.f, 0.f, i * (height / (stacks - 1)));
+			else
+				vertex = vec3f(radius*cos(angle), -radius * sin(angle), i * (-height / (stacks - 1)));
+
+			p->GetArrayPositions().push_back(vertex);
+			p->GetArrayNormals().push_back(vec3f(cos(angle), sin(angle), 0.f));
+			vec2f TextCoord = (vec2f(vertex.x / radius, vertex.y / radius) + 1.f) * 0.5;
+			p->GetArrayTexCoords().push_back(TextCoord);
+		}
+	}
+
+	// Indices
+	for (int i = 0; i < (stacks - 1); i++)
+	{
+
+		for (int j = 0; j < slices; j++)
+		{
+			if (j == (slices - 1))
+			{
+				p->GetArrayIndices().push_back(j + (i * slices));
+				p->GetArrayIndices().push_back((i * slices));
+				p->GetArrayIndices().push_back(j + ((i + 1) * slices));
+
+				p->GetArrayIndices().push_back(j + ((i + 1) * slices));
+				p->GetArrayIndices().push_back((i * slices));
+				p->GetArrayIndices().push_back((i + 1) * slices);
+
+			}
+			else
+			{
+				p->GetArrayIndices().push_back(j + (i * slices));
+				p->GetArrayIndices().push_back(j + (i * slices) + 1);
+				p->GetArrayIndices().push_back(j + ((i + 1) * slices));
+
+				p->GetArrayIndices().push_back(j + ((i + 1) * slices));
+				p->GetArrayIndices().push_back(j + (i * slices) + 1);
+				p->GetArrayIndices().push_back(j + ((i + 1) * slices) + 1);
+			}
+		}
+	}
+
+	return p;
+}
+
 const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateCube(float x, float y, float z, bool bCentered)
 {
 	const shared_ptr<LXPrimitive>& p = CreatePrimitive();

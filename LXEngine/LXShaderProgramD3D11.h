@@ -11,6 +11,8 @@
 #include "LXObject.h"
 
 class LXShaderD3D11;
+class LXRenderCommandList;
+struct D3D11_INPUT_ELEMENT_DESC;
 
 class LXShaderProgramD3D11 : public LXObject
 {
@@ -29,3 +31,23 @@ public:
 	shared_ptr<LXShaderD3D11> PixelShader;
 };
 
+//------------------------------------------------------------------------------------------------------
+// Encapsulates a VertexShader and a PixelShader in a single object
+//------------------------------------------------------------------------------------------------------
+
+class LXShaderProgramBasic
+{
+
+public:
+
+	LXShaderProgramBasic();
+	~LXShaderProgramBasic();
+
+	bool CreateShaders(wchar_t* Filename, const D3D11_INPUT_ELEMENT_DESC* Layout, UINT NumElements);
+	bool IsValid() const;
+	void Render(LXRenderCommandList* r) const;
+
+	LXShaderD3D11* VertexShader;
+	LXShaderD3D11* PixelShader;
+	
+};
