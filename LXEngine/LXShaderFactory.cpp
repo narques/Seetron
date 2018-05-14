@@ -36,7 +36,7 @@ void LXShaderFactory::GenerateVertexShader(const LXFilepath& Filename, const LXS
 	ShaderBuffer += "#include \"" + LXStringA(&*FileToInclude.GetBufferA().begin()) + "\"\n";
 	ShaderBuffer += "\n";
 
-	if (VSSignature.LayoutMask == (int)TRUCMACHIN::P)
+	if (VSSignature.LayoutMask == (int)EPrimitiveLayout::P)
 	{
 		ShaderBuffer += "VS_OUTPUT VS(VS_INPUT_P input)\n";
 		ShaderBuffer += "{\n";
@@ -46,11 +46,11 @@ void LXShaderFactory::GenerateVertexShader(const LXFilepath& Filename, const LXS
 		ShaderBuffer += "}\n";
 
 	}
-	else if (VSSignature.LayoutMask == (int)TRUCMACHIN::PT)
+	else if (VSSignature.LayoutMask == (int)EPrimitiveLayout::PT)
 	{
 		CHK(0);
 	}
-	else if (VSSignature.LayoutMask == (int)TRUCMACHIN::PN)
+	else if (VSSignature.LayoutMask == (int)EPrimitiveLayout::PN)
 	{
 		ShaderBuffer += "VS_OUTPUT VS(VS_INPUT_PN input)\n";
 		ShaderBuffer += "{\n";
@@ -60,7 +60,7 @@ void LXShaderFactory::GenerateVertexShader(const LXFilepath& Filename, const LXS
 		ShaderBuffer += "	return ComputeVertex(Vertex);\n";
 		ShaderBuffer += "}\n";
 	}
-	else if (VSSignature.LayoutMask == (int)TRUCMACHIN::PNT)
+	else if (VSSignature.LayoutMask == (int)EPrimitiveLayout::PNT)
 	{
 		ShaderBuffer += "VS_OUTPUT VS(VS_INPUT_PNT input)\n";
 		ShaderBuffer += "{\n";
@@ -71,7 +71,7 @@ void LXShaderFactory::GenerateVertexShader(const LXFilepath& Filename, const LXS
 		ShaderBuffer += "	return ComputeVertex(Vertex);\n";
 		ShaderBuffer += "}\n";
 	}
-	else if (VSSignature.LayoutMask == (int)TRUCMACHIN::PNABT)
+	else if (VSSignature.LayoutMask == (int)EPrimitiveLayout::PNABT)
 	{
 		ShaderBuffer += "VS_OUTPUT VS(VS_INPUT_PNABT input)\n";
 		ShaderBuffer += "{\n";
@@ -84,7 +84,7 @@ void LXShaderFactory::GenerateVertexShader(const LXFilepath& Filename, const LXS
 		ShaderBuffer += "	return ComputeVertex(Vertex);\n";
 		ShaderBuffer += "}\n";
 	}
-	else if (VSSignature.LayoutMask == (int)TRUCMACHIN::PNABTI)
+	else if (VSSignature.LayoutMask == (int)EPrimitiveLayout::PNABTI)
 	{
 		ShaderBuffer += "VS_OUTPUT VS(VS_INPUT_PNABTI input1, uint instanceID : SV_InstanceID)\n";
 		ShaderBuffer += "{\n";
@@ -234,12 +234,12 @@ LXString LXShaderFactory::GetLayoutName(int LayoutMask)
 {
 	switch (LayoutMask)
 	{
-	case (int)TRUCMACHIN::P: return L"_P"; break;
-	case (int)TRUCMACHIN::PT: return L"_PT"; break;
-	case (int)TRUCMACHIN::PN: return L"_PN"; break;
-	case (int)TRUCMACHIN::PNT: return L"_PNT"; break;
-	case (int)TRUCMACHIN::PNABT: return L"_PNABT"; break;
-	case (int)TRUCMACHIN::PNABTI: return L"_PNABTI"; break;
+	case (int)EPrimitiveLayout::P: return L"_P"; break;
+	case (int)EPrimitiveLayout::PT: return L"_PT"; break;
+	case (int)EPrimitiveLayout::PN: return L"_PN"; break;
+	case (int)EPrimitiveLayout::PNT: return L"_PNT"; break;
+	case (int)EPrimitiveLayout::PNABT: return L"_PNABT"; break;
+	case (int)EPrimitiveLayout::PNABTI: return L"_PNABTI"; break;
 	default: CHK(0); return L""; break;
 	}
 }

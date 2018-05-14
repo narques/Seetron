@@ -9,6 +9,20 @@
 #pragma once
 
 // ---------------------------------------------------------------------------------
+// --- Preprocessor definitions ---
+// To add in the projects settings
+// ---------------------------------------------------------------------------------
+
+// Enable the static compilation 
+// #define LX_CORE_STATIC: To build the player, samples, ...
+
+// Enables the editor features: UI, Shader generator, ...
+// #define LX_EDITOR
+
+// Enable the dev features: Statistics, detailed logs, ...
+// #define LX_DEV
+
+// ---------------------------------------------------------------------------------
 // --- File extensions ---
 // ---------------------------------------------------------------------------------
 

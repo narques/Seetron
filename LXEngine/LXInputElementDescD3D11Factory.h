@@ -12,7 +12,7 @@
 
 typedef vector<D3D11_INPUT_ELEMENT_DESC> LXArrayInputElementDesc;
 
-enum class TRUCMACHIN
+enum class EPrimitiveLayout
 {
 	P = LX_PRIMITIVE_POSITIONS,
 	PT = (LX_PRIMITIVE_POSITIONS | LX_PRIMITIVE_TEXCOORDS),

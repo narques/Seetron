@@ -8,21 +8,25 @@
 
 #include "stdafx.h"
 #include "LXRenderCommandList.h"
+#include "LXBitmap.h"
+#include "LXConsoleManager.h"
+#include "LXConstantBufferD3D11.h"
 #include "LXDirectX11.h"
+#include "LXLogger.h"
+#include "LXPrimitiveD3D11.h"
 #include "LXRenderTargetViewD3D11.h"
 #include "LXShaderD3D11.h"
-#include "LXTextureD3D11.h"
-#include "LXPrimitiveD3D11.h"
-#include "LXConstantBufferD3D11.h"
-#include "LXBitmap.h"
-#include "LXLogger.h"
 #include "LXStatistic.h"
+#include "LXTextureD3D11.h"
 //#include <pix.h>
 #include "LXMemory.h" // --- Must be the last included ---
 
-uint Offset = 0;
+bool LXRenderCommandList::DirectMode = false;
 
-// Init
+namespace
+{
+	LXConsoleCommandT<bool> CSet_DirectMode(L"Engine.ini", L"Renderer", L"DirectMode", L"false", &LXRenderCommandList::DirectMode);
+};
 
 LXRenderCommandList::LXRenderCommandList()
 {
@@ -44,8 +48,6 @@ void LXRenderCommandList::Empty()
 
 	DrawCallCount = 0;
 	TriangleCount = 0;
-
-	Offset = 0;
 }
 
 void LXRenderCommandList::Execute()
@@ -90,6 +92,35 @@ void DispatchError(HRESULT Result)
 //------------------------------------------------------------------------------------------------------------------
 
 #define EXECUTE(name) void LXRenderCommandList::LXRenderCommand_##name::Execute(LXRenderCommandList* RCL)
+
+//
+// ID3DUserDefinedAnnotation Interface
+//
+
+EXECUTE(BeginEvent)
+{
+	LXDirectX11* Direct11 = LXDirectX11::GetCurrentDirectX11();
+	if (Direct11->_D3DUserDefinedAnnotation)
+	{
+		Direct11->_D3DUserDefinedAnnotation->BeginEvent(Name);
+		//PIXBeginEvent(Direct11->D3DUserDefinedAnnotation, PIX_COLOR(255, 0, 0), Name);
+	}
+}
+
+EXECUTE(EndEvent)
+{
+	LXDirectX11* Direct11 = LXDirectX11::GetCurrentDirectX11();
+	if (Direct11->_D3DUserDefinedAnnotation)
+	{
+		Direct11->_D3DUserDefinedAnnotation->EndEvent();
+		//PIXEndEvent();
+	}
+}
+
+//
+// ID3D11DeviceContext Interface
+// 
+
 
 EXECUTE(ClearDepthStencilView)
 {
@@ -190,37 +221,47 @@ EXECUTE(PSSetShader)
 {
 	ID3D11DeviceContext* D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();
 	D3D11DeviceContext->PSSetShader(PixelShader?PixelShader->D3D11PixelShader:nullptr, nullptr, 0);
+#if LX_CHECK_BINDED_OBJECT
 	RCL->_PixelShader = PixelShader;
+#endif
 }
 
 EXECUTE(Draw)
 {
+#if LX_CHECK_BINDED_OBJECT
 	CHK(RCL->_VertexShader && RCL->_VertexShader->D3D11VertexShader);
 	CHK(RCL->_PixelShader && RCL->_PixelShader->D3D11PixelShader && RCL->_PixelShader->GetState() == EShaderD3D11State::Ok);
+#endif
 	ID3D11DeviceContext* D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();
 	D3D11DeviceContext->Draw(VertexCount, StartVertexLocation);
 }
 
 EXECUTE(DrawInstanced)
 {
+#if LX_CHECK_BINDED_OBJECT
 	CHK(RCL->_VertexShader && RCL->_VertexShader->D3D11VertexShader);
 	CHK(RCL->_PixelShader && RCL->_PixelShader->D3D11PixelShader);
+#endif
 	ID3D11DeviceContext* D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();
 	D3D11DeviceContext->DrawInstanced(VertexCount, InstanceCount, StartVertexLocation, StartInstanceLocation);
 }
 
 EXECUTE(DrawIndexed)
 {
+#if LX_CHECK_BINDED_OBJECT
 	CHK(RCL->_VertexShader && RCL->_VertexShader->D3D11VertexShader);
 	CHK(RCL->_PixelShader && RCL->_PixelShader->D3D11PixelShader);
+#endif
 	ID3D11DeviceContext* D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();
 	D3D11DeviceContext->DrawIndexed(IndexCount, 0, 0);
 }
 
 EXECUTE(DrawIndexedInstanced)
 {
+#if LX_CHECK_BINDED_OBJECT
 	CHK(RCL->_VertexShader && RCL->_VertexShader->D3D11VertexShader);
 	CHK(RCL->_PixelShader && RCL->_PixelShader->D3D11PixelShader);
+#endif
 	ID3D11DeviceContext* D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();
 	D3D11DeviceContext->DrawIndexedInstanced(IndexCountPerInstance, InstanceCount, StartIndexLocation, BaseVertexLocation, 0/*UINT StartInstanceLocation*/);
 }
@@ -454,26 +495,6 @@ EXECUTE(UpdateSubresource4)
 	}
 }
 
-EXECUTE(BeginEvent)
-{
-	LXDirectX11* Direct11 = LXDirectX11::GetCurrentDirectX11();
-	if (Direct11->_D3DUserDefinedAnnotation)
-	{
-		Direct11->_D3DUserDefinedAnnotation->BeginEvent(Name);
-		//PIXBeginEvent(Direct11->D3DUserDefinedAnnotation, PIX_COLOR(255, 0, 0), Name);
-	}
-}
-
-EXECUTE(EndEvent)
-{
-	LXDirectX11* Direct11 = LXDirectX11::GetCurrentDirectX11();
-	if (Direct11->_D3DUserDefinedAnnotation)
-	{
-		Direct11->_D3DUserDefinedAnnotation->EndEvent();
-		//PIXEndEvent();
-	}
-}
-
 EXECUTE(VSSetConstantBuffers)
 {
 //#if LX_USE_D3D11_1
@@ -506,7 +527,9 @@ EXECUTE(VSSetShader)
 {
 	ID3D11DeviceContext* D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();
 	D3D11DeviceContext->VSSetShader(VertexShader?VertexShader->D3D11VertexShader:nullptr, nullptr, 0);
+#if LX_CHECK_BINDED_OBJECT
 	RCL->_VertexShader = VertexShader;
+#endif
 }
 
 EXECUTE(RSSetState)
@@ -536,11 +559,21 @@ EXECUTE(CopyResource)
 	D3D11DeviceContext->CopyResource(DstResource, SrcResource);
 }
 
+EXECUTE(GenerateMips)
+{
+	ID3D11DeviceContext* D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();
+	D3D11DeviceContext->GenerateMips(pShaderResourceView);
+}
+
+//
+// Advanced commands (multiple Direct3D commands)
+//
+
 EXECUTE(CopyResourceToBitmap)
 {
 	ID3D11DeviceContext* D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();
 	auto Subresource = D3D11CalcSubresource(0, 0, 1);
-	
+
 	D3D11_MAPPED_SUBRESOURCE MappedResource;
 
 	HRESULT Result = D3D11DeviceContext->Map(SrcResource, Subresource, D3D11_MAP_READ, 0, &MappedResource);
@@ -552,12 +585,6 @@ EXECUTE(CopyResourceToBitmap)
 	memcpy(Dest, Source, size);
 
 	DstBitmap->InvokeOnBitmapChanged();
-	
-	D3D11DeviceContext->Unmap(SrcResource, Subresource);
-}
 
-EXECUTE(GenerateMips)
-{
-	ID3D11DeviceContext* D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();
-	D3D11DeviceContext->GenerateMips(pShaderResourceView);
+	D3D11DeviceContext->Unmap(SrcResource, Subresource);
 }

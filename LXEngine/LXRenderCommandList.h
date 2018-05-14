@@ -12,6 +12,8 @@
 #include "LXRenderCommandDX11.h"
 #include "LXMatrix.h"
 
+// Check if the needed objects for the current operation are correctly binded.
+// Ex: check the PS and VS status before calling Draw...
 #define LX_CHECK_BINDED_OBJECT 1
 
 class LXRenderer;
@@ -65,7 +67,6 @@ void name(type0 var0, type1 var1, type2 var2) { Commands.push_back(new LXRenderC
 CLASSRENDERCOMMAND4(name, type0, var0, type1, var1, type2, var2, type3, var3) \
 void name(type0 var0, type1 var1, type2 var2, type3 var3) { Commands.push_back(new LXRenderCommand_##name(var0, var1, var2, var3)); if(DirectMode) Commands.back()->Execute(this);}																									
 
-
 class LXRenderCommandList :	public LXObject
 {
 
@@ -74,22 +75,18 @@ public:
 	LXRenderCommandList();
 	virtual ~LXRenderCommandList();
 
-	// Array management
 	void Empty();
 	void Execute();
-	
-	// Current objects
-	//LXMatrix CurrentViewMatrix;
-	//LXMatrix CurrentProjectionMatrix;
-	LXShaderD3D11* CurrentVertexShader = nullptr;
 
-	// Frame ConstantBuffers
-	LXConstantBufferD3D11* CBViewProjection = nullptr; 
-	
-	std::vector<LXRenderCommand*> Commands;
-		
 	//
-	// Basic commands
+	// ID3DUserDefinedAnnotation Interface
+	//
+
+	CMD1_CLASS(BeginEvent, const wchar_t*, Name)
+	CMD0_CLASS(EndEvent)
+	
+	//
+	// Standard commands (Direct3D API functions)
 	//
 
 	CMD1_CLASS_CR(VSSetShader, LXShaderD3D11*, VertexShader)
@@ -115,9 +112,6 @@ public:
 	CMD2_CLASS(UpdateSubresource2, ID3D11Buffer*, D3D11Buffer, LXConstantBufferData*, ConstantBufferData)
 	CMD2_CLASS(UpdateSubresource3, LXConstantBufferD3D11*, ConstantBuffer, LXConstantBufferData*, ConstantBufferData)
 	CMD2_CLASS(UpdateSubresource4, ID3D11Buffer*, D3D11Buffer, void*, ConstantBufferData)
-	CMD1_CLASS(BeginEvent, const wchar_t*, Name)
-	CMD0_CLASS(Present)
-	CMD0_CLASS(EndEvent)
 	CMD3_CLASS(VSSetConstantBuffers, UINT, StartSlot, UINT, NumBuffers, LXConstantBufferD3D11*, ConstantBuffer)
 	CMD3_CLASS(PSSetConstantBuffers, UINT, StartSlot, UINT, NumBuffers, const LXConstantBufferD3D11*, ConstantBuffer)
 	CMD1_CLASS(ClearDepthStencilView, LXDepthStencilViewD3D11*, DepthStencilView)
@@ -134,15 +128,27 @@ public:
 	CMD2_CLASS(CopyResource, ID3D11Resource*, DstResource, ID3D11Resource*, SrcResource)
 	CMD1_CLASS(GenerateMips, ID3D11ShaderResourceView*, pShaderResourceView)
 
-
 	//
-	// Advanced commands (multiple Direct3D commands)
+	// Standard commands (IDXGISwapChain Interface)
+	//
+
+	CMD0_CLASS(Present)
+		
+	//
+	// Advanced commands (multiple commands)
 	//
 
 	CMD2_CLASS(CopyResourceToBitmap, LXBitmap*, DstBitmap, ID3D11Resource*, SrcResource)
 
 
 public:
+
+	// Current objects
+	LXShaderD3D11* CurrentVertexShader = nullptr;
+
+	// Frame ConstantBuffers
+	LXConstantBufferD3D11* CBViewProjection = nullptr;
+	std::vector<LXRenderCommand*> Commands;
 
 	//Stats
 	UINT DrawCallCount;
@@ -154,7 +160,7 @@ public:
 
 	//Debug purpose. Default value is false. 
 	//Set true to immediately call the command.
-	bool DirectMode = false;
+	static bool DirectMode;
 
 #if LX_CHECK_BINDED_OBJECT
 

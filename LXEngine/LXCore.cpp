@@ -481,6 +481,7 @@ void LXCore::Run()
 		_Renderer->GetBeginEvent()->SetEvent();
 	}
 
+	// If RenderThread is not used, call the Render function now.
 	if (_Renderer && !LXRenderer::gUseRenderThread)
 	{
 		_Renderer->Render_MainThread();

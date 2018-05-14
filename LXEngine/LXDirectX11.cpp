@@ -33,15 +33,18 @@ using namespace D2D1;
 // Binded on variable and set from an INI file.
 //
 
-bool gCreateDeviceDebug = false;
-LXConsoleCommandT<bool> CSet_CreateDeviceDebug(L"Engine.ini", L"D3D11", L"CreateDeviceDebug", L"false", &gCreateDeviceDebug);
+namespace
+{
+	bool gCreateDeviceDebug = false;
+	LXConsoleCommandT<bool> CSet_CreateDeviceDebug(L"Engine.ini", L"D3D11", L"CreateDeviceDebug", L"false", &gCreateDeviceDebug);
 
-bool gVSync = false;
-LXConsoleCommandT<bool> CSet_VSync(L"Engine.ini", L"D3D11", L"VSync", L"false", &gVSync);
+	bool gVSync = false;
+	LXConsoleCommandT<bool> CSet_VSync(L"Engine.ini", L"D3D11", L"VSync", L"false", &gVSync);
 
-// Use Direct2D to display statistics
-// not supported by Nsight
-bool gD2D1 = true;
+	// Use Direct2D to display statistics
+	// not supported by Nsight
+	bool gD2D1 = true;
+};
 
 //#define BackBufferFormat DXGI_FORMAT_B8G8R8A8_UNORM // Preferable ?
 #define BackBufferFormat DXGI_FORMAT_R8G8B8A8_UNORM

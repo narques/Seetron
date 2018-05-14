@@ -166,6 +166,7 @@ LXActor* LXActorFactory::CreateActor(const LXString& ClassName)
 	}
 	else
 	{
+		LogE(LXActorFactory, L"Unable to create object of class %s", ClassName.GetBuffer());
 		CHK(0);
 	}
 	
