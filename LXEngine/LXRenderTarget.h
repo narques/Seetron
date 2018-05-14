@@ -12,6 +12,7 @@
 
 class LXTextureD3D11;
 class LXRenderTargetViewD3D11;
+class LXDepthStencilViewD3D11;
 
 class LXRenderTarget : public LXObject
 {
@@ -26,5 +27,20 @@ public:
 
 	LXTextureD3D11*  _TextureD3D11 = nullptr;
 	LXRenderTargetViewD3D11* _RenderTargetViewD3D11 = nullptr;
+};
+
+class LXRenderTargetDepth : public LXObject
+{
+
+public:
+
+	LXRenderTargetDepth(uint Width, uint Height, DXGI_FORMAT Format);
+	virtual ~LXRenderTargetDepth();
+
+	void CreateBuffers(uint Width, uint Height, DXGI_FORMAT Format);
+	void DeleteBuffers();
+
+	LXTextureD3D11*  _TextureD3D11 = nullptr;
+	LXDepthStencilViewD3D11* _RenderTargetViewD3D11 = nullptr;
 };
 

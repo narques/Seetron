@@ -55,11 +55,11 @@ LXRenderPipelineDeferred::LXRenderPipelineDeferred(LXRenderer* Renderer):_Render
 	RenderPassUI = new LXRenderPassUI(Renderer);
 	RenderPassSSAO = new LXRenderPassSSAO(Renderer);
 
-	_RenderPasses.push_back(RenderPassShadow);
+	_RenderPasses.push_back(RenderPassAux);
 	_RenderPasses.push_back(RenderPassDynamicTexture);
+	_RenderPasses.push_back(RenderPassShadow);
 	_RenderPasses.push_back(RenderPassGBuffer);
 	_RenderPasses.push_back(RenderPassSSAO);
-	//RenderPasses.push_back(RenderPassAux);
 	_RenderPasses.push_back(RenderPassLighting);
 	_RenderPasses.push_back(RenderPassTransparent);
 	//RenderPasses.push_back(RenderPassDownsample);
@@ -117,6 +117,7 @@ void LXRenderPipelineDeferred::BuildRenderClusterLists()
 	_ListRenderClusterOpaques.clear();
 	_ListRenderClusterTransparents.clear();
 	_ListRenderClusterLights.clear();
+	_ListRenderClusterAuxiliary.clear();
 
 	const LXProject* Project = _Renderer->GetProject();
 	if (!Project)
@@ -159,8 +160,12 @@ void LXRenderPipelineDeferred::BuildRenderClusterLists()
 					GetTextureCoordinatesInAtlas(RenderCluster, RenderCluster->ConstantBufferDataSpotLight->ShadowMapCoords);
 				}
 
-				// FOR DEBUG
-				//_ListRenderClusterOpaques.push_back(RenderCluster);
+				// For the Editor UI or Debug 
+				//_ListRenderClusterAuxiliary.push_back(RenderCluster);
+			}
+			else if (RenderCluster->Flags & ERenderClusterType::Auxiliary)
+			{
+				_ListRenderClusterAuxiliary.push_back(RenderCluster);
 			}
 			else if (RenderCluster->IsTransparent())
 			{

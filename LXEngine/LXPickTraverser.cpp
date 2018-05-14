@@ -727,6 +727,12 @@ vec3f* LXPickTraverser::GetNearestPOIOnNode( LXActor* pNode )
 
 void LXPickTraverser::AddPointOfInterest(float fDistance, LXActor* Actor, LXPrimitive* Primitive, const vec3f& nearest, const wchar_t* Method)
 {
+	// "Rescale" the Gizmo picked distances to make it a priority 
+	if (Actor->GetCID() & LX_NODETYPE_CS)
+	{
+		fDistance = SmoothStep(fDistance, 0.f, 10.f);
+	}
+	
 	m_mapIntersection[fDistance] = LXPOI(Actor, Primitive, nearest);
 	//LogD(PickTraverser, L"Picked %s distance %f (method %s)", Actor->GetName().GetBuffer(), fDistance, Method);
 }

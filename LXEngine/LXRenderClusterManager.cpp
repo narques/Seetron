@@ -111,10 +111,14 @@ void LXRenderClusterManager::AddActor(LXActor* Actor)
 				LXRenderCluster* RenderCluster = CreateRenderCluster(ActorMesh, PrimitiveInstance, MatrixWCS, BBoxWorld, PrimitiveInstance->Primitive.get(), PrimitiveInstance->Primitive->GetMaterial());
 				
 				// Cluster specialization
-				if (RenderCluster && (Actor->GetCID() & LX_NODETYPE_LIGHT))
+				if (Actor->GetCID() & LX_NODETYPE_LIGHT)
 				{
 					RenderCluster->Flags = ERenderClusterType::Light;
 					RenderCluster->SetLightParameters(ActorMesh);
+				}
+				else if (Actor->GetCID() & LX_NODETYPE_CS)
+				{
+					RenderCluster->Flags = ERenderClusterType::Auxiliary;
 				}
 				else
 				{	

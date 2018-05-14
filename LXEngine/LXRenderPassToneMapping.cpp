@@ -12,6 +12,8 @@
 #include "LXRenderTarget.h"
 #include "LXTextureD3D11.h"
 #include "LXRenderCommandList.h"
+#include "LXRenderPassAux.h"
+#include "LXRenderPassGBuffer.h"
 #include "LXRenderPassLighting.h"
 #include "LXRenderPipelineDeferred.h"
 #include "LXShaderD3D11.h"
@@ -77,14 +79,25 @@ void LXRenderPassToneMapping::Render(LXRenderCommandList* r)
 	LXRenderPipelineDeferred* RenderPipelineDeferred = dynamic_cast<LXRenderPipelineDeferred*>(Renderer->GetRenderPipeline());
 	CHK(RenderPipelineDeferred);
 
+	// Aux buffer contains 3D UI Items (Gizmo, LightIcons, Helpers, etc.)
+	const LXTextureD3D11* SceneColor = RenderPipelineDeferred->RenderPassLighting->GetOutputTexture();
+	const LXTextureD3D11* SceneDepth = RenderPipelineDeferred->GetDepthBuffer();
+	const LXTextureD3D11* AuxColor = RenderPipelineDeferred->GetRenderPassAux()->GetColorRenderTarget()->_TextureD3D11;
+	const LXTextureD3D11* AuxDepth = RenderPipelineDeferred->GetRenderPassAux()->GetDepthRenderTarget()->_TextureD3D11;
+
 	r->BeginEvent(L"ToneMapping");
 	r->OMSetRenderTargets2(_RenderTarget->_RenderTargetViewD3D11, nullptr);
 	r->IASetInputLayout(_VertexShader);
 	r->VSSetShader(_VertexShader);
 	r->PSSetShader(_PixelShader);
-	const LXTextureD3D11* Texture = RenderPipelineDeferred->RenderPassLighting->GetOutputTexture();
-	r->PSSetShaderResources(0, 1, Texture);
-	r->PSSetSamplers(0, 1, Texture);
+	r->PSSetShaderResources(0, 1, SceneColor);
+	r->PSSetShaderResources(1, 1, SceneDepth);
+	r->PSSetShaderResources(2, 1, AuxColor);
+	r->PSSetShaderResources(3, 1, AuxDepth);
+	r->PSSetSamplers(0, 1, SceneColor);
+	r->PSSetSamplers(1, 1, SceneDepth);
+	r->PSSetSamplers(2, 1, AuxColor);
+	r->PSSetSamplers(3, 1, AuxDepth);
 	Renderer->DrawScreenSpacePrimitive(r);
 	r->PSSetShaderResources(0, 1, nullptr);
 	r->EndEvent();

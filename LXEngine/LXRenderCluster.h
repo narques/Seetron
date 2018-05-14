@@ -29,7 +29,8 @@ class LXShaderD3D11;
 enum class ERenderClusterType
 {
 	Surface = LX_BIT(0),
-	Light = LX_BIT(1)
+	Light = LX_BIT(1),
+	Auxiliary = LX_BIT(2)
 };
 
 typedef LXFlags<ERenderClusterType> LXFlagsRenderCluster;

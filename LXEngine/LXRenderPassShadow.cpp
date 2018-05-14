@@ -43,6 +43,8 @@ LXRenderPassShadow::LXRenderPassShadow(LXRenderer* InRenderer):LXRenderPass(InRe
 	DepthStencilView = make_unique<LXDepthStencilViewD3D11>(TextureDepth.get());
 	LXConstantBufferDataSpotLight ConstantBufferDataSpotLight;
 	ConstantBufferSpotLight = make_unique<LXConstantBufferD3D11>(&ConstantBufferDataSpotLight, static_cast<int>(sizeof(LXConstantBufferDataSpotLight)));
+	LXRenderPipeline* RenderPipeline = Renderer->GetRenderPipeline();
+	RenderPipeline->AddToViewDebugger(L"ShadowMaps", TextureDepth.get(), ETextureChannel::ChannelR);
 }
 
 LXRenderPassShadow::~LXRenderPassShadow()
@@ -108,7 +110,7 @@ void LXRenderPassShadow::Render(LXRenderCommandList* RCL)
 			}
 		}
 
-		RCL->RSSetViewports2(x, y, kShadowMapWidth, kShadowMapHeight);
+		RCL->RSSetViewports2(x, y, (float)kShadowMapWidth, (float)kShadowMapHeight);
 		
 		RenderClusterLight->LightView->View = Transpose(WorldTransformation.GetMatrixView());
 		RenderClusterLight->LightView->Projection = Transpose(WorldTransformation.GetMatrixProjection());
@@ -116,7 +118,7 @@ void LXRenderPassShadow::Render(LXRenderCommandList* RCL)
 		RenderClusterLight->LightView->ProjectionInv = Transpose(WorldTransformation.GetMatrixProjectionInv());
 		RenderClusterLight->LightView->ViewInv = Transpose(WorldTransformation.GetMatrixViewInv());
 		RenderClusterLight->LightView->CameraPosition = vec4f(Camera.GetPosition(), 0.0f);
-		RenderClusterLight->LightView->RendererSize = vec2f(Renderer->Width, Renderer->Height);
+		RenderClusterLight->LightView->RendererSize = vec2f((float)Renderer->Width, (float)Renderer->Height);
 			
 		RCL->CBViewProjection = RenderPipelineDeferred->_CBViewProjection;
 		RCL->UpdateSubresource4(RenderPipelineDeferred->_CBViewProjection->D3D11Buffer, RenderClusterLight->LightView);

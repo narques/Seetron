@@ -61,6 +61,8 @@ public:
 	const LXRenderPassGBuffer* GetRenderPassGBuffer() const { return RenderPassGBuffer; }
 	const LXRenderPassLighting* GetRenderPassLighting() const { return RenderPassLighting; }
 	const LXRenderPassTransparency* GetRenderPassTransparency() const { return RenderPassTransparent; }
+	const LXRenderPassAux* GetRenderPassAux() const { return RenderPassAux; }
+
 	const LXRenderPass* GetPreviousRenderPass() const override { return _PreviousRenderPass; }
 	
 	// G-Buffer
@@ -75,6 +77,7 @@ public:
 	const LXTextureD3D11* GetOutput() const override;
 	void GetTextureCoordinatesInAtlas(LXRenderCluster* RenderCluster, vec4f& outTextureCoordinates);
 	const LXTextureD3D11* GetTextureNoise4x4() const { return _TextureNoise4x4; }
+	const list<LXRenderCluster*>& GetRenderClusterAuxiliary() const { return _ListRenderClusterAuxiliary; }
 
 private:
 
@@ -104,8 +107,9 @@ private:
 	// Visible clusters in the main view frustum
 	list<LXRenderCluster*> _ListRenderClusterOpaques;
 	list<LXRenderCluster*> _ListRenderClusterTransparents;
+	list<LXRenderCluster*> _ListRenderClusterAuxiliary;
 	list<LXRenderCluster*> _ListRenderClusterLights;
-
+	
 	// Global textures
 	LXTextureD3D11* _TextureD3D11IBL = nullptr;
 	LXTextureD3D11* _TextureNoise4x4 = nullptr;

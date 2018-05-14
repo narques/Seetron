@@ -70,6 +70,11 @@ void LXRenderPassLighting::CreateBuffers(uint Width, uint Height)
 	RenderTargetDiffuse = new LXRenderTarget(Width, Height, DXGI_FORMAT_R16G16B16A16_FLOAT);
 	RenderTargetSpecular = new LXRenderTarget(Width, Height, DXGI_FORMAT_R16G16B16A16_FLOAT);
 	RenderTargetCompose = new LXRenderTarget(Width, Height, DXGI_FORMAT_R16G16B16A16_FLOAT);
+
+	LXRenderPipeline* RenderPipeline = Renderer->GetRenderPipeline();
+	RenderPipeline->AddToViewDebugger(L"Lighting Diffuse", RenderTargetDiffuse->_TextureD3D11, ETextureChannel::ChannelRGB);
+	RenderPipeline->AddToViewDebugger(L"Lighting Specular", RenderTargetSpecular->_TextureD3D11, ETextureChannel::ChannelRGB);
+	RenderPipeline->AddToViewDebugger(L"Lighting Compose", RenderTargetCompose->_TextureD3D11, ETextureChannel::ChannelRGB);
 }
 
 void LXRenderPassLighting::RebuildShaders()
