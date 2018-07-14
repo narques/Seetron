@@ -17,8 +17,8 @@ class LXCORE_API LXFilepath : public LXString
 public:
 
 	LXFilepath( ) { }
-    LXFilepath( const wchar_t* str ):LXString(str){ }
-	LXFilepath( const LXString& str ):LXString(str) { }
+	LXFilepath( const wchar_t* str ):LXString(str){ ReplaceAll(L"\\", L"/"); }
+	LXFilepath( const LXString& str ):LXString(str) { ReplaceAll(L"\\", L"/"); }
 
 	LXString	GetExtension		( ) const;
 	LXString	GetFilename			( ) const;

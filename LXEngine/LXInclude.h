@@ -14,13 +14,14 @@
 // STL
 //
 
-#include <vector>
-#include <set>
-#include <map>
-#include <unordered_map>
-#include <list>
 #include <algorithm>
+#include <list>
+#include <map>
+#include <memory>
+#include <set>
 #include <stack>
+#include <unordered_map>
+#include <vector>
 using namespace std;
 
 //
@@ -73,7 +74,9 @@ using namespace std;
 // Misc
 //
 
+#if !LX_WINDOWS_MUTEX
 #include <mutex>
+#endif
 #include <omp.h>
 
 //

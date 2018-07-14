@@ -100,6 +100,9 @@ void LXRenderPassToneMapping::Render(LXRenderCommandList* r)
 	r->PSSetSamplers(3, 1, AuxDepth);
 	Renderer->DrawScreenSpacePrimitive(r);
 	r->PSSetShaderResources(0, 1, nullptr);
+	r->PSSetShaderResources(1, 1, nullptr);
+	r->PSSetShaderResources(2, 1, nullptr);
+	r->PSSetShaderResources(3, 1, nullptr);
 	r->EndEvent();
 }
 

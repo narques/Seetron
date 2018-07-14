@@ -76,24 +76,35 @@ void LXSyncEvent::Reset()
 
 LXMutex::LXMutex()
 {
-	//_hMutex = ::CreateMutex(NULL, FALSE, NULL); 
+#if LX_WINDOWS_MUTEX
+	_hMutex = ::CreateMutex(NULL, FALSE, NULL); 
+#endif
 }
 
 LXMutex::~LXMutex()
 {
-	//::CloseHandle(_hMutex);
+#if LX_WINDOWS_MUTEX
+	::CloseHandle(_hMutex);
+#endif
 }
 
 bool LXMutex::Lock(unsigned long dwTimeOut)
 {
+#if LX_WINDOWS_MUTEX
+	WaitForSingleObject(_hMutex, INFINITE);
+#else
 	_mutex.lock();
-	//WaitForSingleObject(_hMutex, INFINITE);
+#endif
 	return true;
 }
 
 bool LXMutex::Unlock()
 {
+#if LX_WINDOWS_MUTEX
+	ReleaseMutex(_hMutex);
+#else
 	_mutex.unlock();
+#endif
 	return true;
 }
 

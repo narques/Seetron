@@ -9,7 +9,6 @@
 #pragma once
 
 #include "LXPlatform.h"
-#include <mutex>
 
 class LXCORE_API LXThread
 {
@@ -64,9 +63,12 @@ public:
 	bool Unlock();
 
 private:
-
+		
+#if LX_WINDOWS_MUTEX
 	void* _hMutex = nullptr;
+#else
 	std::mutex _mutex;
+#endif
 };
 
 //----------------------------------------------------------------------------------------------------------
