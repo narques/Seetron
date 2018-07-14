@@ -61,6 +61,11 @@ public:
 
 	LXSmartObject();
 	virtual ~LXSmartObject(void);
+
+	// LXSmartObject pointer can be used as Property so as Variant.
+	LXSmartObject(const LXSmartObject& Object);
+	LXSmartObject& operator=(const LXSmartObject& Object);
+	bool operator== (const LXSmartObject& smartObject) const;
 	
 	// Recycle Bin Management 
 	virtual void 					OnTrashed(){};

@@ -14,6 +14,7 @@
 #include "LXVec3.h"
 #include "LXVec4.h"
 #include "LXPropertyIdentifiers.h"
+#include "LXPropertyType.h"
 
 typedef list<LXPropertyID> ListPropertyID;
 typedef pair<LXPropertyID, LXVariant*> PairPropetyIDVariant;
@@ -82,7 +83,7 @@ class LXCORE_API LXProperty// : public LXObject
 
 public:
 
-	LXProperty(void);
+	LXProperty(EPropertyType type);
 	virtual ~LXProperty(void);
 
 	// UI
@@ -135,8 +136,14 @@ public:
 	virtual	LXString		GetTypeName		( ) = 0;
 	virtual int				GetDataSize		( ) const = 0;
 
+	template<class T>
+	static EPropertyType	GetTemplateType();
+
+	EPropertyType			GetType() const { return _Type; }
+
 protected:
 
+	EPropertyType			_Type;
 	LXPropertyInfo*			_PropInfo;
 	LXSmartObject*			_Owner;
 };
@@ -158,7 +165,7 @@ public:
 	
 	// Constructors & Destructor
 
-	LXPropertyT			( );
+	LXPropertyT			( EPropertyType type );
 	LXPropertyT			( const LXPropertyT& prop );
 	virtual ~LXPropertyT( );
 	
@@ -205,8 +212,8 @@ public:
 protected:
 
 	void				SaveXML2		 ( const TSaveContext& saveContext, const LXString& strXMLName, const T& value );
-	void				GetValueFromXML2 ( const TLoadContext& LoadContext, T& value );
 	LXString			GetTypeName() override;
+	void				GetValueFromXML2 ( const TLoadContext& LoadContext );
 
 private:
 
@@ -227,7 +234,7 @@ class LXCORE_API LXPropertyEnum : public LXPropertyT<uint>
 
 public:
 
-	LXPropertyEnum(void) :LXPropertyT<uint>() {}
+	LXPropertyEnum() :LXPropertyT<uint>(EPropertyType::Enum) {}
 	virtual ~LXPropertyEnum(void) {}
 
 	// Optional callback for a dynamic choices filling
@@ -282,3 +289,4 @@ typedef LXPropertyT<LXAssetPtr>			LXPropertyAssetPtr;
 typedef LXPropertyT<LXMaterialNode*>	LXPropertyMaterialNodePtr;
 typedef LXPropertyT<ArraySmartObjects>	LXPropertyArraySmartObjects;
 typedef LXPropertyT<ArrayVec3f>			LXPropertyArrayVec3f;	
+typedef LXPropertyT<LXSmartObject>		LXPropertySmartObject;

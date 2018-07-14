@@ -19,6 +19,7 @@
 #include "LXMSXMLNode.h"
 #include "LXVariant.h"
 #include "LXAssetMesh.h"
+#include "LXPropertyType.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 typedef list<LXSmartObject*> ListSmartObjects;
@@ -29,6 +30,23 @@ map<LXObject*, std::function<void(LXSmartObject*, LXProperty*)>> LXSmartObject::
 LXSmartObject::LXSmartObject()
 {
 	DefineProperties();
+}
+
+LXSmartObject::LXSmartObject(const LXSmartObject& Object)
+{
+	throw "Function is not implemented";
+}
+
+LXSmartObject& LXSmartObject::operator=(const LXSmartObject& Object)
+{
+	throw "Function is not implemented";
+	return *this;
+}
+
+bool LXSmartObject::operator==(const LXSmartObject& smartObject) const
+{
+	throw "Function is not implemented";
+	return true;
 }
 
 LXSmartObject::~LXSmartObject(void)
@@ -393,7 +411,7 @@ void LXSmartObject::InvokeCB(const LXString& FunctionName)
 template<class T>
 LXPropertyT<T>* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, T* var)
 {
-	LXPropertyT<T>* pProperty = new LXPropertyT<T>();
+	LXPropertyT<T>* pProperty = new LXPropertyT<T>(LXProperty::GetTemplateType<T>());
 
 	auto It = propertyPositions.find(PID);
 	if (It == propertyPositions.end())
@@ -413,7 +431,7 @@ LXPropertyT<T>* LXSmartObject::DefineProperty(const LXString& name, const LXProp
 template<class T>
 LXPropertyT<T>* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, T* var, T Min, T Max)
 {
-	LXPropertyT<T>* pProperty = new LXPropertyT<T>();
+	LXPropertyT<T>* pProperty = new LXPropertyT<T>(LXProperty::GetTemplateType<T>());
 
 	auto It = propertyPositions.find(PID);
 	if (It == propertyPositions.end())
@@ -434,7 +452,7 @@ LXPropertyT<T>* LXSmartObject::DefineProperty(const LXString& name, const LXProp
 template<class T>
 LXPropertyT<T>* LXSmartObject::DefineProperty(const LXString& label, const LXString& name, const LXPropertyID& PID, T* var)
 {
-	LXPropertyT<T>* pProperty = new LXPropertyT<T>();
+	LXPropertyT<T>* pProperty = new LXPropertyT<T>(LXProperty::GetTemplateType<T>());
 
 	auto It = propertyPositions.find(PID);
 	if (It == propertyPositions.end())
@@ -733,6 +751,7 @@ template LXCORE_API LXPropertyDouble* LXSmartObject::DefineProperty(const LXStri
 template LXCORE_API LXPropertyArraySmartObjects* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, ArraySmartObjects* pArraySmartObjects);
 template LXCORE_API LXPropertyAssetPtr* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXAsset** pMaterialInput);
 template LXCORE_API LXPropertyMaterialNodePtr* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXMaterialNode** pMaterialInput);
+template LXCORE_API LXPropertySmartObject* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXSmartObject* smartObject);
 
 template LXCORE_API LXPropertyInt* LXSmartObject::CreateUserProperty(const LXString& Name, const int& Var);
 template LXCORE_API LXPropertyFloat* LXSmartObject::CreateUserProperty(const LXString& Name, const float& Var);

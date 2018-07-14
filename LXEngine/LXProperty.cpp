@@ -7,18 +7,28 @@
 //------------------------------------------------------------------------------------------------------
 
 #include "StdAfx.h"
-#include "LXProperty.h"
-#include "LXSettings.h"
+#include "LXAsset.h"
 #include "LXAssetManager.h"
 #include "LXCore.h"
-#include "LXProject.h"
+#include "LXGraphMaterial.h"
 #include "LXLogger.h"
-#include "LXMaterialNode.h"
-#include "LXMaterial.h"
 #include "LXMSXMLNode.h"
+#include "LXMaterial.h"
+#include "LXMaterialNode.h"
 #include "LXMatrix.h"
-#include "LXAsset.h"
+#include "LXNode.h"
+#include "LXObjectFactory.h"
+#include "LXProject.h"
+#include "LXProperty.h"
+#include "LXSettings.h"
 #include "LXMemory.h" // --- Must be the last included ---
+
+#define LX_DECLARE_GETTEMPLATETYPE(nativeType, enumType)			\
+template<>													\
+EPropertyType LXProperty::GetTemplateType<##nativeType>()	\
+{															\
+	return enumType;										\
+}															\
 
 //--------------------------------------------------------------------------
 // Local Functions
@@ -56,8 +66,9 @@ void SaveXML(const TSaveContext& saveContext, const LXString& strXMLName, const 
 
 LXString LXPropertyInfo::_CurrentGroup = L"MISC";
 
-LXProperty::LXProperty(void):
-_Owner(NULL)
+LXProperty::LXProperty(EPropertyType type):
+_Owner(nullptr),
+_Type(type)
 {
 	_PropInfo = new LXPropertyInfo();
 }
@@ -79,17 +90,35 @@ LXSmartObject* LXProperty::GetLXObject( ) const
 	return _Owner;
 }
 
+LX_DECLARE_GETTEMPLATETYPE(LXMatrix, EPropertyType::Matrix)
+LX_DECLARE_GETTEMPLATETYPE(bool, EPropertyType::Bool)
+LX_DECLARE_GETTEMPLATETYPE(double, EPropertyType::Double)
+LX_DECLARE_GETTEMPLATETYPE(float, EPropertyType::Float)
+LX_DECLARE_GETTEMPLATETYPE(vec2f, EPropertyType::Float2)
+LX_DECLARE_GETTEMPLATETYPE(vec3f, EPropertyType::Float3)
+LX_DECLARE_GETTEMPLATETYPE(vec4f, EPropertyType::Float4)
+LX_DECLARE_GETTEMPLATETYPE(int, EPropertyType::Int)
+LX_DECLARE_GETTEMPLATETYPE(uint, EPropertyType::Uint)
+LX_DECLARE_GETTEMPLATETYPE(LXString, EPropertyType::String)
+LX_DECLARE_GETTEMPLATETYPE(LXFilepath, EPropertyType::Filepath)
+LX_DECLARE_GETTEMPLATETYPE(LXAsset*, EPropertyType::AssetPtr)
+LX_DECLARE_GETTEMPLATETYPE(LXMaterialNode*, EPropertyType::MaterialNode)
+LX_DECLARE_GETTEMPLATETYPE(LXColor4f, EPropertyType::Color)
+LX_DECLARE_GETTEMPLATETYPE(vector<LXSmartObject*>, EPropertyType::ArraySmartObject)
+LX_DECLARE_GETTEMPLATETYPE(vector<vec3f>, EPropertyType::ArrayFloat3f)
+LX_DECLARE_GETTEMPLATETYPE(LXSmartObject, EPropertyType::SmartObject)
+
 //--------------------------------------------------------------------------
 // LXPropertyT 
 //--------------------------------------------------------------------------
 
 template <class T>
-LXPropertyT<T>::LXPropertyT():LXProperty(), _Var(nullptr)
+LXPropertyT<T>::LXPropertyT(EPropertyType type):LXProperty(type), _Var(nullptr)
 {
 };
 
 template <class T>
-LXPropertyT<T>::LXPropertyT(const LXPropertyT& prop)
+LXPropertyT<T>::LXPropertyT(const LXPropertyT& prop):LXProperty(prop._Type)
 {
 	_Var = prop._Var;
 	*_PropInfo = *prop._PropInfo;
@@ -141,9 +170,7 @@ void LXPropertyT<T>::SetMin(const T& valueMin)
 template <class T>
 void LXPropertyT<T>::LoadXML(const TLoadContext& LoadContext)
 { 
-	T val;
-	GetValueFromXML2(LoadContext, val);
-	SetValue(val, false);
+	GetValueFromXML2(LoadContext);
 }
 
 /*virtual*/
@@ -213,9 +240,19 @@ template<>
 bool LXPropertyT<float>::CheckRange(const float& value)
 {
 	if (GetMin())
-		CHK(value >= (*GetMin()));
+	{
+		if (value < *GetMin())
+		{
+			LogW(LXProperty, L"'%s' property value was out of range: %f min: %f", GetName().GetBuffer(), value, *GetMin());
+		}
+	}
 	if (GetMax())
-		CHK(value <= (*GetMax()));
+	{
+		if (value > *GetMax())
+		{
+			LogW(LXProperty, L"'%s' property value was out of range: %f max: %f", GetName().GetBuffer(), value, *GetMax());
+		}
+	}
 	return true;
  }
 
@@ -295,16 +332,18 @@ template class LXCORE_API LXPropertyT<LXAssetPtr>;
 template class LXCORE_API LXPropertyT<LXMaterialNodePtr>;
 template class LXCORE_API LXPropertyT<ArraySmartObjects>;
 template class LXCORE_API LXPropertyT<ArrayVec3f>;
+template class LXCORE_API LXPropertyT<LXSmartObject>;
 
 //
 // --- float ---
 //
 
 template<>
-void LXPropertyT<float>::GetValueFromXML2(const TLoadContext& LoadContext, float& value )
+void LXPropertyT<float>::GetValueFromXML2(const TLoadContext& LoadContext)
 {
 	const LXMSXMLNode& node = LoadContext.node;
-	value =  node.attrFloat(L"Value",1.f);
+	float value =  node.attrFloat(L"Value",1.f);
+	SetValue(value, false);
 }
 
 template<>
@@ -319,10 +358,11 @@ void LXPropertyT<float>::SaveXML2(const TSaveContext& saveContext, const LXStrin
 //
 
 template<>
-void LXPropertyT<double>::GetValueFromXML2(const TLoadContext& LoadContext, double& value)
+void LXPropertyT<double>::GetValueFromXML2(const TLoadContext& LoadContext)
 {
 	const LXMSXMLNode& node = LoadContext.node;
-	value = node.attrDouble(L"Value", 1.);
+	double value = node.attrDouble(L"Value", 1.);
+	SetValue(value, false);
 }
 
 template<>
@@ -337,10 +377,11 @@ void LXPropertyT<double>::SaveXML2(const TSaveContext& saveContext, const LXStri
 //
 
 template<>
-void LXPropertyT<LXString>::GetValueFromXML2(const TLoadContext& LoadContext, LXString& value )
+void LXPropertyT<LXString>::GetValueFromXML2(const TLoadContext& LoadContext)
 {
 	const LXMSXMLNode& node = LoadContext.node;
-	value = node.attr(L"Value");
+	LXString value = node.attr(L"Value");
+	SetValue(value, false);
 }
 
 template<>
@@ -354,10 +395,11 @@ void LXPropertyT<LXString>::SaveXML2(const TSaveContext& saveContext, const LXSt
 //
 
 template<>
-void LXPropertyT<LXFilepath>::GetValueFromXML2(const TLoadContext& LoadContext, LXFilepath& value )
+void LXPropertyT<LXFilepath>::GetValueFromXML2(const TLoadContext& LoadContext)
 {
 	const LXMSXMLNode& node = LoadContext.node;
-	value = LXFilepath(node.attr(L"Value"));
+	LXFilepath value = LXFilepath(node.attr(L"Value"));
+	SetValue(value, false);
 }
 
 template<>
@@ -371,14 +413,16 @@ void LXPropertyT<LXFilepath>::SaveXML2(const TSaveContext& saveContext, const LX
 //
 
 template<>
-void LXPropertyT<LXColor4f>::GetValueFromXML2(const TLoadContext& LoadContext, LXColor4f& value )
+void LXPropertyT<LXColor4f>::GetValueFromXML2(const TLoadContext& LoadContext)
 {
 	const LXMSXMLNode& node = LoadContext.node;
 	float r = node.attrFloat(L"R", 1.f);
 	float g = node.attrFloat(L"G", 1.f);
 	float b = node.attrFloat(L"B", 1.f);
 	float a = node.attrFloat(L"A", 1.f);
+	LXColor4f value;
 	value.Set(r,g,b,a);
+	SetValue(value, false);
 }
 
 template<>
@@ -392,10 +436,11 @@ void LXPropertyT<LXColor4f>::SaveXML2(const TSaveContext& saveContext,  const LX
 //
 
 template<>
-void LXPropertyT<int>::GetValueFromXML2(const TLoadContext& LoadContext, int& value )
+void LXPropertyT<int>::GetValueFromXML2(const TLoadContext& LoadContext)
 {
 	const LXMSXMLNode& node = LoadContext.node;
-	value = node.attrInt(L"Value", 1);
+	int value = node.attrInt(L"Value", 1);
+	SetValue(value, false);
 }
 
 template<>
@@ -409,10 +454,11 @@ void LXPropertyT<int>::SaveXML2(const TSaveContext& saveContext,  const LXString
 //
 
 template<>
-void LXPropertyT<uint>::GetValueFromXML2(const TLoadContext& LoadContext, uint& value )
+void LXPropertyT<uint>::GetValueFromXML2(const TLoadContext& LoadContext)
 {
 	const LXMSXMLNode& node = LoadContext.node;
-	value =  node.attrUint(L"Value", 1);
+	uint value =  node.attrUint(L"Value", 1);
+	SetValue(value, false);
 }
 
 template<>
@@ -426,10 +472,11 @@ void LXPropertyT<uint>::SaveXML2(const TSaveContext& saveContext,  const LXStrin
 //
 
 template<>
-void LXPropertyT<bool>::GetValueFromXML2(const TLoadContext& LoadContext, bool& value )
+void LXPropertyT<bool>::GetValueFromXML2(const TLoadContext& LoadContext)
 {
 	const LXMSXMLNode& node = LoadContext.node;
-	value = node.attrInt(L"Value", 0)!=0;
+	bool value = node.attrInt(L"Value", 0)!=0;
+	SetValue(value, false);
 }
 
 template<>
@@ -443,7 +490,7 @@ void LXPropertyT<bool>::SaveXML2(const TSaveContext& saveContext,  const LXStrin
 //
 
 template<>
-void LXPropertyT<LXMatrix>::GetValueFromXML2(const TLoadContext& LoadContext, LXMatrix& value )
+void LXPropertyT<LXMatrix>::GetValueFromXML2(const TLoadContext& LoadContext)
 {
 	const LXMSXMLNode& node = LoadContext.node;
 
@@ -463,8 +510,10 @@ void LXPropertyT<LXMatrix>::GetValueFromXML2(const TLoadContext& LoadContext, LX
 			CHK(0);	
 	}
 	
+	LXMatrix value;
 	value.SetOrigin(vo);
 	value.SetXYZ(vx, vy, vz);
+	SetValue(value, false);
 }
 
 template<>
@@ -488,12 +537,14 @@ void LXPropertyT<LXMatrix>::SaveXML2(const TSaveContext& saveContext,  const LXS
 //
 
 template<>
-void LXPropertyT<vec2f>::GetValueFromXML2(const TLoadContext& LoadContext, vec2f& value )
+void LXPropertyT<vec2f>::GetValueFromXML2(const TLoadContext& LoadContext)
 {
 	const LXMSXMLNode& node = LoadContext.node;
 	float x = node.attrFloat(L"X", 1.f);
 	float y = node.attrFloat(L"Y", 1.f);
+	vec2f value;
 	value.Set(x,y);
+	SetValue(value, false);
 }
 
 template<>
@@ -507,13 +558,15 @@ void LXPropertyT<vec2f>::SaveXML2(const TSaveContext& saveContext,  const LXStri
 //
 
 template<>
-void LXPropertyT<vec3f>::GetValueFromXML2(const TLoadContext& LoadContext, vec3f& value )
+void LXPropertyT<vec3f>::GetValueFromXML2(const TLoadContext& LoadContext)
 {
 	const LXMSXMLNode& node = LoadContext.node;
 	float x = node.attrFloat(L"X", 1.f);
 	float y = node.attrFloat(L"Y", 1.f);
 	float z = node.attrFloat(L"Z", 1.f);
+	vec3f value;
 	value.Set(x,y,z);
+	SetValue(value, false);
 }
 
 template<>
@@ -527,14 +580,16 @@ void LXPropertyT<vec3f>::SaveXML2(const TSaveContext& saveContext,  const LXStri
 //
 
 template<>
-void LXPropertyT<vec4f>::GetValueFromXML2(const TLoadContext& LoadContext, vec4f& value )
+void LXPropertyT<vec4f>::GetValueFromXML2(const TLoadContext& LoadContext)
 {
 	const LXMSXMLNode& node = LoadContext.node;
 	float x = node.attrFloat(L"X", 1.f);
 	float y = node.attrFloat(L"Y", 1.f);
 	float z = node.attrFloat(L"Z", 1.f);
 	float w = node.attrFloat(L"W", 1.f);
+	vec4f value;
 	value.Set(x,y,z,w);
+	SetValue(value, false);
 }
 
 template<>
@@ -548,25 +603,26 @@ void LXPropertyT<vec4f>::SaveXML2(const TSaveContext& saveContext,  const LXStri
 //
 
 template<>
-void LXPropertyT<LXAssetPtr>::GetValueFromXML2(const TLoadContext& LoadContext, LXAssetPtr& value )
+void LXPropertyT<LXAssetPtr>::GetValueFromXML2(const TLoadContext& LoadContext)
 {
 	const LXMSXMLNode& node = LoadContext.node;
 	LXString strFilename;
+	LXAssetPtr value = nullptr;
+
 	GetValueFromXML(node, strFilename);
-	if (strFilename.IsEmpty())
+	if (!strFilename.IsEmpty())
 	{
-		value = NULL;
-		return;
+		LXProject* Project = GetCore().GetProject();
+		CHK(Project);
+		if (Project)
+		{
+			LXAssetManager& mm = Project->GetAssetManager();
+			value = mm.GetAsset(strFilename);
+			CHK(value);
+		}
 	}
 
-	LXProject* Project = GetCore().GetProject();
-	CHK(Project);
-	if (Project)
-	{
-		LXAssetManager& mm = Project->GetAssetManager();
-		value = mm.GetAsset(strFilename);
-		CHK(value);
-	}
+	SetValue(value, false);
 }
 
 template<>
@@ -579,22 +635,24 @@ void LXPropertyT<LXAssetPtr>::SaveXML2(const TSaveContext& saveContext,  const L
 }
 
 template<>
-void LXPropertyT<LXMaterialNodePtr>::GetValueFromXML2(const TLoadContext& LoadContext, LXMaterialNodePtr& value)
+void LXPropertyT<LXMaterialNodePtr>::GetValueFromXML2(const TLoadContext& LoadContext)
 {
 	const LXMSXMLNode& node = LoadContext.node;
 	LXString XMLValue;
+	LXMaterialNodePtr value = nullptr;
 	GetValueFromXML(node, XMLValue);
  
-	if (XMLValue.IsEmpty())
+	if (!XMLValue.IsEmpty())
 	{
-		value = NULL;
-		return;
+
+
+		LXMaterial* Material = dynamic_cast<LXMaterial*>(_Owner);
+		CHK(Material);
+		LXMaterialNode* MaterialNode = Material->GetMaterialNodeFromUID(XMLValue);
+		value = MaterialNode;
 	}
 
-	LXMaterial* Material = dynamic_cast<LXMaterial*>(_Owner);
-	CHK(Material);
-	LXMaterialNode* MaterialNode = Material->GetMaterialNodeFromUID(XMLValue);
-	value = MaterialNode;
+	SetValue(value, false);
 }
 
 template<>
@@ -642,17 +700,16 @@ void LXPropertyEnum::LoadXML(const TLoadContext& LoadContext)
 {
 	CHK(!_funcBuildChoices);
 
-	uint val;
-	GetValueFromXML2(LoadContext, val);
+	GetValueFromXML2(LoadContext);
+	uint val = GetValue();
 
-	// We verify that the val is a existing choice
+	// Check if the value is a existing choice
 	// Else we set the first possible value
 	
 	for (uint i = 0; i < _arrayValues.size(); i++)
 	{
 		if (_arrayValues[i] == val)
 		{
-			SetValue(val, false);
 			return;
 		}
 	}
@@ -661,9 +718,6 @@ void LXPropertyEnum::LoadXML(const TLoadContext& LoadContext)
 		val = _arrayValues[0];
 	else
 		CHK(0); 
-	
-	SetValue(val, false);
-	
 }
 
 //
@@ -671,7 +725,7 @@ void LXPropertyEnum::LoadXML(const TLoadContext& LoadContext)
 //
 
 template<>
-void LXPropertyT<ListSmartObjects>::GetValueFromXML2(const TLoadContext& LoadContext, ListSmartObjects& value)
+void LXPropertyT<ListSmartObjects>::GetValueFromXML2(const TLoadContext& LoadContext)
 {
 	CHK(0);
 }
@@ -692,10 +746,13 @@ void LXPropertyT<ListSmartObjects>::SaveXML2(const TSaveContext& saveContext, co
 //
 
 template<>
-void LXPropertyT<ArraySmartObjects>::GetValueFromXML2(const TLoadContext& LoadContext, ArraySmartObjects& value)
+void LXPropertyT<ArraySmartObjects>::GetValueFromXML2(const TLoadContext& LoadContext)
 {
 	const LXMSXMLNode& node = LoadContext.node;
 	const LXString& name = node.name();
+
+	ArraySmartObjects value;
+
 	for (LXMSXMLNode e = node.begin(); e != node.end(); e++)
 	{
 		if (e.name() == L"LXMaterialNodeTextureSampler")
@@ -740,6 +797,8 @@ void LXPropertyT<ArraySmartObjects>::GetValueFromXML2(const TLoadContext& LoadCo
 		else
 			CHK(0);
 	}
+
+	SetValue(value, false);
 }
 
 template<>
@@ -758,10 +817,11 @@ void LXPropertyT<ArraySmartObjects>::SaveXML2(const TSaveContext& saveContext, c
 //
 
 template<>
-void LXPropertyT<ArrayVec3f>::GetValueFromXML2(const TLoadContext& LoadContext, ArrayVec3f& value)
+void LXPropertyT<ArrayVec3f>::GetValueFromXML2(const TLoadContext& LoadContext)
 {
 	const LXMSXMLNode& node = LoadContext.node;
 	const LXString& name = node.name();
+	ArrayVec3f value;
 	for (LXMSXMLNode e = node.begin(); e != node.end(); e++)
 	{
 		if (e.name() == L"Vector3f")
@@ -773,6 +833,8 @@ void LXPropertyT<ArrayVec3f>::GetValueFromXML2(const TLoadContext& LoadContext, 
 		else
 			CHK(0);
 	}
+
+	SetValue(value, false);
 }
 
 template<>
@@ -787,17 +849,29 @@ void LXPropertyT<ArrayVec3f>::SaveXML2(const TSaveContext& saveContext, const LX
 }
 
 //
-// LXPropertyT<T>::GetTypeName Default & Specializations
+// --- LXSmartObject ---
 //
+
+template<>
+void LXPropertyT<LXSmartObject>::GetValueFromXML2(const TLoadContext& LoadContext)
+{
+	_Var->Load(LoadContext);
+}
+
+template<>
+void LXPropertyT<LXSmartObject>::SaveXML2(const TSaveContext& saveContext, const LXString& strXMLName, const LXSmartObject& v)
+{
+	fwprintf(saveContext.pXMLFile, L"<%s>\n", strXMLName.GetBuffer());
+	v.Save(saveContext);
+	fwprintf(saveContext.pXMLFile, L"</%s>\n", strXMLName.GetBuffer());
+}
 
 template<> LXString LXPropertyT<bool>::GetTypeName() { return L"bool"; }
 template<> LXString LXPropertyT<int>::GetTypeName() { return L"int"; }
 template<> LXString LXPropertyT<float>::GetTypeName() { return L"float"; }
-
 template<class T>
 LXString LXPropertyT<T>::GetTypeName()
 {
 	LogE(Property, L"Missing specialization for property %s", _PropInfo->_Name.GetBuffer());
 	return L"";
 }
-

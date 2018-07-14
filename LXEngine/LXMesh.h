@@ -30,8 +30,10 @@ public:
 
 	LXMesh();
 	LXMesh(LXAssetMesh* InOwner);
+	LXMesh(const LXMesh& Object) = delete;
+	LXMesh& operator=(const LXMesh& Object) = delete;
 	virtual ~LXMesh();
-
+		
 	// Overridden from LXSmartObject
 	bool OnSaveChild(const TSaveContext& saveContext) const override;
 	bool OnLoadChild(const TLoadContext& LoadContext) override;
