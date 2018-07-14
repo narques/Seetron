@@ -33,7 +33,7 @@ public:
 	virtual ~LXMesh();
 
 	// Overridden from LXSmartObject
-	bool OnSaveChild(const TSaveContext& SaveContext) override;
+	bool OnSaveChild(const TSaveContext& saveContext) const override;
 	bool OnLoadChild(const TLoadContext& LoadContext) override;
 
 	// Hierarchy

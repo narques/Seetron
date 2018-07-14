@@ -22,7 +22,7 @@ public:
 
 	// Overridden from LXManager2
 	virtual void GetObjects(ListObjects& listObject) override;
-	virtual bool OnSaveChild(const TSaveContext& saveContext) override;
+	virtual bool OnSaveChild(const TSaveContext& saveContext) const override;
 	virtual bool OnLoadChild(const TLoadContext& loadContext) override;
 	
 private:

@@ -53,7 +53,7 @@ const SetSmartObjects& LXSelection::Get( )
 }
 
 /*virtual*/
-bool LXSelection::OnSaveChild( const TSaveContext& saveContext  ) 
+bool LXSelection::OnSaveChild( const TSaveContext& saveContext  ) const 
 { 
 	CHK(0); // TODO ASCII to UNICODE !
 	fprintf(saveContext.pXMLFile,"<XMLProp>");

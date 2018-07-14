@@ -46,7 +46,7 @@ private:
 	//
 
 	bool OnLoadChild(const TLoadContext& loadContext) override;
-	bool OnSaveChild(const TSaveContext& saveContext) override;
+	bool OnSaveChild(const TSaveContext& saveContext) const override;
 	
 	// Misc
 	void OnMeshesdTransformationChanged();

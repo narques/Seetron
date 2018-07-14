@@ -27,7 +27,7 @@ LXAnimation::~LXAnimation()
 	}
 }
 
-bool LXAnimation::OnSaveChild(const TSaveContext& saveContext)
+bool LXAnimation::OnSaveChild(const TSaveContext& saveContext) const
 {
 	for (auto& it : _tracks)
 	{

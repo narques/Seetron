@@ -236,7 +236,7 @@ bool LXAssetMesh::OnLoadChild(const TLoadContext& loadContext)
 	return bRet;
 }
 
-bool LXAssetMesh::OnSaveChild(const TSaveContext& saveContext)
+bool LXAssetMesh::OnSaveChild(const TSaveContext& saveContext) const
 {
 	_Root->Save(saveContext);
 	return true;

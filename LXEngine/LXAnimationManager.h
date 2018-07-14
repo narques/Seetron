@@ -23,7 +23,7 @@ public:
 	virtual ~LXAnimationManager(void);
 
 	// Overridden from LXSmartObject
-	virtual bool		OnSaveChild(const TSaveContext& saveContext) override;
+	virtual bool		OnSaveChild(const TSaveContext& saveContext) const override;
 	virtual bool		OnLoadChild(const TLoadContext& loadContext) override;
 	virtual void		GetChildren(ListSmartObjects&);
 	

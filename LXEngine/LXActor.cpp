@@ -325,11 +325,12 @@ void LXActor::RemoveChild(LXActor* Actor)
 		CHK(0);
 }
 
-bool LXActor::OnSaveChild(const TSaveContext& saveContext)
+bool LXActor::OnSaveChild(const TSaveContext& saveContext) const
 {
-	ListActors::iterator It;
-	for (It = _Children.begin(); It != _Children.end(); It++)
+	for (ListActors::const_iterator It = _Children.begin(); It != _Children.end(); It++)
+	{
 		(*It)->Save(saveContext);
+	}
 	return true;
 }
 

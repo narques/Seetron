@@ -234,14 +234,14 @@ void LXProject::OnFilesLoaded( bool Success )
 	m_pActiveView = m_pMainView;
 }
 
-bool LXProject::OnSaveChild(const TSaveContext& saveContext)
+bool LXProject::OnSaveChild(const TSaveContext& saveContext) const
 {
 	//
 	// Order is important !
 	// Ex : ViewState needs a Material pointer, Animation needs some property pointers,...
 	//
 	
-	GetViewStateManager().Save(saveContext);
+	m_pViewStateManager->Save(saveContext);
 	//GetSelectionManager().Save(saveContext);
 	//GetSnapshotManager().Save(saveContext);
 	m_pScene->Save(saveContext);

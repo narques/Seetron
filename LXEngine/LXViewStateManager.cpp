@@ -27,9 +27,9 @@ LXViewStateManager::~LXViewStateManager(void)
 		delete *It;
 }
 
-bool LXViewStateManager::OnSaveChild(const TSaveContext& saveContext)
+bool LXViewStateManager::OnSaveChild(const TSaveContext& saveContext) const
 {
-	for (ListViewStates::iterator It = _listViewStates.begin(); It!= _listViewStates.end(); It++)
+	for (ListViewStates::const_iterator It = _listViewStates.begin(); It!= _listViewStates.end(); It++)
 		(*It)->Save(saveContext);
 	
 	return true;

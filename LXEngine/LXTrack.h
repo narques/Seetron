@@ -31,7 +31,7 @@ public:
 	virtual ~LXTrack();
 
 	// Overridden from LXSmartObject
-	virtual bool OnSaveChild(const TSaveContext& saveContext) override;
+	virtual bool OnSaveChild(const TSaveContext& saveContext) const override;
 	virtual bool OnLoadChild(const TLoadContext& loadContext) override;
 	virtual void GetChildren(ListSmartObjects& list)override;
 

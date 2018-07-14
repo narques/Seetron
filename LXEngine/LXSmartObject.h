@@ -97,7 +97,7 @@ public:
 	// pAttibute. offers the ability to set an attribute to the xml tag object. It's useful when we need to know something 
 	// before to create the object (the type of the template class for example).
 	//------------------------------------------------------------------------------------------------------
-	bool							Save(const TSaveContext& saveContext, LXString* pName = nullptr, LXString* pAttribute = nullptr);
+	bool							Save(const TSaveContext& saveContext, LXString* pName = nullptr, LXString* pAttribute = nullptr) const;
 	bool         					Load(const TLoadContext& loadContext, LXString* pName = nullptr);
 	bool							LoadWithMSXML(const LXFilepath& strFilename, bool bLoadChilds = true, bool bLoadViewStates = true);
 			
@@ -159,7 +159,7 @@ protected:
 
 private:
 
-	virtual bool					OnSaveChild(const TSaveContext& saveContext) { return true; }
+	virtual bool					OnSaveChild(const TSaveContext& saveContext) const { return true; }
 	virtual bool					OnLoadChild(const TLoadContext& loadContext) { return true; }
 
 	void							DefineProperties();

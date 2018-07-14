@@ -98,7 +98,7 @@ LXProperty* LXSmartObject::GetProperty(const LXString& name)
 	return nullptr;
 }
 
-bool LXSmartObject::Save(const TSaveContext& saveContext, LXString* pName, LXString* pAttribute)
+bool LXSmartObject::Save(const TSaveContext& saveContext, LXString* pName, LXString* pAttribute) const
 {
 	if (!_bPersistent)
 		return true;

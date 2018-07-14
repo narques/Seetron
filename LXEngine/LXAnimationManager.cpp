@@ -30,7 +30,7 @@ LXAnimationManager::~LXAnimationManager(void)
 	CHK(_listVolatileAnimations.size() == 0);
 }
 
-bool LXAnimationManager::OnSaveChild(const TSaveContext& saveContext)
+bool LXAnimationManager::OnSaveChild(const TSaveContext& saveContext) const
 {
 	for (LXAnimation* pAnimation : _listAnimations)
 	{

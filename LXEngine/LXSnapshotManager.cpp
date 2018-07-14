@@ -29,7 +29,7 @@ void LXSnapshotManager::GetObjects(ListObjects& listObject)
 	}
 }
 
-bool LXSnapshotManager::OnSaveChild(const TSaveContext& saveContext)
+bool LXSnapshotManager::OnSaveChild(const TSaveContext& saveContext) const
 {
 	for (auto It = _listSnapshots.begin(); It != _listSnapshots.end(); It++)
 		(*It)->Save(saveContext);

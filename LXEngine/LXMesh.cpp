@@ -96,7 +96,7 @@ LXMesh::~LXMesh()
 	}
 }
 
-bool LXMesh::OnSaveChild(const TSaveContext& saveContext)
+bool LXMesh::OnSaveChild(const TSaveContext& saveContext) const
 {
 	// Save primitives
 	for (VectorPrimitiveInstances::const_iterator It = _vectorPrimitives.begin(); It != _vectorPrimitives.end(); It++)

@@ -28,7 +28,7 @@ LXTrack::~LXTrack()
 		delete it.second;
 }
 
-bool LXTrack::OnSaveChild(const TSaveContext& saveContext)
+bool LXTrack::OnSaveChild(const TSaveContext& saveContext) const
 {
 	for (auto &it : _keys)
 	{

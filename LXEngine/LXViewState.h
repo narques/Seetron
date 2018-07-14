@@ -70,7 +70,7 @@ public:
 	// Overridden from LXSmartObject
 	//
 	void					DefineProperties( ) ;
-	virtual bool			OnSaveChild( const TSaveContext& saveContext  ) override;
+	virtual bool			OnSaveChild( const TSaveContext& saveContext  ) const override;
 	virtual bool			OnLoadChild( const TLoadContext& loadContext ) override;
 
 	void					ZoomOnBBoxAnimated( const LXBBox& box, bool bAnimated = true );

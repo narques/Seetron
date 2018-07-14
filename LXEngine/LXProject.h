@@ -60,7 +60,7 @@ public:
 	// Overridden from LXSmartObject
 	//
 
-	virtual bool				OnSaveChild				( const TSaveContext& saveContext ) override;
+	virtual bool				OnSaveChild				( const TSaveContext& saveContext ) const override;
 	virtual bool				OnLoadChild				( const TLoadContext& loadContext ) override;
 	
 	//
@@ -170,7 +170,7 @@ private:
 	// SceneGraph & states
 	//
 
-	LXScene*						m_pScene;			
+	LXScene*						m_pScene = nullptr;			
 	LXActorSceneCapture*			m_pSceneCapture = nullptr;	// Shortcut ( Owned by Scene )
 	ArrayLights						m_lights;
 

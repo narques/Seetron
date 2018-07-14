@@ -233,7 +233,7 @@ void LXViewState::DefineProperties( )
 }
 
 /*virtual*/ 
-bool LXViewState::OnSaveChild(const TSaveContext& saveContext)
+bool LXViewState::OnSaveChild(const TSaveContext& saveContext) const
 {
 // 	for (LXSmartObject* pSmartObject : m_arraySmartObject)
 // 	{

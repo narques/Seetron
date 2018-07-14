@@ -30,7 +30,7 @@ LXSelectionManager::~LXSelectionManager(void)
 {
 }
 
-bool LXSelectionManager::OnSaveChild(const TSaveContext& saveContext)
+bool LXSelectionManager::OnSaveChild(const TSaveContext& saveContext) const
 {
 	for (auto It = _listSelections.begin(); It!= _listSelections.end(); It++)
 		(*It)->Save(saveContext);

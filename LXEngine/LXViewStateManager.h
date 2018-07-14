@@ -21,7 +21,7 @@ public:
 	virtual ~LXViewStateManager(void);
 
 	// Overridden from LXSmartObject
-	virtual bool	OnSaveChild						( const TSaveContext& saveContext  ) override;
+	virtual bool	OnSaveChild						( const TSaveContext& saveContext  ) const override;
 	virtual bool	OnLoadChild						( const TLoadContext& loadContext ) override;
 	
 	// Overridden from LXManager2

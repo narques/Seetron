@@ -114,7 +114,7 @@ public:
 	void				RemoveChild(LXActor* Actor);
 
 	// Serialization
-	bool				OnSaveChild(const TSaveContext& saveContext) override;
+	bool				OnSaveChild(const TSaveContext& saveContext) const override;
 	bool				OnLoadChild(const TLoadContext& loadContext) override;
 	
 	// Constraints

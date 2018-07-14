@@ -25,7 +25,7 @@ public:
 	//
 
 	void						DefineProperties() ;
-	virtual bool				OnSaveChild				( const TSaveContext& saveContext  ) override;
+	virtual bool				OnSaveChild				( const TSaveContext& saveContext ) const override;
 	virtual bool				OnLoadChild				( const TLoadContext& loadContext ) override;
 	const SetSmartObjects&		Get						( ); 
 	void						Set						( const SetSmartObjects& sps) { m_setSmartObjects = sps; }
