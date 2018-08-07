@@ -75,11 +75,13 @@ LXString LXAsset::GetRelativeFilename() const
 	}
 }
 
-const ListProperties& LXAsset::GetProperties()
+const ListProperties& LXAsset::GetProperties() const
 {
 	const ListProperties& listProperties =  __super::GetProperties();
 	if (State == EResourceState::LXResourceState_Unloaded)
-		Load();
+	{
+		(const_cast<LXAsset*>(this))->Load();
+	}
 
 	// Load failed
 	if (State == EResourceState::LXResourceState_Unloaded)

@@ -40,15 +40,14 @@ public:
 	LXString GetRelativeFilename() const;
 	virtual LXString GetFileExtension() = 0;
 
-	
+	virtual const ListProperties& GetProperties() const override;
+		
 protected:
 
 	void DefineProperties() ;
 	GetSet(LXFilepath, _filepath, Filepath);
 
-private:
-
-	virtual const ListProperties& GetProperties() override;
+	
 	
 public:
 

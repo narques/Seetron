@@ -57,6 +57,7 @@ void GetValueFromXML(const LXMSXMLNode& node, LXString& value)
 void SaveXML(const TSaveContext& saveContext, const LXString& strXMLName, const LXString& value )
 { 
 	CHK(!strXMLName.IsEmpty());
+	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 	fwprintf(saveContext.pXMLFile,L"<%s Value=\"%s\"/>\n", strXMLName.GetBuffer(), value.GetBuffer());
 }
 
@@ -105,8 +106,10 @@ LX_DECLARE_GETTEMPLATETYPE(LXAsset*, EPropertyType::AssetPtr)
 LX_DECLARE_GETTEMPLATETYPE(LXMaterialNode*, EPropertyType::MaterialNode)
 LX_DECLARE_GETTEMPLATETYPE(LXColor4f, EPropertyType::Color)
 LX_DECLARE_GETTEMPLATETYPE(vector<LXSmartObject*>, EPropertyType::ArraySmartObject)
+LX_DECLARE_GETTEMPLATETYPE(list<LXSmartObject*>, EPropertyType::ListSmartObject)
 LX_DECLARE_GETTEMPLATETYPE(vector<vec3f>, EPropertyType::ArrayFloat3f)
 LX_DECLARE_GETTEMPLATETYPE(LXSmartObject, EPropertyType::SmartObject)
+LX_DECLARE_GETTEMPLATETYPE(shared_ptr<LXSmartObject>, EPropertyType::SharedObject)
 
 //--------------------------------------------------------------------------
 // LXPropertyT 
@@ -331,8 +334,10 @@ template class LXCORE_API LXPropertyT<LXMatrix>;
 template class LXCORE_API LXPropertyT<LXAssetPtr>;
 template class LXCORE_API LXPropertyT<LXMaterialNodePtr>;
 template class LXCORE_API LXPropertyT<ArraySmartObjects>;
+template class LXCORE_API LXPropertyT<ListSmartObjects>;
 template class LXCORE_API LXPropertyT<ArrayVec3f>;
 template class LXCORE_API LXPropertyT<LXSmartObject>;
+template class LXCORE_API LXPropertyT<shared_ptr<LXSmartObject>>;
 
 //
 // --- float ---
@@ -350,6 +355,7 @@ template<>
 void LXPropertyT<float>::SaveXML2(const TSaveContext& saveContext, const LXString& strXMLName, const float& value)
 {
 	CHK(!strXMLName.IsEmpty());
+	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 	fwprintf(saveContext.pXMLFile, L"<%s Value=\"%f\"/>\n", strXMLName.GetBuffer(), value);
 }
 
@@ -369,6 +375,7 @@ template<>
 void LXPropertyT<double>::SaveXML2(const TSaveContext& saveContext, const LXString& strXMLName, const double& value)
 {
 	CHK(!strXMLName.IsEmpty());
+	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 	fwprintf(saveContext.pXMLFile, L"<%s Value=\"%f\"/>\n", strXMLName.GetBuffer(), value);
 }
 
@@ -387,7 +394,11 @@ void LXPropertyT<LXString>::GetValueFromXML2(const TLoadContext& LoadContext)
 template<>
 void LXPropertyT<LXString>::SaveXML2(const TSaveContext& saveContext, const LXString& strXMLName, const LXString& value )
 { 
-	fwprintf(saveContext.pXMLFile,L"<%s Value=\"%s\"/>\n", strXMLName.GetBuffer(), value.GetBuffer());
+	if (!value.IsEmpty())
+	{
+		fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
+		fwprintf(saveContext.pXMLFile, L"<%s Value=\"%s\"/>\n", strXMLName.GetBuffer(), value.GetBuffer());
+	}
 }
 
 //
@@ -405,6 +416,7 @@ void LXPropertyT<LXFilepath>::GetValueFromXML2(const TLoadContext& LoadContext)
 template<>
 void LXPropertyT<LXFilepath>::SaveXML2(const TSaveContext& saveContext, const LXString& strXMLName, const LXFilepath& value )
 { 
+	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 	fwprintf(saveContext.pXMLFile,L"<%s Value=\"%s\"/>\n", strXMLName.GetBuffer(), value.GetBuffer());
 }
 
@@ -428,6 +440,7 @@ void LXPropertyT<LXColor4f>::GetValueFromXML2(const TLoadContext& LoadContext)
 template<>
 void LXPropertyT<LXColor4f>::SaveXML2(const TSaveContext& saveContext,  const LXString& strXMLName, const LXColor4f& color)
 {
+	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 	fwprintf(saveContext.pXMLFile, L"<%s R=\"%f\" G=\"%f\" B=\"%f\" A=\"%f\"/>\n", strXMLName.GetBuffer(), color.r, color.g, color.b, color.a);
 }
 
@@ -446,6 +459,7 @@ void LXPropertyT<int>::GetValueFromXML2(const TLoadContext& LoadContext)
 template<>
 void LXPropertyT<int>::SaveXML2(const TSaveContext& saveContext,  const LXString& strXMLName, const int& value )
 {
+	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 	fwprintf(saveContext.pXMLFile,L"<%s Value=\"%i\"/>\n", strXMLName.GetBuffer(), value);
 }
 
@@ -464,6 +478,7 @@ void LXPropertyT<uint>::GetValueFromXML2(const TLoadContext& LoadContext)
 template<>
 void LXPropertyT<uint>::SaveXML2(const TSaveContext& saveContext,  const LXString& strXMLName, const uint& value )
 {
+	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 	fwprintf(saveContext.pXMLFile,L"<%s Value=\"%u\"/>\n", strXMLName.GetBuffer(), value);
 }
 
@@ -482,6 +497,7 @@ void LXPropertyT<bool>::GetValueFromXML2(const TLoadContext& LoadContext)
 template<>
 void LXPropertyT<bool>::SaveXML2(const TSaveContext& saveContext,  const LXString& strXMLName, const bool& value )
 {
+	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 	fwprintf(saveContext.pXMLFile,L"<%s Value=\"%s\"/>\n", strXMLName.GetBuffer(), value?L"1":L"0");
 }
 
@@ -524,6 +540,7 @@ void LXPropertyT<LXMatrix>::SaveXML2(const TSaveContext& saveContext,  const LXS
 	vec3f vy = value.GetVy();
 	vec3f vz = value.GetVz();
 
+	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 	fwprintf(saveContext.pXMLFile, L"<%s>\n", strXMLName.GetBuffer());
 	fwprintf(saveContext.pXMLFile, L"<Origin X=\"%f\" Y=\"%f\" Z=\"%f\"/>\n", vo.x, vo.y, vo.z);
 	fwprintf(saveContext.pXMLFile, L"<VX X=\"%f\" Y=\"%f\" Z=\"%f\"/>\n", vx.x, vx.y, vx.z);
@@ -550,6 +567,7 @@ void LXPropertyT<vec2f>::GetValueFromXML2(const TLoadContext& LoadContext)
 template<>
 void LXPropertyT<vec2f>::SaveXML2(const TSaveContext& saveContext,  const LXString& strXMLName, const vec2f& v)
 {
+	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 	fwprintf(saveContext.pXMLFile, L"<%s X=\"%f\" Y=\"%f\"/>\n", strXMLName.GetBuffer(), v.x, v.y);
 }
 
@@ -572,6 +590,7 @@ void LXPropertyT<vec3f>::GetValueFromXML2(const TLoadContext& LoadContext)
 template<>
 void LXPropertyT<vec3f>::SaveXML2(const TSaveContext& saveContext,  const LXString& strXMLName, const vec3f& v)
 {
+	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 	fwprintf(saveContext.pXMLFile, L"<%s X=\"%f\" Y=\"%f\" Z=\"%f\"/>\n", strXMLName.GetBuffer(), v.x, v.y, v.z);
 }
 
@@ -595,6 +614,7 @@ void LXPropertyT<vec4f>::GetValueFromXML2(const TLoadContext& LoadContext)
 template<>
 void LXPropertyT<vec4f>::SaveXML2(const TSaveContext& saveContext,  const LXString& strXMLName, const vec4f& v)
 {
+	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 	fwprintf(saveContext.pXMLFile, L"<%s X=\"%f\" Y=\"%f\" Z=\"%f\" W=\"%f\"/>\n", strXMLName.GetBuffer(), v.x, v.y, v.z, v.w);
 }
 
@@ -661,6 +681,7 @@ void LXPropertyT<LXMaterialNodePtr>::SaveXML2(const TSaveContext& saveContext, c
 	LXString* pUID = nullptr;
 	if (v)
 		pUID = v->GetUID(true);
+	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 	fwprintf(saveContext.pXMLFile, L"<%s Value=\"%s\"/>\n", strXMLName.GetBuffer(), pUID?pUID->GetBuffer():L"");
 }
 
@@ -721,27 +742,6 @@ void LXPropertyEnum::LoadXML(const TLoadContext& LoadContext)
 }
 
 //
-// --- ListSmartObjects ---
-//
-
-template<>
-void LXPropertyT<ListSmartObjects>::GetValueFromXML2(const TLoadContext& LoadContext)
-{
-	CHK(0);
-}
-
-template<>
-void LXPropertyT<ListSmartObjects>::SaveXML2(const TSaveContext& saveContext, const LXString& strXMLName, const ListSmartObjects& v)
-{
-	fwprintf(saveContext.pXMLFile, L"<%s>\n", strXMLName.GetBuffer());
-	for (LXSmartObject *SmartObject : v)
-	{
-		SmartObject->Save(saveContext);
-	}
-	fwprintf(saveContext.pXMLFile, L"</%s>\n", strXMLName.GetBuffer());
-}
-
-//
 // --- ArraySmartObjects ---
 //
 
@@ -795,7 +795,21 @@ void LXPropertyT<ArraySmartObjects>::GetValueFromXML2(const TLoadContext& LoadCo
 			value.push_back(p);
 		}
 		else
-			CHK(0);
+		{
+			LXSmartObject* smartObject = LXObjectFactory::CreateObject(e.name(), LoadContext.pOwner);
+			if (smartObject)
+			{
+				TLoadContext loadContextChild(e);
+				loadContextChild.pOwner = LoadContext.pOwner;
+				loadContextChild.filepath = LoadContext.filepath;
+				smartObject->Load(loadContextChild);
+				value.push_back(smartObject);
+			}
+			else
+			{
+				LogE(LXProperty, L"Unknonw object type (%s) for array", e.name());
+			}
+		}
 	}
 
 	SetValue(value, false);
@@ -804,13 +818,71 @@ void LXPropertyT<ArraySmartObjects>::GetValueFromXML2(const TLoadContext& LoadCo
 template<>
 void LXPropertyT<ArraySmartObjects>::SaveXML2(const TSaveContext& saveContext, const LXString& strXMLName, const ArraySmartObjects& v)
 {
-	fwprintf(saveContext.pXMLFile, L"<%s>\n", strXMLName.GetBuffer());
-	for (LXSmartObject* SmartObject : v)
+	if (v.size() > 0)
 	{
-		SmartObject->Save(saveContext);
+		fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
+		fwprintf(saveContext.pXMLFile, L"<%s>\n", strXMLName.GetBuffer());
+		saveContext.Indent++;
+		for (LXSmartObject* SmartObject : v)
+		{
+			SmartObject->Save(saveContext);
+		}
+		saveContext.Indent--;
+		fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
+		fwprintf(saveContext.pXMLFile, L"</%s>\n", strXMLName.GetBuffer());
 	}
-	fwprintf(saveContext.pXMLFile, L"</%s>\n", strXMLName.GetBuffer());
 }
+
+//
+// --- ListSmartObjects ---
+//
+
+template<>
+void LXPropertyT<ListSmartObjects>::GetValueFromXML2(const TLoadContext& LoadContext)
+{
+	const LXMSXMLNode& node = LoadContext.node;
+	const LXString& name = node.name();
+
+	ListSmartObjects value;
+
+	for (LXMSXMLNode e = node.begin(); e != node.end(); e++)
+	{
+		LXSmartObject* smartObject = LXObjectFactory::CreateObject(e.name(), LoadContext.pOwner);
+		if (smartObject)
+		{
+			TLoadContext loadContextChild(e);
+			loadContextChild.pOwner = LoadContext.pOwner;
+			loadContextChild.filepath = LoadContext.filepath;
+			smartObject->Load(loadContextChild);
+			value.push_back(smartObject);
+		}
+		else
+		{
+			LogE(LXProperty, L"Unknonw object type (%s) for List", e.name());
+		}
+	}
+
+	SetValue(value, false);
+}
+
+template<>
+void LXPropertyT<ListSmartObjects>::SaveXML2(const TSaveContext& saveContext, const LXString& strXMLName, const ListSmartObjects& v)
+{
+	if(v.size() > 0)
+	{
+		fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
+		fwprintf(saveContext.pXMLFile, L"<%s>\n", strXMLName.GetBuffer());
+		saveContext.Indent++;
+		for (LXSmartObject* SmartObject : v)
+		{
+			SmartObject->Save(saveContext);
+		}
+		saveContext.Indent--;
+		fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
+		fwprintf(saveContext.pXMLFile, L"</%s>\n", strXMLName.GetBuffer());
+	}
+}
+
 
 //
 // --- ArrayVec3f ---
@@ -840,11 +912,16 @@ void LXPropertyT<ArrayVec3f>::GetValueFromXML2(const TLoadContext& LoadContext)
 template<>
 void LXPropertyT<ArrayVec3f>::SaveXML2(const TSaveContext& saveContext, const LXString& strXMLName, const ArrayVec3f& v)
 {
+	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 	fwprintf(saveContext.pXMLFile, L"<%s>\n", strXMLName.GetBuffer());
+	saveContext.Indent++;
 	for (const vec3f elem : v)
 	{
+		fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 		fwprintf(saveContext.pXMLFile, L"<Vector3f X=\"%f\" Y=\"%f\" Z=\"%f\"/>\n", elem.x, elem.y, elem.z);
 	}
+	saveContext.Indent--;
+	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 	fwprintf(saveContext.pXMLFile, L"</%s>\n", strXMLName.GetBuffer());
 }
 
@@ -855,16 +932,48 @@ void LXPropertyT<ArrayVec3f>::SaveXML2(const TSaveContext& saveContext, const LX
 template<>
 void LXPropertyT<LXSmartObject>::GetValueFromXML2(const TLoadContext& LoadContext)
 {
-	_Var->Load(LoadContext);
+	// To load the object as a property, set the className with 
+	// the property name to pass the verification
+	LXString className = LoadContext.node.name();
+	_Var->Load(LoadContext, &className);
 }
 
 template<>
 void LXPropertyT<LXSmartObject>::SaveXML2(const TSaveContext& saveContext, const LXString& strXMLName, const LXSmartObject& v)
 {
+	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 	fwprintf(saveContext.pXMLFile, L"<%s>\n", strXMLName.GetBuffer());
-	v.Save(saveContext);
+	v.Save(saveContext, nullptr, nullptr, true);
+	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 	fwprintf(saveContext.pXMLFile, L"</%s>\n", strXMLName.GetBuffer());
 }
+
+//
+// --- shared_ptr<LXSmartObject> ---
+//
+
+template<>
+void LXPropertyT<shared_ptr<LXSmartObject>>::GetValueFromXML2(const TLoadContext& LoadContext)
+{
+	const LXMSXMLNode& node = LoadContext.node;
+	LXString value = node.attr(L"Value");
+	shared_ptr<LXSmartObject> smartObject = LoadContext.pOwner->GetObject(value);
+	SetValue(smartObject, false);
+}
+
+template<>
+void LXPropertyT<shared_ptr<LXSmartObject>>::SaveXML2(const TSaveContext& saveContext, const LXString& strXMLName, const shared_ptr<LXSmartObject>& v)
+{
+	LXString* pUID = nullptr;
+	if (v)
+		pUID = v->GetUID(true);
+	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
+	fwprintf(saveContext.pXMLFile, L"<%s Value=\"%s\"/>\n", strXMLName.GetBuffer(), pUID ? pUID->GetBuffer() : L"");
+}
+
+//
+// --- 
+//
 
 template<> LXString LXPropertyT<bool>::GetTypeName() { return L"bool"; }
 template<> LXString LXPropertyT<int>::GetTypeName() { return L"int"; }

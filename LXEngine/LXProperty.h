@@ -93,6 +93,8 @@ public:
 	const LXString&			GetGroupName	( ) const							{ return _PropInfo->_GroupName; }
 	void					SetGroupName	( const LXString& strGroupName)		{ _PropInfo->_GroupName = strGroupName; }
 
+	LXSmartObject*			GetOwner		( ) const							{ return _Owner; }
+
 	bool					IsEnable() const									{ return _PropInfo->_bEnable?*_PropInfo->_bEnable : true; }
 	void					SetEnable(bool* pBool)								{ _PropInfo->_bEnable = pBool;  }
 
@@ -273,20 +275,22 @@ private:
 	
 };
 
-typedef LXPropertyT<bool>				LXPropertyBool;
-typedef LXPropertyT<int>				LXPropertyInt;
-typedef LXPropertyT<uint>				LXPropertyUint;
-typedef LXPropertyT<float>				LXPropertyFloat;
-typedef LXPropertyT<double>				LXPropertyDouble;
-typedef LXPropertyT<vec2f>				LXPropertyVec2f;
-typedef LXPropertyT<vec3f>				LXPropertyVec3f;
-typedef LXPropertyT<vec4f>				LXPropertyVec4f;
-typedef LXPropertyT<LXColor4f>			LXPropertyLXColor4f;
-typedef LXPropertyT<LXString>			LXPropertyString;
-typedef LXPropertyT<LXFilepath>			LXPropertyFilepath;
-typedef LXPropertyT<LXMatrix>			LXPropertyMatrix;
-typedef LXPropertyT<LXAssetPtr>			LXPropertyAssetPtr;
-typedef LXPropertyT<LXMaterialNode*>	LXPropertyMaterialNodePtr;
-typedef LXPropertyT<ArraySmartObjects>	LXPropertyArraySmartObjects;
-typedef LXPropertyT<ArrayVec3f>			LXPropertyArrayVec3f;	
-typedef LXPropertyT<LXSmartObject>		LXPropertySmartObject;
+typedef LXPropertyT<bool>						LXPropertyBool;
+typedef LXPropertyT<int>						LXPropertyInt;
+typedef LXPropertyT<uint>						LXPropertyUint;
+typedef LXPropertyT<float>						LXPropertyFloat;
+typedef LXPropertyT<double>						LXPropertyDouble;
+typedef LXPropertyT<vec2f>						LXPropertyVec2f;
+typedef LXPropertyT<vec3f>						LXPropertyVec3f;
+typedef LXPropertyT<vec4f>						LXPropertyVec4f;
+typedef LXPropertyT<LXColor4f>					LXPropertyLXColor4f;
+typedef LXPropertyT<LXString>					LXPropertyString;
+typedef LXPropertyT<LXFilepath>					LXPropertyFilepath;
+typedef LXPropertyT<LXMatrix>					LXPropertyMatrix;
+typedef LXPropertyT<LXAssetPtr>					LXPropertyAssetPtr;
+typedef LXPropertyT<LXMaterialNode*>			LXPropertyMaterialNodePtr;
+typedef LXPropertyT<ArraySmartObjects>			LXPropertyArraySmartObjects;
+typedef LXPropertyT<ListSmartObjects>			LXPropertyListSmartObjects;
+typedef LXPropertyT<ArrayVec3f>					LXPropertyArrayVec3f;	
+typedef LXPropertyT<LXSmartObject>				LXPropertySmartObject;
+typedef LXPropertyT<shared_ptr<LXSmartObject>>	LXPropertySharedObject;

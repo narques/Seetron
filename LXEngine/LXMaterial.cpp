@@ -7,11 +7,12 @@
 //------------------------------------------------------------------------------------------------------
 
 #include "StdAfx.h"
-#include "LXMaterial.h"
-#include "LXProject.h"
 #include "LXAssetManager.h"
-#include "LXMaterialNode.h"
 #include "LXController.h"
+#include "LXGraphMaterial.h"
+#include "LXMaterial.h"
+#include "LXMaterialNode.h"
+#include "LXProject.h"
 #include "LXMemory.h" // --- Must be the last included ---*
 
 LXMaterial::LXMaterial(EMaterialType InMaterialType):MaterialType(InMaterialType)
@@ -75,19 +76,24 @@ void LXMaterial::DefineProperties()
 	DefineProperty("Displacement", &Displacement);
 }
 
-void LXMaterial::GetChildProperties(ListProperties& listProperties)
+void LXMaterial::GetChildProperties(ListProperties& listProperties) const
 {
-	for (LXMaterialNode* MaterialNode : MaterialNodes)
+	__super::GetChildProperties(listProperties);
+
+	if (Version == 1)
 	{
-		if (LXProperty* Property = MaterialNode->GetProperty(kMaterrialNode_ValuePropertyName))
+		for (LXMaterialNode* MaterialNode : MaterialNodes)
 		{
-			Property->SetLabel(MaterialNode->GetName());
-			listProperties.push_back(Property);
-		}
-		else if (LXProperty* Property = MaterialNode->GetProperty(kMaterialNode_TexturePropertyName))
-		{
-			Property->SetLabel(MaterialNode->GetName());
-			listProperties.push_back(Property);
+			if (LXProperty* Property = MaterialNode->GetProperty(kMaterrialNode_ValuePropertyName))
+			{
+				Property->SetLabel(MaterialNode->GetName());
+				listProperties.push_back(Property);
+			}
+			else if (LXProperty* Property = MaterialNode->GetProperty(kMaterialNode_TexturePropertyName))
+			{
+				Property->SetLabel(MaterialNode->GetName());
+				listProperties.push_back(Property);
+			}
 		}
 	}
 }

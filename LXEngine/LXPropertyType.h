@@ -28,7 +28,9 @@ enum class EPropertyType
 	MaterialNode,
 	ArrayFloat3f,
 	ArraySmartObject,
-	SmartObject
+	ListSmartObject,
+	SmartObject,
+	SharedObject
 };
 
 enum class EConnectorType

@@ -40,7 +40,7 @@ public:
 	// Overridden From LXSmartObject
 	//
 
-	void GetChildProperties(ListProperties& UserProperties) override;
+	void GetChildProperties(ListProperties& UserProperties) const override;
 	
 	//
 	// Overridden From LXAsset

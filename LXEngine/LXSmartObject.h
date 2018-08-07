@@ -75,13 +75,14 @@ public:
 	virtual void					GetChildren(ListSmartObjects&) {}
 
 	// Properties
-	virtual const ListProperties&	GetProperties();
-	virtual void					GetChildProperties(ListProperties& UserProperties){};
+	virtual const ListProperties&	GetProperties() const;
+	ListProperties					GetBranchProperties() const;
+	virtual void					GetChildProperties(ListProperties& listProperties) const;
+	
 	void							GetUserProperties(ListProperties& UserProperties);
 	void							AttachPropertiesToThis();
 	LXProperty*						GetProperty(const LXPropertyID& PID);
 	LXProperty*						GetProperty(const LXString& name);
-	static int						GetPropertyPosition(const LXPropertyID& id);
 	virtual void					OnPropertyChanged(LXProperty* pProperty);
 
 	// Listeners / Callback
@@ -102,7 +103,7 @@ public:
 	// pAttibute. offers the ability to set an attribute to the xml tag object. It's useful when we need to know something 
 	// before to create the object (the type of the template class for example).
 	//------------------------------------------------------------------------------------------------------
-	bool							Save(const TSaveContext& saveContext, LXString* pName = nullptr, LXString* pAttribute = nullptr) const;
+	bool							Save(const TSaveContext& saveContext, LXString* pName = nullptr, LXString* pAttribute = nullptr, bool saveAsProperty = false) const;
 	bool         					Load(const TLoadContext& loadContext, LXString* pName = nullptr);
 	bool							LoadWithMSXML(const LXFilepath& strFilename, bool bLoadChilds = true, bool bLoadViewStates = true);
 			
@@ -120,9 +121,12 @@ public:
 	void							SetUserData(uint64 nUserData) { _nUserData = nUserData; }
 	const uint64&					GetUserData() const { return _nUserData; }
 
-	bool							IsNeedSave() const { return _bNeedSave; }
+	// Local references
+	shared_ptr<LXSmartObject>		GetObject(const LXString& uid);
+	void							AddObject(const LXString& uid, LXSmartObject* smartObject);
 
 	// Misc 
+	bool							IsNeedSave() const { return _bNeedSave; }
 	LXString*						GetUID(bool bBuild = false);
 	
 	template<class T>
@@ -158,6 +162,7 @@ protected:
 	LXPropertyAssetPtr*				DefinePropertyAsset(const LXString& name, const LXPropertyID& PID, LXAsset** pAsset);
 	LXPropertyBool*					DefinePropertyBool(const LXString& name, const LXPropertyID& PID, bool* pBool);
 	LXPropertyBool*					DefinePropertyBool(const LXString& name, const LXString& strID, const LXPropertyID& PID, bool* pBool);
+	LXPropertyEnum*					DefinePropertyEnum(const LXString& name, uint* pEnum);
 	LXPropertyEnum*					DefinePropertyEnum(const LXString& name, const LXPropertyID& PID, uint* pEnum);
 	LXPropertyFloat*				DefinePropertyFloat(const LXString& label, const LXString& name, const LXPropertyID& PID, float* pFloat);
 	LXPropertyEnum*					DefinePropertyEnum(const LXString& label, const LXString& name, const LXPropertyID& propID, uint* pEnum);
@@ -192,6 +197,15 @@ private:
 	map<void*, std::function<void(LXSmartObject*, LXProperty*)>> _MapCBOnPropertyChanged;
 	static map<LXObject*, std::function<void(LXSmartObject*, LXProperty*)>> _MapCBOnPropertiesChanged;
 	TMapFunctionListeners _MapGenericCB;
+
+	//
+	// Private local references,
+	// used to resolve the links between the child objects (Should be in TLoadContext)
+	// More useful than a ReferenceManager, here we can safely duplicate the object regardless of the child UIDs values.
+	// ex: Duplicate a material asset file.
+	//
+
+	map<LXString, LXSmartObject*> _objects;
 
 };
 

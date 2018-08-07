@@ -66,9 +66,59 @@ LXSmartObject::~LXSmartObject(void)
 	LX_SAFE_DELETE(_pUID);
 }
 
-const ListProperties& LXSmartObject::GetProperties()
+const ListProperties& LXSmartObject::GetProperties() const
 {
 	return _listProperties;
+}
+
+ListProperties LXSmartObject::GetBranchProperties() const
+{
+	ListProperties listProperties = GetProperties();
+	GetChildProperties(listProperties);
+	return listProperties;
+}
+
+void LXSmartObject::GetChildProperties(ListProperties& properties) const
+{
+	for (const LXProperty* property : _listProperties)
+	{
+		// Hard reference
+		if (const LXPropertySmartObject* propertySmartObject = dynamic_cast<const LXPropertySmartObject*>(property))
+		{
+			const ListProperties& propertiesToAdd = propertySmartObject->GetValue().GetProperties();
+			properties.insert(properties.end(), propertiesToAdd.begin(), propertiesToAdd.end());
+
+			// Continue with grandchildren
+			propertySmartObject->GetValue().GetChildProperties(properties);
+		}
+
+		// List
+		else if (const LXPropertyListSmartObjects* propertyListSmartObject = dynamic_cast<const LXPropertyListSmartObjects*>(property))
+		{
+			for (const LXSmartObject* smartObject : propertyListSmartObject->GetValue())
+			{
+				const ListProperties& propertiesToAdd = smartObject->GetProperties();
+				properties.insert(properties.end(), propertiesToAdd.begin(), propertiesToAdd.end());
+
+				// Continue with grandchildren
+				smartObject->GetChildProperties(properties);
+			}
+		}
+		
+		// Array
+		else if (const LXPropertyArraySmartObjects* propertyListSmartObject = dynamic_cast<const LXPropertyArraySmartObjects*>(property))
+		{
+			for (const LXSmartObject* smartObject : propertyListSmartObject->GetValue())
+			{
+				const ListProperties& propertiesToAdd = smartObject->GetProperties();
+				properties.insert(properties.end(), propertiesToAdd.begin(), propertiesToAdd.end());
+
+				// Continue with grandchildren
+				smartObject->GetChildProperties(properties);
+			}
+		}
+		
+	}
 }
 
 void LXSmartObject::GetUserProperties(ListProperties& UserProperties)
@@ -116,7 +166,7 @@ LXProperty* LXSmartObject::GetProperty(const LXString& name)
 	return nullptr;
 }
 
-bool LXSmartObject::Save(const TSaveContext& saveContext, LXString* pName, LXString* pAttribute) const
+bool LXSmartObject::Save(const TSaveContext& saveContext, LXString* pName, LXString* pAttribute, bool saveAsProperty) const
 {
 	if (!_bPersistent)
 		return true;
@@ -136,17 +186,20 @@ bool LXSmartObject::Save(const TSaveContext& saveContext, LXString* pName, LXStr
 		strClassName = *pName;
 	else
 		strClassName = GetObjectName();
-	
-	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
+
+	if (!saveAsProperty)
+	{
+		fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
+		fwprintf(saveContext.pXMLFile, L"<%s%s>\n", strClassName.GetBuffer(), strAttribute.GetBuffer());
+	}
+
 	saveContext.Indent++;
-	fwprintf(saveContext.pXMLFile, L"<%s%s>\n", strClassName.GetBuffer(), strAttribute.GetBuffer());
 	
 	for (ListProperties::const_iterator It = _listProperties.begin(); It!= _listProperties.end(); It++)
 	{
 		LXProperty* pProperty = *It;
 		if (pProperty->GetPersistent())
 		{
-			fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 			pProperty->SaveXML(saveContext);
 
 		}
@@ -158,8 +211,12 @@ bool LXSmartObject::Save(const TSaveContext& saveContext, LXString* pName, LXStr
 	}
 
 	saveContext.Indent--;
-	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
-	fwprintf(saveContext.pXMLFile, L"</%s>\n", strClassName.GetBuffer());
+
+	if (!saveAsProperty)
+	{
+		fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
+		fwprintf(saveContext.pXMLFile, L"</%s>\n", strClassName.GetBuffer());
+	}
 
 	return true;
 }
@@ -217,11 +274,26 @@ bool LXSmartObject::Load(const TLoadContext& loadContext, LXString* pName)
 
 			LXString strName = e.name();
 			TMapStringProperty::const_iterator it = mapProperties.find(strName);
-			LXProperty* pProperty = NULL;
+			LXProperty* property = nullptr;
 			if (it != mapProperties.end())
 			{
-				pProperty = it->second;
-				pProperty->LoadXML(loadContextChild);
+				property = it->second;
+				property->LoadXML(loadContextChild);
+				//OnPropertyLoaded(property); 
+
+				// If the object contains a UID 
+				if (property->GetID() == LXPropertyID::OBJECT_UID)
+				{
+					LXPropertyString* propertyString = dynamic_cast<LXPropertyString*>(property);
+					if (propertyString->GetValue().IsEmpty() == false)
+					{
+						loadContext.pOwner->AddObject(propertyString->GetValue(), this);
+					}
+					else
+					{
+						// Warning empty uid
+					}
+				}
 			}
 			else
 			{
@@ -232,8 +304,8 @@ bool LXSmartObject::Load(const TLoadContext& loadContext, LXString* pName)
 					LXString type = e.attr(L"Type");
 					if (type == "float")
 					{
-						pProperty =  CreateUserProperty<float>(name, 0.f);
-						pProperty->LoadXML(e);
+						property =  CreateUserProperty<float>(name, 0.f);
+						property->LoadXML(e);
 					}
 					else
 					{
@@ -250,6 +322,7 @@ bool LXSmartObject::Load(const TLoadContext& loadContext, LXString* pName)
 	}
 	else
 	{
+		CHK(0);
 		return false;
 	}
 
@@ -320,18 +393,6 @@ void LXSmartObject::DefineProperties()
 		}
 	});
 };
-
-namespace
-{
-	map<LXPropertyID, int> propertyPositions;
-	int currentPosition = 0;
-};
-
-int LXSmartObject::GetPropertyPosition(const LXPropertyID& id)
-{
-	auto It = propertyPositions.find(id);
-	return propertyPositions[id];
-}
 
 void LXSmartObject::OnPropertyChanged(LXProperty* Property)
 {
@@ -413,13 +474,6 @@ LXPropertyT<T>* LXSmartObject::DefineProperty(const LXString& name, const LXProp
 {
 	LXPropertyT<T>* pProperty = new LXPropertyT<T>(LXProperty::GetTemplateType<T>());
 
-	auto It = propertyPositions.find(PID);
-	if (It == propertyPositions.end())
-	{
-		propertyPositions[PID] = currentPosition;
-		currentPosition++;
-	}
-
 	pProperty->SetObject(this);
 	pProperty->SetName(name);
 	pProperty->SetID(PID);
@@ -432,13 +486,6 @@ template<class T>
 LXPropertyT<T>* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, T* var, T Min, T Max)
 {
 	LXPropertyT<T>* pProperty = new LXPropertyT<T>(LXProperty::GetTemplateType<T>());
-
-	auto It = propertyPositions.find(PID);
-	if (It == propertyPositions.end())
-	{
-		propertyPositions[PID] = currentPosition;
-		currentPosition++;
-	}
 
 	pProperty->SetObject(this);
 	pProperty->SetName(name);
@@ -454,13 +501,6 @@ LXPropertyT<T>* LXSmartObject::DefineProperty(const LXString& label, const LXStr
 {
 	LXPropertyT<T>* pProperty = new LXPropertyT<T>(LXProperty::GetTemplateType<T>());
 
-	auto It = propertyPositions.find(PID);
-	if (It == propertyPositions.end())
-	{
-		propertyPositions[PID] = currentPosition;
-		currentPosition++;
-	}
-
 	pProperty->SetObject(this);
 	pProperty->SetID(PID);
 	pProperty->SetName(name);
@@ -475,13 +515,6 @@ LXPropertyT<T>*	LXSmartObject::DefinePropertyEval(const LXString& name, const LX
 {
 	LXPropertyT<T>* pProperty = new LXPropertyT<T>();
 
-	auto It = propertyPositions.find(id);
-	if (It == propertyPositions.end())
-	{
-		propertyPositions[id] = currentPosition;
-		currentPosition++;
-	}
-
 	pProperty->SetObject(this);
 	pProperty->SetName(name);
 	pProperty->SetID(id);
@@ -493,13 +526,6 @@ LXPropertyT<T>*	LXSmartObject::DefinePropertyEval(const LXString& name, const LX
 LXPropertyEnum* LXSmartObject::DefinePropertyEnum(const LXString& name, const LXPropertyID& propID, uint* pEnum)
 {
 	LXPropertyEnum* pPropEnum = new LXPropertyEnum();
-
-	auto It = propertyPositions.find(propID);
-	if (It == propertyPositions.end())
-	{
-		propertyPositions[propID] = currentPosition;
-		currentPosition++;
-	}
 
 	pPropEnum->SetObject(this);
 	pPropEnum->SetID(propID);
@@ -514,6 +540,11 @@ LXPropertyEnum* LXSmartObject::DefinePropertyEnum(const LXString& label, const L
 	LXPropertyEnum* pPropEnum = DefinePropertyEnum(label, propID, pEnum);
 	pPropEnum->SetName(name);
 	return pPropEnum;
+}
+
+LXPropertyEnum* LXSmartObject::DefinePropertyEnum(const LXString& name, uint* pEnum)
+{
+	return DefinePropertyEnum(name, GetAutomaticPropertyID(), pEnum);
 }
 
 void LXSmartObject::DefinePropertyName()
@@ -694,9 +725,32 @@ LXString* LXSmartObject::GetUID(bool bBuild)
 	{
 		_pUID = new LXString();
 		*_pUID = LXPlatform::CreateUuid();
+		// Use only data1 (ulong)
+		*_pUID = _pUID->Left(L"-");
 		LogI(Core, L"Generated UID for object \"%s\" (%s)", GetName().GetBuffer(), GetObjectName().GetBuffer());
 	}
 	return _pUID;
+}
+
+std::shared_ptr<LXSmartObject> LXSmartObject::GetObject(const LXString& uid)
+{
+	auto It = _objects.find(uid);
+	if (It != _objects.end())
+	{
+		LXSmartObject* smartObject = It->second;
+		return std::shared_ptr<LXSmartObject>(smartObject);
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+void LXSmartObject::AddObject(const LXString& uid, LXSmartObject* smartObject)
+{
+	auto It = _objects.find(uid);
+	CHK(It == _objects.end());
+	_objects[uid] = smartObject;
 }
 
 LXSmartObjectContainer::LXSmartObjectContainer()
@@ -749,10 +803,16 @@ template LXCORE_API LXPropertyInt* LXSmartObject::DefineProperty(const LXString&
 template LXCORE_API LXPropertyFloat* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, float* pFloat, float, float);
 template LXCORE_API LXPropertyDouble* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, double* pDouble);
 template LXCORE_API LXPropertyArraySmartObjects* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, ArraySmartObjects* pArraySmartObjects);
+template LXCORE_API LXPropertyListSmartObjects* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, ListSmartObjects* pListSmartObjects);
 template LXCORE_API LXPropertyAssetPtr* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXAsset** pMaterialInput);
 template LXCORE_API LXPropertyMaterialNodePtr* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXMaterialNode** pMaterialInput);
 template LXCORE_API LXPropertySmartObject* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXSmartObject* smartObject);
+template LXCORE_API LXPropertySharedObject* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, shared_ptr<LXSmartObject>* smartObject);
 
 template LXCORE_API LXPropertyInt* LXSmartObject::CreateUserProperty(const LXString& Name, const int& Var);
 template LXCORE_API LXPropertyFloat* LXSmartObject::CreateUserProperty(const LXString& Name, const float& Var);
+template LXCORE_API LXPropertyVec2f* LXSmartObject::CreateUserProperty(const LXString& Name, const vec2f& Var);
+template LXCORE_API LXPropertyVec3f* LXSmartObject::CreateUserProperty(const LXString& Name, const vec3f& Var);
+template LXCORE_API LXPropertyVec4f* LXSmartObject::CreateUserProperty(const LXString& Name, const vec4f& Var);
 template LXCORE_API LXPropertyArrayVec3f* LXSmartObject::CreateUserProperty(const LXString& Name, const ArrayVec3f& Var);
+
