@@ -8,10 +8,8 @@
 
 #pragma once
 
-#include "LXVec3.h"
-
 template<class T> 
-class LXCORE_API vec2
+class vec2
 {
 
 public:
@@ -65,7 +63,7 @@ public:
 
 	// Misc
 
-	vec3<T> xyx() const { return vec3<T>(x, y, x); }
+	//vec3<T> xyx() const { return vec3<T>(x, y, x); }
 		
 public:
 	
@@ -84,3 +82,6 @@ __forceinline static vec2f	operator-(float num, const vec2f& v) { return vec2f(n
 __forceinline static vec2d	operator*(double num, const vec2d& v) { return vec2d(num * v.x, num * v.y); }
 __forceinline static vec2d	operator+(double num, const vec2d& v) { return vec2d(num + v.x, num + v.y); }
 __forceinline static vec2d	operator-(double num, const vec2d& v) { return vec2d(num - v.x, num - v.y); }
+
+// Macros
+#define LX_VEC2F_NULL vec2f(0.f, 0.f)
