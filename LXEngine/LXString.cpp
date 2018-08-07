@@ -110,7 +110,7 @@ LXString GetTab(int Count)
 	LXString Tabs;
 	for (int i = 0; i < Count; i++)
 	{
-		Tabs += "  ";
+		Tabs += "\t";
 	}
 	return Tabs;
 }
