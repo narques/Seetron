@@ -18,6 +18,7 @@ class LXScript;
 class LXShader;
 class LXProject;
 class LXAssetMesh;
+class LXGraphTemplate;
 
 typedef map<LXString, LXAsset*> MapAssets;
 
@@ -87,6 +88,11 @@ public:
 	// Update the renamed asset in the map
 	void				OnAssetRenamed(const LXString& Path, const LXString& OldName, const LXString& NewName, EResourceOwner ResourceOwner);
 
+	const LXGraphTemplate* GetGraphMaterialTemplate() 
+	{
+		return _graphMaterialTemplate.get();
+	}
+
 private:
 
 	template <typename T>
@@ -105,6 +111,7 @@ protected:
 	
 private:
 
+	unique_ptr<LXGraphTemplate> _graphMaterialTemplate;
 	LXMaterial*		_defaultMaterial = nullptr;
 	list<LXString>	_ListAssetExtentions;
 

@@ -10,21 +10,24 @@
 
 #include "LXSmartObject.h"
 
-class LXConnection;
-class LXNode;
+class LXConnector;
 
-class LXCORE_API LXGraph : public LXSmartObject
+class LXCORE_API LXConnection : public LXSmartObject
 {
 
 public:
 
-	LXGraph();
-	virtual ~LXGraph();
-	
-	void AddNode(LXNode* node);
-	void AddConnection(LXConnection* connection);
+	LXConnection();
+	LXConnection(LXConnector* source, LXConnector* destination);
+	virtual ~LXConnection();
 
-	vector<LXNode*> Nodes;
-	vector<LXConnection*> Connections;
+private:
+
+	void DefineProperties();
+
+public:
+
+	shared_ptr<LXConnector> Source;
+	shared_ptr<LXConnector> Destination;
 };
 

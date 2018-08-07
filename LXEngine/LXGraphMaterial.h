@@ -8,23 +8,22 @@
 
 #pragma once
 
-#include "LXSmartObject.h"
+#include "LXGraph.h"
 
-class LXConnection;
 class LXNode;
+class LXNodeTemplate;
 
-class LXCORE_API LXGraph : public LXSmartObject
+class LXCORE_API LXGraphMaterial : public LXGraph
 {
 
 public:
 
-	LXGraph();
-	virtual ~LXGraph();
-	
-	void AddNode(LXNode* node);
-	void AddConnection(LXConnection* connection);
-
-	vector<LXNode*> Nodes;
-	vector<LXConnection*> Connections;
+	LXGraphMaterial();
+	virtual ~LXGraphMaterial();
 };
+
+
+
+
+
 

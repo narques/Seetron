@@ -7,21 +7,30 @@
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
+#include "LXConnection.h"
+#include "LXConnector.h"
 #include "LXGraph.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXGraph::LXGraph()
 {
+	// --------------------------------------------------------------------------------------------------------------
+	LXProperty::SetCurrentGroup(L"Graph");
+	// --------------------------------------------------------------------------------------------------------------
+	DefineProperty("Nodes", (ArraySmartObjects*)&Nodes);
+	DefineProperty("Connections", (ArraySmartObjects*)&Connections);
 }
 
 LXGraph::~LXGraph()
 {
-	for (LXGraphNode* GraphNode : Nodes)
-	{
-		delete GraphNode;
-	}
 }
 
-void LXGraph::AddLink(LXGraphNode* Node0, LXGraphNode* Node1)
+void LXGraph::AddNode(LXNode* node)
 {
+	Nodes.push_back(node);
+}
+
+void LXGraph::AddConnection(LXConnection* connection)
+{
+	Connections.push_back(connection);
 }

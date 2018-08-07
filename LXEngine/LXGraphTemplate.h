@@ -10,21 +10,22 @@
 
 #include "LXSmartObject.h"
 
-class LXConnection;
-class LXNode;
+class LXNodeTemplate;
 
-class LXCORE_API LXGraph : public LXSmartObject
+class LXCORE_API LXGraphTemplate : public LXSmartObject
 {
 
 public:
 
-	LXGraph();
-	virtual ~LXGraph();
-	
-	void AddNode(LXNode* node);
-	void AddConnection(LXConnection* connection);
+	LXGraphTemplate();
+	virtual ~LXGraphTemplate();
+	vector<LXNodeTemplate*> NodeTemplates;
 
-	vector<LXNode*> Nodes;
-	vector<LXConnection*> Connections;
+private:
+
+	virtual bool OnLoadChild(const TLoadContext& loadContext) override;
+
+	
 };
+
 

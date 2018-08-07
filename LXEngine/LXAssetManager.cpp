@@ -21,6 +21,7 @@
 #include "LXAssetMesh.h"
 #include "LXMesh.h"
 #include "LXConsoleManager.h"
+#include "LXGraphTemplate.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 #define LX_DEFAULT_MATERIAL L"Materials/M_Default.smat"
@@ -74,13 +75,19 @@ const bool ForceLowercase = false;
 
 LXAssetManager::LXAssetManager(LXProject* Project) :_pDocument(Project)
 {
+	_graphMaterialTemplate = make_unique<LXGraphTemplate>();
+	VRF(_graphMaterialTemplate->LoadWithMSXML(GetSettings().GetCoreFolder() + L"/GraphMaterialTempale.xml"));
+				
 	_ListAssetExtentions.push_back(LX_MATERIAL_EXT);
 	_ListAssetExtentions.push_back(LX_TEXTURE_EXT);
 	_ListAssetExtentions.push_back(LX_SHADER_EXT);
+	
 	// Engine Asset
 	LoadFromFolder(GetSettings().GetDataFolder(), EResourceOwner::LXResourceOwner_Engine);
+	
 	// Project Asset
 	LoadFromFolder(Project->GetAssetFolder(), EResourceOwner::LXResourceOwner_Project);
+	
 	// Internal Engine Asset 
 	BuildEngineMaterials();
 }
@@ -180,7 +187,8 @@ LXScript* LXAssetManager::GetScript(const LXString& strFilename) const
 
 LXGraphTexture* LXAssetManager::GetGraphTexture(const LXString& strFilename) const
 {
-	return GetResourceT<LXGraphTexture*>(strFilename);
+	//return GetResourceT<LXGraphTexture*>(strFilename);
+	return nullptr;
 }
 
 LXMaterial* LXAssetManager::CreateNewMaterial(const LXString& MaterialName, const LXString& RelativeAssetFolder)

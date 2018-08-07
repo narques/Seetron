@@ -6,25 +6,16 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#pragma once
+#include "stdafx.h"
+#include "LXGraphMaterial.h"
+#include "LXConnector.h"
+#include "LXNode.h"
 
-#include "LXSmartObject.h"
-
-class LXConnection;
-class LXNode;
-
-class LXCORE_API LXGraph : public LXSmartObject
+LXGraphMaterial::LXGraphMaterial()
 {
+	SetName(L"GraphMaterial");
+}
 
-public:
-
-	LXGraph();
-	virtual ~LXGraph();
-	
-	void AddNode(LXNode* node);
-	void AddConnection(LXConnection* connection);
-
-	vector<LXNode*> Nodes;
-	vector<LXConnection*> Connections;
-};
-
+LXGraphMaterial::~LXGraphMaterial()
+{
+}
