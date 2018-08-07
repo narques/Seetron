@@ -471,7 +471,7 @@ bool LXTrackBallCameraManipulator::PanCamera( double dFrameTime )
 	if ( mouseChange.Length() > 1.f )
 	{
 		// Update Pan value
-		double t = dFrameTime / 250;// 92.5;
+		double t = dFrameTime / 92.5;
 		if (t > 1.0)
 			_panStart = _panEnd;
 		else
