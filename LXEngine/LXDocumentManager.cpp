@@ -20,7 +20,7 @@
 
 LXDocumentManager::LXDocumentManager(void)
 {
-	GetEventManager()->RegisterEvent(EEventType::ProjectLoaded, [this](LXEvent* Event)
+	GetEventManager()->RegisterEventFunc(EEventType::ProjectLoaded, this, [this](LXEvent* Event)
 	{
 		LXEventResult* EventResult = static_cast<LXEventResult*>(Event);
 
@@ -37,6 +37,8 @@ LXDocumentManager::LXDocumentManager(void)
 
 LXDocumentManager::~LXDocumentManager(void)
 {
+	GetEventManager()->UnregisterEventFunc(EEventType::ProjectLoaded, this);
+
 	LX_SAFE_DELETE(_LoadingThread);
 	CHK(_FilesToLoad.size() == 0);
 	LX_SAFE_DELETE(_Project);

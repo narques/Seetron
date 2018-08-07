@@ -56,7 +56,7 @@ void LXCoreWindow::OnCreate()
 {
 	BuildMenu();
 		
-	GetEventManager()->RegisterEvent(EEventType::ProjectLoaded, [this](LXEvent* Event)
+	GetEventManager()->RegisterEventFunc(EEventType::ProjectLoaded, this, [this](LXEvent* Event)
 	{
 		LXEventResult* EventResult = static_cast<LXEventResult*>(Event);
 		if (EventResult->Success)
@@ -75,7 +75,7 @@ void LXCoreWindow::OnCreate()
 		}
 	});
 
-	GetEventManager()->RegisterEvent(EEventType::ProjectClosed, [this](LXEvent* Event)
+	GetEventManager()->RegisterEventFunc(EEventType::ProjectClosed, this, [this](LXEvent* Event)
 	{
 		int itemCount = GetMenuItemCount(_hMenuViewBuffer);
 		for (int i = 0; i < itemCount; i++)

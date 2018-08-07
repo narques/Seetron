@@ -18,6 +18,9 @@ LXEventManager::LXEventManager()
 
 LXEventManager::~LXEventManager()
 {
+	CHK(EventActors.size() == 0);
+	CHK(EventFunctions.size() == 0);
+	CHK(EventDeferred.size() == 0);
 }
 
 void LXEventManager::RegisterEvent(EEventType Event, LXActor* Actor)
@@ -25,9 +28,43 @@ void LXEventManager::RegisterEvent(EEventType Event, LXActor* Actor)
 	EventActors[Event].insert(Actor);
 }
 
-void LXEventManager::RegisterEvent(EEventType Event, std::function<void(LXEvent*)> Func)
+void LXEventManager::RegisterEventFunc(EEventType Event, void* Owner, std::function<void(LXEvent*)> Func)
 {
-	EventFunctions[Event].push_back(Func);
+	EventFunctions[Event].push_back(pair<void*, std::function<void(LXEvent*)>>(Owner, Func));
+}
+
+void LXEventManager::UnregisterEvent(EEventType EventType, LXActor* Actor)
+{
+	CHK(EventActors.find(EventType) != EventActors.end());
+	CHK(EventActors[EventType].find(Actor) != EventActors[EventType].end());
+	EventActors[EventType].erase(Actor);
+	if (EventActors[EventType].size() == 0)
+	{
+		EventActors.erase(EventType);
+	}
+}
+
+void LXEventManager::UnregisterEventFunc(EEventType EventType, void* Owner)
+{
+	auto itEvent = EventFunctions.find(EventType);
+	CHK(itEvent != EventFunctions.end());
+	
+	auto& list = EventFunctions[EventType];
+
+	// Find the pair using the Owner
+	auto itPair = std::find_if(list.begin(), list.end(), [Owner](std::pair<void*, std::function<void(LXEvent*)>>& element)
+	{ 
+		return element.first == Owner;
+	});
+
+	CHK(itPair != list.end());
+	
+	list.erase(itPair);
+
+	if (list.size() == 0)
+	{
+		EventFunctions.erase(itEvent);
+	}
 }
 
 void LXEventManager::BroadCastEvent(EEventType Event)
@@ -53,7 +90,7 @@ void LXEventManager::BroadCastEvent(LXEvent* Event)
 	{
 		for (auto Func : It2->second)
 		{
-			Func(Event);
+			Func.second (Event);
 		}
 	}
 
@@ -96,7 +133,7 @@ void LXEventManager::BroadCastEvent(LXActor* Actor, LXEvent* Event)
 		}
 		break;
 
-		case EEventType::SelectionChanged: Actor->OnSelectionChanged(); break;
+		case EEventType::SelectionChanged: const_cast<LXActor*>(Actor)->OnSelectionChanged(); break;
 
 
 		default: CHK(0); break;

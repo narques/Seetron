@@ -135,6 +135,9 @@ LXActorMeshGizmo::LXActorMeshGizmo()
 
 LXActorMeshGizmo::~LXActorMeshGizmo()
 {
+	// Unregister Events.
+	GetEventManager()->UnregisterEvent(EEventType::SelectionChanged, this);
+
 	delete Mesh;
 }
 

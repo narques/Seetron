@@ -19,8 +19,11 @@ public:
 	~LXEventManager();
 	
 	void RegisterEvent(EEventType EventType, LXActor* Actor);
-	void RegisterEvent(EEventType EventType, std::function<void(LXEvent*)> Func);
-	
+	void RegisterEventFunc(EEventType EventType, void* Owner, std::function<void(LXEvent*)> Func);
+
+	void UnregisterEvent(EEventType EventType, LXActor* Actor);
+	void UnregisterEventFunc(EEventType EventType, void* Owner);
+		
 	// Immediate broadcast
 	void BroadCastEvent(EEventType EventType);
 	void BroadCastEvent(LXEvent* Event);
@@ -41,7 +44,7 @@ private:
 	map < EEventType, set<LXActor*>> EventActors;
 
 	// Simple callbacks.
-	map < EEventType, list<std::function<void(LXEvent*)>>> EventFunctions;
+	map < EEventType, list<pair<void*, std::function<void(LXEvent*)>>>> EventFunctions;
 
 	// 
 	set < LXEvent* > EventDeferred; 
