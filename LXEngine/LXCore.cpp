@@ -357,9 +357,15 @@ ECreateProjectResult LXCore::CreateNewProject(const LXString& Name, const LXStri
 
 bool LXCore::LoadProject(const LXString& ProjectName)
 {
-	LXFilepath Filepath = GetSettings().GetProjectsFolder() + ProjectName + "/" + ProjectName + L"." LX_PROJECT_EXT;
+	LXFilepath Filepath = ProjectName;
+	if (!Filepath.IsFileExist())
+	{
+		Filepath = GetSettings().GetProjectsFolder() + ProjectName + "/" + ProjectName + L"." LX_PROJECT_EXT;
+	}
 	if (Filepath.IsFileExist())
+	{
 		return LoadFile(Filepath);
+	}
 	else
 	{
 		LogW(Core, L"Project file %s does not exist", Filepath.GetBuffer());

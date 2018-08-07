@@ -113,12 +113,18 @@ LXFilepath LXFilepath::GetRelativeFilepath(const LXFilepath& AbsoluteFilepath) c
 {
 	LXString RelativePath;
 	int Lenght = AbsoluteFilepath.GetLength() - GetLength();
-		
-	// Check if the given absolute filepath is in the folder (this) else return an empty string
-	LXString Toto = AbsoluteFilepath.Left(GetLength());
-	
-	if (ToLower() == Toto.ToLower())
-		RelativePath = AbsoluteFilepath.Right(Lenght);
-	
-	return RelativePath;
+
+	if (Lenght > 0)
+	{
+		// Check if the given absolute filepath is in the folder (this) else return an empty string
+		LXString Toto = AbsoluteFilepath.Left(GetLength());
+
+		if (ToLower() == Toto.ToLower())
+		{
+			RelativePath = AbsoluteFilepath.Right(Lenght);
+			return RelativePath;
+		}
+	}
+
+	return  AbsoluteFilepath;
 }
