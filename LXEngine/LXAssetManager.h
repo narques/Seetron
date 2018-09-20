@@ -100,7 +100,6 @@ private:
 
 	void LoadFromFolder(const LXFilepath& Folderpath, EResourceOwner ResourceOwner);
 	void Add(LXAsset* Resource);
-	void BuildEngineMaterials();
 	LXMaterial* CreateEngineMaterial(const wchar_t* szName);
 	LXString BuildKey(EResourceOwner ResourceOwner, const LXString& RelativeFilepath);
 	

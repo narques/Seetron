@@ -87,9 +87,6 @@ LXAssetManager::LXAssetManager(LXProject* Project) :_pDocument(Project)
 	
 	// Project Asset
 	LoadFromFolder(Project->GetAssetFolder(), EResourceOwner::LXResourceOwner_Project);
-	
-	// Internal Engine Asset 
-	BuildEngineMaterials();
 }
 
 LXAssetManager::~LXAssetManager()
@@ -102,25 +99,9 @@ LXAssetManager::~LXAssetManager()
 
 LXMaterial*	LXAssetManager::GetDefaultMaterial()
 {
-	// Default Material is not more dynamic. Now it's an asset
-
 	LXMaterial* Material = GetMaterial(LX_DEFAULT_MATERIAL);
 	CHK(Material);
 	return Material;
-
-//	if (!m_defaultMaterial)
-//	{
-//
-// 		m_defaultMaterial = new LXMaterial;
-// 		m_defaultMaterial->SetName(L"DefaulMaterial");
-// 		m_defaultMaterial->SetFilepath(GetSettings().GetMaterialsFolder() + L"M_Default." + LX_MATERIAL_EXT);
-// 		m_defaultMaterial->SetTwoSided(true);
-// 		m_defaultMaterial->SetColor(L"Textures/grid.stex", 0);
-// 		m_defaultMaterial->State = LXAsset::EResourceState::LXResourceState_Loaded;
-// 		m_defaultMaterial->Save();
-//	}
-
-//	return m_defaultMaterial;
 }
 
 LXAsset* LXAssetManager::GetAsset(const LXString& Name) const
@@ -535,90 +516,6 @@ LXMaterial* LXAssetManager::CreateEngineMaterial(const wchar_t* szName)
 	Material->Owner = EResourceOwner::LXResourceOwner_Engine;
 	Add(Material);
 	return Material;
-}
-
-void LXAssetManager::BuildEngineMaterials()
-{
-	// Default Material
-	{
-
-	}
-		
-	// Light Icon
-	{
-		LXMaterial* pMaterialLight = CreateEngineMaterial(L"sysLight");
-		//LXShaderProgram* pShader = pDocument->GetShaderManager().GetShader(LX_SHADER_RENDERANCHOR);
-		//pMaterialLight->SetShader(pShader);
-//		pMaterialLight->SetLighting(false);
-		pMaterialLight->SetColor(RED);
-		//pMaterialLight->SetTextureDiffuse(L"light.png");
-		pMaterialLight->SetPersistent(false);
-		pMaterialLight->SetSystem(true);
-	}
-
-	// Anchor
-	{
-		LXMaterial* pMaterialAnchor = CreateEngineMaterial(L"sysAnchor");
-		//LXShaderProgram* pShader = pDocument->GetShaderManager().GetShader(LX_SHADER_RENDERANCHOR);
-		//pMaterialAnchor->SetShader(pShader);
-//		pMaterialAnchor->SetLighting(false);
-		pMaterialAnchor->SetColor(RED);
-		//pMaterialAnchor->SetTextureDiffuse(L"anchor.jpg");
-		pMaterialAnchor->SetPersistent(false);
-		pMaterialAnchor->SetSystem(true);
-	}
-
-	// Outline
-	{
-		LXMaterial* pBlack = CreateEngineMaterial(L"sysBlack");
-//		pBlack->SetLighting(false);
-		pBlack->SetColor(BLACK);
-		pBlack->SetPersistent(false);
-		pBlack->SetSystem(true);
-		//pBlack->SetTextureDiffuse(L"stipple.jpg");
-		/*
-		Shader pour épaisseurs des lignes.
-		TODO : Picking HS
-		*/
-		//LXShaderProgram* pShader = pDocument->GetShaderManager().GetShader(LX_SHADER_RENDERLINES);
-		//pBlack->SetShader(pShader);
-	}
-
-	// White
-	{
-		LXMaterial* pWhite = CreateEngineMaterial(L"sysWhite");
-		//pWhite->SetLighting(false);
-		pWhite->SetColor(WHITE);
-		pWhite->SetPersistent(false);
-		pWhite->SetSystem(true);
-	}
-
-	// Red
-	{
-		LXMaterial* pRed = CreateEngineMaterial(L"sysRed");
-		//pRed->SetLighting(false);
-		pRed->SetColor(RED);
-		pRed->SetPersistent(false);
-		pRed->SetSystem(true);
-	}
-
-	// Green
-	{
-		LXMaterial* pGreen = CreateEngineMaterial(L"sysGreen");
-		//pGreen->SetLighting(false);
-		pGreen->SetColor(GREEN);
-		pGreen->SetPersistent(false);
-		pGreen->SetSystem(true);
-	}
-
-	// Blue
-	{
-		LXMaterial* pBlue = CreateEngineMaterial(L"sysBlue");
-		//pBlue->SetLighting(false);
-		pBlue->SetColor(BLUE);
-		pBlue->SetPersistent(false);
-		pBlue->SetSystem(true);
-	}
 }
 
 template<typename T>
