@@ -30,7 +30,8 @@ enum class EPropertyType
 	ArraySmartObject,
 	ListSmartObject,
 	SmartObject,
-	SharedObject
+	SharedObject,
+	ReferenceObject
 };
 
 enum class EConnectorType
@@ -40,8 +41,8 @@ enum class EConnectorType
 	Float2,
 	Float3,
 	Float4,
-	Texture,
-	Sampler,
+	Texture2D,
+	SamplerState,
 };
 
 EPropertyType GetPropertyTypeFromName(const wchar_t* typeName);

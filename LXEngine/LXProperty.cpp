@@ -103,13 +103,13 @@ LX_DECLARE_GETTEMPLATETYPE(uint, EPropertyType::Uint)
 LX_DECLARE_GETTEMPLATETYPE(LXString, EPropertyType::String)
 LX_DECLARE_GETTEMPLATETYPE(LXFilepath, EPropertyType::Filepath)
 LX_DECLARE_GETTEMPLATETYPE(LXAsset*, EPropertyType::AssetPtr)
-LX_DECLARE_GETTEMPLATETYPE(LXMaterialNode*, EPropertyType::MaterialNode)
 LX_DECLARE_GETTEMPLATETYPE(LXColor4f, EPropertyType::Color)
 LX_DECLARE_GETTEMPLATETYPE(vector<LXSmartObject*>, EPropertyType::ArraySmartObject)
 LX_DECLARE_GETTEMPLATETYPE(list<LXSmartObject*>, EPropertyType::ListSmartObject)
 LX_DECLARE_GETTEMPLATETYPE(vector<vec3f>, EPropertyType::ArrayFloat3f)
 LX_DECLARE_GETTEMPLATETYPE(LXSmartObject, EPropertyType::SmartObject)
 LX_DECLARE_GETTEMPLATETYPE(shared_ptr<LXSmartObject>, EPropertyType::SharedObject)
+LX_DECLARE_GETTEMPLATETYPE(LXReference<LXSmartObject>, EPropertyType::ReferenceObject)
 
 //--------------------------------------------------------------------------
 // LXPropertyT 
@@ -169,6 +169,13 @@ void LXPropertyT<T>::SetMin(const T& valueMin)
 	_PropInfo->_MinValue = new T(valueMin);
 }
 
+template <class T>
+void LXPropertyT<T>::SetMax(const T& valueMax)
+{
+	LX_SAFE_DELETE(_PropInfo->_MaxValue);
+	_PropInfo->_MaxValue = new T(valueMax);
+}
+
 /*virtual*/
 template <class T>
 void LXPropertyT<T>::LoadXML(const TLoadContext& LoadContext)
@@ -202,7 +209,18 @@ void LXPropertyT<T>::SaveXML(const TSaveContext& saveContext)
 			LogE(Property, L"Fail to save a non typed user property");
 			return;
 		}
+
 		TagName = L"UserProperty Name=\"" + _PropInfo->_Name + L"\"" + L" Type=\"" + TypeName + L"\"";
+
+		if (GetMin())
+		{
+			TagName += L" " + GetMinXMLAttribute();
+		}
+
+		if (GetMax())
+		{
+			TagName += L" " + GetMaxXMLAttribute();
+		}
 	}
 	else
 		TagName = _PropInfo->_Name;
@@ -332,12 +350,12 @@ template class LXCORE_API LXPropertyT<LXString>;
 template class LXCORE_API LXPropertyT<LXFilepath>;
 template class LXCORE_API LXPropertyT<LXMatrix>;
 template class LXCORE_API LXPropertyT<LXAssetPtr>;
-template class LXCORE_API LXPropertyT<LXMaterialNodePtr>;
 template class LXCORE_API LXPropertyT<ArraySmartObjects>;
 template class LXCORE_API LXPropertyT<ListSmartObjects>;
 template class LXCORE_API LXPropertyT<ArrayVec3f>;
 template class LXCORE_API LXPropertyT<LXSmartObject>;
 template class LXCORE_API LXPropertyT<shared_ptr<LXSmartObject>>;
+template class LXCORE_API LXPropertyT<LXReference<LXSmartObject>>;
 
 //
 // --- float ---
@@ -654,37 +672,6 @@ void LXPropertyT<LXAssetPtr>::SaveXML2(const TSaveContext& saveContext,  const L
 	::SaveXML(saveContext, strXMLName, strFilename);
 }
 
-template<>
-void LXPropertyT<LXMaterialNodePtr>::GetValueFromXML2(const TLoadContext& LoadContext)
-{
-	const LXMSXMLNode& node = LoadContext.node;
-	LXString XMLValue;
-	LXMaterialNodePtr value = nullptr;
-	GetValueFromXML(node, XMLValue);
- 
-	if (!XMLValue.IsEmpty())
-	{
-
-
-		LXMaterial* Material = dynamic_cast<LXMaterial*>(_Owner);
-		CHK(Material);
-		LXMaterialNode* MaterialNode = Material->GetMaterialNodeFromUID(XMLValue);
-		value = MaterialNode;
-	}
-
-	SetValue(value, false);
-}
-
-template<>
-void LXPropertyT<LXMaterialNodePtr>::SaveXML2(const TSaveContext& saveContext, const LXString& strXMLName, const LXMaterialNodePtr& v)
-{
-	LXString* pUID = nullptr;
-	if (v)
-		pUID = v->GetUID(true);
-	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
-	fwprintf(saveContext.pXMLFile, L"<%s Value=\"%s\"/>\n", strXMLName.GetBuffer(), pUID?pUID->GetBuffer():L"");
-}
-
 map<LXString, int> groupPositions;
 
 int LXProperty::GetGroupPosition(const LXString& strGroup)
@@ -755,60 +742,18 @@ void LXPropertyT<ArraySmartObjects>::GetValueFromXML2(const TLoadContext& LoadCo
 
 	for (LXMSXMLNode e = node.begin(); e != node.end(); e++)
 	{
-		if (e.name() == L"LXMaterialNodeTextureSampler")
+		LXSmartObject* smartObject = LXObjectFactory::CreateObject(e.name(), LoadContext.pOwner);
+		if (smartObject)
 		{
 			TLoadContext loadContextChild(e);
 			loadContextChild.pOwner = LoadContext.pOwner;
 			loadContextChild.filepath = LoadContext.filepath;
-
-			LXMaterial* Material = dynamic_cast<LXMaterial*>(LoadContext.pOwner);
-			CHK(Material);
-
-			LXMaterialNodeTextureSampler* p = new LXMaterialNodeTextureSampler(Material, nullptr, EShader::UndefinedShader, 0);
-			p->Load(loadContextChild);
-			value.push_back(p);
-		}
-		else if (e.name() == "LXMaterialNodeFloat")
-		{
-			TLoadContext loadContextChild(e);
-			loadContextChild.pOwner = LoadContext.pOwner;
-			loadContextChild.filepath = LoadContext.filepath;
-
-			LXMaterial* Material = dynamic_cast<LXMaterial*>(LoadContext.pOwner);
-			CHK(Material);
-
-			LXMaterialNodeFloat* p = new LXMaterialNodeFloat(Material, 0.0f);
-			p->Load(loadContextChild);
-			value.push_back(p);
-		}
-		else if (e.name() == "LXMaterialNodeColor")
-		{
-			TLoadContext loadContextChild(e);
-			loadContextChild.pOwner = LoadContext.pOwner;
-			loadContextChild.filepath = LoadContext.filepath;
-
-			LXMaterial* Material = dynamic_cast<LXMaterial*>(LoadContext.pOwner);
-			CHK(Material);
-
-			LXMaterialNodeColor* p = new LXMaterialNodeColor(Material, LXColor4f(0.0f, 0.0f, 0.0f, 0.0f));
-			p->Load(loadContextChild);
-			value.push_back(p);
+			smartObject->Load(loadContextChild);
+			value.push_back(smartObject);
 		}
 		else
 		{
-			LXSmartObject* smartObject = LXObjectFactory::CreateObject(e.name(), LoadContext.pOwner);
-			if (smartObject)
-			{
-				TLoadContext loadContextChild(e);
-				loadContextChild.pOwner = LoadContext.pOwner;
-				loadContextChild.filepath = LoadContext.filepath;
-				smartObject->Load(loadContextChild);
-				value.push_back(smartObject);
-			}
-			else
-			{
-				LogE(LXProperty, L"Unknonw object type (%s) for array", e.name());
-			}
+			LogE(LXProperty, L"Unknonw object type (%s) for array", e.name());
 		}
 	}
 
@@ -847,7 +792,7 @@ void LXPropertyT<ListSmartObjects>::GetValueFromXML2(const TLoadContext& LoadCon
 
 	for (LXMSXMLNode e = node.begin(); e != node.end(); e++)
 	{
-		LXSmartObject* smartObject = LXObjectFactory::CreateObject(e.name(), LoadContext.pOwner);
+		LXSmartObject* smartObject = LXObjectFactory::CreateObject(e.name(), _Owner/*LoadContext.pOwner*/);
 		if (smartObject)
 		{
 			TLoadContext loadContextChild(e);
@@ -958,6 +903,12 @@ void LXPropertyT<shared_ptr<LXSmartObject>>::GetValueFromXML2(const TLoadContext
 	const LXMSXMLNode& node = LoadContext.node;
 	LXString value = node.attr(L"Value");
 	shared_ptr<LXSmartObject> smartObject = LoadContext.pOwner->GetObject(value);
+
+	if (smartObject == nullptr)
+	{
+		LogE(LXProperty, L"%s %s property value not found: Referenced object does not exist", _Owner->GetName().GetBuffer(), GetName().GetBuffer());
+	}
+
 	SetValue(smartObject, false);
 }
 
@@ -972,15 +923,69 @@ void LXPropertyT<shared_ptr<LXSmartObject>>::SaveXML2(const TSaveContext& saveCo
 }
 
 //
-// --- 
+// --- LXReference<LXSmartObject> ---
+//
+
+template<>
+void LXPropertyT<LXReference<LXSmartObject>>::GetValueFromXML2(const TLoadContext& LoadContext)
+{
+	const LXMSXMLNode& node = LoadContext.node;
+	LXString value = node.attr(L"Value");
+	LXReference<LXSmartObject> smartObject = LoadContext.pOwner->GetObjectAsRef(value);
+
+	if (smartObject == nullptr)
+	{
+		LogE(LXProperty, L"%s %s property value not found: Referenced object does not exist", _Owner->GetName().GetBuffer(), GetName().GetBuffer());
+	}
+
+	SetValue(smartObject, false);
+}
+
+template<>
+void LXPropertyT<LXReference<LXSmartObject>>::SaveXML2(const TSaveContext& saveContext, const LXString& strXMLName, const LXReference<LXSmartObject>& v)
+{
+	LXString* pUID = nullptr;
+	if (v.get())
+		pUID = v->GetUID(true);
+	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
+	fwprintf(saveContext.pXMLFile, L"<%s Value=\"%s\"/>\n", strXMLName.GetBuffer(), pUID ? pUID->GetBuffer() : L"");
+}
+
+//
+// --- Specializations
 //
 
 template<> LXString LXPropertyT<bool>::GetTypeName() { return L"bool"; }
 template<> LXString LXPropertyT<int>::GetTypeName() { return L"int"; }
 template<> LXString LXPropertyT<float>::GetTypeName() { return L"float"; }
+template<> LXString LXPropertyT<vec2f>::GetTypeName() { return L"float2"; }
+template<> LXString LXPropertyT<vec3f>::GetTypeName() { return L"float3"; }
+template<> LXString LXPropertyT<vec4f>::GetTypeName() { return L"float4"; }
+template<> LXString LXPropertyT<LXAssetPtr>::GetTypeName() { return L"LXAssetPtr"; }
+template<> LXString LXPropertyT<LXString>::GetTypeName() { return L"LXString"; }
 template<class T>
 LXString LXPropertyT<T>::GetTypeName()
 {
-	LogE(Property, L"Missing specialization for property %s", _PropInfo->_Name.GetBuffer());
+	CHK(0);
+	LogE(LXProperty, L"Missing GetTypeName() specialization for property %s", _PropInfo->_Name.GetBuffer());
 	return L"";
 }
+
+template<> LXString LXPropertyT<float>::GetMinXMLAttribute() { return L"Min=\"" + LXString::Number(*GetMin()) + "\""; }
+template<class T>
+LXString LXPropertyT<T>::GetMinXMLAttribute()
+{
+	CHK(0);
+	LogE(LXProperty, L"Missing GetMinXMLAttribute() specialization for property %s", _PropInfo->_Name.GetBuffer());
+	return L"";
+}
+
+template<> LXString LXPropertyT<float>::GetMaxXMLAttribute() { return L"Max=\"" + LXString::Number(*GetMax()) +"\""; }
+template<class T>
+LXString LXPropertyT<T>::GetMaxXMLAttribute()
+{
+	CHK(0);
+	LogE(LXProperty, L"Missing GetMaxXMLAttribute() specialization for property %s", _PropInfo->_Name.GetBuffer());
+	return L"";
+}
+

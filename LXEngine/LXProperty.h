@@ -23,9 +23,6 @@ class LXProperty;
 class LXAsset;
 class LXFilepath;
 class LXMatrix;
-class LXMaterialNode;
-
-typedef LXMaterialNode*	LXMaterialNodePtr;
 typedef LXAsset* LXAssetPtr;
 
 struct TSaveContext;
@@ -135,8 +132,10 @@ public:
 	virtual void*			GetVarPtr		( ) = 0;
 
 	// User property tools
-	virtual	LXString		GetTypeName		( ) = 0;
-	virtual int				GetDataSize		( ) const = 0;
+	virtual	LXString		GetTypeName() = 0;
+	virtual LXString		GetMinXMLAttribute() = 0;
+	virtual LXString		GetMaxXMLAttribute() = 0;
+	virtual int				GetDataSize() const = 0;
 
 	template<class T>
 	static EPropertyType	GetTemplateType();
@@ -194,6 +193,7 @@ public:
 	T*					GetMin			( ) const									{ return (T*)_PropInfo->_MinValue; }
 	void				SetMinMax		( const T& valueMin, const T& valueMax );
 	void				SetMin			( const T& valueMin );
+	void				SetMax			( const T& valueMax );
 	bool				CheckRange		( const T& value );
 	
 	virtual	LXVariant*	CreateVariant()
@@ -215,6 +215,8 @@ protected:
 
 	void				SaveXML2		 ( const TSaveContext& saveContext, const LXString& strXMLName, const T& value );
 	LXString			GetTypeName() override;
+		LXString		GetMinXMLAttribute() override;
+	LXString			GetMaxXMLAttribute() override;
 	void				GetValueFromXML2 ( const TLoadContext& LoadContext );
 
 private:
@@ -288,9 +290,9 @@ typedef LXPropertyT<LXString>					LXPropertyString;
 typedef LXPropertyT<LXFilepath>					LXPropertyFilepath;
 typedef LXPropertyT<LXMatrix>					LXPropertyMatrix;
 typedef LXPropertyT<LXAssetPtr>					LXPropertyAssetPtr;
-typedef LXPropertyT<LXMaterialNode*>			LXPropertyMaterialNodePtr;
 typedef LXPropertyT<ArraySmartObjects>			LXPropertyArraySmartObjects;
 typedef LXPropertyT<ListSmartObjects>			LXPropertyListSmartObjects;
 typedef LXPropertyT<ArrayVec3f>					LXPropertyArrayVec3f;	
 typedef LXPropertyT<LXSmartObject>				LXPropertySmartObject;
 typedef LXPropertyT<shared_ptr<LXSmartObject>>	LXPropertySharedObject;
+typedef LXPropertyT<LXReference<LXSmartObject>>	LXPropertyReferenceObject;

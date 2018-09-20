@@ -51,6 +51,17 @@ LXString LXString::Right(const wchar_t* pszSub) const
 	return LXString(m_str.substr(i, m_str.size() - i).c_str());
 }
 
+LXStringA LXString::ToStringA() const
+{
+	int len = m_str.size();
+	char* sz = new char[len + 1];
+	int size = wcstombs(sz, m_str.c_str(), len + 1);
+	sz[size] = '\0';
+	LXStringA str(sz);
+	delete sz;
+	return str;
+}
+
 LXString LXString::Number(int i)
 {
 	wchar_t sz[256];

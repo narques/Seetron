@@ -343,6 +343,7 @@ template<> const LXString LXTrackT<float>::GetTypeString() const { return L" Typ
 template<> const LXString LXTrackT<double>::GetTypeString() const { return L" Type=\"double\""; }
 template<> const LXString LXTrackT<uint>::GetTypeString() const { return L" Type=\"uint\""; }
 template<> const LXString LXTrackT<int>::GetTypeString() const { return L" Type=\"int\""; }
+template<> const LXString LXTrackT<vec2f>::GetTypeString() const { return L" Type=\"vec2f\""; }
 template<> const LXString LXTrackT<vec3f>::GetTypeString() const { return L" Type=\"vec3f\""; }
 template<> const LXString LXTrackT<vec4f>::GetTypeString() const { return L" Type=\"vec4f\""; }
 template<> const LXString LXTrackT<LXColor4f>::GetTypeString() const { return L" Type=\"LXColor4f\""; }
@@ -350,7 +351,6 @@ template<> const LXString LXTrackT<LXMatrix>::GetTypeString() const { return L" 
 template<> const LXString LXTrackT<LXString>::GetTypeString() const { return L" Type=\"string\""; }
 template<> const LXString LXTrackT<LXFilepath>::GetTypeString() const { return L" Type=\"filepath\""; }
 template<> const LXString LXTrackT<LXAssetPtr>::GetTypeString() const { return L" Type=\"asset\""; }
-template<> const LXString LXTrackT<LXMaterialNodePtr>::GetTypeString() const { return L" Type=\"materialinput\""; }
 
 //Explicit class Instantiation
 template class LXTrackT < bool >;
@@ -358,6 +358,7 @@ template class LXTrackT < float > ;
 template class LXTrackT < double >;
 template class LXTrackT < uint >;
 template class LXTrackT < int >;
+template class LXTrackT < vec2f >;
 template class LXTrackT < vec3f >;
 template class LXTrackT < vec4f >;
 template class LXTrackT < LXColor4f >;
@@ -365,4 +366,3 @@ template class LXTrackT < LXMatrix >;
 template class LXTrackT < LXString >;
 template class LXTrackT < LXFilepath >;
 template class LXTrackT < LXAssetPtr >;
-template class LXTrackT < LXMaterialNodePtr >;

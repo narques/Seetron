@@ -57,6 +57,7 @@ void LXRenderPassUI::Resize(uint Width, uint Height)
 
 void LXRenderPassUI::DrawStats(const LXStat* Stat, float X, float& Y)
 {
+#if LX_D2D1
 	const LXDirectX11* DirectX11 = Renderer->GetDirectX11();
 	ID2D1DeviceContext* dc = DirectX11->_D2D1DeviceContext;
 	float Bottom = Y + LX_CONSOLE_FONT_SIZE;
@@ -71,7 +72,7 @@ void LXRenderPassUI::DrawStats(const LXStat* Stat, float X, float& Y)
 	{
 		DrawStats(Child, X + 10, Y);
 	}
-
+#endif
 }
 
 void LXRenderPassUI::DrawStats()

@@ -189,10 +189,9 @@ template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const uint& newV
 template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const int& newValue, DWORD dwTime);
 template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const LXString& newValue, DWORD dwTime);
 template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const LXFilepath& newValue, DWORD dwTime);
+template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const vec2f& newValue, DWORD dwTime);
 template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const vec3f& newValue, DWORD dwTime);
 template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const vec4f& newValue, DWORD dwTime);
 template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const LXColor4f& newValue, DWORD dwTime);
 template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const LXMatrix& newValue, DWORD dwTime);
 template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const LXAssetPtr& newValue, DWORD dwTime);
-template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const LXMaterialNodePtr& newValue, DWORD dwTime);
-

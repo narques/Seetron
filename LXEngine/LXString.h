@@ -23,6 +23,8 @@ typedef vector<char> ArrayChar;
 // Buffers used for conversions
 #define LX_MAX_NUMBER_OF_CHAR 4096 
 
+class LXStringA;
+
 class LXCORE_API LXString
 {
 
@@ -88,16 +90,18 @@ public:
 		return ac;
 	}
 
+	LXStringA ToStringA() const;
+	
 	const wchar_t*	GetConstBuffer( ) const								{ return m_str.c_str(); }
 	void		SetString( const LXString& str )						{ m_str.assign(str); }
 	int			CompareNoCase( const wchar_t* str ) const						{ return compare(str); }
 
-	int Replace( wchar_t* pszOld, wchar_t* pszNew )
+	int Replace( const wchar_t* pszOld, const wchar_t* pszNew )
 	{
-		LXString strToReplace(pszOld);
+		const LXString strToReplace(pszOld);
 		int nSize = strToReplace.size();
 		int nPos = (int)m_str.find(strToReplace);
-		LXString strReplacement(pszNew);
+		const LXString strReplacement(pszNew);
 		m_str.replace(nPos, nSize, strReplacement);
 		return 0;
 	}

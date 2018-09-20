@@ -62,7 +62,7 @@ public:
 	// Comparison Operators
 
 	LX_INLINE bool		operator!=( const vec4& v ) const				{ return ((x != v.x) || (y != v.y) || (z != v.z) || (w != v.w)); }
-	LX_INLINE bool		operator==( const vec4& v ) const				{ return ((x == v.x) && (y == v.y) && (z == v.z) || (w == v.w)); }
+	LX_INLINE bool		operator==( const vec4& v ) const				{ return ((x == v.x) && (y == v.y) && (z == v.z) && (w == v.w)); }
 
 	// Math
 

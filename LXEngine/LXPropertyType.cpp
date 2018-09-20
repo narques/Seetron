@@ -33,6 +33,11 @@ EPropertyType GetPropertyTypeFromName(const wchar_t* typeName)
 	CMP_PTYPE(ArraySmartObject);
 	CMP_PTYPE(SmartObject);
 	
+
+	if (wcscmp(typeName, L"Texture2D") == 0) 
+		return EPropertyType::AssetPtr;
+
+	
 	CHK(0);
 	return EPropertyType::Undefined;
 }
@@ -43,9 +48,11 @@ EConnectorType GetConnectorTypeFromName(const wchar_t* typeName)
 	CMP_CTYPE(Float2);
 	CMP_CTYPE(Float3);
 	CMP_CTYPE(Float4);
-	CMP_CTYPE(Texture);
-	CMP_CTYPE(Sampler);
-	
+	CMP_CTYPE(Texture2D);
+	CMP_CTYPE(SamplerState);
+			
 	CHK(0);
+	LogE(LXPropertyType, L"GetConnectorTypeFromName: undefined type %s", typeName);
+	
 	return EConnectorType::Undefined;
 }

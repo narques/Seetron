@@ -79,10 +79,10 @@ public:
 	ListProperties					GetBranchProperties() const;
 	virtual void					GetChildProperties(ListProperties& listProperties) const;
 	
-	void							GetUserProperties(ListProperties& UserProperties);
+	void							GetUserProperties(ListProperties& UserProperties) const;
 	void							AttachPropertiesToThis();
 	LXProperty*						GetProperty(const LXPropertyID& PID);
-	LXProperty*						GetProperty(const LXString& name);
+	LXProperty*						GetProperty(const LXString& name) const;
 	virtual void					OnPropertyChanged(LXProperty* pProperty);
 
 	// Listeners / Callback
@@ -123,6 +123,7 @@ public:
 
 	// Local references
 	shared_ptr<LXSmartObject>		GetObject(const LXString& uid);
+	LXReference<LXSmartObject>		GetObjectAsRef(const LXString& uid);
 	void							AddObject(const LXString& uid, LXSmartObject* smartObject);
 
 	// Misc 
@@ -131,6 +132,8 @@ public:
 	
 	template<class T>
 	LXPropertyT<T>*					CreateUserProperty(const LXString& Name, const T& DefaultValue);
+	template<class T>
+	LXPropertyT<T>*					CreateUserProperty(const LXString& Name, LXPropertyID propertyID, const T& DefaultValue);
 	template <class T>
 	LXPropertyT<T>*					DefineProperty(const LXString& Name, T* var) { return DefineProperty(Name, GetAutomaticPropertyID(), var); }
 	template <class T>				
@@ -171,6 +174,7 @@ private:
 
 	virtual bool					OnSaveChild(const TSaveContext& saveContext) const { return true; }
 	virtual bool					OnLoadChild(const TLoadContext& loadContext) { return true; }
+	virtual void					OnLoaded() {};
 
 	void							DefineProperties();
 	bool							AddProperty(LXProperty* pProperty);

@@ -111,6 +111,17 @@ LXString LXFilepath::GetFontDirectory()
 
 LXFilepath LXFilepath::GetRelativeFilepath(const LXFilepath& AbsoluteFilepath) const
 {
+	// Already Relative
+	if (::PathIsRelative(AbsoluteFilepath.GetBuffer()) == TRUE)
+	{
+		return AbsoluteFilepath;
+	}
+
+	if (AbsoluteFilepath.Find(GetBuffer()) == -1)
+	{
+		return L"";
+	}
+		
 	LXString RelativePath;
 	int Lenght = AbsoluteFilepath.GetLength() - GetLength();
 
