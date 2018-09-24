@@ -12,6 +12,7 @@
 
 class LXConnection;
 class LXConnectorTemplate;
+class LXNode;
 
 enum class EConnectorRole
 {
@@ -25,10 +26,13 @@ class LXCORE_API LXConnector : public LXSmartObject
 
 public:
 
-	LXConnector();
-	LXConnector(EConnectorRole role);
-	LXConnector(const LXConnectorTemplate* connectorTemplate, EConnectorRole role);
+	LXConnector(LXNode* owner);
+	LXConnector(LXNode* owner, EConnectorRole role);
+	LXConnector(LXNode* owner, const LXConnectorTemplate* connectorTemplate, EConnectorRole role);
+	LXConnector(LXNode* owner, EConnectorRole role, EConnectorType type);
 	virtual ~LXConnector();
+
+	LXNode* GetOwner() const { return _owner; }
 
 private:
 
@@ -40,6 +44,10 @@ public:
 	EConnectorType Type = EConnectorType::Undefined;
 	
 	list<LXConnection*> Connections;
+
+private:
+
+	LXNode* _owner;
 };
 
 class LXCORE_API LXConnectorTemplate : public LXSmartObject
@@ -50,4 +58,5 @@ public:
 	LXConnectorTemplate(const LXString& name, EConnectorType type);
 	virtual ~LXConnectorTemplate();
 	EConnectorType Type;
+	LXString Code;
 };

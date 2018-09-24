@@ -21,6 +21,8 @@ public:
 	virtual ~LXGraphTemplate();
 	vector<LXNodeTemplate*> NodeTemplates;
 
+	const LXNodeTemplate* GetNodeTemplate(const LXString& templateID) const;
+
 private:
 
 	virtual bool OnLoadChild(const TLoadContext& loadContext) override;

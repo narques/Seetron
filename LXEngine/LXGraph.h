@@ -20,11 +20,28 @@ public:
 
 	LXGraph();
 	virtual ~LXGraph();
+
+	void Clear();
 	
 	void AddNode(LXNode* node);
 	void AddConnection(LXConnection* connection);
 
-	vector<LXNode*> Nodes;
-	vector<LXConnection*> Connections;
+	void DeleteNode(LXNode* node);
+	void DeleteConnection(LXConnection* conection);
+
+	const LXNode* GetMain() const;
+
+private:
+
+	void OnLoaded() override;
+
+public:
+
+	list<LXNode*> Nodes;
+	list<LXConnection*> Connections;
+
+private:
+
+	LXNode * _main = nullptr;
 };
 

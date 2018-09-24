@@ -15,20 +15,35 @@ LXConnection::LXConnection()
 	DefineProperties();
 }
 
+LXConnection::~LXConnection()
+{
+}
+
+void LXConnection::Detach(LXConnector* owner)
+{
+	if (owner != Source)
+	{
+		Source->Connections.remove(this);
+	}
+
+	if (owner != Destination)
+	{
+		Destination->Connections.remove(this);
+	}
+}
+
 LXConnection::LXConnection(LXConnector* source, LXConnector* destination)
 {
-	LogD(LXConnection, L"Raw ptr to shared_ptr :(");
-	Source = shared_ptr<LXConnector>(source);
-	Destination = shared_ptr<LXConnector>(destination);
-
+	Source = source;
+	Destination = destination;
+	
 	// Input is unique, remove existing
 	if (Destination->Connections.size() > 0)
 	{
 		for(LXConnection* connection : destination->Connections)
 		{
-			CHK(0); // TODO : message to delete the corresponding connection views
-			connection->Source->Connections.remove(connection);
-			//canvas.Children.Remove(connection._connectionView._path);
+			Detach(nullptr);
+			delete connection;
 		}
 
 		destination->Connections.clear();
@@ -42,10 +57,19 @@ LXConnection::LXConnection(LXConnector* source, LXConnector* destination)
 
 void LXConnection::DefineProperties()
 {
-	DefineProperty(L"Source", (shared_ptr<LXSmartObject>*)&Source);
-	DefineProperty(L"Destination", (shared_ptr<LXSmartObject>*)&Destination);
+	DefineProperty(L"Source", (LXReference<LXSmartObject>*)&Source);
+	DefineProperty(L"Destination", (LXReference<LXSmartObject>*)&Destination);
 }
 
-LXConnection::~LXConnection()
+void LXConnection::OnLoaded()
 {
+	if (Destination->Connections.size() == 0)
+	{
+		Source->Connections.push_back(this);
+		Destination->Connections.push_back(this);
+	}
+	else
+	{
+		// Broken or duplicated
+	}
 }

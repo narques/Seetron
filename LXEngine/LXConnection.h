@@ -20,14 +20,16 @@ public:
 	LXConnection();
 	LXConnection(LXConnector* source, LXConnector* destination);
 	virtual ~LXConnection();
+	void Detach(LXConnector* owner);
 
 private:
 
 	void DefineProperties();
+	void OnLoaded() override;
 
 public:
 
-	shared_ptr<LXConnector> Source;
-	shared_ptr<LXConnector> Destination;
+	LXReference<LXConnector> Source;
+	LXReference<LXConnector> Destination;
 };
 

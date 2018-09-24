@@ -7,24 +7,39 @@
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
+#include "LXConnection.h"
 #include "LXConnector.h"
+#include "LXNode.h"
 
-LXConnector::LXConnector(EConnectorRole role)
+LXConnector::LXConnector(LXNode* owner, EConnectorRole role)
 {
 	SetName(L"[CoName]");
+	_owner = owner;
 	Role = role;
 	DefineProperties();
 }
 
-LXConnector::LXConnector(const LXConnectorTemplate* connectorTemplate, EConnectorRole role)
+LXConnector::LXConnector(LXNode* owner, const LXConnectorTemplate* connectorTemplate, EConnectorRole role)
 {
 	SetName(connectorTemplate->GetName());
+	_owner = owner;
 	Role = role;
+	Type = connectorTemplate->Type;
 	DefineProperties();
 }
 
-LXConnector::LXConnector()
+LXConnector::LXConnector(LXNode* owner)
 {
+	_owner = owner;
+	DefineProperties();
+}
+
+LXConnector::LXConnector(LXNode* owner, EConnectorRole role, EConnectorType type)
+{
+	SetName(L"[CoName]");
+	_owner = owner;
+	Role = role;
+	Type = type;
 	DefineProperties();
 }
 
@@ -41,6 +56,7 @@ void LXConnector::DefineProperties()
 
 LXConnector::~LXConnector()
 {
+	CHK(Connections.size() == 0);
 }
 
 LXConnectorTemplate::LXConnectorTemplate(const LXString& name, EConnectorType type):

@@ -18,8 +18,14 @@ class LXCORE_API LXGraphMaterial : public LXGraph
 
 public:
 
-	LXGraphMaterial();
+	LXGraphMaterial(LXMaterial* material);
 	virtual ~LXGraphMaterial();
+
+	void GetChildProperties(ListProperties& UserProperties) const override;
+
+public:
+
+	LXMaterial* Material = nullptr;
 };
 
 

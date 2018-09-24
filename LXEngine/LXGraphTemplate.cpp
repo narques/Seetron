@@ -8,6 +8,7 @@
 
 #include "stdafx.h"
 #include "LXGraphTemplate.h"
+#include "LXNode.h"
 #include "LXMemory.h" // --- Must be the last included --- 
 
 LXGraphTemplate::LXGraphTemplate()
@@ -17,6 +18,20 @@ LXGraphTemplate::LXGraphTemplate()
 
 LXGraphTemplate::~LXGraphTemplate()
 {
+}
+
+const LXNodeTemplate* LXGraphTemplate::GetNodeTemplate(const LXString& templateID) const
+{
+	for (const LXNodeTemplate* nodeTemplate : NodeTemplates)
+	{
+		if (nodeTemplate->GetName() == templateID)
+		{
+			return nodeTemplate;
+		}
+	}
+
+	CHK(0);
+	return nullptr;
 }
 
 bool LXGraphTemplate::OnLoadChild(const TLoadContext& loadContext)
