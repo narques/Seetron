@@ -81,7 +81,7 @@ void LXRenderPassTransparency::Render(LXRenderCommandList* RCL)
 			
 	for (LXRenderCluster* RenderCluster : *_ListRenderClusterTransparents)
 	{
-		RenderCluster->Render(ERenderPass::GBuffer, RCL);
+		RenderCluster->Render(ERenderPass::Transparency, RCL);
 	}
 
 	//

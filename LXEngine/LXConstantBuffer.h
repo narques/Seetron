@@ -27,6 +27,8 @@ struct LXVariableDeclaration
 	EHLSLType Type;
 	LXStringA Name;
 	uint Offset;
+	uint Size;
+	void* Value;
 };
 
 class LXConstantBuffer 
@@ -51,12 +53,18 @@ public:
 
 	uint GetSize();
 
+	uint GetPadSize() const 
+	{
+		return _PadSize;
+	}
+
+	void UpdateAll();
 	void Update(const LXString& Name, const float& Value);
 	void Update(const LXString& Name, const vec4f& Value);
 		
 private:
 
-	bool IsNameFree(const LXStringA& Name);
+	bool IsNameFree(const LXStringA& Name, EHLSLType type);
 	void AddPad();
 	void RemovePad();
 	

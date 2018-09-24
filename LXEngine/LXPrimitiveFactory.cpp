@@ -907,19 +907,20 @@ const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateQuadXZ(float SizeX, flo
 
 const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateSphere(float radius)
 {
-	int slices = 32;
-	int stacks = 32;
+	int slices = 64; // Min 3
+	int stacks = 32; // Min 2
 
 	const shared_ptr<LXPrimitive>& p = CreatePrimitive();
-	p->SetTopology(LX_TRIANGLE_STRIP);
+	p->SetTopology(LX_TRIANGLES);
 
 	// Top
-	// 	p->GetArrayPositions().push_back(vec3f(0.f, 0.f, radius));
-	// 	p->GetArrayNormals().push_back(vec3f(0.f, 0.f, 1.f));
+	p->GetArrayPositions().push_back(vec3f(0.f, 0.f, radius));
+	p->GetArrayNormals().push_back(vec3f(0.f, 0.f, 1.f));
+	p->GetArrayTexCoords().push_back(vec2f(0.f, 1.f));
 
-	for (int i = 0; i<stacks; i++)
+	for (int i = 1; i < stacks; i++)
 	{
-		float angle2 = LX_PI * (0.5f + (float)i / ((float)(stacks - 1)));
+		float angle2 = LX_PI * (0.5f + (float)i / ((float)(stacks)));
 		float cos2 = cos(angle2);
 		float sin2 = sin(angle2);
 
@@ -935,28 +936,72 @@ const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateSphere(float radius)
 
 			p->GetArrayPositions().push_back(vec3f(x*radius, y*radius, z*radius));
 			p->GetArrayNormals().push_back(vec3f(x, y, z));
-			float v = 0.5f + atan2(z, x) / LX_2PI;
-			float u = 0.5f - asin(y) / LX_PI;
+			
+			float v =  (j * (LX_2PI / slices)) / LX_2PI;
+			float u = (i * (LX_PI / stacks)) / LX_PI;
+
 			p->GetArrayTexCoords().push_back(vec2f(u, v));
 		}
 	}
 
-	// 	// bottom
-	// 	p->GetArrayPositions().push_back(vec3f(0.f, 0.f, -radius));
-	// 	p->GetArrayNormals().push_back(vec3f(0.f, 0.f, -1.f));
+	// bottom
+	p->GetArrayPositions().push_back(vec3f(0.f, 0.f, -radius));
+	p->GetArrayNormals().push_back(vec3f(0.f, 0.f, -1.f));
+	p->GetArrayTexCoords().push_back(vec2f(0.f, 0.f));
 
+	//
 	// Indices
-	for (int y = 0; y < stacks - 1; y++)
+	//
+
+	for (int i = 0; i < slices; i++)
+	{
+		const int a = 0;
+		int b = (i == slices - 1)? 1 : i + 2;
+		int c = i + 1;
+		p->GetArrayIndices().push_back(a);
+		p->GetArrayIndices().push_back(b);
+		p->GetArrayIndices().push_back(c);
+	}
+	
+	for (int y = 0; y < stacks - 2; y++)
 	{
 		for (int x = 0; x < slices; x++)
 		{
-			p->GetArrayIndices().push_back(x + (y + 1) * slices);
-			p->GetArrayIndices().push_back(x + y * slices);
+			const int offsety = y * slices + 1;
+			const int offsety2 = (y + 1) * slices + 1;
+
+			int x2 = x + 1;
+			if (x2 >= slices)
+				x2 = 0;
+
+			int a = offsety + x;
+			int b = offsety + x2;
+			int c = offsety2 + x;
+			int d = offsety2 + x2;
+
+			p->GetArrayIndices().push_back(a);
+			p->GetArrayIndices().push_back(b);
+			p->GetArrayIndices().push_back(c);
+  
+			p->GetArrayIndices().push_back(c);
+			p->GetArrayIndices().push_back(b);
+			p->GetArrayIndices().push_back(d);
 		}
-		p->GetArrayIndices().push_back(0 + (y + 1) * slices);
-		p->GetArrayIndices().push_back(0 + y * slices);
 	}
 
+	int lastIndex = slices * (stacks - 1) + 1;
+	int lastStackIndex = lastIndex - slices;
+
+	for (int i = 0; i < slices; i++)
+	{
+		const int a = lastIndex;
+		int b = lastStackIndex + ((i == slices - 1) ? 0 : i + 1);
+		int c = lastStackIndex + i;
+		p->GetArrayIndices().push_back(a);
+		p->GetArrayIndices().push_back(c);
+		p->GetArrayIndices().push_back(b);
+	}
+		
 	return p;
 }
 

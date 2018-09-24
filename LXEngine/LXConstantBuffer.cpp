@@ -24,14 +24,20 @@ void LXConstantBuffer::Release()
 	VariableDeclarations.clear();
 }
 
-bool LXConstantBuffer::IsNameFree(const LXStringA& Name)
+bool LXConstantBuffer::IsNameFree(const LXStringA& Name, EHLSLType type)
 {
 
 	for (const LXVariableDeclaration& VD: VariableDeclarations)
 	{
 		if (VD.Name == Name)
 		{
-			LogD(ConstantBuffer, L"'%s' variable name is already used in ConstantBuffer structure.", Name.GetBuffer());
+			if (VD.Type != type)
+			{
+				LogD(ConstantBuffer, "'%s' variable name is already used in ConstantBuffer structure with a different type.", Name.GetBuffer());
+				CHK(0);
+				return false;
+			}
+
 			return false;
 		}
 	}
@@ -61,6 +67,24 @@ bool LXConstantBuffer::AddFloat4(const LXString& Name, const vec4f& Value)
 bool LXConstantBuffer::AddMatrix(const LXString& Name, const LXMatrix& Value)
 {
 	return AddVariable(EHLSLType::HLSL_Matrix, Name, Value);
+}
+
+void LXConstantBuffer::UpdateAll()
+{
+	for (const LXVariableDeclaration& VD : VariableDeclarations)
+	{
+		uint Offset = VD.Offset;
+		void* p = &Buffer[Offset];
+		if (memcmp(p, VD.Value, VD.Size) != 0)
+		{
+			memcpy(p, VD.Value, VD.Size);
+			ValueHasChanged = true;
+		}
+		else
+		{
+			int foo = 0;
+		}
+	}
 }
 
 void LXConstantBuffer::Update(const LXString& Name, const float& Value)
@@ -112,14 +136,14 @@ bool LXConstantBuffer::AddVariable(EHLSLType inType, const LXString& Name, const
 {
 	LXStringA NameA = &*Name.GetBufferA().begin();
 
-	if (!IsNameFree(NameA))
-		return false;
+	if (!IsNameFree(NameA, inType))
+		return true;
 
 	RemovePad();
  
 	uint Offset = (uint)Buffer.size();
 	Buffer.resize(Offset + sizeof(T));
- T* p = (T*)&Buffer[Offset];
+	T* p = (T*)&Buffer[Offset];
 	*p = Value;
 
 	AddPad();
@@ -128,6 +152,8 @@ bool LXConstantBuffer::AddVariable(EHLSLType inType, const LXString& Name, const
 	NewVariable.Type = inType;
 	NewVariable.Name = NameA;
 	NewVariable.Offset = Offset;
+	NewVariable.Size = sizeof(T);
+	NewVariable.Value = (void*)&Value;
 
 	VariableDeclarations.push_back(NewVariable);
 
@@ -159,7 +185,10 @@ void LXConstantBuffer::AddPad()
 	CHK(_PadSize == 0); // Pad already pushed
 
 	uint Size = (uint)Buffer.size();
-	_PadSize = (16 - (Size % 16)) % 16;
+
+	uint to48Bytes = Size >= 48 ? 0 : 48 - Size;
+
+	_PadSize = ((16 - ((Size + to48Bytes) % 16)) % 16) + to48Bytes;
 	if (_PadSize > 0)
 	{
 		Buffer.resize(Size + _PadSize);

@@ -26,6 +26,7 @@ enum class ERenderPass
 	Depth,
 	Shadow,
 	GBuffer,
+	Transparency,
 	Last // To count and iterate
 };
 

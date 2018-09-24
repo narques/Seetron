@@ -247,6 +247,11 @@ void LXRenderPassLighting::RenderSpotLight(LXRenderCommandList* r, const LXRende
 	for (const LXRenderCluster* SpotLight : *_ListRenderClusterLights)
 	{
 		CHK(SpotLight->ConstantBufferDataSpotLight);
+
+		SpotLight->ConstantBufferDataSpotLight->MatrixLightView = SpotLight->LightView->View;
+		SpotLight->ConstantBufferDataSpotLight->MatrixLightProjection = SpotLight->LightView->Projection;
+		SpotLight->ConstantBufferDataSpotLight->LightPosition = SpotLight->LightView->CameraPosition;
+		
 		r->UpdateSubresource4(RenderPassShadow->ConstantBufferSpotLight->D3D11Buffer, SpotLight->ConstantBufferDataSpotLight);
 		Renderer->GetSSTriangle()->Render(r);
 	}
