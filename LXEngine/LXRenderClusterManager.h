@@ -45,7 +45,7 @@ public:
 	
 	// Material
 	void UpdateMaterial(const LXMaterial* Material);
-	//void RebuildMaterial(const LXMaterial* Material);
+	void RebuildMaterial(const LXMaterial* Material);
 	LXMaterialD3D11* GetMaterial(const LXMaterial* Material);
 
 	// Misc
@@ -53,9 +53,11 @@ public:
 	
 private:
 
+	void DeleteUnusedMaterials();
 	shared_ptr<LXMaterialD3D11>& GetMaterialD3D11(const LXMaterial* Material);
 	shared_ptr<LXPrimitiveD3D11>& GetPrimitiveD3D11(LXPrimitive* Primitive, const ArrayVec3f* ArrayInstancePosition = nullptr);
-	shared_ptr<LXMaterialD3D11>& GetMaterialAndShadersD3D11(ERenderPass RenderPass, const LXMaterial* Material, const LXPrimitiveD3D11* PrimitiveD3D11, LXShaderProgramD3D11* OutShaderProgram);
+	bool GetMaterialAndShadersD3D11(LXRenderCluster* renderCluster, const LXMaterial* Material, const LXPrimitiveD3D11* PrimitiveD3D11);
+	bool GetShadersD3D11(ERenderPass renderPass, const LXPrimitiveD3D11* primitiveD3D11, const LXMaterialD3D11* materialD3D11, LXShaderProgramD3D11* shaderProgram);
 	LXRenderCluster* CreateRenderCluster(LXActorMesh* Actor, LXPrimitiveInstance* PrimitiveInstance, const LXMatrix& MatrixWCS, const LXBBox& BBoxWorld, LXPrimitive* Primitive, LXMaterial* Material);
 
 	// Remove the RenderCluster from the Rendering (ListRendersClusters)

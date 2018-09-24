@@ -360,10 +360,10 @@ template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties
 template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXString&);
 template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXFilepath&);
 template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const bool&);
+template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const vec2f&);
 template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const vec3f&);
 template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const vec4f&);
 template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXColor4f&);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXMaterialNodePtr&);
 template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXMatrix&);
 template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXAssetPtr&);
 
@@ -380,6 +380,7 @@ template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<int>*, con
 template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXString>*, const LXString&);
 template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXFilepath>*, const LXFilepath&);
 template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<bool>*, const bool&);
+template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<vec2f>*, const vec2f&);
 template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<vec3f>*, const vec3f&);
 template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<vec4f>*, const vec4f&);
 template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXColor4f>*, const LXColor4f&);

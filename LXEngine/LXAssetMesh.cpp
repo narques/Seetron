@@ -221,7 +221,6 @@ bool LXAssetMesh::OnLoadChild(const TLoadContext& loadContext)
 				LXMaterial* Material = GetAssetManager()->CreateNewMaterial(MaterialName, LX_DEFAULT_MATERIAL_FOLDER);
 				LXShader* Shader = GetAssetManager()->CreateNewShader(MaterialName, LX_DEFAULT_SHADER_FOLDER);
 				Shader->SaveDefault();
-				Material->SetPixelShader(Shader->GetRelativeFilename());
 				Material->Save();
 				
 				// Delete the volatile material

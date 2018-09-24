@@ -38,6 +38,7 @@ using namespace std;
 #include "LXExports.h"
 #include "LXMacros.h"
 #include "LXDebug.h"
+#include "LXReference.h"
 #include "LXTypes.h"
 #include "LXString.h"
 #include "LXVec2.h"

@@ -13,6 +13,8 @@
 #include "LXMaterial.h"
 #include "LXShader.h"
 #include "LXSettings.h"
+#include "LXCore.h"
+#include "LXProject.h"
 #include "LXDirectX11.h"
 #include "LXPrimitiveD3D11.h"
 #include "LXFile.h"
@@ -49,7 +51,7 @@ LXShaderManager::LXShaderManager()
 
 LXShaderManager::~LXShaderManager()
 {
-	DeleteShaders();
+	DeleteUnusedShaders();
 
 	LX_SAFE_DELETE(VSDrawToBackBuffer);
 	LX_SAFE_DELETE(PSDrawToBackBuffer);
@@ -88,36 +90,66 @@ void LXShaderManager::RebuildShaders()
 	}
 }
 
-void LXShaderManager::DeleteShaders()
+void LXShaderManager::DeleteUnusedShaders()
 {
-	for (auto It = VertexShaders.begin(); It != VertexShaders.end(); It++)
+	for (auto It = VertexShaders.begin(); It != VertexShaders.end();)
 	{
-		CHK(It->second.use_count() == 1);
-		//delete It->second;
+		if (It->second.use_count() == 1)
+		{
+			It = VertexShaders.erase(It);
+		}
+		else
+		{
+			It++;
+		}
 	}
 
-	for (auto It = HullShaders.begin(); It != HullShaders.end(); It++)
+	for (auto It = HullShaders.begin(); It != HullShaders.end();)
 	{
-		CHK(It->second.use_count() == 1);
-		//delete It->second;
+		if (It->second.use_count() == 1)
+		{
+			It = HullShaders.erase(It);
+		}
+		else
+		{
+			It++;
+		}
 	}
 
-	for (auto It = DomainShaders.begin(); It != DomainShaders.end(); It++)
+	for (auto It = DomainShaders.begin(); It != DomainShaders.end();)
 	{
-		CHK(It->second.use_count() == 1);
-		//delete It->second;
+		if (It->second.use_count() == 1)
+		{
+			It = DomainShaders.erase(It);
+		}
+		else
+		{
+			It++;
+		}
 	}
 
-	for (auto It = GeometryShaders.begin(); It != GeometryShaders.end(); It++)
+	for (auto It = GeometryShaders.begin(); It != GeometryShaders.end();)
 	{
-		CHK(It->second.use_count() == 1);
-		//delete It->second;
+		if (It->second.use_count() == 1)
+		{
+			It = GeometryShaders.erase(It);
+		}
+		else
+		{
+			It++;
+		}
 	}
 
-	for (auto It = PixelShaders.begin(); It != PixelShaders.end(); It++)
+	for (auto It = PixelShaders.begin(); It != PixelShaders.end();)
 	{
-		CHK(It->second.use_count() == 1);
-		//delete It->second;
+		if (It->second.use_count() == 1)
+		{
+			It = PixelShaders.erase(It);
+		}
+		else
+		{
+			It++;
+		}
 	}
 }
 
@@ -126,7 +158,7 @@ bool LXShaderManager::GetShaderSimple(LXShaderD3D11 * OutVS, LXShaderD3D11 * Out
 	return false;
 }
 
-bool LXShaderManager::GetShaders(ERenderPass RenderPass, const LXPrimitiveD3D11* InPrimitive, LXMaterialD3D11* InMaterial, LXShaderProgramD3D11* OutShaderProgram)
+bool LXShaderManager::GetShaders(ERenderPass RenderPass, const LXPrimitiveD3D11* InPrimitive, const LXMaterialD3D11* InMaterial, LXShaderProgramD3D11* OutShaderProgram)
 {
 	bool bResult = true;
 
@@ -136,7 +168,7 @@ bool LXShaderManager::GetShaders(ERenderPass RenderPass, const LXPrimitiveD3D11*
 
 	{
 		LXVSSignature VSSignature;
-		VSSignature.Shader = InMaterial->GetMaterial()->VertexShader;
+
 		VSSignature.Layout = &(*InPrimitive->Layout2)[0];
 		VSSignature.LayoutElements = (uint)InPrimitive->Layout2->size();
 		VSSignature.LayoutMask = InPrimitive->layoutMask;
@@ -184,13 +216,14 @@ bool LXShaderManager::GetShaders(ERenderPass RenderPass, const LXPrimitiveD3D11*
 
 	{
 		LXPSSignature PSSignature;
-		PSSignature.Shader = InMaterial->GetMaterial()->PixelShader;
+		PSSignature.Material = InMaterial;
 		PSSignature.RenderPass = RenderPass;
 		OutShaderProgram->PixelShader = FindOrCreate(PSSignature, PixelShaders);
 		if (!OutShaderProgram->PixelShader || OutShaderProgram->PixelShader->GetState() != EShaderD3D11State::Ok)
 			bResult = false;
 	}
 	
+	//CHK(bResult);
 	return bResult;
 }
 
@@ -203,46 +236,7 @@ LXShaderD3D11* LXShaderManager::GetTextureShader(const LXString& ShaderFilename)
 void LXShaderManager::Run()
 {
 	CHK(IsRenderThread())
-
-	for (auto It = VertexShaders.begin(); It != VertexShaders.end(); It++)
-	{
-		if (It->second.use_count() == 1)
-		{
-			VertexShaders.erase(It);
-		}
-	}
-
-	for (auto It = HullShaders.begin(); It != HullShaders.end(); It++)
-	{
-		if (It->second.use_count() == 1)
-		{
-			HullShaders.erase(It);
-		}
-	}
-	
-	for (auto It = DomainShaders.begin(); It != DomainShaders.end(); It++)
-	{
-		if (It->second.use_count() == 1)
-		{
-			DomainShaders.erase(It);
-		}
-	}
-
-	for (auto It = GeometryShaders.begin(); It != GeometryShaders.end(); It++)
-	{
-		if (It->second.use_count() == 1)
-		{
-			GeometryShaders.erase(It);
-		}
-	}
-	
-	for (auto It = PixelShaders.begin(); It != PixelShaders.end(); It++)
-	{
-		if (It->second.use_count() == 1)
-		{
-			PixelShaders.erase(It);
-		}
-	}
+	DeleteUnusedShaders();
 }
 
 template<typename T, typename M>
@@ -269,14 +263,7 @@ bool LXShaderManager::CreateShader(const LXVSSignature& VSSignature, LXShaderD3D
 
 	// Retrieve the shader filename
 	LXFilepath ShaderFilePath;
-	if (VSSignature.Shader)
-	{
-		ShaderFilePath = VSSignature.Shader->GetFilepath();
-	}
-	else
-	{
-		ShaderFilePath = GetSettings().GetShadersFolder() + DEFAULT_SHADER;
-	}
+	ShaderFilePath = GetSettings().GetShadersFolder() + DEFAULT_SHADER;
 
 	// Compute the shader filename and generate the it (EDITOR only)
 	const LXString BaseName = ShaderFilePath.GetFilenameNoExt();
@@ -303,24 +290,32 @@ bool LXShaderManager::CreateShader(const LXGSSignature& GSSignature, LXShaderD3D
 
 bool LXShaderManager::CreateShader(const LXPSSignature& PSSignature, LXShaderD3D11* Shader)
 {
-	// For now, only the GBuffer shaders can be overridden by user.
-	if (PSSignature.Shader && PSSignature.RenderPass == ERenderPass::GBuffer)
+	// Material 2.0 only the GBuffer shaders can be generated
+	if (PSSignature.Material && (PSSignature.RenderPass == ERenderPass::GBuffer || PSSignature.RenderPass == ERenderPass::Transparency))
 	{
-		return Shader->CreatePixelShader(PSSignature.Shader->GetFilepath());
-	}
-	else
-	{
-		switch (PSSignature.RenderPass)
-		{
-		case ERenderPass::Depth:
-		case ERenderPass::Shadow:
-			return Shader->CreatePixelShader(GetSettings().GetShadersFolder() + DEFAULT_SHADER, "PS_DEPTHONLY");
-			break;
-		case ERenderPass::GBuffer:
-			return Shader->CreatePixelShader(GetSettings().GetShadersFolder() + DEFAULT_SHADER);
-			break;
+		// Retrieve the shader filename
+		LXFilepath ShaderFilePath = PSSignature.Material->GetMaterial()->GetFilepath();
+		
+		// Compute the shader filename and generate the it (EDITOR only)
+		const LXString BaseName = ShaderFilePath.GetFilenameNoExt();
+		LXFilepath GeneretedShaderFilePath = GetProject()->GetAssetFolder() + L"Shaders/" + LXShaderFactory::BuildShaderFilename(BaseName, PSSignature.RenderPass, -1, EShader::PixelShader);
+		
+		//LXShaderFactory::GenerateVertexShader(GeneretedShaderFilePath, ShaderFilePath.GetFilename(), VSSignature);
+		LXShaderFactory::GeneratePixelShader(GeneretedShaderFilePath, PSSignature.Material, PSSignature.RenderPass);
 
-		default: CHK(0); return false; break;
-		}
+		return Shader->CreatePixelShader(GeneretedShaderFilePath);
+	}
+
+	switch (PSSignature.RenderPass)
+	{
+	case ERenderPass::Depth:
+	case ERenderPass::Shadow:
+		return Shader->CreatePixelShader(GetSettings().GetShadersFolder() + DEFAULT_SHADER, "PS_DEPTHONLY");
+		break;
+	case ERenderPass::GBuffer:
+	case ERenderPass::Transparency:
+		return Shader->CreatePixelShader(GetSettings().GetShadersFolder() + DEFAULT_SHADER);
+		break;
+	default: CHK(0); return false; break;
 	}
 }

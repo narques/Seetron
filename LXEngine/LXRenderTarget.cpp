@@ -14,7 +14,7 @@
 
 LXRenderTarget::LXRenderTarget(uint Width, uint Height, DXGI_FORMAT Format)
 {
-	LogD(LXRenderTarget, L" Size: %ix%i", Width, Height);
+	//LogD(LXRenderTarget, L" Size: %ix%i", Width, Height);
 	CreateBuffers(Width, Height, Format);
 }
 
@@ -40,7 +40,7 @@ void LXRenderTarget::DeleteBuffers()
 
 LXRenderTargetDepth::LXRenderTargetDepth(uint Width, uint Height, DXGI_FORMAT Format)
 {
-	LogD(LXRenderTargetDepth, L" Size: %ix%i", Width, Height);
+	//LogD(LXRenderTargetDepth, L" Size: %ix%i", Width, Height);
 	CreateBuffers(Width, Height, Format);
 }
 

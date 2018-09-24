@@ -22,7 +22,6 @@ struct D3D11_INPUT_ELEMENT_DESC;
 struct LXVSSignature
 {
 	uint displacement;					// DEPRECATED
-	LXShader* Shader;					// The Shader Asset Pointer
 	D3D11_INPUT_ELEMENT_DESC* Layout;	// Layout description array pointer
 	UINT LayoutElements;				// Layout array element count
 	int LayoutMask;						// Layout Mask TODO : TO CLARIFY
@@ -46,7 +45,7 @@ struct LXGSSignature
 
 struct LXPSSignature
 {
-	LXShader* Shader;
+	const LXMaterialD3D11* Material = nullptr; 
 	ERenderPass RenderPass;
 };
 
@@ -69,11 +68,7 @@ struct CmpLXVSSignature{
 			return true;
 		else if (a.LayoutMask > b.LayoutMask)
 			return false;
-		else if ((int)a.RenderPass < (int)b.RenderPass)
-			return true;
-		else if ((int)a.RenderPass > (int)b.RenderPass)
-			return false;
-		return (a.Shader < b.Shader);
+		return ((int)a.RenderPass < (int)b.RenderPass);
 	}
 };
 
@@ -105,7 +100,7 @@ struct CmpLXPSSignature {
 			return true;
 		else if ((int)a.RenderPass > (int)b.RenderPass)
 			return false;
-		return a.Shader < b.Shader;
+		return a.Material > b.Material;
 	}
 };
 
@@ -123,12 +118,12 @@ public:
 	LXShaderManager();
 	virtual ~LXShaderManager();
 	void RebuildShaders();
-	void DeleteShaders();
+	void DeleteUnusedShaders();
 
 	bool GetShaderSimple(LXShaderD3D11* OutVS, LXShaderD3D11* OutPS);
 
 	// Retrieve shaders according the giving Material
-	bool GetShaders(ERenderPass RenderPass, const LXPrimitiveD3D11* InPrimitive, LXMaterialD3D11* InMaterial, LXShaderProgramD3D11* OutShaderProgram);
+	bool GetShaders(ERenderPass RenderPass, const LXPrimitiveD3D11* InPrimitive, const LXMaterialD3D11* InMaterial, LXShaderProgramD3D11* OutShaderProgram);
 
 	// Retrieve Shader according the giving Material
 	LXShaderD3D11* GetTextureShader(const LXString& ShaderFilename);

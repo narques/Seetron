@@ -412,7 +412,7 @@ void LXPropertyT<LXString>::GetValueFromXML2(const TLoadContext& LoadContext)
 template<>
 void LXPropertyT<LXString>::SaveXML2(const TSaveContext& saveContext, const LXString& strXMLName, const LXString& value )
 { 
-	if (!value.IsEmpty())
+	if (!value.IsEmpty() || _PropInfo->_bUserProperty)
 	{
 		fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 		fwprintf(saveContext.pXMLFile, L"<%s Value=\"%s\"/>\n", strXMLName.GetBuffer(), value.GetBuffer());

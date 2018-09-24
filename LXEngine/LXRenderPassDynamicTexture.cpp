@@ -126,43 +126,43 @@ LXRenderClusterJob* LXRenderPassDynamicTexture::TraverseNode(LXGraphNode* Linked
 		return nullptr;
 	}
 
-	if (LXGraphNodeMaterial* NodeMaterial = dynamic_cast<LXGraphNodeMaterial*>(Node))
-	{
-		LXRenderClusterJobTexture* RenderClusterJobTexture = new LXRenderClusterJobTexture(Renderer, NodeMaterial->Material);
-
-		// Parameters
-		CHK(0 && "Revoir tout ce truc")
-		//RenderClusterJobTexture->Material->ListTextures.push_back(TextureD3D11);
-		
-		DXGI_FORMAT Format = DXGI_FORMAT_UNKNOWN;
-		switch (Texture->GetInsternalFormat())
-		{
-		case ETextureFormat::LX_R16_USHORT: Format = DXGI_FORMAT_R16_UNORM; break;
-		case ETextureFormat::LX_R16G16_USHORT: Format = DXGI_FORMAT_R16G16_UNORM; break;
-		case ETextureFormat::LX_R16G16_FLOAT: Format = DXGI_FORMAT_R16G16_FLOAT; break;
-		case ETextureFormat::LX_R32G32_FLOAT: Format = DXGI_FORMAT_R32G32_FLOAT; break;
-		case ETextureFormat::LX_RGBA8: Format = DXGI_FORMAT_B8G8R8A8_UNORM;  break;
-		default: CHK(0 && "Bad texture format");
-			break;
-		}
-		
-		RenderClusterJobTexture->TextureOutput = new LXTextureD3D11(Texture->GetWidth(), Texture->GetHeight(), Format);;
-		RenderClusterJobTexture->RenderTarget = new LXRenderTargetViewD3D11(RenderClusterJobTexture->TextureOutput);
-		RenderClusterJobTexture->Iteration = NodeMaterial->Iteration;
-		
-		// Traverse links
-		if (NodeMaterial->From)
-		{
-			LXRenderClusterJob* PreviousNode = TraverseNode(Node, RenderClusterJobTexture, NodeMaterial->From);
-		}
-
-		MapRenderClusters[Node] = RenderClusterJobTexture;
-		ListRenderClusters.push_back(RenderClusterJobTexture);
-
-		return RenderClusterJobTexture;
-
-	}
-	else
+// 	if (LXGraphNodeMaterial* NodeMaterial = dynamic_cast<LXGraphNodeMaterial*>(Node))
+// 	{
+// 		LXRenderClusterJobTexture* RenderClusterJobTexture = new LXRenderClusterJobTexture(Renderer, NodeMaterial->Material);
+// 
+// 		// Parameters
+// 		CHK(0 && "Revoir tout ce truc")
+// 		//RenderClusterJobTexture->Material->ListTextures.push_back(TextureD3D11);
+// 		
+// 		DXGI_FORMAT Format = DXGI_FORMAT_UNKNOWN;
+// 		switch (Texture->GetInsternalFormat())
+// 		{
+// 		case ETextureFormat::LX_R16_USHORT: Format = DXGI_FORMAT_R16_UNORM; break;
+// 		case ETextureFormat::LX_R16G16_USHORT: Format = DXGI_FORMAT_R16G16_UNORM; break;
+// 		case ETextureFormat::LX_R16G16_FLOAT: Format = DXGI_FORMAT_R16G16_FLOAT; break;
+// 		case ETextureFormat::LX_R32G32_FLOAT: Format = DXGI_FORMAT_R32G32_FLOAT; break;
+// 		case ETextureFormat::LX_RGBA8: Format = DXGI_FORMAT_B8G8R8A8_UNORM;  break;
+// 		default: CHK(0 && "Bad texture format");
+// 			break;
+// 		}
+// 		
+// 		RenderClusterJobTexture->TextureOutput = new LXTextureD3D11(Texture->GetWidth(), Texture->GetHeight(), Format);;
+// 		RenderClusterJobTexture->RenderTarget = new LXRenderTargetViewD3D11(RenderClusterJobTexture->TextureOutput);
+// 		RenderClusterJobTexture->Iteration = NodeMaterial->Iteration;
+// 		
+// 		// Traverse links
+// 		if (NodeMaterial->From)
+// 		{
+// 			LXRenderClusterJob* PreviousNode = TraverseNode(Node, RenderClusterJobTexture, NodeMaterial->From);
+// 		}
+// 
+// 		MapRenderClusters[Node] = RenderClusterJobTexture;
+// 		ListRenderClusters.push_back(RenderClusterJobTexture);
+// 
+// 		return RenderClusterJobTexture;
+// 
+// 	}
+// 	else
 		CHK(0);
 
 	return nullptr;
@@ -170,52 +170,54 @@ LXRenderClusterJob* LXRenderPassDynamicTexture::TraverseNode(LXGraphNode* Linked
 
 LXTextureD3D11* LXRenderPassDynamicTexture::AddGraph(LXTexture* InTexture)
 {
-	Texture = InTexture;
+// 	Texture = InTexture;
+// 
+// 	LXGraphTexture* Graph = static_cast<LXGraphTexture*>(Texture->GetGraph());
+// 	CHK(Graph);
+// 
+// 	const set<LXGraphNodeOutput*>& Outputs = Graph->GetOutput2();
+// 
+// 	for (LXGraphNodeOutput* Output : Outputs)
+// 	{
+// 		if (LXGraphNodeOutputTexture* OutputTexture = dynamic_cast<LXGraphNodeOutputTexture*>(Output))
+// 		{
+// 			CHK(Texture == OutputTexture->Texture);
+// 
+// 			// Create the final texture
+// 			DXGI_FORMAT Format = DXGI_FORMAT_UNKNOWN;
+// 			switch (Texture->GetInsternalFormat())
+// 			{
+// 			case ETextureFormat::LX_R16_USHORT: Format = DXGI_FORMAT_R16_UNORM; break;
+// 			case ETextureFormat::LX_R16G16_USHORT: Format = DXGI_FORMAT_R16G16_UNORM; break;
+// 			case ETextureFormat::LX_R16G16_FLOAT: Format = DXGI_FORMAT_R16G16_FLOAT; break;
+// 			case ETextureFormat::LX_R32G32_FLOAT: Format = DXGI_FORMAT_R32G32_FLOAT; break;
+// 			case ETextureFormat::LX_RGBA8: Format = DXGI_FORMAT_B8G8R8A8_UNORM;  break;
+// 			default: CHK(0 && "Bad texture format");
+// 				break;
+// 			}
+// 			TextureD3D11 = new LXTextureD3D11(Texture->GetWidth(), Texture->GetHeight(), Format);
+// 
+// 			// Pass trough the "Parent" node(s)
+// 			LXGraphNode* Node = OutputTexture->GetNodeIn();
+// 			CHK(Node);
+// 			TraverseNode(OutputTexture, nullptr, Node);
+// 		}
+// 		else if (LXGraphNodeOutputBitmap* OutputBitmap = dynamic_cast<LXGraphNodeOutputBitmap*>(Output))
+// 		{
+// 
+// 			LXRenderClusterJobBitmap* RenderClusterJobBitmap = new LXRenderClusterJobBitmap();
+// 			ListRenderClusters.push_back(RenderClusterJobBitmap);
+// 		}
+// 		else
+// 			CHK(0);
+// 	}
+// 
+// 	ItStart = ListRenderClusters.begin();
+// 
+// 	CHK(TextureD3D11);
+// 	return TextureD3D11;
 
-	LXGraphTexture* Graph = static_cast<LXGraphTexture*>(Texture->GetGraph());
-	CHK(Graph);
-
-	const set<LXGraphNodeOutput*>& Outputs = Graph->GetOutput2();
-
-	for (LXGraphNodeOutput* Output : Outputs)
-	{
-		if (LXGraphNodeOutputTexture* OutputTexture = dynamic_cast<LXGraphNodeOutputTexture*>(Output))
-		{
-			CHK(Texture == OutputTexture->Texture);
-
-			// Create the final texture
-			DXGI_FORMAT Format = DXGI_FORMAT_UNKNOWN;
-			switch (Texture->GetInsternalFormat())
-			{
-			case ETextureFormat::LX_R16_USHORT: Format = DXGI_FORMAT_R16_UNORM; break;
-			case ETextureFormat::LX_R16G16_USHORT: Format = DXGI_FORMAT_R16G16_UNORM; break;
-			case ETextureFormat::LX_R16G16_FLOAT: Format = DXGI_FORMAT_R16G16_FLOAT; break;
-			case ETextureFormat::LX_R32G32_FLOAT: Format = DXGI_FORMAT_R32G32_FLOAT; break;
-			case ETextureFormat::LX_RGBA8: Format = DXGI_FORMAT_B8G8R8A8_UNORM;  break;
-			default: CHK(0 && "Bad texture format");
-				break;
-			}
-			TextureD3D11 = new LXTextureD3D11(Texture->GetWidth(), Texture->GetHeight(), Format);
-
-			// Pass trough the "Parent" node(s)
-			LXGraphNode* Node = OutputTexture->GetNodeIn();
-			CHK(Node);
-			TraverseNode(OutputTexture, nullptr, Node);
-		}
-		else if (LXGraphNodeOutputBitmap* OutputBitmap = dynamic_cast<LXGraphNodeOutputBitmap*>(Output))
-		{
-
-			LXRenderClusterJobBitmap* RenderClusterJobBitmap = new LXRenderClusterJobBitmap();
-			ListRenderClusters.push_back(RenderClusterJobBitmap);
-		}
-		else
-			CHK(0);
-	}
-
-	ItStart = ListRenderClusters.begin();
-
-	CHK(TextureD3D11);
-	return TextureD3D11;
+	return nullptr;
 
 }
 

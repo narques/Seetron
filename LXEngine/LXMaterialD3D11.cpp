@@ -15,6 +15,7 @@
 #include "LXTextureD3D11.h"
 #include "LXBitmap.h"
 #include "LXRenderer.h"
+#include "LXGraphMaterialToHLSLConverter.h"
 #include "LXCore.h"
 #include "LXShaderManager.h"
 #include "LXRenderPassDynamicTexture.h"
@@ -188,7 +189,7 @@ bool LXMaterialD3D11::Create(const LXMaterial* InMaterial)
 	//	ComputeNormals = 1;
 	
 	TwoSided = Material->GetTwoSided() == true;
-	Displacement = Material->Displacement != nullptr;
+	Displacement = 0;
 	Transparent = Material->IsTransparent();
 
 	//
@@ -203,28 +204,13 @@ bool LXMaterialD3D11::Create(const LXMaterial* InMaterial)
 	// Build the PS Constant Buffer structure according the MaterialNodes
 	//
 
-	for (const LXMaterialNode* MaterialNode : Material->GetMaterialNodes())
-	{
-		if (LXMaterialNodeFloat* MaterialNodeFloat = CastMaterialNode<LXMaterialNodeFloat>(MaterialNode))
-		{
-			VRF(ConstantBufferPS.AddFloat(MaterialNodeFloat->GetName(), (const float&)MaterialNodeFloat->Value));
-		}
-		else if (LXMaterialNodeColor* MaterialNodeColor = CastMaterialNode<LXMaterialNodeColor>(MaterialNode))
-		{
-			VRF(ConstantBufferPS.AddFloat4(MaterialNodeColor->GetName(), (const vec4f&)MaterialNodeColor->Value));
-		}
-		else if (LXMaterialNodeTextureSampler* TextureSample = CastMaterialNode<LXMaterialNodeTextureSampler>(MaterialNode))
-		{
-			// Managed below 
-		}
-		else
-		{
-			CHK(0);
-			LogE(MaterialD3D11, L"Unknown MaterialNode");
-		}
-	}
 
-	if (ConstantBufferPS.HasData() && Material->PixelShader)
+	VRF(LXGraphMaterialToHLSLConverter::GenerateConstanBuffer((const LXGraph*)Material->GetGraph(), ConstantBufferPS));
+
+	LXGraphMaterialToHLSLConverter graphMaterialToHLSLConverter;
+	VRF(graphMaterialToHLSLConverter.GatherTextures((const LXGraph*)Material->GetGraph(), ListPSTextures));
+
+	if (ConstantBufferPS.HasData())
 	{
 		// Create the D3D11 Constant Buffer
 		CBMaterialParemetersPS = new LXConstantBufferD3D11();
@@ -234,111 +220,15 @@ bool LXMaterialD3D11::Create(const LXMaterial* InMaterial)
 	//
 	// Textures and TextureSamplers
 	//
-
-	list<LXMaterialNodeTextureSampler*> listTextureSamplers;
-	Material->GetTextureSamplers(listTextureSamplers);
-	for (LXMaterialNodeTextureSampler* TextureSampler : listTextureSamplers)
-	{
-		if (!TextureSampler->GetTexture() || TextureSampler->AffectedShaders == 0)
-		{
-			continue;
-		}
-
-		// VertexShader
-		if (TextureSampler->AffectedShaders & EShader::VertexShader)
-		{
-			ListVSTextures.push_back(CreateTexture(TextureSampler));
-		}
-
-		// PixelShader 
-		if (TextureSampler->AffectedShaders & EShader::PixelShader)
-		{
-			ListPSTextures.push_back(CreateTexture(TextureSampler));
-		}
-	}
-
-	// Only in custom shader. In the default Shader, declarations are hard-coded.
-	if (Material->PixelShader)
-	{
-		const LXFilepath& Filepath = Material->PixelShader->GetFilepath();
-		LXShaderFactory::UpdateShader(Filepath, this);
-	}
 		
 	LogI(MaterialD3D11, L"Successful create %s", Material->GetName().GetBuffer());
 	_bValid = true;
 	return true;
 }
 
-LXTextureD3D11* LXMaterialD3D11::CreateTexture(LXMaterialNodeTextureSampler* TextureSampler)
-{
-	LXTexture* Texture = TextureSampler->GetTexture();
-	if (!Texture)
-	{
-		LogE(MaterialD3D11, L"CreateTexture fails, the TextureSamplerNode is null");
-		return nullptr;
-	}
-	
-	const LXFilepath& Filepath = Texture->GetFilepath();
-	
-	LXTextureD3D11* TextureD3D11 = nullptr;
-
-	if (Texture->TextureSource == ETextureSource::TextureSourceBitmap)
-	{
-		CHK(Texture->GetGraph() == nullptr);
-		if (LXBitmap* Bitmap = Texture->GetBitmap(0))
-		{
-			DXGI_FORMAT Format = LXTextureD3D11::GetDXGIFormat(Bitmap->GetInternalFormat());
-			uint MipLevels = LXBitmap::GetNumMipLevels(Bitmap->GetWidth(), Bitmap->GetHeight());
-			TextureD3D11 = new LXTextureD3D11(Bitmap->GetWidth(), Bitmap->GetHeight(), Format, Bitmap->GetPixels(), Bitmap->GetPixelSize(), MipLevels);
-		}
-		else
-		{
-			LogE(MaterialD3D11, L"CreateTexture fails, Bitmap is null");
-		}
-	}
-	else if (Texture->TextureSource == ETextureSource::TextureSourceDynamic)
-	{
-		CHK(Texture->GetGraph());
-		CHK(0); // Find a more generic way to access the rendered texture
-		//TextureD3D11 = GetCore().GetRenderer()->RenderPassDynamicTexture->AddGraph(Texture);
-	}
-	else
-	{
-		// Texture without source
-		LogE(MaterialD3D11, L"CreateTexture fails, No source specified");
-		CHK(0); 
-	}
-	
-	if (TextureD3D11)
-		TextureD3D11->Slot = TextureSampler->Slot;
-	
-	else
-		LogE(MaterialD3D11, L"CreateTexture fails, unknown error");
-		
-	return TextureD3D11;
-}
-
 void LXMaterialD3D11::UpdateConstantBufferDataValues()
 {
-	for (const LXMaterialNode* MaterialNode : Material->GetMaterialNodes())
-	{
-		if (LXMaterialNodeFloat* MaterialNodeFloat = CastMaterialNode<LXMaterialNodeFloat>(MaterialNode))
-		{
-			ConstantBufferPS.Update(MaterialNodeFloat->GetName(), (const float&)MaterialNodeFloat->Value);
-		}
-		else if (LXMaterialNodeColor* MaterialNodeColor = CastMaterialNode<LXMaterialNodeColor>(MaterialNode))
-		{
-			ConstantBufferPS.Update(MaterialNodeColor->GetName(), (const vec4f&)MaterialNodeColor->Value);
-		}
-		else if (LXMaterialNodeTextureSampler* TextureSample = CastMaterialNode<LXMaterialNodeTextureSampler>(MaterialNode))
-		{
-			// Rebuild the Material
-			_bValid = false;
-		}
-		else
-		{
-			CHK(0);
-			LogE(MaterialD3D11, L"Unknown MaterialNode");
-		}
-	}
+	ConstantBufferPS.UpdateAll();
 }
+
+

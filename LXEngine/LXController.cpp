@@ -17,6 +17,9 @@
 #include "LXActorMesh.h"
 #include "LXProperty.h"
 #include "LXActor.h"
+#include "LXNode.h"
+#include "LXGraph.h"
+#include "LXGraphMaterial.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXController::LXController()
@@ -29,6 +32,14 @@ LXController::LXController()
 		if (LXMaterial* Material = dynamic_cast<LXMaterial*>(SmartObject))
 		{
 			AddMaterialToUpdateRenderStateSet(Material);
+		}
+		else if (LXNode* node = dynamic_cast<LXNode*>(SmartObject))
+		{
+			if (const LXGraphMaterial* graphMaterial = dynamic_cast<LXGraphMaterial*>(node->Graph))
+			{
+				Material = graphMaterial->Material;
+				AddMaterialToUpdateRenderStateSet(Material);
+			}
 		}
 		else if (LXActor* Actor = dynamic_cast<LXActor*>(SmartObject))
 		{
@@ -61,10 +72,12 @@ void LXController::Purge()
 	_SetActorToDelete.clear();
 	_SetActorToMove.clear();
 	_SetMaterialToUpdateRenderState.clear();
+	_SetMaterialToRebuild.clear();
 
-	_SetActorToUpdateRenderStateRT.clear();
-	_SetActorToDeleteRT.clear();
-	_SetMaterialToUpdateRenderStateRT.clear();
+	_SetActorToUpdateRenderState_RT.clear();
+	_SetActorToDelete_RT.clear();
+	_SetMaterialToUpdateRenderState_RT.clear();
+	_SetMaterialToRebuild_RT.clear();
 
 	for (LXRendererUpdate* RendererUpdate : _RendererUpdates)
 	{
@@ -100,6 +113,12 @@ void LXController::AddMaterialToUpdateRenderStateSet(LXMaterial* Material)
 {
 	CHK(IsMainThread());
 	_SetMaterialToUpdateRenderState.insert(Material);
+}
+
+void LXController::AddMaterialToRebuild(LXMaterial* material)
+{
+	CHK(IsMainThread());
+	_SetMaterialToRebuild.insert(material);
 }
 
 void LXController::MaterialChanged(LXActor* ActorMesh, LXMaterial* Material)
@@ -186,12 +205,12 @@ void LXController::Run()
 		Mutex.Lock();
 		SetActors& Actors = _SetActorToUpdateRenderState;
 		// Previous actors should be consumed
-		CHK(_SetActorToUpdateRenderStateRT.size() == 0);
-		_SetActorToUpdateRenderStateRT.insert(Actors.begin(), Actors.end());
+		CHK(_SetActorToUpdateRenderState_RT.size() == 0);
+		_SetActorToUpdateRenderState_RT.insert(Actors.begin(), Actors.end());
 
-		for (const LXActor* Actor : _SetActorToUpdateRenderStateRT)
+		for (const LXActor* Actor : _SetActorToUpdateRenderState_RT)
 		{
-			LogD(LXController, L"Synchronised: %s", Actor->GetName().GetBuffer());
+			LogD(LXController, L"Synchronized: %s", Actor->GetName().GetBuffer());
 		}
 		
 		Actors.clear();
@@ -205,11 +224,16 @@ void LXController::Run()
 	{
 		LXMutex Mutex;
 		Mutex.Lock();
-		SetMaterials& Materials = _SetMaterialToUpdateRenderState;
+		
 		// Previous materials should be consumed
-		CHK(_SetMaterialToUpdateRenderStateRT.size() == 0);
-		_SetMaterialToUpdateRenderStateRT.insert(Materials.begin(), Materials.end());
-		Materials.clear();
+		CHK(_SetMaterialToUpdateRenderState_RT.size() == 0);
+		CHK(_SetMaterialToRebuild_RT.size() == 0);
+
+		_SetMaterialToUpdateRenderState_RT.insert(_SetMaterialToUpdateRenderState.begin(), _SetMaterialToUpdateRenderState.end());
+		_SetMaterialToRebuild_RT.insert(_SetMaterialToRebuild.begin(), _SetMaterialToRebuild.end());
+
+		_SetMaterialToUpdateRenderState.clear();
+		_SetMaterialToRebuild.clear();
 		Mutex.Unlock();
 	}
 

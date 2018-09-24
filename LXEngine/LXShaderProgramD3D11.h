@@ -22,6 +22,15 @@ public:
 	LXShaderProgramD3D11();
 	virtual ~LXShaderProgramD3D11();
 	
+	void Release()
+	{
+		HullShader.reset();
+		DomainShader.reset();
+		GeometryShader.reset();
+		VertexShader.reset();
+		PixelShader.reset();
+	}
+	
 public:
 
 	shared_ptr<LXShaderD3D11> HullShader;

@@ -80,6 +80,7 @@ public:
 	LXString&	MakeLower( )											{ transform(m_str.begin(), m_str.end(), m_str.begin(), ::tolower); return( *this ); }
 	LXString	ToLower( ) const 										{ LXString str = *this; return str.MakeLower(); }
 	wchar_t*	GetBuffer( ) const										{ return (wchar_t*)m_str.c_str(); } // WARNING const
+	[[deprecated]]
 	ArrayChar	GetBufferA() const										
 	{ 
 		char l_char[256]; 
@@ -227,7 +228,8 @@ public:
 	int			Find(const char* pszSub) const { return (int)m_str.find(pszSub); }
 	LXStringA	Left(int nCount) const { return LXStringA(m_str.substr(0, nCount).c_str()); }
 	int			ReverseFind(char ch) const { return (int)m_str.rfind(ch); }
-	LXStringA	Right(int nCount) const { return LXStringA(m_str.substr(m_str.size() - nCount, nCount).c_str()); }
+	//LXStringA	Right(int nCount) const { return LXStringA(m_str.substr(m_str.size() - nCount, nCount).c_str()); }
+	LXStringA	Right(int position) const { return LXStringA(m_str.substr(position, m_str.size() - position).c_str()); }
 
 	int			GetLength() const { return (int)m_str.size(); }
 	bool		IsEmpty() const { return(GetLength() == 0); }

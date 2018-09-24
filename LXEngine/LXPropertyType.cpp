@@ -33,11 +33,21 @@ EPropertyType GetPropertyTypeFromName(const wchar_t* typeName)
 	CMP_PTYPE(ArraySmartObject);
 	CMP_PTYPE(SmartObject);
 	
-
 	if (wcscmp(typeName, L"Texture2D") == 0) 
 		return EPropertyType::AssetPtr;
 
-	
+	if (wcscmp(typeName, L"ConstantFloat") == 0)
+		return EPropertyType::Float;
+
+	if (wcscmp(typeName, L"ConstantFloat2") == 0)
+		return EPropertyType::Float2;
+
+	if (wcscmp(typeName, L"ConstantFloat3") == 0)
+		return EPropertyType::Float3;
+
+	if (wcscmp(typeName, L"ConstantFloat4") == 0)
+		return EPropertyType::Float4;
+		
 	CHK(0);
 	return EPropertyType::Undefined;
 }

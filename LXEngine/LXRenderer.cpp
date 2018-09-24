@@ -442,14 +442,20 @@ void LXRenderer::UpdateStates()
 	}
 	GetController()->GetActorToUpdateRenderStateSetRT().clear();
 
-	for (LXMaterial* Material : GetController()->GetMaterialToUpdateRenderStateSetRT())
+	for (LXMaterial* material : GetController()->GetMaterialToUpdateRenderStateSetRT())
 	{
-		LogI(Renderer, L"Update Material %s", Material->GetName().GetBuffer());
-		RenderClusterManager->UpdateMaterial(Material);
-		//RenderClusterManager->RebuildMaterial(Material);
+		LogI(Renderer, L"Update Material %s", material->GetName().GetBuffer());
+		RenderClusterManager->UpdateMaterial(material);
 	}
 	GetController()->GetMaterialToUpdateRenderStateSetRT().clear();
 
+	for (LXMaterial* material : GetController()->GetMaterialToRebuild_RT())
+	{
+		LogI(Renderer, L"Rebuild Material %s", material->GetName().GetBuffer());
+		RenderClusterManager->RebuildMaterial(material);
+	}
+	GetController()->GetMaterialToRebuild_RT().clear();
+	
 	// Actor Matrix
 // 	for (LXActor* Actor : GetController()->GetActorToMoveRT())
 // 	{

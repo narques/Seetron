@@ -256,9 +256,9 @@ void LXPickTraverser::Apply( )
 	m_nTestedTriangles = 0;
 	m_nHitTriangles = 0;
 	LXTraverser::Apply();
-	LogD(PickTraverser, L"Intersected(hit):  %i(%i) Actor BBoxes %i(%i) Primitive BBoxes %i(%i) Triangles", m_nTestedBoxes, m_nHitBoxes,
-		m_nTestedPrimitivesBoxes, m_nHitPrimitivesBoxes,
-		m_nTestedTriangles, m_nHitTriangles);
+	//LogD(PickTraverser, L"Intersected(hit):  %i(%i) Actor BBoxes %i(%i) Primitive BBoxes %i(%i) Triangles", m_nTestedBoxes, m_nHitBoxes,
+	//	m_nTestedPrimitivesBoxes, m_nHitPrimitivesBoxes,
+	//	m_nTestedTriangles, m_nHitTriangles);
 }
 
 void LXPickTraverser::OnActor(LXActor* pGroup)

@@ -27,6 +27,7 @@ public:
 	LXMaterialD3D11(const LXMaterial*);
 	~LXMaterialD3D11();
 
+	void Release();
 	//void Invalidate();
 	void Render(ERenderPass RenderPass, LXRenderCommandList* RCL);
 	void Update(const LXMaterial* Material);
@@ -37,15 +38,18 @@ public:
 	bool IsTransparent() const { return Transparent; }
 
 	const LXConstantBuffer& GetConstantBufferPS() const { return ConstantBufferPS; }
+	const list<LXTextureD3D11*>& GetTexturesVS() const { return ListVSTextures; }
+	const list<LXTextureD3D11*>& GetTexturesPS() const { return ListPSTextures; }
 			
 private:
 
-	void Release();
 	bool Create(const LXMaterial*);
-	LXTextureD3D11* CreateTexture(LXMaterialNodeTextureSampler* TextureSampler);
 	void UpdateConstantBufferDataValues();
 
+public:
 
+	mutable int HLSLTextureIndex = 0;
+	
 private:
 
 	// List of texture to bind to the corresponding shader

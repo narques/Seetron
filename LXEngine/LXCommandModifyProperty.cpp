@@ -26,7 +26,6 @@ template class LXCORE_API LXCommandPropertyT<vec3f>;
 template class LXCORE_API LXCommandPropertyT<vec4f>;
 template class LXCORE_API LXCommandPropertyT<LXColor4f>;
 template class LXCORE_API LXCommandPropertyT<LXMatrix>;
-template class LXCORE_API LXCommandPropertyT<LXMaterialNode*>;
 template class LXCORE_API LXCommandPropertyT<LXAsset*>;
 
 // Explicit class Instantiation
@@ -42,7 +41,6 @@ template class LXCORE_API LXCommandPropertiesT<vec3f>;
 template class LXCORE_API LXCommandPropertiesT<vec4f>;
 template class LXCORE_API LXCommandPropertiesT<LXColor4f>;
 template class LXCORE_API LXCommandPropertiesT<LXMatrix>;
-template class LXCORE_API LXCommandPropertiesT<LXMaterialNode*>;
 template class LXCORE_API LXCommandPropertiesT<LXAsset*>;
 
 LXCommandProperty::LXCommandProperty(void)

@@ -11,12 +11,16 @@
 #include "LXDocumentBase.h"
 #include "LXCore.h"
 
-class LXAnimationManager;
-class LXActorMesh;
 class LXActor;
+class LXActorCamera;
 class LXActorLight;
-class LXQueryManager;
+class LXActorMesh;
+class LXActorSceneCapture;
+class LXAnimationManager;
 class LXAssetManager;
+class LXGraphTemplate;
+class LXPrimitive;
+class LXQueryManager;
 class LXScene;
 class LXSelectionManager;
 class LXShaderManager;
@@ -24,9 +28,6 @@ class LXSnapshotManager;
 class LXTextureManager;
 class LXViewState;
 class LXViewStateManager;
-class LXPrimitive;
-class LXActorSceneCapture;
-class LXActorCamera;
 
 typedef list<LXString> ListUID;
 typedef map<LXFilepath, LXActor*> MapFilepathGroup;
@@ -137,6 +138,13 @@ public:
 
 	vec3f*						GetNewObjectPosition	( ) const { return m_pNewObjectPosition; }
 	void						SetNewObjectPosition	( vec3f* p) { m_pNewObjectPosition = p; }
+
+	//
+	// Assets
+	//
+
+		LXMaterial*					GetMaterial(const LXString& filename);
+		const LXGraphTemplate*		GetGraphMaterialTemplate( );
 
 	//
 	// Tools

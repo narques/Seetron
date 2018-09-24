@@ -15,6 +15,7 @@
 struct LXVSSignature;
 class LXMaterialD3D11;
 class LXConstantBuffer;
+class LXFilepath;
 
 class LXShaderFactory : public LXObject
 {
@@ -29,6 +30,12 @@ public:
 
 	static void GenerateVertexShader(const LXFilepath& Filename, const LXString& FileToInclude, const LXVSSignature& VSSignature);
 
+	//
+	// Generate a HLSL shader file according...
+	//
+
+	static void GeneratePixelShader(const LXFilepath& Filename, const LXMaterialD3D11* materialD3D11, ERenderPass renderPass);
+	
 	//
 	// Update an existing shader file contain:
 	// with a generated HLSL declaration according the material textures and ConstantBuffers.
@@ -57,6 +64,12 @@ private:
 	//
 
 	static LXStringA ConstantBufferToHLSL(const LXConstantBuffer& ConstantBuffer);
+
+	//
+	// Generate the Textures and SamplerStates declaration
+	//
+
+	static LXStringA ListTexturesToHLSL(const list<LXTextureD3D11*>& listTextures);
 	
 	//
 	// Generate all Shaders for the given material

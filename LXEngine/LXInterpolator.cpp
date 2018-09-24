@@ -71,6 +71,10 @@ template LXCORE_API void LXInterpolator::InterpolateLinear(const int& v0, const 
 template LXCORE_API void LXInterpolator::InterpolateSmooth(const int& v0, const int& v1, double t, int& result);
 template LXCORE_API void LXInterpolator::InterpolateCubic(const int& v0, const int& v1, const int& v2, const int& v3, double t, int& result);
 
+template LXCORE_API void LXInterpolator::InterpolateLinear(const vec2f& v0, const vec2f& v1, double t, vec2f& result);
+template LXCORE_API void LXInterpolator::InterpolateSmooth(const vec2f& v0, const vec2f& v1, double t, vec2f& result);
+template LXCORE_API void LXInterpolator::InterpolateCubic(const vec2f& v0, const vec2f& v1, const vec2f& v2, const vec2f& v3, double t, vec2f& result);
+
 template LXCORE_API void LXInterpolator::InterpolateLinear(const vec3f& v0, const vec3f& v1, double t, vec3f& result);
 template LXCORE_API void LXInterpolator::InterpolateSmooth(const vec3f& v0, const vec3f& v1, double t, vec3f& result);
 template LXCORE_API void LXInterpolator::InterpolateCubic(const vec3f& v0, const vec3f& v1, const vec3f& v2, const vec3f& v3, double t, vec3f& result);
@@ -185,22 +189,3 @@ void LXInterpolator::InterpolateCubic<LXAssetPtr>(const LXAssetPtr& v0, const LX
 	CHK(0);
 }
 
-//------------------------------------------------------------------------------------------------------
-
-template<>
-void LXInterpolator::InterpolateLinear<LXMaterialNodePtr>(const LXMaterialNodePtr& v0, const LXMaterialNodePtr& v1, double t, LXMaterialNodePtr& result)
-{
-	CHK(0);
-}
-
-template<>
-void LXInterpolator::InterpolateSmooth<LXMaterialNodePtr>(const LXMaterialNodePtr& v0, const LXMaterialNodePtr& v1, double t, LXMaterialNodePtr& result)
-{
-	CHK(0);
-}
-
-template<>
-void LXInterpolator::InterpolateCubic<LXMaterialNodePtr>(const LXMaterialNodePtr& v0, const LXMaterialNodePtr& v1, const LXMaterialNodePtr& v2, const LXMaterialNodePtr& v3, double t, LXMaterialNodePtr& result)
-{
-	CHK(0);
-}

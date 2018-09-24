@@ -45,6 +45,8 @@ public:
 	LXRenderCluster(LXRenderClusterManager* RenderClusterManager, LXActor* InActor, const LXMatrix& MatrixWCS);
 	~LXRenderCluster();
 
+	void ReleaseShaders();
+
 	bool SetMaterial(shared_ptr<LXMaterialD3D11>& InMaterial);
 	void SetPrimitive(shared_ptr<LXPrimitiveD3D11>& InPrimitiveD3D11);
 			

@@ -29,6 +29,7 @@
 #include "LXScene.h"
 #include "LXSelectionManager.h"
 #include "LXSelectionTraverser.h"
+#include "LXSettings.h"
 #include "LXSnapshotManager.h"
 #include "LXStatistic.h"
 #include "LXTerrain.h"
@@ -424,6 +425,25 @@ LXSmartObject* LXProject::GetObjectFromUID(const LXString& UID)
 	}
 	
 	return pResult;
+}
+
+LXMaterial* LXProject::GetMaterial(const LXString& filename)
+{
+	LXFilepath assetFolder = GetAssetFolder();
+	LXFilepath relativeFilepath = assetFolder.GetRelativeFilepath(filename);
+
+	if (relativeFilepath.IsEmpty())
+	{
+		assetFolder = GetSettings().GetDataFolder();
+		relativeFilepath = assetFolder.GetRelativeFilepath(filename);
+	}
+
+	return GetAssetManager().GetMaterial(relativeFilepath);
+}
+
+const LXGraphTemplate* LXProject::GetGraphMaterialTemplate()
+{
+	return m_pResourceManager->GetGraphMaterialTemplate();
 }
 
 const LXFilepath LXProject::GetFolder()

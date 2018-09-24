@@ -48,6 +48,21 @@ void LXRenderClusterManager::Empty()
 	MapMaterialD3D11.clear();
 }
 
+void LXRenderClusterManager::DeleteUnusedMaterials()
+{
+	for (auto It = MapMaterialD3D11.begin(); It != MapMaterialD3D11.end();)
+	{
+		if (It->second.use_count() == 1)
+		{
+			It=MapMaterialD3D11.erase(It);
+		}
+		else
+		{
+			It++;
+		}
+	}
+}
+
 void LXRenderClusterManager::Tick()
 {
 	auto it = MapPrimitiveD3D11.begin();
@@ -66,21 +81,7 @@ void LXRenderClusterManager::Tick()
 		}
 	}
 
-	auto It2 = MapMaterialD3D11.begin();
-	while (It2 != MapMaterialD3D11.end())
-	{
-		// Delete the MaterialD3D11 when referenced by the map only
-		if (It2->second.use_count() == 1)
-		{
-			auto toErase = It2;
-			++It2;
-			MapMaterialD3D11.erase(toErase);
-		}
-		else
-		{
-			++It2;
-		}
-	}
+	DeleteUnusedMaterials();
 }
 
 void LXRenderClusterManager::AddActor(LXActor* Actor)
@@ -109,6 +110,9 @@ void LXRenderClusterManager::AddActor(LXActor* Actor)
 
 				// Create and add
 				LXRenderCluster* RenderCluster = CreateRenderCluster(ActorMesh, PrimitiveInstance, MatrixWCS, BBoxWorld, PrimitiveInstance->Primitive.get(), PrimitiveInstance->Primitive->GetMaterial());
+
+				if (!RenderCluster)
+					continue;
 				
 				// Cluster specialization
 				if (Actor->GetCID() & LX_NODETYPE_LIGHT)
@@ -281,7 +285,9 @@ void LXRenderClusterManager::UpdateMaterial(const LXMaterial* Material)
 shared_ptr<LXMaterialD3D11>& LXRenderClusterManager::GetMaterialD3D11(const LXMaterial* Material)
 {
 	if (!Material)
+	{
 		Material = GetCore().GetDefaultMaterial();
+	}
 	
 	auto It = MapMaterialD3D11.find(Material);
 
@@ -313,61 +319,88 @@ shared_ptr<LXPrimitiveD3D11>& LXRenderClusterManager::GetPrimitiveD3D11(LXPrimit
 	}
 }
 
-shared_ptr<LXMaterialD3D11>& LXRenderClusterManager::GetMaterialAndShadersD3D11(ERenderPass RenderPass, const LXMaterial* Material, const LXPrimitiveD3D11* PrimitiveD3D11, LXShaderProgramD3D11* OutShaderProgram)
+bool LXRenderClusterManager::GetMaterialAndShadersD3D11(LXRenderCluster* renderCluster, const LXMaterial* Material, const LXPrimitiveD3D11* PrimitiveD3D11)
 {
-	LXRenderer* Renderer = GetCore().GetRenderer();
 	shared_ptr<LXMaterialD3D11>& MaterialD3D11 = GetMaterialD3D11(Material);
-
-	if (Renderer->GetShaderManager()->GetShaders(RenderPass, PrimitiveD3D11, MaterialD3D11.get(), OutShaderProgram))
+	
+	for (auto i = 0; i < (int)ERenderPass::Last; i++)
 	{
-		return MaterialD3D11;
-	}
-	else
-	{
-		// Try with the default material
-		MaterialD3D11 = GetMaterialD3D11(nullptr);
-
-		if (Renderer->GetShaderManager()->GetShaders(RenderPass, PrimitiveD3D11, MaterialD3D11.get(), OutShaderProgram))
+		ERenderPass RenderPass = (ERenderPass)i;
+		LXShaderProgramD3D11 shaderProgram;
+		if (GetShadersD3D11(RenderPass, PrimitiveD3D11, MaterialD3D11.get(), &shaderProgram))
 		{
-			return MaterialD3D11;
+			LXShaderProgramD3D11* RenderClusterShaderProgram = &renderCluster->ShaderPrograms[(int)RenderPass];
+			RenderClusterShaderProgram->VertexShader = shaderProgram.VertexShader;
+			RenderClusterShaderProgram->HullShader = shaderProgram.HullShader;
+			RenderClusterShaderProgram->DomainShader = shaderProgram.DomainShader;
+			RenderClusterShaderProgram->GeometryShader = shaderProgram.GeometryShader;
+			RenderClusterShaderProgram->PixelShader = shaderProgram.PixelShader;
 		}
 		else
 		{
-			static shared_ptr<LXMaterialD3D11> NullMaterialD3D11;
-			return NullMaterialD3D11;
+			return false;
+		}
+	}
+
+	renderCluster->SetMaterial(MaterialD3D11);
+
+	return true;
+}
+
+void LXRenderClusterManager::RebuildMaterial(const LXMaterial* material)
+{
+	// Release cluster Shaders
+	auto It = MaterialRenderClusters.find(material);
+	if (It != MaterialRenderClusters.end())
+	{
+		for (LXRenderCluster* RenderCluster : (*It).second)
+		{
+			RenderCluster->ReleaseShaders();
+			RenderCluster->Material.reset();
+		}
+	}
+
+	// Delete unused Shaders
+	LXRenderer* Renderer = GetCore().GetRenderer();
+	Renderer->GetShaderManager()->DeleteUnusedShaders();
+
+	// Delete unused MaterialD3D11
+	DeleteUnusedMaterials();
+	
+
+	// Rebuild
+	if (It != MaterialRenderClusters.end())
+	{
+		for (LXRenderCluster* RenderCluster : (*It).second)
+		{
+			LXPrimitiveD3D11* PrimitiveD3D11 = RenderCluster->Primitive.get();
+			LXShaderProgramD3D11 ShaderProgram;
+			if (GetMaterialAndShadersD3D11(RenderCluster, material, PrimitiveD3D11) == false)
+			{
+				// Try the default material
+				if (!GetMaterialAndShadersD3D11(RenderCluster, nullptr, PrimitiveD3D11) == false)
+				{
+					LogE(RenderClusterManager, L"Unable to retrieve a material for cluster");
+					delete RenderCluster;
+				}
+			}
 		}
 	}
 }
 
-// void LXRenderClusterManager::RebuildMaterial(const LXMaterial* Material)
-// {
-// 	auto It = MaterialRenderClusters.find(Material);
-// 	if (It != MaterialRenderClusters.end())
-// 	{
-// 		for (LXRenderCluster* RenderCluster : (*It).second)
-// 		{
-// 			LXPrimitiveD3D11* PrimitiveD3D11 = RenderCluster->Primitive.get();
-// 			LXShaderProgramD3D11 ShaderProgram;
-// 
-// 			shared_ptr<LXMaterialD3D11>& NewMaterialD3D11 = GetMaterialAndShadersD3D11(ERenderPass::GBuffer, Material, PrimitiveD3D11, &ShaderProgram);
-// 			if (NewMaterialD3D11.get())
-// 			{
-// 				LXShaderProgramD3D11* RenderClusterShaderProgram = &RenderCluster->ShaderPrograms[(int)ERenderPass::GBuffer];
-// 				RenderCluster->SetMaterial(NewMaterialD3D11);
-// 				RenderClusterShaderProgram->VertexShader = ShaderProgram.VertexShader;
-// 				RenderClusterShaderProgram->HullShader = ShaderProgram.HullShader;
-// 				RenderClusterShaderProgram->DomainShader = ShaderProgram.DomainShader;
-// 				RenderClusterShaderProgram->GeometryShader = ShaderProgram.GeometryShader;
-// 				RenderClusterShaderProgram->PixelShader = ShaderProgram.PixelShader;
-// 			}
-// 			else
-// 			{
-// 				CHK(0);
-// 			}
-// 		}
-// 	}
-// }
-
+bool LXRenderClusterManager::GetShadersD3D11(ERenderPass renderPass, const LXPrimitiveD3D11* primitiveD3D11, const LXMaterialD3D11* materialD3D11, LXShaderProgramD3D11* shaderProgram)
+{
+	LXRenderer* Renderer = GetCore().GetRenderer();
+	if (Renderer->GetShaderManager()->GetShaders(renderPass, primitiveD3D11, materialD3D11, shaderProgram))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+	
 LXMaterialD3D11* LXRenderClusterManager::GetMaterial(const LXMaterial* Material)
 {
 	auto It = MapMaterialD3D11.find(Material);
@@ -395,32 +428,21 @@ LXRenderCluster* LXRenderClusterManager::CreateRenderCluster(LXActorMesh* Actor,
 	// Create or Retrieve the PrimitiiveD3D11 according the Primitive
 	shared_ptr<LXPrimitiveD3D11>& PrimitiveD3D11 = GetPrimitiveD3D11(Primitive, (Actor->GetInsanceCount()) > 0 ? &Actor->GetArrayInstancePosition() : nullptr);
 	RenderCluster->SetPrimitive(PrimitiveD3D11);
-		
-	// Create or retrieve the Shaders and MaterialD3D11 according the Material
-	for (auto i = 0; i < (int)ERenderPass::Last; i++)
+
+	if (Material == nullptr)
 	{
-		ERenderPass RenderPass = (ERenderPass)i;
-
-		LXShaderProgramD3D11 ShaderProgram;
-
-		shared_ptr<LXMaterialD3D11>& MaterialD3D11 = GetMaterialAndShadersD3D11(RenderPass, Material, PrimitiveD3D11.get(), &ShaderProgram);
-		if (MaterialD3D11.get())
+		Material = GetCore().GetDefaultMaterial();
+		CHK(Material);
+	}
+	
+	if (GetMaterialAndShadersD3D11(RenderCluster, Material, PrimitiveD3D11.get()) == false)
+	{
+		// Try the default material
+		if (GetMaterialAndShadersD3D11(RenderCluster, nullptr, PrimitiveD3D11.get()) == false)
 		{
-			RenderCluster->SetMaterial(MaterialD3D11);
-			LXShaderProgramD3D11* RenderClusterShaderProgram = &RenderCluster->ShaderPrograms[(int)RenderPass];
-			RenderClusterShaderProgram->VertexShader = ShaderProgram.VertexShader;
-			RenderClusterShaderProgram->HullShader = ShaderProgram.HullShader;
-			RenderClusterShaderProgram->DomainShader = ShaderProgram.DomainShader;
-			RenderClusterShaderProgram->GeometryShader = ShaderProgram.GeometryShader;
-			RenderClusterShaderProgram->PixelShader = ShaderProgram.PixelShader;
-		}
-		else
-		{
-			//CHK(0);
 			LogE(RenderClusterManager, L"Unable to retrieve a material for cluster");
 			delete RenderCluster;
 			return nullptr;
-			
 		}
 	}
 

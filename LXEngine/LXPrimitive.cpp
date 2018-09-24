@@ -534,10 +534,22 @@ void LXPrimitive::ComputeTangents2(vector<U>& arrayPositions, vector<T>& arrayTe
 						binormal.z = (-texEdge1.x * edge0.z + texEdge0.x * edge1.z) * det;
 
 						if (!tangent.IsNull())
+						{
 							tangent.Normalize();
+						}
+						else
+						{
+							CHK(0);
+						}
 						
-						if(!binormal.IsNull())
+						if (!binormal.IsNull())
+						{
 							binormal.Normalize();
+						}
+						else
+						{
+							CHK(0);
+						}
 					}
 
 					m_arrayTangents[a] = tangent;

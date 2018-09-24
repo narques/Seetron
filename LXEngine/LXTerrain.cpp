@@ -91,6 +91,7 @@ float LXTerrain::GetHeightAt(float x, float y) const
 {
 	if (Material)
 	{
+#if 0
 		if (LXMaterialNodeTextureSampler* TextureSampler = Material->GetMaterialNodeTextureSamplerFromName(L"HeightMap"))
 		{
 			if (LXMaterialNodeFloat* MaterialNodeFloat = Material->GetMaterialNodeFloatFromName(L"HeightScale"))
@@ -117,6 +118,7 @@ float LXTerrain::GetHeightAt(float x, float y) const
 			}
 		}
 		else
+#endif
 		{
 			LogE(Terrain, L"Missing \"HeightMap\" texture material node in material %s.", Material->GetName().GetBuffer());
 		}

@@ -15,13 +15,20 @@
 #include "LXFile.h"
 #include "LXMaterial.h"
 #include "LXMaterialD3D11.h"
+#include "LXTextureD3D11.h"
+#include "LXGraphMaterialToHLSLConverter.h"
 #include "LXShader.h"
 #include "LXMemory.h" // --- Must be the last included ---
+
+namespace
+{
+	const char kConstantBufferInsertionPos[] = "//CONSTANT_BUFFER";
+	const char kTexturesInsersionPos[] = "//TEXTURES";
+}
 
 LXShaderFactory::LXShaderFactory()
 {
 }
-
 
 LXShaderFactory::~LXShaderFactory()
 {
@@ -42,6 +49,13 @@ void LXShaderFactory::GenerateVertexShader(const LXFilepath& Filename, const LXS
 		ShaderBuffer += "{\n";
 		ShaderBuffer += "	VS_VERTEX Vertex = (VS_VERTEX)0;\n";
 		ShaderBuffer += "	Vertex.Pos = input.Pos;\n";
+		// Default values
+		ShaderBuffer += "	Vertex.Normal = float3(0.0, 0.0, 1.0);\n";
+		ShaderBuffer += "	Vertex.Tangent = float3(1.0, 0.0, 0.0);\n";
+		ShaderBuffer += "	Vertex.Binormal = float3(0.0, 1.0, 0.0);\n";
+		ShaderBuffer += "	Vertex.TexCoord = float2(0.0, 0.0);\n";
+		ShaderBuffer += "	Vertex.InstanceID = 0;\n";
+		ShaderBuffer += "	Vertex.InstancePos = float3(0.0, 0.0, 0.0);\n";
 		ShaderBuffer += "	return ComputeVertex(Vertex);\n";
 		ShaderBuffer += "}\n";
 
@@ -57,6 +71,13 @@ void LXShaderFactory::GenerateVertexShader(const LXFilepath& Filename, const LXS
 		ShaderBuffer += "	VS_VERTEX Vertex = (VS_VERTEX)0;\n";
 		ShaderBuffer += "	Vertex.Pos = input.Pos;\n";
 		ShaderBuffer += "	Vertex.Normal = input.Normal; \n";
+		// Default values
+		ShaderBuffer += "	Vertex.Tangent = float3(1.0, 0.0, 0.0);\n";
+		ShaderBuffer += "	Vertex.Binormal = float3(0.0, 1.0, 0.0);\n";
+		ShaderBuffer += "	Vertex.TexCoord = float2(0.0, 0.0);\n";
+		ShaderBuffer += "	Vertex.InstanceID = 0;\n";
+		ShaderBuffer += "	Vertex.InstancePos = float3(0.0, 0.0, 0.0);\n";
+		//
 		ShaderBuffer += "	return ComputeVertex(Vertex);\n";
 		ShaderBuffer += "}\n";
 	}
@@ -68,6 +89,12 @@ void LXShaderFactory::GenerateVertexShader(const LXFilepath& Filename, const LXS
 		ShaderBuffer += "	Vertex.Pos = input.Pos;\n";
 		ShaderBuffer += "	Vertex.Normal = input.Normal; \n";
 		ShaderBuffer += "	Vertex.TexCoord = input.TexCoord;\n";
+		// Default values
+		ShaderBuffer += "	Vertex.Tangent = float3(1.0, 0.0, 0.0);\n";
+		ShaderBuffer += "	Vertex.Binormal = float3(0.0, 1.0, 0.0);\n";
+		ShaderBuffer += "	Vertex.InstanceID = 0;\n";
+		ShaderBuffer += "	Vertex.InstancePos = float3(0.0, 0.0, 0.0);\n";
+		//
 		ShaderBuffer += "	return ComputeVertex(Vertex);\n";
 		ShaderBuffer += "}\n";
 	}
@@ -81,6 +108,11 @@ void LXShaderFactory::GenerateVertexShader(const LXFilepath& Filename, const LXS
 		ShaderBuffer += "	Vertex.Tangent = input.Tangent;\n";
 		ShaderBuffer += "	Vertex.Binormal = input.Binormal;\n";
 		ShaderBuffer += "	Vertex.TexCoord = input.TexCoord;\n";
+		ShaderBuffer += "	Vertex.SupportNormalMap = true;\n";
+		// Default values
+		ShaderBuffer += "	Vertex.InstanceID = 0;\n";
+		ShaderBuffer += "	Vertex.InstancePos = float3(0.0, 0.0, 0.0);\n";
+		//
 		ShaderBuffer += "	return ComputeVertex(Vertex);\n";
 		ShaderBuffer += "}\n";
 	}
@@ -94,6 +126,7 @@ void LXShaderFactory::GenerateVertexShader(const LXFilepath& Filename, const LXS
 		ShaderBuffer += "	Vertex.Tangent = input.Tangent;\n";
 		ShaderBuffer += "	Vertex.Binormal = input.Binormal;\n";
 		ShaderBuffer += "	Vertex.TexCoord = input.TexCoord;\n";
+		ShaderBuffer += "	Vertex.SupportNormalMap = true;\n";
 		ShaderBuffer += "	Vertex.InstanceID = instanceID;\n";
 		ShaderBuffer += "	Vertex.InstancePos = input.InstancePos;\n";
 		ShaderBuffer += "	return ComputeVertex(Vertex);\n";
@@ -128,81 +161,65 @@ void LXShaderFactory::GenerateVertexShader(const LXFilepath& Filename, const LXS
 	}
 }
 
-void LXShaderFactory::UpdateShader(const LXFilepath& Filepath, const LXMaterialD3D11* MaterialD3D11 )
+void LXShaderFactory::GeneratePixelShader(const LXFilepath& Filename, const LXMaterialD3D11* materialD3D11, ERenderPass renderPass)
 {
-	// Generated HLSL Code to inject into shader file
-	LXStringA HLSLCodeVS;
-	LXStringA HLSLCodePS;
-
-	const LXMaterial* Material = MaterialD3D11->GetMaterial();
+	LXGraphMaterialToHLSLConverter graphMaterialToHLSLConverer;
+	LXStringA ShaderBuffer = graphMaterialToHLSLConverer.GenerateCode(materialD3D11, renderPass);
 
 	//
-	// ConstantBuffers
+	// Insert the constant buffer declaration.
 	//
 
-	if (MaterialD3D11->GetConstantBufferPS().HasData() && Material->PixelShader)
+	if (materialD3D11->GetConstantBufferPS().HasData())
 	{
-		HLSLCodePS += ConstantBufferToHLSL(MaterialD3D11->GetConstantBufferPS());
-	}
-	
-	//
-	// Textures and TextureSamplers
-	//
-
-	LXStringA HLSLTextureDeclarationVS;
-	LXStringA HLSLTextureDeclarationPS;
-	
-	list<LXMaterialNodeTextureSampler*> listTextureSamplers;
-	Material->GetTextureSamplers(listTextureSamplers);
-	for (LXMaterialNodeTextureSampler* TextureSampler : listTextureSamplers)
-	{
-		if (!TextureSampler->GetTexture() || TextureSampler->AffectedShaders == 0)
+		LXStringA constantBufferDecl = ConstantBufferToHLSL(materialD3D11->GetConstantBufferPS());
+		int Start = ShaderBuffer.Find(kConstantBufferInsertionPos);
+		if (Start == -1)
 		{
-			continue;
+			CHK(0);
 		}
-
-		// VertexShader
-		if (TextureSampler->AffectedShaders & EShader::VertexShader)
+		else
 		{
-			LXStringA n = LXStringA::Number(TextureSampler->Slot);
-			LXStringA HLSLTexture = "Texture2D texture" + n + " : register(vs, t" + n + ");\n";
-			LXStringA HLSLSampler = "SamplerState sampler" + n + " : register(vs, s" + n + ");\n\n";
-			HLSLTextureDeclarationVS += HLSLTexture;
-			HLSLTextureDeclarationVS += HLSLSampler;
-		}
-
-		// PixelShader 
-		if (TextureSampler->AffectedShaders & EShader::PixelShader)
-		{
-			LXStringA n = LXStringA::Number(TextureSampler->Slot);
-			LXStringA HLSLTexture = "Texture2D texture" + n + " : register(ps, t" + n + ");\n";
-			LXStringA HLSLSampler = "SamplerState sampler" + n + " : register(ps, s" + n + ");\n\n";
-			HLSLTextureDeclarationPS += HLSLTexture;
-			HLSLTextureDeclarationPS += HLSLSampler;
+			Start += (int)strlen(kConstantBufferInsertionPos) + 1;
+			ShaderBuffer.Insert(Start, constantBufferDecl.GetBuffer());
 		}
 	}
 
-	HLSLCodeVS += HLSLTextureDeclarationVS;
-	HLSLCodePS += HLSLTextureDeclarationPS;
+	//
+	// Insert Textures and SamplerStates
+	//
+
+	if (materialD3D11->GetTexturesPS().size() > 0)
+	{
+		LXStringA texturesDecl = ListTexturesToHLSL(materialD3D11->GetTexturesPS());
+		int Start = ShaderBuffer.Find(kTexturesInsersionPos);
+		if (Start == -1)
+		{
+			CHK(0);
+		}
+		else
+		{
+			Start += (int)strlen(kTexturesInsersionPos) + 1;
+			ShaderBuffer.Insert(Start, texturesDecl.GetBuffer());
+		}
+	}
+	
 
 	//
-	// Inject
-	// 
+	// Write to disk.
+	//
 	
-	LXStringA FileData;
-	VRF(LXFileUtility::ReadTextFile(Filepath.GetBuffer(), FileData));
-	int Start = FileData.Find("//BEGIN_GENERATED");
-	int End = FileData.Find("//END_GENERATED");
-	if (Start == -1 || End == -1)
+	LXPlatform::DeleteFile(Filename);
+
+	LXFile File;
+	if (File.Open(Filename, "wt") == true)
 	{
-		LogW(LXShaderFactory, L"Unable to find //BEGIN_GENERATED or //END_GENERATED in shader %s.", Material->PixelShader->GetRelativeFilename().GetBuffer());
+		File.Write(ShaderBuffer.GetBuffer(), ShaderBuffer.size());
+		File.Close();
 	}
 	else
 	{
-		Start += 18; // the size of //BEGIN_GENERATED
-		FileData.Erase(Start, End - Start);
-		FileData.Insert(Start, HLSLCodePS.GetBuffer());
-		VRF(LXFileUtility::WriteTextFile(Filepath.GetBuffer(), FileData));
+		LogE(ShaderManager, L"Unable to open shader file: %s", Filename.GetBuffer());
 	}
 }
 
@@ -213,6 +230,7 @@ LXString LXShaderFactory::GetRenderPassName(ERenderPass RenderPass)
 	case ERenderPass::Depth: return L"_Depth"; break;
 	case ERenderPass::Shadow: return L"_Shadow"; break;
 	case ERenderPass::GBuffer: return L"_GBuffer"; break;
+	case ERenderPass::Transparency: return L"_Transparency"; break;
 	default: CHK(0); return L""; break;
 	}
 }
@@ -265,7 +283,61 @@ LXStringA LXShaderFactory::ConstantBufferToHLSL(const LXConstantBuffer& Constant
 		HLSLDeclaration += "  " + TypeName + " " + VD.Name + ";\n";
 	}
 
+	uint padSize = ConstantBuffer.GetPadSize();
+
+	HLSLDeclaration += "  float Pad_ConstantBuffer_001[" + LXStringA::Number((int)(padSize / 4)) + "];\n";
+
+	/*
+	switch (padSize)
+	{
+	case 4: HLSLDeclaration += "  float Pad_ConstantBuffer_001;\n"; break;
+	case 8: HLSLDeclaration += "  float2 Pad_ConstantBuffer_001;\n"; break;
+	case 12: HLSLDeclaration += "  float3 Pad_ConstantBuffer_001;\n"; break;
+	case 24: HLSLDeclaration += "  float4 Pad_ConstantBuffer_001;\n"; break;
+	default:CHK(0);
+	}
+	*/
+
 	HLSLDeclaration += "};\n";
+	return HLSLDeclaration;
+}
+
+LXStringA LXShaderFactory::ListTexturesToHLSL(const list<LXTextureD3D11*>& listTextures)
+{
+	//
+	// Textures and TextureSamplers
+	//
+
+	LXStringA HLSLDeclaration;
+	
+	for (LXTextureD3D11* textureD3D11 : listTextures)
+	{
+		//if (!TextureSampler->GetTexture() || TextureSampler->AffectedShaders == 0)
+		//{
+		//	continue;
+		//}
+
+		/*
+		// VertexShader
+		if (TextureSampler->AffectedShaders & EShader::VertexShader)
+		{
+			LXStringA n = LXStringA::Number(TextureSampler->Slot);
+			LXStringA HLSLTexture = "Texture2D texture" + n + " : register(vs, t" + n + ");\n";
+			LXStringA HLSLSampler = "SamplerState sampler" + n + " : register(vs, s" + n + ");\n\n";
+			HLSLTextureDeclarationVS += HLSLTexture;
+			HLSLTextureDeclarationVS += HLSLSampler;
+		}
+		*/
+
+		// PixelShader 
+		//if (TextureSampler->AffectedShaders & EShader::PixelShader)
+		{
+			LXStringA n = LXStringA::Number(textureD3D11->Slot);
+			HLSLDeclaration += "Texture2D texture" + n + " : register(ps, t" + n + ");\n";
+			HLSLDeclaration += "SamplerState sampler" + n + " : register(ps, s" + n + ");\n\n";
+		}
+	}
+		
 	return HLSLDeclaration;
 }
 

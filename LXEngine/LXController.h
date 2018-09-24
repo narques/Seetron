@@ -56,6 +56,7 @@ public:
 	//
 
 	void AddMaterialToUpdateRenderStateSet(LXMaterial* Material);
+	void AddMaterialToRebuild(LXMaterial* material);
 
 	//
 	// Actor
@@ -71,9 +72,10 @@ public:
 	// PrimitiveInstance
 	//
 		
-	SetActors& GetActorsToDeleteRT() { return _SetActorToDeleteRT; }
-	SetActors& GetActorToUpdateRenderStateSetRT() { return _SetActorToUpdateRenderStateRT; }
-	SetMaterials& GetMaterialToUpdateRenderStateSetRT() { return _SetMaterialToUpdateRenderStateRT; }
+	SetActors& GetActorsToDeleteRT() { return _SetActorToDelete_RT; }
+	SetActors& GetActorToUpdateRenderStateSetRT() { return _SetActorToUpdateRenderState_RT; }
+	SetMaterials& GetMaterialToUpdateRenderStateSetRT() { return _SetMaterialToUpdateRenderState_RT; }
+	SetMaterials& GetMaterialToRebuild_RT() { return _SetMaterialToRebuild_RT; }
 
 	ListRendererUpdates& GetRendererUpdate() { return _RendererUpdates; }
 	
@@ -91,11 +93,13 @@ private:
 	SetActors		_SetActorToDelete;
 	SetActors		_SetActorToMove;
 	SetMaterials	_SetMaterialToUpdateRenderState;
+	SetMaterials	_SetMaterialToRebuild;
 	
 	// Consumed by RenderThread
-	SetActors		_SetActorToUpdateRenderStateRT;
-	SetActors		_SetActorToDeleteRT;
-	SetMaterials	_SetMaterialToUpdateRenderStateRT;
+	SetActors		_SetActorToUpdateRenderState_RT;
+	SetActors		_SetActorToDelete_RT;
+	SetMaterials	_SetMaterialToUpdateRenderState_RT;
+	SetMaterials	_SetMaterialToRebuild_RT;
 
 	// Shared
 	ListRendererUpdates	_RendererUpdates;

@@ -30,9 +30,9 @@ void LXLogger::PrintToConsoles(ELogType LogType, const LXString& msg)
 	SYSTEMTIME st;
 	::GetSystemTime(&st);
 	LXString TimeMsg = LXString::Number(st.wMinute) + L":" + LXString::Number(st.wSecond) + L"." + LXString::Number(st.wMilliseconds) + L" " + msg;
-	
+
 	//if (LogModes & ELogMode::LogMode_OSConsole)
-		wcout << TimeMsg.GetBuffer() << endl;
+	wcout << TimeMsg.GetBuffer() << endl;
 
 	if (LogModes & ELogMode::LogMode_CoreConsole)
 	{
@@ -48,11 +48,14 @@ void LXLogger::PrintToConsoles(ELogType LogType, const LXString& msg)
 
 	// File
 
-	LXStringA msgA = &*msg.GetBufferA().begin();
+	LXStringA msgA = msg.ToStringA();
 	msgA += "\n";
-	File->Open(LXCore::GetAppPath() + "/log.txt", L"a");
-	File->Write(msgA.GetBuffer(), msgA.size(), true);
-	File->Close();
+
+	if (File->Open(LXCore::GetAppPath() + "/log.txt", L"a"))
+	{
+		File->Write(msgA.GetBuffer(), msgA.size(), true);
+		File->Close();
+	}
 
 	Mutex->Unlock();
 }
