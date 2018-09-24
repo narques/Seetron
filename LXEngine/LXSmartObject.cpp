@@ -402,7 +402,7 @@ void LXSmartObject::DefineProperties()
 		pProp->SetReadOnly(true);
 		pProp->SetPersistent(false);
 	}
-		
+
 	//--------------------------------------------------------------------------------------------------------------------------------
 	LXProperty::SetCurrentGroup(L"Object");
 	//--------------------------------------------------------------------------------------------------------------------------------
@@ -812,8 +812,16 @@ LXReference<LXSmartObject> LXSmartObject::GetObjectAsRef(const LXString& uid)
 void LXSmartObject::AddObject(const LXString& uid, LXSmartObject* smartObject)
 {
 	auto It = _objects.find(uid);
-	CHK(It == _objects.end());
+	// CHK commented as RemoveObject is still not used.
+	//CHK(It == _objects.end()); 
 	_objects[uid] = smartObject;
+}
+
+void LXSmartObject::RemoveObject(const LXString& uid, LXSmartObject* smartObject)
+{
+	auto It = _objects.find(uid);
+	CHK(It != _objects.end());
+	_objects.erase(uid);
 }
 
 LXSmartObjectContainer::LXSmartObjectContainer()

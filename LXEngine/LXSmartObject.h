@@ -66,10 +66,10 @@ public:
 	LXSmartObject(const LXSmartObject& Object);
 	LXSmartObject& operator=(const LXSmartObject& Object);
 	bool operator== (const LXSmartObject& smartObject) const;
-	
+
 	// Recycle Bin Management 
-	virtual void 					OnTrashed(){};
-	virtual void					OnRecycled(){};
+	virtual void 					OnTrashed() {};
+	virtual void					OnRecycled() {};
 
 	// UI Helper: Child objects
 	virtual void					GetChildren(ListSmartObjects&) {}
@@ -78,24 +78,45 @@ public:
 	virtual const ListProperties&	GetProperties() const;
 	ListProperties					GetBranchProperties() const;
 	virtual void					GetChildProperties(ListProperties& listProperties) const;
-	
+
 	void							GetUserProperties(ListProperties& UserProperties) const;
 	void							AttachPropertiesToThis();
 	LXProperty*						GetProperty(const LXPropertyID& PID);
 	LXProperty*						GetProperty(const LXString& name) const;
 	virtual void					OnPropertyChanged(LXProperty* pProperty);
 
+	//
 	// Listeners / Callback
+	//
+
+	// Register/Unregister object properties changes 
 	void							RegisterCB_OnPropertyChanged(void* Listener, std::function<void(LXSmartObject*, LXProperty*)>);
 	void							UnregisterCB_OnPropertyChanged(void* Listener);
+	
+	// Register/Unregister for global properties changes 
 	static void						RegisterCB_OnPropertiesChanged(LXObject* Listener, std::function<void(LXSmartObject*, LXProperty*)> func);
 	static void						UnregisterCB_OnPropertiesChanged(LXObject* Listener);
 
 	// Generic CallBack mechanism (Deprecated)
+	[[deprecated]]
 	void							RegisterCB(LXSmartObject* Listerner, const LXString& FunctionName, std::function<void(LXSmartObject*)>);
+	[[deprecated]]
 	void							UnregisterCB(LXSmartObject* Listener, const LXString& FunctionName);
+	[[deprecated]]
 	void							InvokeCB(const LXString& functionn);
 
+	//------------------------------------------------------------------------------------------------------
+	// 
+	// LXPropertyListSmartObjects & LXPropertyArraySmartObjects tools
+	// 
+	//------------------------------------------------------------------------------------------------------
+
+	// For UI, returns choices/options to determine the object to create as the a list item.
+	virtual void					GetNewListItemChoices(const LXPropertyListSmartObjects* property, list<LXString>& outStrings) { }
+
+	// For UI, Create and add a new list item according the previous choice.
+	virtual void					AddItemToPropertyList(const LXPropertyListSmartObjects* property, const LXString& id) { };
+	
 	//------------------------------------------------------------------------------------------------------
 	// Save & Load 
 	// pName. By default the methods use the object className as the xml tag, 
@@ -106,7 +127,7 @@ public:
 	bool							Save(const TSaveContext& saveContext, LXString* pName = nullptr, LXString* pAttribute = nullptr, bool saveAsProperty = false) const;
 	bool         					Load(const TLoadContext& loadContext, LXString* pName = nullptr);
 	bool							LoadWithMSXML(const LXFilepath& strFilename, bool bLoadChilds = true, bool bLoadViewStates = true);
-			
+
 	void							SetName(const LXString& strName) { _Name = strName; }
 	const LXString&					GetName() const { return _Name; }
 
@@ -125,11 +146,12 @@ public:
 	shared_ptr<LXSmartObject>		GetObject(const LXString& uid);
 	LXReference<LXSmartObject>		GetObjectAsRef(const LXString& uid);
 	void							AddObject(const LXString& uid, LXSmartObject* smartObject);
+	void							RemoveObject(const LXString& uid, LXSmartObject* smartObject);
 
 	// Misc 
 	bool							IsNeedSave() const { return _bNeedSave; }
 	LXString*						GetUID(bool bBuild = false);
-	
+		
 	template<class T>
 	LXPropertyT<T>*					CreateUserProperty(const LXString& Name, const T& DefaultValue);
 	template<class T>
@@ -179,6 +201,11 @@ private:
 	void							DefineProperties();
 	bool							AddProperty(LXProperty* pProperty);
 	void							DeleteProperty(LXProperty* pProperty);
+
+public:
+
+	bool							EditableUserProperties = false;
+
 
 protected:
 
