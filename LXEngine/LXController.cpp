@@ -24,6 +24,7 @@
 
 LXController::LXController()
 {
+	_mutex = new LXMutex();
 
 	// Listen the properties
 
@@ -59,6 +60,7 @@ LXController::~LXController()
 {
 	LXSmartObject::UnregisterCB_OnPropertiesChanged(this);
 	Purge();
+	delete _mutex;;
 }
 
 void LXController::SetRenderer(LXRenderer* Renderer)
@@ -96,11 +98,10 @@ LXMaterialD3D11* GetMaterialD3D11(const LXMaterial* Material)
 void LXController::AddActorToUpdateRenderStateSet(LXActor* Actor)
 {
 	CHK(IsMainThread() || IsLoadingThread());
-	LXMutex Mutex;
-	Mutex.Lock();
+	_mutex->Lock();
 	LogD(LXController, L"AddActorToUpdateRenderStateSet %s", Actor->GetName().GetBuffer());
 	_SetActorToUpdateRenderState.insert(Actor);
-	Mutex.Unlock();
+	_mutex->Unlock();
 }
 
 void LXController::AddActorToDeleteSet(LXActor* Actor)
@@ -180,7 +181,7 @@ void LXController::Run()
 	if (!RenderThread && LXRenderer::gUseRenderThread)
 		return;
 
-	// Now the RenderTread must wait
+	// Now the RenderTread is waiting
 	// TODO CHK(RenderThread.IsWaiting());
 	
 	// All updates should be consumed.
@@ -201,8 +202,8 @@ void LXController::Run()
 	//
 
 	{
-		LXMutex Mutex; 
-		Mutex.Lock();
+		// Lock, _SetActorToUpdateRenderState can be modified by the LoadingThread.
+		_mutex->Lock();
 		SetActors& Actors = _SetActorToUpdateRenderState;
 		// Previous actors should be consumed
 		CHK(_SetActorToUpdateRenderState_RT.size() == 0);
@@ -210,11 +211,16 @@ void LXController::Run()
 
 		for (const LXActor* Actor : _SetActorToUpdateRenderState_RT)
 		{
+			if (LXActorMesh* actorMesh = dynamic_cast<LXActorMesh*>(const_cast<LXActor*>(Actor)))
+			{
+				actorMesh->GetAllPrimitives();
+			}
+
 			LogD(LXController, L"Synchronized: %s", Actor->GetName().GetBuffer());
 		}
 		
 		Actors.clear();
-		Mutex.Unlock();
+		_mutex->Unlock();
 	}
 
 	//
@@ -222,9 +228,6 @@ void LXController::Run()
 	//
 	
 	{
-		LXMutex Mutex;
-		Mutex.Lock();
-		
 		// Previous materials should be consumed
 		CHK(_SetMaterialToUpdateRenderState_RT.size() == 0);
 		CHK(_SetMaterialToRebuild_RT.size() == 0);
@@ -234,7 +237,6 @@ void LXController::Run()
 
 		_SetMaterialToUpdateRenderState.clear();
 		_SetMaterialToRebuild.clear();
-		Mutex.Unlock();
 	}
 
 	//

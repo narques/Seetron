@@ -186,6 +186,7 @@ const TWorldPrimitives& LXActorMesh::GetAllPrimitives()
 	}
 	else
 	{
+		CHK(!IsRenderThread())
 		_WorldPrimitives.clear();
 		GetAllPrimitives(Mesh, _WorldPrimitives, GetMatrixWCS());
 		_bValidWorldPrimitives = true;

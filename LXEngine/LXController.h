@@ -15,6 +15,7 @@
 
 class LXPrimitiveInstance;
 class LXMaterial;
+class LXMutex;
 class LXRenderer;
 class LXString;
 
@@ -103,5 +104,8 @@ private:
 
 	// Shared
 	ListRendererUpdates	_RendererUpdates;
+
+	// Threads
+	LXMutex* _mutex; // _SetActorToUpdateRenderState
 };
 

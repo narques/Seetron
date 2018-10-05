@@ -131,6 +131,7 @@ public:
 	void				SetVisible(bool bVisible);
 	
 	// Play
+	virtual void		Run(double frameTime);
 	virtual void		RunRT(double frameTime);
 
 	// Event Callbacks from EventManager

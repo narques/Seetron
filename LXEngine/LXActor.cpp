@@ -361,6 +361,14 @@ void LXActor::SetVisible(bool bVisible)
 	}
 }
 
+void LXActor::Run(double frameTime)
+{
+	for (LXActor* Child : _Children)
+	{
+		Child->Run(frameTime);
+	}
+}
+
 void LXActor::RunRT(double frameTime)
 {
 	for (LXActor* Child : _Children)

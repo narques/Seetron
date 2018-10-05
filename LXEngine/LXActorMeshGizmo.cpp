@@ -150,7 +150,7 @@ EConstraint LXActorMeshGizmo::GetConstraint(LXPrimitive* primitive) const
 		return EConstraint::None;
 }
 
-void LXActorMeshGizmo::RunRT(double frameTime)
+void LXActorMeshGizmo::Run(double frameTime)
 {
 	if (LXActorCamera* ActorCamera = GetProject()->GetCamera())
 	{

@@ -448,10 +448,10 @@ void LXCore::Run()
 	// MainThread Actors Update
 	//
 
-// 	if (GetScene())
-// 	{
-// 		GetScene()->Update2(Time.DeltaTime());
-// 	}
+	if (GetScene())
+	{
+		GetScene()->Run(Time.DeltaTime());
+	}
 		
 	if (_Renderer && RenderThread)
 	{

@@ -24,7 +24,7 @@ public:
 private:
 
 	// Overridden from LXActor
-	void RunRT(double frameTime) override;
+	void Run(double frameTime) override;
 	void OnSelectionChanged() override;
 	void OnPositionChanged() override;
 
