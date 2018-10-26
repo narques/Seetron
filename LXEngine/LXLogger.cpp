@@ -28,16 +28,20 @@ void LXLogger::PrintToConsoles(ELogType LogType, const LXString& msg)
 	Mutex->Lock();
 
 	SYSTEMTIME st;
-	::GetSystemTime(&st);
-	LXString TimeMsg = LXString::Number(st.wMinute) + L":" + LXString::Number(st.wSecond) + L"." + LXString::Number(st.wMilliseconds) + L" " + msg;
+	::GetLocalTime(&st);
+	LXString logEntry = L"[";
+	logEntry += LXString::Format(L"%02d", st.wHour);
+	logEntry += L":" + LXString::Format(L"%02d", st.wMinute);;
+	logEntry += L":" + LXString::Format(L"%02d", st.wSecond);
+	logEntry += L"." + LXString::Format(L"%03d", st.wMilliseconds) + L"]" + msg;
 
 	//if (LogModes & ELogMode::LogMode_OSConsole)
-	wcout << TimeMsg.GetBuffer() << endl;
+	wcout << logEntry.GetBuffer() << endl;
 
 	if (LogModes & ELogMode::LogMode_CoreConsole)
 	{
 		for (auto It : MapCallbacks)
-			It.second(LogType, TimeMsg);
+			It.second(LogType, logEntry);
 	}
 
 	if ((LogModes & ELogMode::LogMode_DebuggerConsole) && IsDebuggerPresent())
@@ -48,7 +52,7 @@ void LXLogger::PrintToConsoles(ELogType LogType, const LXString& msg)
 
 	// File
 
-	LXStringA msgA = msg.ToStringA();
+	LXStringA msgA = logEntry.ToStringA();
 	msgA += "\n";
 
 	if (File->Open(LXCore::GetAppPath() + "/log.txt", L"a"))
