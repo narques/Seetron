@@ -64,10 +64,10 @@ void LXMaterialD3D11::Release()
 
 	ListPSTextures.clear();
 
-	//LX_SAFE_DELETE(CBMaterialParemetersVS);
+	LX_SAFE_DELETE(CBMaterialParemetersVS);
 	LX_SAFE_DELETE(CBMaterialParemetersPS);
 
-	//ConstantBufferVS.Release();
+	ConstantBufferVS.Release();
 	ConstantBufferPS.Release();
 }
 
@@ -109,7 +109,21 @@ void LXMaterialD3D11::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 	else
 		RCL->RSSetState(Renderer->D3D11RasterizerState);
 
+	//
 	// Textures
+	//
+
+	// Reset current states
+	/* Pas possible la pass Transparency bind la texture "ambiant" sur le slot 10
+	for (int i = 0; i < 16; i++)
+	{
+		//RCL->VSSetSamplers(i, 1, nullptr);
+		RCL->VSSetShaderResources(i, 1, nullptr);
+		//RCL->PSSetSamplers(i, 1, nullptr); // DOIT DUPPOER TABLEAU DE 1 NULL ( voir PSSetShaderReopusce= )
+		RCL->PSSetShaderResources(i, 1, nullptr);
+	}
+	*/
+
 
 	for (LXTextureD3D11* Texture : ListVSTextures)
 	{
@@ -192,23 +206,29 @@ bool LXMaterialD3D11::Create(const LXMaterial* InMaterial)
 	Displacement = 0;
 	Transparent = Material->IsTransparent();
 
+	LXGraphMaterialToHLSLConverter graphMaterialToHLSLConverter;
+
 	//
 	// Build the VS Constant Buffer 
 	//
 
-//	Update(Material);
-// 	CBMaterialParemetersVS = new LXConstantBufferD3D11();
-// 	CBMaterialParemetersVS->CreateConstantBuffer(&MaterialParameters, sizeof(TMaterialParemeters));
+	VRF(graphMaterialToHLSLConverter.GenerateConstanBuffer((const LXGraph*)Material->GetGraph(), EShader::VertexShader, ConstantBufferVS));
+	VRF(graphMaterialToHLSLConverter.GatherTextures((const LXGraph*)Material->GetGraph(), EShader::VertexShader, ListVSTextures));
+
+	if (ConstantBufferPS.HasData())
+	{
+		// Create the D3D11 Constant Buffer
+		CBMaterialParemetersVS = new LXConstantBufferD3D11();
+		CBMaterialParemetersVS->CreateConstantBuffer(ConstantBufferVS.GetData(), ConstantBufferVS.GetSize());
+	}
+
 	
 	//
 	// Build the PS Constant Buffer structure according the MaterialNodes
 	//
 
-
-	VRF(LXGraphMaterialToHLSLConverter::GenerateConstanBuffer((const LXGraph*)Material->GetGraph(), ConstantBufferPS));
-
-	LXGraphMaterialToHLSLConverter graphMaterialToHLSLConverter;
-	VRF(graphMaterialToHLSLConverter.GatherTextures((const LXGraph*)Material->GetGraph(), ListPSTextures));
+	VRF(graphMaterialToHLSLConverter.GenerateConstanBuffer((const LXGraph*)Material->GetGraph(), EShader::PixelShader, ConstantBufferPS));
+	VRF(graphMaterialToHLSLConverter.GatherTextures((const LXGraph*)Material->GetGraph(), EShader::PixelShader, ListPSTextures));
 
 	if (ConstantBufferPS.HasData())
 	{

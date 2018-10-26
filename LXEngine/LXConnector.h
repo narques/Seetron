@@ -33,6 +33,7 @@ public:
 	virtual ~LXConnector();
 
 	LXNode* GetOwner() const { return _owner; }
+	LXNode* GetFirstConnectedNode(const LXString& nodeName) const;
 
 private:
 

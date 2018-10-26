@@ -71,8 +71,7 @@ LXTerrain::LXTerrain(LXProject* pDocument) :
 		{
 			LXString Key = PropertyAsset->GetValue()->GetRelativeFilename();
 			Mesh->SetMaterial(Key);
-			//GetController()->MaterialChanged(this, dynamic_cast<LXMaterial*>(Asset));
-			InvalidateRenderState();
+			GetController()->MaterialChanged(this, dynamic_cast<LXMaterial*>(Asset));
 		}
 	});
 
@@ -91,39 +90,42 @@ float LXTerrain::GetHeightAt(float x, float y) const
 {
 	if (Material)
 	{
-#if 0
-		if (LXMaterialNodeTextureSampler* TextureSampler = Material->GetMaterialNodeTextureSamplerFromName(L"HeightMap"))
+		if (const LXTexture* texture = Material->GetTextureDisplacement(L"HeightMap"))
 		{
-			if (LXMaterialNodeFloat* MaterialNodeFloat = Material->GetMaterialNodeFloatFromName(L"HeightScale"))
+			float heightScale = 0.f;
+			if (Material->GetFloatParameter(L"HeightScale", heightScale))
 			{
-				LXTexture* Texture = TextureSampler->GetTexture();
-				if (LXBitmap* Bitmap = Texture->GetBitmap(0))
+
+				if (LXBitmap* bitmap = texture->GetBitmap(0))
 				{
-					x = (float)x * (float)Texture->GetWidth() / 409600.f/*GetOverallSize()*/;
-					y = (float)y * (float)Texture->GetHeight() / 409600.f/*GetOverallSize()*/;
+					x = (float)x * (float)texture->GetWidth() / 409600.f/*GetOverallSize()*/;
+					y = (float)y * (float)texture->GetHeight() / 409600.f/*GetOverallSize()*/;
 
 					CHK(x >= 0.f);
 					CHK(y >= 0.f);
 					CHK(x < 4096.f);
 					CHK(y < 4096.f);
-					
-					unsigned short b = Bitmap->GetPixel<unsigned short>((int)x, (int)y)[0];
-					float r = (float)(b) / USHRT_MAX * MaterialNodeFloat->Value;
+
+					unsigned short b = bitmap->GetPixel<unsigned short>((int)x, (int)y)[0];
+					float r = (float)(b) / USHRT_MAX * heightScale;
 					return r;
+				}
+				else
+				{
+					CHK(0);
 				}
 			}
 			else
 			{
-				LogE(Terrain, L"Missing \"HeightScale\" float material node in material %s.", Material->GetName().GetBuffer());
+				LogE(Terrain, L"Missing \"HeightScale\" material node in material %s.", Material->GetName().GetBuffer());
 			}
 		}
 		else
-#endif
 		{
-			LogE(Terrain, L"Missing \"HeightMap\" texture material node in material %s.", Material->GetName().GetBuffer());
+			LogE(Terrain, L"Missing \"HeightMap\" material node in material %s.", Material->GetName().GetBuffer());
 		}
 	}
-	
+			
 	return 0.f;
 }
 

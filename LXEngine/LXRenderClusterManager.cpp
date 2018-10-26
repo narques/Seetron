@@ -416,7 +416,7 @@ LXMaterialD3D11* LXRenderClusterManager::GetMaterial(const LXMaterial* Material)
 
 LXRenderCluster* LXRenderClusterManager::CreateRenderCluster(LXActorMesh* Actor, LXPrimitiveInstance* PrimitiveInstance, const LXMatrix& MatrixWCS, const LXBBox& BBoxWorld, LXPrimitive* Primitive, LXMaterial* Material)
 {
-	//LogD(LXRenderClusterManager, L"CreateRenderCluster %s", Actor->GetName().GetBuffer());
+	LogD(LXRenderClusterManager, L"CreateRenderCluster %s", Actor->GetName().GetBuffer());
 
 	// Create the RenderCluster
 	LXRenderCluster* RenderCluster = new LXRenderCluster(this, Actor, MatrixWCS);

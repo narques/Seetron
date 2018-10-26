@@ -13,6 +13,7 @@
 
 class LXShader;
 class LXGraphMaterial;
+class LXTexture;
 
 enum class EMaterialType // ! DataModel 
 {
@@ -53,6 +54,8 @@ public:
 	bool IsTransparent() const { return _LightingModel == EMaterialLightingModel::Transparent; }
 	bool GetTwoSided() const { return _bTwoSided; }
 	void SetTwoSided(bool b) { _bTwoSided = b; }
+	LXTexture* GetTextureDisplacement(const LXString& textureName) const;
+	bool GetFloatParameter(const LXString& textureName, float& outValue) const;
 	EMaterialLightingModel GetLightingModel() const { return _LightingModel; }
 
 	// Graph

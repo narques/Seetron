@@ -86,6 +86,22 @@ bool LXMaterial::Load()
 	return false;
 }
 
+LXTexture* LXMaterial::GetTextureDisplacement(const LXString& textureName) const
+{
+	if (LXGraphMaterial* graphMaterial = GetGraph())
+	{
+		return graphMaterial->GetTextureDisplacement(textureName);
+	}
+}
+
+bool LXMaterial::GetFloatParameter(const LXString& textureName, float& outValue) const
+{
+	if (LXGraphMaterial* graphMaterial = GetGraph())
+	{
+		return graphMaterial->GetFloatParameter(textureName, outValue);
+	}
+}
+
 LXGraphMaterial* LXMaterial::GetGraph() const
 {
 	// Create the "Main" function if needed

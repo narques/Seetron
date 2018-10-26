@@ -60,6 +60,14 @@ EConnectorType GetConnectorTypeFromName(const wchar_t* typeName)
 	CMP_CTYPE(Float4);
 	CMP_CTYPE(Texture2D);
 	CMP_CTYPE(SamplerState);
+
+	// Special cases, empty or * are valids.
+	// useful for the "multiple type" connector/node like arithmetic operations.
+	if (wcscmp(typeName, L"*") == 0 || wcscmp(typeName, L""))
+	{
+		return  EConnectorType::Undefined;
+	}
+
 			
 	CHK(0);
 	LogE(LXPropertyType, L"GetConnectorTypeFromName: undefined type %s", typeName);

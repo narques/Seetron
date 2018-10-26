@@ -73,8 +73,8 @@ private:
 	bool _bValid = false;
 
 	// VS Constant Buffer 
-	//LXConstantBuffer ConstantBufferVS;
-	//LXConstantBufferD3D11* CBMaterialParemetersVS = nullptr;
+	LXConstantBuffer ConstantBufferVS;
+	LXConstantBufferD3D11* CBMaterialParemetersVS = nullptr;
 
 	// PS Constant Buffer 
 	LXConstantBuffer ConstantBufferPS;

@@ -25,9 +25,8 @@
 #include "LXTextureD3D11.h"
 #include "LXMaterialD3D11.h"
 #include "LXReference.h"
+#include "LXInputElementDescD3D11Factory.h"
 #include "LXMemory.h" // --- Must be the last included ---
-
-LX_PRAGMA_OPTIM_OFF
 
 LXGraphMaterialToHLSLConverter::LXGraphMaterialToHLSLConverter()
 {
@@ -37,8 +36,13 @@ LXGraphMaterialToHLSLConverter::~LXGraphMaterialToHLSLConverter()
 {
 }
 
-LXStringA LXGraphMaterialToHLSLConverter::GenerateCode(const LXMaterialD3D11* materialD3D11, ERenderPass renderPass)
+LXStringA LXGraphMaterialToHLSLConverter::GenerateCode(const LXMaterialD3D11* materialD3D11, ERenderPass renderPass, EShader Shader, int layoutMask)
 {
+	_material = materialD3D11->GetMaterial();
+	_renderPass = renderPass;
+	_shader = Shader;
+	_layoutMask = layoutMask;
+	
 	const LXGraph* graph = (const LXGraph*)materialD3D11->GetMaterial()->GetGraph();
 		
 	// Start from the "main function node"
@@ -59,7 +63,7 @@ LXStringA LXGraphMaterialToHLSLConverter::GenerateCode(const LXMaterialD3D11* ma
 	LXStringA defaultInlclude;
 
 	defaultInlclude = "common.hlsl";
-	if (renderPass == ERenderPass::GBuffer)
+	if ((renderPass == ERenderPass::GBuffer) || (renderPass == ERenderPass::Shadow) || (renderPass == ERenderPass::Depth))
 	{
 		defaultInlclude = "common.hlsl";
 	}
@@ -124,8 +128,11 @@ LXStringA LXGraphMaterialToHLSLConverter::GenerateCode(const LXMaterialD3D11* ma
 	return ShaderBuffer;
 }
 
-bool LXGraphMaterialToHLSLConverter::GenerateConstanBuffer(const LXGraph* graph, LXConstantBuffer& outConstantBuffer)
+bool LXGraphMaterialToHLSLConverter::GenerateConstanBuffer(const LXGraph* graph, EShader Shader, LXConstantBuffer& outConstantBuffer)
 {
+	//_renderPass = renderPass;
+	_shader = Shader;
+
 	const LXNode* nodeRoot = graph->GetMain();
 
 	if (!nodeRoot)
@@ -138,8 +145,12 @@ bool LXGraphMaterialToHLSLConverter::GenerateConstanBuffer(const LXGraph* graph,
 	return ParseNodeCB(*nodeRoot, outConstantBuffer);
 }
 
-bool LXGraphMaterialToHLSLConverter::GatherTextures(const LXGraph* graph, list<LXTextureD3D11*>& listTextures)
+bool LXGraphMaterialToHLSLConverter::GatherTextures(const LXGraph* graph, EShader Shader, list<LXTextureD3D11*>& listTextures)
 {
+	//_renderPass = renderPass;
+	_shader = Shader;
+	_addedTextures.clear();
+
 	const LXNode* nodeRoot = graph->GetMain();
 
 	if (!nodeRoot)
@@ -211,66 +222,16 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNode(const LXMaterialD3D11* mater
 
 	if (node->Main == true)
 	{
-		// the main function is generated according the "Role"
+		// the main function is generated according the "Role", 
 
-		if (renderPass == ERenderPass::GBuffer)
+		switch (_shader)
 		{
-			if (materialD3D11->GetMaterial()->GetLightingModel() == EMaterialLightingModel::Unlit)
-			{
-				code = "static const float lightModel = 1.0;\n"; // Unlit
-			}
-			else
-			{
-				code = "static const float lightModel = 0.0;\n"; // Lit
-			}
-
-			code +=
-				"//--------------------------------------------------------------------------------------\n"
-				"// Pixel Shader - GBuffer\n"
-				"//--------------------------------------------------------------------------------------\n"
-				"PS_OUTPUT PS(VS_OUTPUT input, uint IsFrontFace : SV_IsFrontFace)\n"
-				"{\n"
-				"	//VARIABLES\n"
-				"	PS_OUTPUT output = (PS_OUTPUT)0;\n"
-				"	output.OutColor0 = float4($Albedo, $Opacity); // Albedo\n"
-				"	output.OutColor1 = float4($Normal, 0.0); // Normal\n"
-				"	output.OutColor2 = float4($Metal, $Rough, 0.0, lightModel); // MRUL\n"
-				"	output.OutColor3 = float4($Emissive, 0.0); // Emissive\n"
-				"	return output;\n"
-				"}\n";
-		}
-		else if (renderPass == ERenderPass::Transparency)
-		{
-			if (materialD3D11->GetMaterial()->GetLightingModel() == EMaterialLightingModel::Unlit)
-			{
-				code = 
-					"//--------------------------------------------------------------------------------------\n"
-					"// Pixel Shader - Unlit transparency \n"
-					"//--------------------------------------------------------------------------------------\n"
-					"float4 PS(VS_OUTPUT input, uint IsFrontFace : SV_IsFrontFace) : SV_Target\n"
-					"{\n"
-					"	//VARIABLES\n"
-					"	return float4($Albedo, $Opacity);\n"
-					"}\n";
-			}
-			else
-			{
-				code =
-					"//--------------------------------------------------------------------------------------\n"
-					"// Pixel Shader - Lit Transparency \n"
-					"//--------------------------------------------------------------------------------------\n"
-					"float4 PS(VS_OUTPUT input, uint IsFrontFace : SV_IsFrontFace) : SV_Target\n"
-					"{\n"
-					"	//VARIABLES\n"
-					"	float3 EyeDir = normalize(input.WorldPosition.xyz - CameraPosition);\n"
-					"	return ComputeColor(float4($Albedo, $Opacity), float4($Metal, $Rough, 0.0, 0.0), EyeDir, input);\n"
-					"}\n";
-			}
-		}
-		else
-		{
-			CHK(0);
-			return "";
+		case EShader::VertexShader: code = CreateVertexShaderEntryPoint(_layoutMask); break;
+		//case EShader::HullShader: 	break;
+		//case EShader::DomainShader: break;
+		//case EShader::GeometryShader: 	break;
+		case EShader::PixelShader: code = CreatePixelShaderEntryPoint(); break;
+		default: CHK(0)	break;
 		}
 	}
 	else
@@ -340,6 +301,16 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNode(const LXMaterialD3D11* mater
 			// The connector is not used at all.
 			continue;
 		}
+
+		// Connector can be used with the current shader
+		if (node->Main)
+		{
+			if (!IsConnectorUsableInContext(connector))
+			{
+				continue;
+			}
+		}
+
 		
 		LXStringA connectorValue;
 						
@@ -395,7 +366,7 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNode(const LXMaterialD3D11* mater
 			{
 				if (connector->GetName() == L"UV")
 				{
-					connectorValue = "input.Tex";
+					connectorValue = "input.TexCoord";
 				}
 				else
 				{
@@ -539,6 +510,16 @@ bool LXGraphMaterialToHLSLConverter::ParseNodeCB(const LXNode& node, LXConstantB
 			const LXConnection* connection = connector->Connections.back();
 			if (connection->Source != nullptr)
 			{
+
+				// Connector can be used with the current shader
+				if (node.Main)
+				{
+					if (!IsConnectorUsableInContext(connector))
+					{
+						continue;
+					}
+				}
+
 				res &= ParseNodeCB(*connection->Source->GetOwner(), outConstantBuffer);
 			}
 		}
@@ -632,6 +613,17 @@ bool LXGraphMaterialToHLSLConverter::ParseNodeTexture(const LXNode& node, list<L
 		if (connector->Connections.size() == 1)
 		{
 			const LXConnection* connection = connector->Connections.back();
+
+			// Connector can be used with the current shader
+			if (node.Main)
+			{
+				if (!IsConnectorUsableInContext(connector))
+				{
+					continue;
+				}
+			}
+
+
 			if (connection->Source != nullptr)
 			{
 				res &= ParseNodeTexture(*connection->Source->GetOwner(), listTextures);
@@ -730,5 +722,233 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNodeConstant(const LXNode* node)
 	}
 }
 
-LX_PRAGMA_OPTIM_ON
+bool LXGraphMaterialToHLSLConverter::IsConnectorUsableInContext(const LXConnector* connector)
+{
+	switch (_shader)
+	{
+	case EShader::VertexShader:
+		return connector->GetName() == L"Displacement";
+		break;
 
+	case EShader::PixelShader:
+		return (connector->GetName() == L"Albedo" ||
+			connector->GetName() == L"Opacity" ||
+			connector->GetName() == L"Normal" ||
+			connector->GetName() == L"Metal" ||
+			connector->GetName() == L"Rough" ||
+			connector->GetName() == L"Emissive");
+		break;
+
+	default:
+		CHK(0);
+		return false;
+		break;
+	}
+}
+
+
+LXStringA LXGraphMaterialToHLSLConverter::CreateVertexShaderEntryPoint(int LayoutMask)
+{
+	LXStringA code;
+
+	if (LayoutMask == (int)EPrimitiveLayout::P)
+	{
+		code = 
+			"//--------------------------------------------------------------------------------------\n"
+			"// Vertex Shader - GBuffer - 'P' layout \n"
+			"//--------------------------------------------------------------------------------------\n"
+			"VS_OUTPUT VS(VS_INPUT_P input)\n"
+			"{\n"
+			"	//VARIABLES\n"
+			"	VS_VERTEX Vertex = (VS_VERTEX)0;\n"
+			"	Vertex.Pos = input.Pos;\n"
+			"	Vertex.Normal = float3(0.0, 0.0, 1.0);\n"
+			"	Vertex.Tangent = float3(1.0, 0.0, 0.0);\n"
+			"	Vertex.Binormal = float3(0.0, 1.0, 0.0);\n"
+			"	Vertex.TexCoord = float2(0.0, 0.0);\n"
+			"	Vertex.InstanceID = 0;\n"
+			"	Vertex.InstancePos = float3(0.0, 0.0, 0.0);\n"
+			"	return ComputeVertex(Vertex, $Displacement);\n"
+			"}\n";
+	}
+	else if (LayoutMask == (int)EPrimitiveLayout::PT)
+	{
+		CHK(0);
+	}
+	else if (LayoutMask == (int)EPrimitiveLayout::PN)
+	{
+		code =
+			"//--------------------------------------------------------------------------------------\n"
+			"// Vertex Shader - GBuffer - 'PN' layout \n"
+			"//--------------------------------------------------------------------------------------\n"
+			"VS_OUTPUT VS(VS_INPUT_PN input)\n"
+			"{\n"
+			"	//VARIABLES\n"
+			"	VS_VERTEX Vertex = (VS_VERTEX)0;\n"
+			"	Vertex.Pos = input.Pos;\n"
+			"	Vertex.Normal = input.Normal; \n"
+			"	Vertex.Tangent = float3(1.0, 0.0, 0.0);\n"
+			"	Vertex.Binormal = float3(0.0, 1.0, 0.0);\n"
+			"	Vertex.TexCoord = float2(0.0, 0.0);\n"
+			"	Vertex.InstanceID = 0;\n"
+			"	Vertex.InstancePos = float3(0.0, 0.0, 0.0);\n"
+			"	return ComputeVertex(Vertex, $Displacement);\n"
+			"}\n";
+	}
+	else if (LayoutMask == (int)EPrimitiveLayout::PNT)
+	{
+		code =
+			"//--------------------------------------------------------------------------------------\n"
+			"// Vertex Shader - GBuffer - 'PNT' layout \n"
+			"//--------------------------------------------------------------------------------------\n"
+			"VS_OUTPUT VS(VS_INPUT_PNT input)\n"
+			"{\n"
+			"	//VARIABLES\n"
+			"	VS_VERTEX Vertex = (VS_VERTEX)0;\n"
+			"	Vertex.Pos = input.Pos;\n"
+			"	Vertex.Normal = input.Normal; \n"
+			"	Vertex.TexCoord = input.TexCoord;\n"
+			"	Vertex.Tangent = float3(1.0, 0.0, 0.0);\n"
+			"	Vertex.Binormal = float3(0.0, 1.0, 0.0);\n"
+			"	Vertex.InstanceID = 0;\n"
+			"	Vertex.InstancePos = float3(0.0, 0.0, 0.0);\n"
+			"	return ComputeVertex(Vertex, $Displacement);\n"
+			"}\n";
+	}
+	else if (LayoutMask == (int)EPrimitiveLayout::PNABT)
+	{
+		code =
+			"//--------------------------------------------------------------------------------------\n"
+			"// Vertex Shader - GBuffer - 'PNABT' layout \n"
+			"//--------------------------------------------------------------------------------------\n"
+			"VS_OUTPUT VS(VS_INPUT_PNABT input)\n"
+			"{\n"
+			"	//VARIABLES\n"
+			"	VS_VERTEX Vertex = (VS_VERTEX)0;\n"
+			"	Vertex.Pos = input.Pos; \n"
+			"	Vertex.Normal = input.Normal; \n"
+			"	Vertex.Tangent = input.Tangent;\n"
+			"	Vertex.Binormal = input.Binormal;\n"
+			"	Vertex.TexCoord = input.TexCoord;\n"
+			"	Vertex.SupportNormalMap = true;\n"
+			"	Vertex.InstanceID = 0;\n"
+			"	Vertex.InstancePos = float3(0.0, 0.0, 0.0);\n"
+			"	VS_OUTPUT output = ComputeVertex(Vertex, $Displacement);\n"
+			"	return output;\n"
+			"}\n";
+	}
+	else if (LayoutMask == (int)EPrimitiveLayout::PNABTI)
+	{
+		code =
+			"//--------------------------------------------------------------------------------------\n"
+			"// Vertex Shader - GBuffer - 'PNABTI' layout \n"
+			"//--------------------------------------------------------------------------------------\n"
+			"VS_OUTPUT VS(VS_INPUT_PNABTI input1, uint instanceID : SV_InstanceID)\n"
+			"{\n"
+			"	//VARIABLES\n"
+			"	VS_VERTEX Vertex = (VS_VERTEX)0;\n"
+			"	Vertex.Pos = input.Pos;\n"
+			"	Vertex.Normal = input.Normal; \n"
+			"	Vertex.Tangent = input.Tangent;\n"
+			"	Vertex.Binormal = input.Binormal;\n"
+			"	Vertex.TexCoord = input.TexCoord;\n"
+			"	Vertex.SupportNormalMap = true;\n"
+			"	Vertex.InstanceID = instanceID;\n"
+			"	Vertex.InstancePos = input.InstancePos;\n"
+			"	return ComputeVertex(Vertex, $Displacement);\n"
+			"}\n";
+	}
+	else
+	{
+		// Unsupported layout 
+		LXString Layouts = L"Unsupported layout:";
+		if (LayoutMask & LX_PRIMITIVE_INDICES) { Layouts += L" LX_PRIMITIVE_INDICES"; }
+		if (LayoutMask & LX_PRIMITIVE_POSITIONS) { Layouts += L" LX_PRIMITIVE_POSITIONS"; }
+		if (LayoutMask & LX_PRIMITIVE_NORMALS) { Layouts += L" LX_PRIMITIVE_NORMALS"; }
+		if (LayoutMask & LX_PRIMITIVE_TANGENTS) { Layouts += L" LX_PRIMITIVE_TANGENTS"; }
+		if (LayoutMask & LX_PRIMITIVE_TEXCOORDS) { Layouts += L" LX_PRIMITIVE_TEXCOORDS"; }
+		if (LayoutMask & LX_PRIMITIVE_BINORMALS) { Layouts += L" LX_PRIMITIVE_BINORMALS"; }
+		if (LayoutMask & LX_PRIMITIVE_INSTANCEPOSITIONS) { Layouts += L" LX_PRIMITIVE_INSTANCEPOSITIONS"; }
+		LogE(LXShaderManager, Layouts.GetBuffer());
+		CHK(0);
+	}
+
+	return code;
+}
+
+LXStringA LXGraphMaterialToHLSLConverter::CreatePixelShaderEntryPoint()
+{
+	LXStringA code;
+
+	if (_renderPass == ERenderPass::GBuffer)
+	{
+		if (_material->GetLightingModel() == EMaterialLightingModel::Unlit)
+		{
+			code = "static const float lightModel = 1.0;\n"; // Unlit
+		}
+		else
+		{
+			code = "static const float lightModel = 0.0;\n"; // Lit
+		}
+
+		code +=
+			"//--------------------------------------------------------------------------------------\n"
+			"// Pixel Shader - GBuffer\n"
+			"//--------------------------------------------------------------------------------------\n"
+			"PS_OUTPUT PS(VS_OUTPUT input, uint IsFrontFace : SV_IsFrontFace)\n"
+			"{\n"
+			"	//VARIABLES\n"
+			"	PS_OUTPUT output = (PS_OUTPUT)0;\n"
+			"	output.OutColor0 = float4($Albedo, $Opacity); // Albedo\n"
+			"	output.OutColor1 = float4($Normal, 0.0); // Normal\n"
+			"	output.OutColor2 = float4($Metal, $Rough, 0.0, lightModel); // MRUL\n"
+			"	output.OutColor3 = float4($Emissive, 0.0); // Emissive\n"
+			"	return output;\n"
+			"}\n";
+	}
+	else if ((_renderPass == ERenderPass::Depth) || (_renderPass == ERenderPass::Shadow))
+	{
+		code =
+			"//--------------------------------------------------------------------------------------\n"
+			"// Pixel Shader - Shadow, Depth\n"
+			"//--------------------------------------------------------------------------------------\n"
+			"void PS_DEPTHONLY(VS_OUTPUT input)\n"
+			"{\n"
+			"}\n";
+
+	}
+	else if (_renderPass == ERenderPass::Transparency)
+	{
+		if (_material->GetLightingModel() == EMaterialLightingModel::Unlit)
+		{
+			code =
+				"//--------------------------------------------------------------------------------------\n"
+				"// Pixel Shader - Unlit transparency \n"
+				"//--------------------------------------------------------------------------------------\n"
+				"float4 PS(VS_OUTPUT input, uint IsFrontFace : SV_IsFrontFace) : SV_Target\n"
+				"{\n"
+				"	//VARIABLES\n"
+				"	return float4($Albedo, $Opacity);\n"
+				"}\n";
+		}
+		else
+		{
+			code =
+				"//--------------------------------------------------------------------------------------\n"
+				"// Pixel Shader - Lit Transparency \n"
+				"//--------------------------------------------------------------------------------------\n"
+				"float4 PS(VS_OUTPUT input, uint IsFrontFace : SV_IsFrontFace) : SV_Target\n"
+				"{\n"
+				"	//VARIABLES\n"
+				"	float3 EyeDir = normalize(input.WorldPosition.xyz - CameraPosition);\n"
+				"	return ComputeColor(float4($Albedo, $Opacity), float4($Metal, $Rough, 0.0, 0.0), EyeDir, input);\n"
+				"}\n";
+		}
+	}
+	else
+	{
+		CHK(0);
+	}
+
+	return code;
+}

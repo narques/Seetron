@@ -8,7 +8,10 @@
 
 #include "stdafx.h"
 #include "LXNode.h"
+#include "LXAssetManager.h"
 #include "LXConnector.h"
+#include "LXCore.h"
+#include "LXGraphTemplate.h"
 #include "LXMSXMLNode.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
@@ -103,21 +106,79 @@ int LXNode::GetOuputConnectorIndex(const LXConnector* connector)
 
 void LXNode::DefineProperties()
 {
-	DefineProperty(L"TemplateID", &TemplateID);
-	DefineProperty(L"Position", &Position);
-	DefineProperty("Main", &Main);
-	DefineProperty(L"Inputs", (ListSmartObjects*)&Inputs);
-	DefineProperty(L"Outputs", (ListSmartObjects*)&Outputs);
+	LXProperty* property = DefineProperty(L"TemplateID", &TemplateID);
+	property->SetReadOnly(true);
+	property = DefineProperty(L"Position", &Position);
+	property->SetReadOnly(true);
+	property = DefineProperty("Main", &Main);
+	property->SetReadOnly(true);
+	property = DefineProperty(L"Inputs", (ListSmartObjects*)&Inputs);
+	property->SetReadOnly(true);
+	property = DefineProperty(L"Outputs", (ListSmartObjects*)&Outputs);
+	property->SetReadOnly(true);
 }
 
 void LXNode::OnLoaded()
 {
 // 	// Check if the 
 // 	CHK(VerifyConformity(TemplateID))
+	Update(TemplateID);
 
 	if (TemplateID == L"CustomFunction")
 	{
 		EditableInputs = true;
+	}
+
+	const LXNodeTemplate* nodeTemplate = GetAssetManager()->GetGraphMaterialTemplate()->GetNodeTemplate(TemplateID);
+	
+	if ((nodeTemplate->Type == "Variable") || (nodeTemplate->Type == "Constant"))
+	{
+		GetProperty(LXPropertyID::NAME)->SetReadOnly(false);
+	}
+	else
+	{
+		GetProperty(LXPropertyID::NAME)->SetReadOnly(true);
+	}
+}
+
+void LXNode::Update(const LXString& templateID)
+{
+	//
+	// For now , update only the RenderTarget Connector,
+	// as the connector "reference" between Node and NodeTemplate is based on the connector name,
+	// so it is not possible to know which is new or simply renamed in the template.
+	//
+
+	if (TemplateID != L"RenderTarget")
+	{
+		return;
+	}	
+
+	const LXNodeTemplate* nodeTemplate = GetAssetManager()->GetGraphMaterialTemplate()->GetNodeTemplate(TemplateID);
+
+	for (const LXConnectorTemplate* connectorTemplate : nodeTemplate->Inputs)
+	{
+		auto it = std::find_if(Inputs.begin(), Inputs.end(), [connectorTemplate](LXConnector* connector)
+		{
+			return connector->GetName() == connectorTemplate->GetName();
+		});
+
+		if (it == Inputs.end())
+		{
+			Inputs.push_back(new LXConnector(this, connectorTemplate, EConnectorRole::Input));
+		}
+	}
+
+	for (const LXConnectorTemplate* connectorTemplate : nodeTemplate->Outputs)
+	{
+		auto it = std::find_if(Outputs.begin(), Outputs.end(), [connectorTemplate](LXConnector* connector)
+		{
+			return connector->GetName() == connectorTemplate->GetName();
+		});
+		if (it == Outputs.end())
+		{
+			Outputs.push_back(new LXConnector(this, connectorTemplate, EConnectorRole::Output));
+		}
 	}
 }
 
@@ -137,6 +198,26 @@ void LXNode::AddItemToPropertyList(const LXPropertyListSmartObjects* property, c
 	Inputs.push_back(new LXConnector(this, EConnectorRole::Input, type));
 }
 
+const LXConnector* LXNode::GetInputConnector(const LXString& connectorName) const
+{
+	auto it = std::find_if(Inputs.begin(), Inputs.end(), [connectorName](LXConnector* connector)
+	{
+		return connector->GetName() == connectorName;
+	});
+
+	return it != Inputs.end() ? *it : nullptr;
+
+}
+
+const LXConnector* LXNode::GetOutputConnector(const LXString& connectorName) const
+{
+	auto it = std::find_if(Outputs.begin(), Outputs.end(), [connectorName](LXConnector* connector)
+	{
+		return connector->GetName() == connectorName;
+	});
+
+	return it != Inputs.end() ? *it : nullptr;
+}
 
 LXNodeTemplate::LXNodeTemplate()
 {

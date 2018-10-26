@@ -37,10 +37,17 @@ public:
 
 	void AddItemToPropertyList(const LXPropertyListSmartObjects* property, const LXString& id) override;
 
+	const LXConnector* GetInputConnector(const LXString& connectorName) const;
+
+	const LXConnector* GetOutputConnector(const LXString& connectorName) const;
+
 private:
 
 	void DefineProperties();
 	void OnLoaded() override;
+	
+	// Add missing connectors
+	void Update(const LXString& templateID);
 	
 public:
 

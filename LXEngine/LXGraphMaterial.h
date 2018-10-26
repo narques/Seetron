@@ -12,6 +12,7 @@
 
 class LXNode;
 class LXNodeTemplate;
+class LXTexture;
 
 class LXCORE_API LXGraphMaterial : public LXGraph
 {
@@ -22,6 +23,8 @@ public:
 	virtual ~LXGraphMaterial();
 
 	void GetChildProperties(ListProperties& UserProperties) const override;
+	LXTexture* GetTextureDisplacement(const LXString& textureName) const;
+	bool GetFloatParameter(const LXString& textureName, float& outValue) const;
 
 public:
 

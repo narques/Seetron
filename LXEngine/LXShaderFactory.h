@@ -28,7 +28,7 @@ public:
 	// Generate a HLSL shader file according the signature and role.
 	//
 
-	static void GenerateVertexShader(const LXFilepath& Filename, const LXString& FileToInclude, const LXVSSignature& VSSignature);
+	static void GenerateVertexShader(const LXFilepath& Filename, const LXMaterialD3D11* materialD3D11, ERenderPass renderPass, int layoutMask);
 
 	//
 	// Generate a HLSL shader file according...
@@ -69,7 +69,7 @@ private:
 	// Generate the Textures and SamplerStates declaration
 	//
 
-	static LXStringA ListTexturesToHLSL(const list<LXTextureD3D11*>& listTextures);
+	static LXStringA ListTexturesToHLSL(const list<LXTextureD3D11*>& listTextures, EShader shader);
 	
 	//
 	// Generate all Shaders for the given material

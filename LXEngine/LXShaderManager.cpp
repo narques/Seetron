@@ -25,13 +25,8 @@
 #include "LXShaderFactory.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
-// New feature: All shaders are generated, the user shader files must adopt a format
-// The Generated file will include the user file.
-#define LX_GENERATED_SHADER 1
-
 #define DEFAULT_SHADER L"Default.hlsl"
 #define DRAWTOBACKBUFFER_SHADER L"DrawToBackBuffer.hlsl"
-
 
 LXShaderManager::LXShaderManager()
 {
@@ -169,6 +164,7 @@ bool LXShaderManager::GetShaders(ERenderPass RenderPass, const LXPrimitiveD3D11*
 	{
 		LXVSSignature VSSignature;
 
+		VSSignature.Material = InMaterial;
 		VSSignature.Layout = &(*InPrimitive->Layout2)[0];
 		VSSignature.LayoutElements = (uint)InPrimitive->Layout2->size();
 		VSSignature.LayoutMask = InPrimitive->layoutMask;
@@ -262,13 +258,13 @@ bool LXShaderManager::CreateShader(const LXVSSignature& VSSignature, LXShaderD3D
 		Shader->AddMacro("DISPLACEMENT", "1");
 
 	// Retrieve the shader filename
-	LXFilepath ShaderFilePath;
-	ShaderFilePath = GetSettings().GetShadersFolder() + DEFAULT_SHADER;
+	LXFilepath ShaderFilePath = VSSignature.Material->GetMaterial()->GetFilepath();
 
 	// Compute the shader filename and generate the it (EDITOR only)
 	const LXString BaseName = ShaderFilePath.GetFilenameNoExt();
-	LXFilepath GeneretedShaderFilePath = ShaderFilePath.GetFilepath() + LXShaderFactory::BuildShaderFilename(BaseName, VSSignature.RenderPass, VSSignature.LayoutMask, EShader::VertexShader);
-	LXShaderFactory::GenerateVertexShader(GeneretedShaderFilePath, ShaderFilePath.GetFilename(), VSSignature);
+	LXFilepath GeneretedShaderFilePath = GetProject()->GetAssetFolder() + L"Shaders/" + LXShaderFactory::BuildShaderFilename(BaseName, VSSignature.RenderPass, VSSignature.LayoutMask, EShader::VertexShader);
+		
+	LXShaderFactory::GenerateVertexShader(GeneretedShaderFilePath, VSSignature.Material, VSSignature.RenderPass, VSSignature.LayoutMask);
 
 	return Shader->CreateVertexShader(GeneretedShaderFilePath, VSSignature.Layout, VSSignature.LayoutElements);
 }
@@ -300,7 +296,6 @@ bool LXShaderManager::CreateShader(const LXPSSignature& PSSignature, LXShaderD3D
 		const LXString BaseName = ShaderFilePath.GetFilenameNoExt();
 		LXFilepath GeneretedShaderFilePath = GetProject()->GetAssetFolder() + L"Shaders/" + LXShaderFactory::BuildShaderFilename(BaseName, PSSignature.RenderPass, -1, EShader::PixelShader);
 		
-		//LXShaderFactory::GenerateVertexShader(GeneretedShaderFilePath, ShaderFilePath.GetFilename(), VSSignature);
 		LXShaderFactory::GeneratePixelShader(GeneretedShaderFilePath, PSSignature.Material, PSSignature.RenderPass);
 
 		return Shader->CreatePixelShader(GeneretedShaderFilePath);

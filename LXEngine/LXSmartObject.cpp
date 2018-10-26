@@ -776,7 +776,7 @@ LXString* LXSmartObject::GetUID(bool bBuild)
 		*_pUID = LXPlatform::CreateUuid();
 		// Use only data1 (ulong)
 		*_pUID = _pUID->Left(L"-");
-		LogI(Core, L"Generated UID for object \"%s\" (%s)", GetName().GetBuffer(), GetObjectName().GetBuffer());
+		//LogI(Core, L"Generated UID for object \"%s\" (%s)", GetName().GetBuffer(), GetObjectName().GetBuffer());
 	}
 	return _pUID;
 }

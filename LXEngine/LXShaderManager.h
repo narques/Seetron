@@ -21,6 +21,7 @@ struct D3D11_INPUT_ELEMENT_DESC;
 
 struct LXVSSignature
 {
+	const LXMaterialD3D11* Material = nullptr;
 	uint displacement;					// DEPRECATED
 	D3D11_INPUT_ELEMENT_DESC* Layout;	// Layout description array pointer
 	UINT LayoutElements;				// Layout array element count
@@ -67,6 +68,10 @@ struct CmpLXVSSignature{
 		else if (a.LayoutMask < b.LayoutMask)
 			return true;
 		else if (a.LayoutMask > b.LayoutMask)
+			return false;
+		else if (a.Material < b.Material)
+			return true;
+		else if (a.Material > b.Material)
 			return false;
 		return ((int)a.RenderPass < (int)b.RenderPass);
 	}

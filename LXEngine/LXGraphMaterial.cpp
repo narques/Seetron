@@ -10,6 +10,7 @@
 #include "LXGraphMaterial.h"
 #include "LXConnector.h"
 #include "LXNode.h"
+#include "LXTexture.h"
 
 LXGraphMaterial::LXGraphMaterial(LXMaterial* material):Material(material)
 {
@@ -26,4 +27,51 @@ void LXGraphMaterial::GetChildProperties(ListProperties& listProperties) const
 	{
 		node->GetUserProperties(listProperties);
 	}
+}
+
+LXTexture* LXGraphMaterial::GetTextureDisplacement(const LXString& textureName) const
+{
+	if (const LXNode* mainNode = GetMain())
+	{
+		if (const LXConnector* connector = mainNode->GetInputConnector(L"Displacement"))
+		{
+			if (const LXNode* node = connector->GetFirstConnectedNode(textureName))
+			{
+				LXProperty* property = node->GetProperty(L"Value");
+				if (property && property->GetType() == EPropertyType::AssetPtr)
+				{
+					LXPropertyAssetPtr* propertyAssetPtr = (LXPropertyAssetPtr*)property;
+					if (LXAsset* asset = propertyAssetPtr->GetValue())
+					{
+						return dynamic_cast<LXTexture*>(asset);
+					}
+				}
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+bool LXGraphMaterial::GetFloatParameter(const LXString& paramName, float& outValue) const
+{
+
+	if (const LXNode* mainNode = GetMain())
+	{
+		if (const LXConnector* connector = mainNode->GetInputConnector(L"Displacement"))
+		{
+			if (const LXNode* node = connector->GetFirstConnectedNode(paramName))
+			{
+				LXProperty* property = node->GetProperty(L"Value");
+				if (property && property->GetType() == EPropertyType::Float)
+				{
+					LXPropertyFloat* propertyFloat = (LXPropertyFloat*)property;
+					outValue = propertyFloat->GetValue();
+					return true;
+				}
+			}
+		}
+	}
+	
+	return false;
 }

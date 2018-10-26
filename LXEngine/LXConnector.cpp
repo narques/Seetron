@@ -59,6 +59,33 @@ LXConnector::~LXConnector()
 	CHK(Connections.size() == 0);
 }
 
+LXNode* LXConnector::GetFirstConnectedNode(const LXString& nodeName) const
+{
+	for (const LXConnection* connection : Connections)
+	{
+		LXNode* node = connection->Source->_owner;
+
+		if (node->GetName() == nodeName)
+		{
+			return node;
+		}
+		else
+		{
+			for (const LXConnector* connector : node->Inputs)
+			{
+				LXNode* node = connector->GetFirstConnectedNode(nodeName);
+
+				if (node && node->GetName() == nodeName)
+				{
+					return node;
+				}
+			}
+		}
+	}
+
+	return nullptr;
+}
+
 LXConnectorTemplate::LXConnectorTemplate(const LXString& name, EConnectorType type):
 	Type(type)
 {
