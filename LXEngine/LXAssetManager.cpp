@@ -8,6 +8,7 @@
 
 #include "stdafx.h"
 #include "LXAssetManager.h"
+#include "LXAnimation.h"
 #include "LXProject.h"
 #include "LXSettings.h"
 #include "LXScript.h"
@@ -69,6 +70,19 @@ LXConsoleCommand1S CCCreateNewShader(L"CreateNewShader", [](const LXString& inSh
 	}
 });
 
+LXConsoleCommand1S CCCreateNewAnimation(L"CreateNewAnimation", [](const LXString& inAnimationName)
+{
+	LXProject* Project = GetCore().GetProject();
+	if (!Project)
+	{
+		LogW(Core, L"No project");
+	}
+	else
+	{
+		Project->GetAssetManager().CreateNewAnimation(inAnimationName, LX_DEFAULT_ANIMATION_FOLDER);
+	}
+});
+
 //------------------------------------------------------------------------------------------------------
 
 const bool ForceLowercase = false;
@@ -81,6 +95,7 @@ LXAssetManager::LXAssetManager(LXProject* Project) :_pDocument(Project)
 	_ListAssetExtentions.push_back(LX_MATERIAL_EXT);
 	_ListAssetExtentions.push_back(LX_TEXTURE_EXT);
 	_ListAssetExtentions.push_back(LX_SHADER_EXT);
+	_ListAssetExtentions.push_back(LX_ANIMATION_EXT);
 	
 	// Engine Asset
 	LoadFromFolder(GetSettings().GetDataFolder(), EResourceOwner::LXResourceOwner_Engine);
@@ -93,8 +108,6 @@ LXAssetManager::~LXAssetManager()
 {
 	for (auto It : _MapAssets)
 		delete It.second;
-
-	LX_SAFE_DELETE(_defaultMaterial);
 }
 
 LXMaterial*	LXAssetManager::GetDefaultMaterial()
@@ -299,6 +312,49 @@ LXTexture* LXAssetManager::CreateNewTexture(const LXString& MaterialName, const 
 	return Texture;
 }
 
+
+LXAnimation* LXAssetManager::CreateNewAnimation(const LXString& AnimationName, const LXString& RelativeAssetFolder)
+{
+	LXFilepath AssetFolderpath = GetCore().GetProject()->GetAssetFolder();
+	LXFilepath AnimationFilepath;
+
+	if (AnimationName.IsEmpty())
+	{
+		int i = 0;
+		while (1)
+		{
+			LXString GeneratedAnimationName = L"M_Animation" + LXString::Number(i);
+			AnimationFilepath = AssetFolderpath + RelativeAssetFolder + GeneratedAnimationName + L"." + LX_ANIMATION_EXT;
+			if (!AnimationFilepath.IsFileExist())
+				break;
+			i++;
+		}
+	}
+	else
+	{
+		AnimationFilepath = AssetFolderpath + RelativeAssetFolder + AnimationName + L"." + LX_ANIMATION_EXT;
+		if (AnimationFilepath.IsFileExist())
+		{
+			LogW(ResourceManager, L"Animation %s already exist (%S).", AnimationName.GetBuffer(), AnimationFilepath.GetBuffer());
+			return GetResourceT<LXAnimation*>(RelativeAssetFolder + AnimationName + L"." + LX_ANIMATION_EXT);
+		}
+	}
+
+
+	LXAnimation* Animation = new LXAnimation();
+	Animation->Owner = EResourceOwner::LXResourceOwner_Project;
+	Animation->SetFilepath(AnimationFilepath);
+	Animation->State = LXAsset::EResourceState::LXResourceState_Loaded;
+	Animation->Save();
+
+	LXFilepath RelativeAssetFilepath = AssetFolderpath.GetRelativeFilepath(AnimationFilepath);
+	RelativeAssetFilepath.MakeLower();
+	_MapAssets[RelativeAssetFilepath] = Animation;
+
+	LogI(ResourceManager, L"Animation %s created (%s).", AnimationName.GetBuffer(), AnimationFilepath.GetBuffer());
+	return Animation;
+}
+
 LXAsset* LXAssetManager::Import(const LXFilepath& Filepath, const LXString& RelativeAssetFolder, bool Transient)
 {
 	LXString Extension = Filepath.GetExtension().MakeLower();
@@ -486,6 +542,14 @@ void LXAssetManager::LoadFromFolder(const LXFilepath& Folderpath, EResourceOwner
 			_MapAssets[AssetKey] = Shader;
 			LogI(AssetManager, L"Added %s", Filepath.GetBuffer());
 		}
+		else if (Extension == LX_ANIMATION_EXT)
+		{
+			LXAnimation* Shader = new LXAnimation();
+			Shader->SetFilepath(Filepath);
+			Shader->Owner = ResourceOwner;
+			_MapAssets[AssetKey] = Shader;
+			LogI(AssetManager, L"Added %s", Filepath.GetBuffer());
+		}
 				
 
 #ifdef LX_USE_RAW_TEXTURES_AS_ASSETS
@@ -519,32 +583,32 @@ LXMaterial* LXAssetManager::CreateEngineMaterial(const wchar_t* szName)
 }
 
 template<typename T>
-void LXAssetManager::GetAssets(list<T>& listResources) const
+void LXAssetManager::GetAssets(list<T>& listAssets) const
 {
 	for (auto It : _MapAssets)
 	{
 		if (T resource = dynamic_cast<T>(It.second))
-			listResources.push_back(resource);
+			listAssets.push_back(resource);
 	}
 }
 
-void LXAssetManager::GetAssetsOfType(list<LXAsset*>& listResources, LXAsset* Asset) const
+void LXAssetManager::GetAssetsOfType(list<LXAsset*>& listAssets, LXAsset* Asset) const
 {
 	if (dynamic_cast<LXMaterial*>(Asset))
 	{
-		GetMaterials((list<LXMaterial*>&)listResources);
+		GetMaterials((list<LXMaterial*>&)listAssets);
 	}
 	else if (dynamic_cast<LXTexture*>(Asset))
 	{
-		GetTextures((list<LXTexture*>&)listResources);
+		GetTextures((list<LXTexture*>&)listAssets);
 	}
 	else if (dynamic_cast<LXShader*>(Asset))
 	{
-		GetShaders((list<LXShader*>&)listResources);
+		GetShaders((list<LXShader*>&)listAssets);
 	}
 	else if (dynamic_cast<LXAssetMesh*>(Asset))
 	{
-		GetMeshes((list<LXAssetMesh*>&)listResources);
+		GetMeshes((list<LXAssetMesh*>&)listAssets);
 	}
 	else
 	{
@@ -553,7 +617,7 @@ void LXAssetManager::GetAssetsOfType(list<LXAsset*>& listResources, LXAsset* Ass
 			LogE(AssetManager, L"Unknown asset type. Return all of them");
 		}
 
-		GetAssets(listResources);
+		GetAssets(listAssets);
 	}
 }
 

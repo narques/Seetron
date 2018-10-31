@@ -11,14 +11,15 @@
 #include "LXSmartObject.h"
 #include "LXAsset.h"
 
-class LXMaterial;
-class LXTexture;
-class LXGraphTexture;
-class LXScript;
-class LXShader;
-class LXProject;
+class LXAnimation;
 class LXAssetMesh;
 class LXGraphTemplate;
+class LXGraphTexture;
+class LXMaterial;
+class LXProject;
+class LXScript;
+class LXShader;
+class LXTexture;
 
 typedef map<LXString, LXAsset*> MapAssets;
 
@@ -26,6 +27,7 @@ typedef map<LXString, LXAsset*> MapAssets;
 #define LX_DEFAULT_MATERIAL_FOLDER	L"Materials/"
 #define LX_DEFAULT_SHADER_FOLDER	L"Shaders/"
 #define LX_DEFAULT_TEXTURE_FOLDER	L"Textures/"
+#define LX_DEFAULT_ANIMATION_FOLDER L"Animations/"
 
 class LXCORE_API LXAssetManager : public LXSmartObject
 {
@@ -65,6 +67,7 @@ public:
 	LXMaterial*			CreateNewMaterial(const LXString& MaterialName, const LXString& RelativeAssetFolder);
 	LXShader*			CreateNewShader(const LXString& MaterialName, const LXString& RelativeAssetFolder);
 	LXTexture*			CreateNewTexture(const LXString& MaterialName, const LXString& RelativeAssetFolder);
+	LXAnimation*		CreateNewAnimation(const LXString& AnimationName, const LXString& RelativeAssetFolder);
 	
 	// Import from existing file
 	LXAsset*			Import(const LXFilepath& Filepath, const LXString& RelativeAssetFolder, bool Transcient = false);
@@ -74,14 +77,14 @@ public:
 	//
 
 	template<typename T>
-	void				GetAssets(list<T>& listResources)const;
+	void				GetAssets(list<T>& listAssets)const;
 	void				GetScripts(list<LXScript*>& listScripts)const;
 	void				GetTextures(list<LXTexture*>& listTextures)const;
 	void				GetMaterials(list<LXMaterial*>& listMaterial)const;
 	void				GetShaders(list<LXShader*>& listShader)const;
 	void				GetMeshes(list<LXAssetMesh*>& listMeshes)const;
-	void				GetAssets(list<LXAsset*>& listResources)const;
-	void				GetAssetsOfType(list<LXAsset*>& listResources, LXAsset* Asset)const;
+	void				GetAssets(list<LXAsset*>& listAssets)const;
+	void				GetAssetsOfType(list<LXAsset*>& listAssets, LXAsset* Asset)const;
 	LXAsset*			FindAsset(const LXString& RelativeFilepath)const;
 	const MapAssets&	GetAssets() const { return _MapAssets; }
 
@@ -111,7 +114,6 @@ protected:
 private:
 
 	unique_ptr<LXGraphTemplate> _graphMaterialTemplate;
-	LXMaterial*		_defaultMaterial = nullptr;
 	list<LXString>	_ListAssetExtentions;
 
 };

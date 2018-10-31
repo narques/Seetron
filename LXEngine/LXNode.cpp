@@ -192,10 +192,12 @@ void LXNode::GetNewListItemChoices(const LXPropertyListSmartObjects* property, l
 	outStrings.push_back(L"SamplerState");
 }
 
-void LXNode::AddItemToPropertyList(const LXPropertyListSmartObjects* property, const LXString& typeName)
+LXSmartObject* LXNode::AddItemToPropertyList(const LXPropertyListSmartObjects* property, const LXString& typeName)
 {
 	EConnectorType type =  GetConnectorTypeFromName(typeName);
-	Inputs.push_back(new LXConnector(this, EConnectorRole::Input, type));
+	LXConnector* connector = new LXConnector(this, EConnectorRole::Input, type);
+	Inputs.push_back(connector);
+	return connector;
 }
 
 const LXConnector* LXNode::GetInputConnector(const LXString& connectorName) const

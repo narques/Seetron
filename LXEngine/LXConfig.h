@@ -30,6 +30,7 @@
 #define LX_MATERIAL_EXT				L"smat"
 #define LX_SHADER_EXT				L"hlsl"
 #define LX_TEXTURE_EXT				L"stex"
+#define LX_ANIMATION_EXT			L"anim"
 #define LX_MESH_EXT					L"smesh"
 #define LX_MESHBIN_EXT				L"sebin"
 #define LX_PROCEDURALTEXTURE_EXT	L"sgtex"

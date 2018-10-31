@@ -210,7 +210,7 @@ void LXActor::SetRotation(const vec3f& Rotation)
 	{
 		_Transformation.SetRotation(Rotation);
 		InvalidateMatrixWCS();
-		OnPositionChanged();
+		OnRotationChanged();
 	}
 }
 
@@ -220,7 +220,7 @@ void LXActor::SetScale(const vec3f& Scale)
 	{
 		_Transformation.SetScale(Scale);
 		InvalidateMatrixWCS();
-		OnPositionChanged();
+		OnScaleChanged();
 	}
 }
 

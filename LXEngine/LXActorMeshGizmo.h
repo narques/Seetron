@@ -27,6 +27,7 @@ private:
 	void Run(double frameTime) override;
 	void OnSelectionChanged() override;
 	void OnPositionChanged() override;
+	void OnRotationChanged() override;
 
 private:
 

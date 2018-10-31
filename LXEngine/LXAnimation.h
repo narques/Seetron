@@ -8,13 +8,13 @@
 
 #pragma once
 
-#include "LXSmartObject.h"
+#include "LXAsset.h"
 #include "LXTrack.h"
 #include "LXProperty.h"
 
 typedef map<LXProperty*, LXTrack*> MapPropertyTrack;
 
-class LXCORE_API LXAnimation : public LXSmartObject
+class LXCORE_API LXAnimation : public LXAsset
 {
 
 public:
@@ -22,10 +22,20 @@ public:
 	LXAnimation();
 	virtual ~LXAnimation();
 
+	//
 	// Overridden from LXSmartObject
+	//
+
 	virtual bool OnSaveChild(const TSaveContext& saveContext) const override;
 	virtual bool OnLoadChild(const TLoadContext& loadContext) override;
 	virtual void GetChildren(ListSmartObjects&) override;
+	
+	//
+	// Overridden From LXAsset
+	//
+
+	LXString GetFileExtension() override { return LX_ANIMATION_EXT; }
+	bool Load() override;
 
 	//------------------------------------------------------------------------------------------------------
 	// Remove the given key 

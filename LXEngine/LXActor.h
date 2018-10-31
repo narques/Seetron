@@ -142,6 +142,8 @@ public:
 
 	// Actor Events
 	virtual void        OnPositionChanged() {}
+	virtual void		OnRotationChanged() {}
+	virtual void		OnScaleChanged(){}
 	
 private:
 

@@ -80,8 +80,11 @@ bool LXMaterial::Load()
 
 	bool Result = false;
 	Result =  LoadWithMSXML(_filepath);
+
 	if (Result)
+	{
 		State = EResourceState::LXResourceState_Loaded;
+	}
 
 	return false;
 }
@@ -92,6 +95,10 @@ LXTexture* LXMaterial::GetTextureDisplacement(const LXString& textureName) const
 	{
 		return graphMaterial->GetTextureDisplacement(textureName);
 	}
+	else
+	{
+		return nullptr;
+	}
 }
 
 bool LXMaterial::GetFloatParameter(const LXString& textureName, float& outValue) const
@@ -99,6 +106,10 @@ bool LXMaterial::GetFloatParameter(const LXString& textureName, float& outValue)
 	if (LXGraphMaterial* graphMaterial = GetGraph())
 	{
 		return graphMaterial->GetFloatParameter(textureName, outValue);
+	}
+	else
+	{
+		return false;
 	}
 }
 

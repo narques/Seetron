@@ -12,47 +12,33 @@
 #include "LXAnimation.h"
 #include "LXActor.h"
 #include "LXMSXMLNode.h"
+#include "LXEventManager.h"
+#include "LXSelectionManager.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXAnimationManager::LXAnimationManager(const LXProject* pDocument)
 {
 	SetName(L"Animations");
 
-	LXAnimation* pAnim = new LXAnimation();
-	AddAnimation(pAnim);
+	// Register Events.
+	GetEventManager()->RegisterEventFunc(EEventType::SelectionChanged, this, [this](LXEvent* Event)
+	{
+		const SetSmartObjects& objects =  GetSelectionManager()->GetSelection();
+		for (LXSmartObject* object : objects)
+		{
+			if (LXAnimation* animation = dynamic_cast<LXAnimation*>(object))
+			{
+				_animation = animation;
+				return;
+			}
+		}
+	});
 }
 
 LXAnimationManager::~LXAnimationManager(void)
 {
-	for (LXAnimation* animation : _listAnimations)
-		delete animation;
-
+	GetEventManager()->UnregisterEventFunc(EEventType::SelectionChanged, this);
 	CHK(_listVolatileAnimations.size() == 0);
-}
-
-bool LXAnimationManager::OnSaveChild(const TSaveContext& saveContext) const
-{
-	for (LXAnimation* pAnimation : _listAnimations)
-	{
-		pAnimation->Save(saveContext);
-	}
-	return true;
-}
-
-bool LXAnimationManager::OnLoadChild(const TLoadContext& loadContext)
-{
-	if (loadContext.node.name() == L"LXAnimation")
-	{
-		LXAnimation* animation = *_listAnimations.begin();
-		animation->Load(loadContext);
-	}
-	else
-	{
-		auto str = loadContext.node.name();
-		CHK(0);
-	}
-
-	return true;
 }
 
 void LXAnimationManager::Play(bool bPlay)
@@ -65,7 +51,7 @@ void LXAnimationManager::Play(bool bPlay)
 			_mapMatrices[It] = It->GetMatrix();
 		}
 
-		_activeAnimation = *_listAnimations.begin();
+		_activeAnimation = _animation;
 	}
 	else
 	{
@@ -81,7 +67,7 @@ void LXAnimationManager::Play(bool bPlay)
 			*/
 		}
 		
-		_activeAnimation = NULL; 
+		_activeAnimation = nullptr; 
 	}
 }
 
@@ -134,44 +120,34 @@ bool LXAnimationManager::Update(double dFrameTime)
 	return bRet;
 }
 
-void LXAnimationManager::AddAnimation(LXAnimation* pAnimation)
+void LXAnimationManager::SetAnimation(LXAnimation* animation)
 {
-	CHK(pAnimation);
-	if (!pAnimation)
+	_animation = animation;
+}
+
+void LXAnimationManager::PlayVolatileAnimation(LXAnimation* animation)
+{
+	CHK(animation);
+	if (!animation)
 		return;
 
-	_listAnimations.push_back(pAnimation);
+	_listVolatileAnimations.push_back(animation);
 }
 
-void LXAnimationManager::PlayVolatileAnimation(LXAnimation* pAnimation)
+void LXAnimationManager::AddBehavior(LXActor* actor)
 {
-	CHK(pAnimation);
-	if (!pAnimation)
-		return;
-
-	_listVolatileAnimations.push_back(pAnimation);
+	_setSceneObjectToUpdate.insert(actor);
 }
 
-void LXAnimationManager::AddBehavior(LXActor* pGroup)
+void LXAnimationManager::RemoveBehavior(LXActor* actor)
 {
-	_setSceneObjectToUpdate.insert(pGroup);
-}
-
-void LXAnimationManager::RemoveBehavior(LXActor* pGroup)
-{
-	_setSceneObjectToUpdate.erase(pGroup);
+	_setSceneObjectToUpdate.erase(actor);
 }
 
 LXAnimation* LXAnimationManager::GetAnimation()
 {
-	return *_listAnimations.begin();
+	return _animation;
 }
-
-void LXAnimationManager::GetChildren(ListSmartObjects& list)
-{
-	for (LXAnimation* anim : _listAnimations)
-		list.push_back(anim);
-}     
 
 void LXAnimationManager::Remove(LXKey* pKey)
 {

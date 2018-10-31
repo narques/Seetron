@@ -952,8 +952,10 @@ void LXPropertyT<LXReference<LXSmartObject>>::SaveXML2(const TSaveContext& saveC
 }
 
 //
-// --- Specializations
+// --- Specializations ---
 //
+
+// GetTypeName
 
 template<> LXString LXPropertyT<bool>::GetTypeName() { return L"bool"; }
 template<> LXString LXPropertyT<int>::GetTypeName() { return L"int"; }
@@ -971,6 +973,8 @@ LXString LXPropertyT<T>::GetTypeName()
 	return L"";
 }
 
+// GetMinXMLAttribute
+
 template<> LXString LXPropertyT<float>::GetMinXMLAttribute() { return L"Min=\"" + LXString::Number(*GetMin()) + "\""; }
 template<class T>
 LXString LXPropertyT<T>::GetMinXMLAttribute()
@@ -979,6 +983,8 @@ LXString LXPropertyT<T>::GetMinXMLAttribute()
 	LogE(LXProperty, L"Missing GetMinXMLAttribute() specialization for property %s", _PropInfo->_Name.GetBuffer());
 	return L"";
 }
+
+// GetMaxXMLAttribute
 
 template<> LXString LXPropertyT<float>::GetMaxXMLAttribute() { return L"Max=\"" + LXString::Number(*GetMax()) +"\""; }
 template<class T>

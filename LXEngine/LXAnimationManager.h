@@ -22,15 +22,10 @@ public:
 	LXAnimationManager(const LXProject* pDocument);
 	virtual ~LXAnimationManager(void);
 
-	// Overridden from LXSmartObject
-	virtual bool		OnSaveChild(const TSaveContext& saveContext) const override;
-	virtual bool		OnLoadChild(const TLoadContext& loadContext) override;
-	virtual void		GetChildren(ListSmartObjects&);
-	
 	// Animation
 	void Play					( bool bPlay );
 	bool Update					( double dFrameTime );
-	void AddAnimation			( LXAnimation* pAnimation );
+	void SetAnimation			( LXAnimation* pAnimation );
 	LXAnimation* GetAnimation	( );
 
 	// Key management
@@ -45,10 +40,10 @@ public:
 
 private:
 
-	LXAnimation*		_activeAnimation = NULL;
+	LXAnimation*		_animation = nullptr;
+	LXAnimation*		_activeAnimation = nullptr;
 	ListAnimations		_listVolatileAnimations;
-	ListAnimations		_listAnimations;
-
+	
 	SetActors			_setSceneObjectToUpdate;
 
 	typedef map<LXActor*, LXMatrix> MapMatrices;

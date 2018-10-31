@@ -115,7 +115,7 @@ public:
 	virtual void					GetNewListItemChoices(const LXPropertyListSmartObjects* property, list<LXString>& outStrings) { }
 
 	// For UI, Create and add a new list item according the previous choice.
-	virtual void					AddItemToPropertyList(const LXPropertyListSmartObjects* property, const LXString& id) { };
+	virtual LXSmartObject*			AddItemToPropertyList(const LXPropertyListSmartObjects* property, const LXString& id) { CHK(0); return nullptr; };
 	
 	//------------------------------------------------------------------------------------------------------
 	// Save & Load 
@@ -166,7 +166,9 @@ public:
 	LXPropertyT<T>*					DefineProperty(const LXString& name, const LXPropertyID& PID, T* var);
 	template<class T>
 	LXPropertyT<T>*					DefineProperty(const LXString& name, const LXPropertyID& PID, T* var, T Min, T Max);
-
+	template<class T>
+	LXPropertyListSmartObjects*		DefinePropertyList(const LXString &name, T* var) { return DefineProperty(name, (ListSmartObjects*)var); }
+	
 protected:
 
 	template<class T>

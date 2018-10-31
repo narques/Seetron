@@ -35,7 +35,7 @@ public:
 
 	void GetNewListItemChoices(const LXPropertyListSmartObjects* property, list<LXString>& outStrings) override;
 
-	void AddItemToPropertyList(const LXPropertyListSmartObjects* property, const LXString& id) override;
+	LXSmartObject* AddItemToPropertyList(const LXPropertyListSmartObjects* property, const LXString& id) override;
 
 	const LXConnector* GetInputConnector(const LXString& connectorName) const;
 

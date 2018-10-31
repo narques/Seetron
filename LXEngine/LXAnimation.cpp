@@ -151,8 +151,24 @@ void LXAnimation::GetChildren(ListSmartObjects& list)
 
 void LXAnimation::DefineProperties()
 {
-	auto p = DefineProperty("Duration", LXPropertyID::AnimationDuration, &_dDuration);
-	p->SetMin(0.);
+	auto propertyDuration = DefineProperty("Duration", LXPropertyID::AnimationDuration, &_dDuration);
+	propertyDuration->SetMin(0.);
+}
+
+bool LXAnimation::Load()
+{
+	if (State == EResourceState::LXResourceState_Loaded)
+		return true;
+
+	bool Result = false;
+	Result = LoadWithMSXML(_filepath);
+
+	if (Result)
+	{
+		State = EResourceState::LXResourceState_Loaded;
+	}
+
+	return false;
 }
 
 void LXAnimation::Remove(LXKey* pKey)

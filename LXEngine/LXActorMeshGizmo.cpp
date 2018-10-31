@@ -195,6 +195,11 @@ void LXActorMeshGizmo::OnSelectionChanged()
 	}
 }
 
+void LXActorMeshGizmo::OnRotationChanged()
+{
+	OnPositionChanged();
+}
+
 void LXActorMeshGizmo::OnPositionChanged()
 {
 	LXSelectionManager *SelectionManager = GetSelectionManager();
