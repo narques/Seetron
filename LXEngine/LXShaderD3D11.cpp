@@ -148,7 +148,12 @@ HRESULT LXShaderD3D11::CompileShaderFromFile(wchar_t* Filename, const char* szEn
 	}
 	else
 	{
-		LogI(ShaderD3D11, L"Compilation OK: %s", Filename);
+		LXString entryPoint = LXString(szEntryPoint).GetBuffer();
+		for (const LXShaderMacro& macro : ShaderMacros)
+		{
+			entryPoint += L", " + LXString(macro.first.c_str()) + L" " + LXString(macro.second.c_str());
+		}
+		LogI(ShaderD3D11, L"Compilation OK: %s (%s)", Filename, entryPoint.GetBuffer());
 	}
 
 	if (pErrorBlob)
