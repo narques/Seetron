@@ -689,29 +689,36 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNodeVariable(const LXMaterialD3D1
 LXStringA LXGraphMaterialToHLSLConverter::ParseNodeConstant(const LXNode* node)
 {
 	// Retrieve the UserProperty where is stored the constant value;
-	LXProperty* property = node->GetProperty(L"Value");
+	ListProperties properties;
+	node->GetUserProperties(properties);
+
+	// Constant node must contain only one user property to store the value.
+	LX_CHK_RETV(properties.size() == 1, "");
+		
+	const LXProperty* property = *properties.begin();
+	
 	
 	if (property->GetType() == EPropertyType::Float)
 	{
-		LXPropertyFloat* propertyFloat =  static_cast<LXPropertyFloat*>(property);
+		const LXPropertyFloat* propertyFloat =  static_cast<const LXPropertyFloat*>(property);
 		float value = propertyFloat->GetValue();
 		return LXStringA::Format("%f", value);
 	}
 	else if (property->GetType() == EPropertyType::Float2)
 	{
-		LXPropertyVec2f* propertyFloat2 = static_cast<LXPropertyVec2f*>(property);
+		const LXPropertyVec2f* propertyFloat2 = static_cast<const LXPropertyVec2f*>(property);
 		vec2f value = propertyFloat2->GetValue();
 		return LXStringA::Format("float2(%f,%f)", value.x, value.y);
 	}
 	else if (property->GetType() == EPropertyType::Float3)
 	{
-		LXPropertyVec3f* propertyFloat3 = static_cast<LXPropertyVec3f*>(property);
+		const LXPropertyVec3f* propertyFloat3 = static_cast<const LXPropertyVec3f*>(property);
 		vec3f value = propertyFloat3->GetValue();
 		return LXStringA::Format("float3(%f, %f, %f)", value.x, value.y, value.z);
 	}
 	else if (property->GetType() == EPropertyType::Float4)
 	{
-		LXPropertyVec4f* propertyFloat4 = static_cast<LXPropertyVec4f*>(property);
+		const LXPropertyVec4f* propertyFloat4 = static_cast<const LXPropertyVec4f*>(property);
 		vec4f value = propertyFloat4->GetValue();
 		return LXStringA::Format("float3(%f, %f, %f, %f)", value.x, value.y, value.z, value.w);
 	}

@@ -63,6 +63,12 @@ bool LXGraphMaterial::GetFloatParameter(const LXString& paramName, float& outVal
 			if (const LXNode* node = connector->GetFirstConnectedNode(paramName))
 			{
 				LXProperty* property = node->GetProperty(L"Value");
+
+				if (!property)
+				{
+					property = node->GetProperty(paramName);
+				}
+
 				if (property && property->GetType() == EPropertyType::Float)
 				{
 					LXPropertyFloat* propertyFloat = (LXPropertyFloat*)property;
