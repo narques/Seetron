@@ -76,14 +76,20 @@ void LXRenderPassToneMapping::DeleteBuffers()
 
 void LXRenderPassToneMapping::Render(LXRenderCommandList* r)
 {
-	LXRenderPipelineDeferred* RenderPipelineDeferred = dynamic_cast<LXRenderPipelineDeferred*>(Renderer->GetRenderPipeline());
-	CHK(RenderPipelineDeferred);
+	LXRenderPipelineDeferred* renderPipelineDeferred = dynamic_cast<LXRenderPipelineDeferred*>(Renderer->GetRenderPipeline());
+	CHK(renderPipelineDeferred);
 
 	// Aux buffer contains 3D UI Items (Gizmo, LightIcons, Helpers, etc.)
-	const LXTextureD3D11* SceneColor = RenderPipelineDeferred->RenderPassLighting->GetOutputTexture();
-	const LXTextureD3D11* SceneDepth = RenderPipelineDeferred->GetDepthBuffer();
-	const LXTextureD3D11* AuxColor = RenderPipelineDeferred->GetRenderPassAux()->GetColorRenderTarget()->_TextureD3D11;
-	const LXTextureD3D11* AuxDepth = RenderPipelineDeferred->GetRenderPassAux()->GetDepthRenderTarget()->_TextureD3D11;
+	const LXTextureD3D11* SceneColor = renderPipelineDeferred->RenderPassLighting->GetOutputTexture();
+
+	if (renderPipelineDeferred->GetDebugTexture())
+	{
+		SceneColor = renderPipelineDeferred->GetDebugTexture()->TextureD3D11;
+	}
+	
+	const LXTextureD3D11* SceneDepth = renderPipelineDeferred->GetDepthBuffer();
+	const LXTextureD3D11* AuxColor = renderPipelineDeferred->GetRenderPassAux()->GetColorRenderTarget()->_TextureD3D11;
+	const LXTextureD3D11* AuxDepth = renderPipelineDeferred->GetRenderPassAux()->GetDepthRenderTarget()->_TextureD3D11;
 
 	r->BeginEvent(L"ToneMapping");
 	r->OMSetRenderTargets2(_RenderTarget->_RenderTargetViewD3D11, nullptr);

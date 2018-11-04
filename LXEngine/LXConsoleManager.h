@@ -29,7 +29,7 @@ public:
 
 LXCORE_API LXConsoleManager& GetConsoleManager();
 
-class LXCORE_API LXConsoleCommand
+class LXCORE_API LXConsoleCommand : public LXObject
 {
 
 public:

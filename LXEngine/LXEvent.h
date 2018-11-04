@@ -14,14 +14,17 @@ enum class EEventType			// Known emitters
 {
 	// Event
 	SelectionChanged,			// SelectionManager
-	
+
 	ProjectLoaded,				// ProjectManager  ( EventResult )
 	ProjectClosed,
 
 	// Specialized Event
 	MouseMoveOnActor,			// Viewport
 	MouseLButtonDownOnActor,	// Viewport
-	MouseLButtonUpOnActor		// Viewport
+	MouseLButtonUpOnActor,		// Viewport
+
+	ConsoleCommandAdded,		// A new console command was added to the ConsoleManager.
+
 };
 
 enum class EMouseButton
@@ -64,3 +67,11 @@ class LXEvenLButtonUp : public LXEvent
 public:
 	LXEvenLButtonUp(const vec3f& v);
 };
+
+class  LXEventObjectCreated : public LXEvent
+{
+public:
+	LXEventObjectCreated(EEventType EventType, LXObject* object):LXEvent(EventType), CreatedObject(object) { }
+	LXObject* CreatedObject;
+};
+

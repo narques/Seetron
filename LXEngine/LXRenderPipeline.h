@@ -43,6 +43,7 @@ public:
 	virtual const LXTextureD3D11* GetOutput() const = 0;
 	
 	const TDebuggableTextures& GetDebugTextures() const { return _DebugTextures; }
+	const TVisualizableBuffer* GetDebugTexture() const { return _debugTexture; }
 	void AddToViewDebugger(const LXString& Name, const LXTextureD3D11* TextureD3D11, ETextureChannel TextureChannel);
 
 protected:
@@ -50,5 +51,6 @@ protected:
 	vector<LXRenderPass*> _RenderPasses;
 	LXRenderPass* _PreviousRenderPass = nullptr;
 	TDebuggableTextures _DebugTextures;
+	const TVisualizableBuffer* _debugTexture = nullptr;
 };
 

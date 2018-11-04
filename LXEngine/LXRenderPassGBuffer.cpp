@@ -38,13 +38,13 @@ void LXRenderPassGBuffer::CreateBuffers(uint Width, uint Height)
 
 	LXRenderPipeline* RenderPipeline = Renderer->GetRenderPipeline();
 
-	RenderPipeline->AddToViewDebugger(L"GBuffer Depth", TextureDepth, ETextureChannel::ChannelR);
-	RenderPipeline->AddToViewDebugger(L"GBuffer Color", TextureColor, ETextureChannel::ChannelRGB);
-	RenderPipeline->AddToViewDebugger(L"GBuffer Normal", TextureNormal, ETextureChannel::ChannelRGB);
-	RenderPipeline->AddToViewDebugger(L"GBuffer Metal", TextureSpecular, ETextureChannel::ChannelR);
-	RenderPipeline->AddToViewDebugger(L"GBuffer Rough", TextureSpecular , ETextureChannel::ChannelG);
-	RenderPipeline->AddToViewDebugger(L"GBuffer LightModel", TextureSpecular, ETextureChannel::ChannelA);
-	RenderPipeline->AddToViewDebugger(L"GBuffer Emissive", TextureEmissive, ETextureChannel::ChannelRGB);
+	RenderPipeline->AddToViewDebugger(L"View.GBufferDepth", TextureDepth, ETextureChannel::ChannelR);
+	RenderPipeline->AddToViewDebugger(L"View.GBufferColor", TextureColor, ETextureChannel::ChannelRGB);
+	RenderPipeline->AddToViewDebugger(L"View.GBufferNormal", TextureNormal, ETextureChannel::ChannelRGB);
+	RenderPipeline->AddToViewDebugger(L"View.GBufferMetal", TextureSpecular, ETextureChannel::ChannelR);
+	RenderPipeline->AddToViewDebugger(L"View.GBufferRough", TextureSpecular , ETextureChannel::ChannelG);
+	RenderPipeline->AddToViewDebugger(L"View.GBufferLightModel", TextureSpecular, ETextureChannel::ChannelA);
+	RenderPipeline->AddToViewDebugger(L"View.GBufferEmissive", TextureEmissive, ETextureChannel::ChannelRGB);
 	
 	DepthStencilView = new LXDepthStencilViewD3D11(TextureDepth);
 	RenderTargetColor = new LXRenderTargetViewD3D11(TextureColor);

@@ -40,8 +40,8 @@ void LXRenderPassAux::CreateBuffers(uint Width, uint Height)
 	_Color = new LXRenderTarget(Width, Height, DXGI_FORMAT_B8G8R8A8_TYPELESS);
 
 	LXRenderPipeline* RenderPipeline = Renderer->GetRenderPipeline();
-	RenderPipeline->AddToViewDebugger(L"Auxiliary Depth", _Depth->_TextureD3D11, ETextureChannel::ChannelR);
-	RenderPipeline->AddToViewDebugger(L"Auxiliary Color", _Color->_TextureD3D11, ETextureChannel::ChannelRGB);
+	RenderPipeline->AddToViewDebugger(L"View.AuxiliaryDepth", _Depth->_TextureD3D11, ETextureChannel::ChannelR);
+	RenderPipeline->AddToViewDebugger(L"View.AuxiliaryColor", _Color->_TextureD3D11, ETextureChannel::ChannelRGB);
 }
 
 void LXRenderPassAux::DeleteBuffers()

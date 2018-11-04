@@ -41,7 +41,7 @@
 
 LXConsoleCommandNoArg CCListAllCommands(L"ListAllCommands", []()
 {
-	for (LXConsoleCommand* ConsoleCommand : GetConsoleManager().ListCommands)
+	for (const LXConsoleCommand* ConsoleCommand : GetConsoleManager().ListCommands)
 	{
 		LXString Msg = L"- " + ConsoleCommand->Name;
 		LogI(Core,L"%s", Msg.GetBuffer());

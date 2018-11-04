@@ -44,7 +44,7 @@ LXRenderPassShadow::LXRenderPassShadow(LXRenderer* InRenderer):LXRenderPass(InRe
 	LXConstantBufferDataSpotLight ConstantBufferDataSpotLight;
 	ConstantBufferSpotLight = make_unique<LXConstantBufferD3D11>(&ConstantBufferDataSpotLight, static_cast<int>(sizeof(LXConstantBufferDataSpotLight)));
 	LXRenderPipeline* RenderPipeline = Renderer->GetRenderPipeline();
-	RenderPipeline->AddToViewDebugger(L"ShadowMaps", TextureDepth.get(), ETextureChannel::ChannelR);
+	RenderPipeline->AddToViewDebugger(L"View.ShadowMaps", TextureDepth.get(), ETextureChannel::ChannelR);
 }
 
 LXRenderPassShadow::~LXRenderPassShadow()

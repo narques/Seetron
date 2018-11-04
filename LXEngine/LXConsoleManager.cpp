@@ -10,6 +10,9 @@
 #include "LXConsoleManager.h"
 #include "LXSettings.h"
 #include "LXLogger.h"
+#include "LXCore.h"
+#include "LXEventManager.h"
+#include "LXEvent.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXConsoleManager& GetConsoleManager()
@@ -62,12 +65,14 @@ void LXConsoleManager::GetNearestCommand(const LXString& Str, vector<LXString>& 
 
 void LXConsoleManager::AddCommand(LXConsoleCommand* Command)
 {
-	for (LXConsoleCommand* ItConsoleCommand : ListCommands)
+	for (const LXConsoleCommand* ItConsoleCommand : ListCommands)
 	{
 		CHK(ItConsoleCommand->Name != Command->Name);
 	}
 
 	ListCommands.push_back(Command); 
+
+	GetEventManager()->PostEvent(new LXEventObjectCreated(EEventType::ConsoleCommandAdded, Command));
 }
 
 //------------------------------------------------------------------------------------------------------

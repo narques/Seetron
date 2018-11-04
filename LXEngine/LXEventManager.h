@@ -30,7 +30,7 @@ public:
 
 	// Deferred broadcast system
 	// Useful to send event outside of the MainThread
-	//void PostEvent(EEventType EventType);
+	void PostEvent(EEventType EventType);
 	void PostEvent(LXEvent* Event);
 	void BroadCastEvents();
 

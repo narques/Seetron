@@ -140,16 +140,16 @@ void LXEventManager::BroadCastEvent(LXActor* Actor, LXEvent* Event)
 	}
 }
 
-// void LXEventManager::PostEvent(EEventType Event)
-// {
-// 	PostEvent(new LXEvent(Event));
-// }
+void LXEventManager::PostEvent(EEventType eventType)
+{
+	PostEvent(new LXEvent(eventType));
+}
 
-void LXEventManager::PostEvent(LXEvent* Event)
+void LXEventManager::PostEvent(LXEvent* event)
 {
 	LXMutex Mutex;
 	Mutex.Lock();
-	EventDeferred.insert(Event);
+	EventDeferred.insert(event);
 	Mutex.Unlock();
 }
 
