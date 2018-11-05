@@ -431,7 +431,14 @@ void	LXCommandManager::ChangeProperties( const ListProperties& listProperties, c
 		pCmd = new LXCommandPropertiesT<T>(listProperties, newValue);
 
 	pCmd->Do();
-	pCmd->SetDescription(listProperties.size() + L" properties changed");
+	
+	LXString message = L"Properties changed:";
+	for (const LXProperty* property : listProperties)
+	{
+		message += L" " + property->GetName();
+	}
+	
+	pCmd->SetDescription(message);
 	PushCommand(pCmd);
 
 	// Animation
@@ -518,7 +525,7 @@ void	LXCommandManager::ChangeProperty( LXPropertyT<T>* pProp, const T& newValue 
 	
 
 	pCmd->Do();
-	pCmd->SetDescription(L"Property " +  pProp->GetLXObject()->GetName() + "." + pProp->GetLabel() + L" changed");
+	pCmd->SetDescription(L"Property changed: " +  pProp->GetLXObject()->GetName() + "." + pProp->GetLabel());
 	PushCommand(pCmd);
 
 	for (ListObservers::iterator It = m_listObservers.begin(); It!=m_listObservers.end(); It++)
