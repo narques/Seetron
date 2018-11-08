@@ -40,8 +40,8 @@ void LXRenderPassAux::CreateBuffers(uint Width, uint Height)
 	_Color = new LXRenderTarget(Width, Height, DXGI_FORMAT_B8G8R8A8_TYPELESS);
 
 	LXRenderPipeline* RenderPipeline = Renderer->GetRenderPipeline();
-	RenderPipeline->AddToViewDebugger(L"View.AuxiliaryDepth", _Depth->_TextureD3D11, ETextureChannel::ChannelR);
-	RenderPipeline->AddToViewDebugger(L"View.AuxiliaryColor", _Color->_TextureD3D11, ETextureChannel::ChannelRGB);
+	RenderPipeline->AddToViewDebugger(L"View.AuxiliaryDepth", _Depth->TextureD3D11, ETextureChannel::ChannelR);
+	RenderPipeline->AddToViewDebugger(L"View.AuxiliaryColor", _Color->TextureD3D11, ETextureChannel::ChannelRGB);
 }
 
 void LXRenderPassAux::DeleteBuffers()
@@ -55,9 +55,9 @@ void LXRenderPassAux::Render(LXRenderCommandList* RCL)
 	const LXRenderPipelineDeferred* renderPipelineDeferred = dynamic_cast<const LXRenderPipelineDeferred*>(Renderer->GetRenderPipeline());
 
 	RCL->BeginEvent(L"Auxiliary");
-	RCL->OMSetRenderTargets2(_Color->_RenderTargetViewD3D11, _Depth->_RenderTargetViewD3D11);
-	RCL->ClearDepthStencilView(_Depth->_RenderTargetViewD3D11);
-	RCL->ClearRenderTargetView(_Color->_RenderTargetViewD3D11);
+	RCL->OMSetRenderTargets2(_Color->RenderTargetViewD3D11, _Depth->RenderTargetViewD3D11);
+	RCL->ClearDepthStencilView(_Depth->RenderTargetViewD3D11);
+	RCL->ClearRenderTargetView(_Color->RenderTargetViewD3D11);
 
 	for (LXRenderCluster* RenderCluster : renderPipelineDeferred->GetRenderClusterAuxiliary())
 	{

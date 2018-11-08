@@ -60,7 +60,7 @@ bool LXRenderPassToneMapping::IsValid() const
 
 const LXTextureD3D11* LXRenderPassToneMapping::GetOutputTexture() const
 {
-	return _RenderTarget->_TextureD3D11;
+	return _RenderTarget->TextureD3D11;
 }
 
 void LXRenderPassToneMapping::CreateBuffers(uint Width, uint Height)
@@ -88,11 +88,11 @@ void LXRenderPassToneMapping::Render(LXRenderCommandList* r)
 	}
 	
 	const LXTextureD3D11* SceneDepth = renderPipelineDeferred->GetDepthBuffer();
-	const LXTextureD3D11* AuxColor = renderPipelineDeferred->GetRenderPassAux()->GetColorRenderTarget()->_TextureD3D11;
-	const LXTextureD3D11* AuxDepth = renderPipelineDeferred->GetRenderPassAux()->GetDepthRenderTarget()->_TextureD3D11;
+	const LXTextureD3D11* AuxColor = renderPipelineDeferred->GetRenderPassAux()->GetColorRenderTarget()->TextureD3D11;
+	const LXTextureD3D11* AuxDepth = renderPipelineDeferred->GetRenderPassAux()->GetDepthRenderTarget()->TextureD3D11;
 
 	r->BeginEvent(L"ToneMapping");
-	r->OMSetRenderTargets2(_RenderTarget->_RenderTargetViewD3D11, nullptr);
+	r->OMSetRenderTargets2(_RenderTarget->RenderTargetViewD3D11, nullptr);
 	r->IASetInputLayout(_VertexShader);
 	r->VSSetShader(_VertexShader);
 	r->PSSetShader(_PixelShader);

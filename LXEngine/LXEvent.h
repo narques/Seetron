@@ -23,8 +23,8 @@ enum class EEventType			// Known emitters
 	MouseLButtonDownOnActor,	// Viewport
 	MouseLButtonUpOnActor,		// Viewport
 
-	ConsoleCommandAdded,		// A new console command was added to the ConsoleManager.
-
+	ConsoleCommandAdded,		// Console command is created and added to the ConsoleManager.
+	ConsoleCommandDeleted,		// Console command removed from the ConsoleManager and deleted.
 };
 
 enum class EMouseButton
@@ -75,3 +75,9 @@ public:
 	LXObject* CreatedObject;
 };
 
+class  LXEventObjectDeleted : public LXEvent
+{
+public:
+	LXEventObjectDeleted(EEventType EventType, LXObject* object) :LXEvent(EventType), DeleteObject(object) { }
+	LXObject* DeleteObject;
+};

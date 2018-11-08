@@ -47,6 +47,7 @@ class LXRenderPipelineDeferred : public LXRenderPipeline
 	friend LXRenderPassShadow;
 	friend LXRenderPassToneMapping;
 	friend LXRenderPassTransparency;
+	friend LXRenderPassDownsample;
 
 public:
 

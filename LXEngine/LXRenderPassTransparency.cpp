@@ -73,7 +73,7 @@ void LXRenderPassTransparency::Render(LXRenderCommandList* RCL)
 #if LX_DEDICATED_TRANSPARENCY_BUFFER
 	RCL->OMSetRenderTargets2(RenderTargetColor, Renderer->RenderPassGBuffer->DepthStencilView);
 #else
-	RCL->OMSetRenderTargets2(RenderPipelineDeferred->RenderPassLighting->RenderTargetCompose->_RenderTargetViewD3D11, RenderPipelineDeferred->RenderPassGBuffer->DepthStencilView);
+	RCL->OMSetRenderTargets2(RenderPipelineDeferred->RenderPassLighting->RenderTargetCompose->RenderTargetViewD3D11, RenderPipelineDeferred->RenderPassGBuffer->DepthStencilView);
 	RCL->OMSetBlendState(Renderer->GetBlendStateTransparent());
 #endif
 	RCL->RSSetViewports(Renderer->Width, Renderer->Height);

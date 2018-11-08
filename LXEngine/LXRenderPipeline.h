@@ -9,6 +9,7 @@
 #pragma once
 
 #include "LXFormats.h"
+#include "LXConsoleManager.h"
 
 class LXRenderCommandList;
 class LXRenderPass;
@@ -24,6 +25,7 @@ struct TVisualizableBuffer
 	LXString Name;
 	const LXTextureD3D11* TextureD3D11;
 	ETextureChannel TextureChannel;
+	LXConsoleCommandNoArg* ConsoleCommand;
 };
 
 typedef vector<TVisualizableBuffer> TDebuggableTextures;
@@ -45,6 +47,7 @@ public:
 	const TDebuggableTextures& GetDebugTextures() const { return _DebugTextures; }
 	const TVisualizableBuffer* GetDebugTexture() const { return _debugTexture; }
 	void AddToViewDebugger(const LXString& Name, const LXTextureD3D11* TextureD3D11, ETextureChannel TextureChannel);
+	void AddToViewDebugger(const LXString& Name, const LXString& commandName, const LXTextureD3D11* TextureD3D11, ETextureChannel TextureChannel);
 
 protected:
 

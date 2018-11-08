@@ -63,16 +63,36 @@ void LXConsoleManager::GetNearestCommand(const LXString& Str, vector<LXString>& 
 	}
 }
 
-void LXConsoleManager::AddCommand(LXConsoleCommand* Command)
+void LXConsoleManager::AddCommand(LXConsoleCommand* command)
 {
 	for (const LXConsoleCommand* ItConsoleCommand : ListCommands)
 	{
-		CHK(ItConsoleCommand->Name != Command->Name);
+		CHK(ItConsoleCommand->Name != command->Name);
 	}
 
-	ListCommands.push_back(Command); 
+	ListCommands.push_back(command); 
 
-	GetEventManager()->PostEvent(new LXEventObjectCreated(EEventType::ConsoleCommandAdded, Command));
+	GetEventManager()->PostEvent(new LXEventObjectCreated(EEventType::ConsoleCommandAdded, command));
+}
+
+void LXConsoleManager::RemoveCommand(LXConsoleCommand* command)
+{
+	ListCommands.remove(command);
+	GetEventManager()->PostEvent(new LXEventObjectDeleted(EEventType::ConsoleCommandDeleted, command));
+}
+
+//------------------------------------------------------------------------------------------------------
+// LXConsoleCommand
+//------------------------------------------------------------------------------------------------------
+
+LXConsoleCommand::LXConsoleCommand(const LXString& name):Name(name)
+{
+	GetConsoleManager().AddCommand(this);
+}
+
+LXConsoleCommand::~LXConsoleCommand()
+{
+	GetConsoleManager().RemoveCommand(this);
 }
 
 //------------------------------------------------------------------------------------------------------
@@ -187,3 +207,5 @@ template class LXCORE_API LXConsoleCommandCall2<void()>;
 template class LXCORE_API LXConsoleCommandCall2<void(const LXString&)>;
 template class LXCORE_API LXConsoleCommandCall2<void(const LXString&, const LXString&)>;
 template class LXCORE_API LXConsoleCommandCall2<void(const LXString&, const LXString&, const LXString&)>;
+
+

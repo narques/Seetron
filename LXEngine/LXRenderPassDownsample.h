@@ -12,9 +12,14 @@
 
 class LXRenderTarget;
 
+namespace
+{
+	const int maxDownSample = 10;  // Enough for 1920x1080 to 1x1
+}
+
 enum class EDownsampleFunction
 {
-	//Downsample_ToOne,
+	Downsample_ToOne,
 	Downsample_HalfRes
 };
 
@@ -36,7 +41,7 @@ private:
 
 private:
 
-	vector<LXRenderTarget*> _RenderTargerts;
+	LXRenderTarget* _RenderTargerts[maxDownSample];
 	LXShaderD3D11* _VertexShader;
 	LXShaderD3D11* _PixelShader;
 	

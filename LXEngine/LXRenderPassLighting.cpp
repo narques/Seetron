@@ -72,9 +72,9 @@ void LXRenderPassLighting::CreateBuffers(uint Width, uint Height)
 	RenderTargetCompose = new LXRenderTarget(Width, Height, DXGI_FORMAT_R16G16B16A16_FLOAT);
 
 	LXRenderPipeline* RenderPipeline = Renderer->GetRenderPipeline();
-	RenderPipeline->AddToViewDebugger(L"Lighting Diffuse", RenderTargetDiffuse->_TextureD3D11, ETextureChannel::ChannelRGB);
-	RenderPipeline->AddToViewDebugger(L"Lighting Specular", RenderTargetSpecular->_TextureD3D11, ETextureChannel::ChannelRGB);
-	RenderPipeline->AddToViewDebugger(L"Lighting Compose", RenderTargetCompose->_TextureD3D11, ETextureChannel::ChannelRGB);
+	RenderPipeline->AddToViewDebugger(L"Lighting Diffuse", RenderTargetDiffuse->TextureD3D11, ETextureChannel::ChannelRGB);
+	RenderPipeline->AddToViewDebugger(L"Lighting Specular", RenderTargetSpecular->TextureD3D11, ETextureChannel::ChannelRGB);
+	RenderPipeline->AddToViewDebugger(L"Lighting Compose", RenderTargetCompose->TextureD3D11, ETextureChannel::ChannelRGB);
 }
 
 void LXRenderPassLighting::RebuildShaders()
@@ -104,7 +104,7 @@ bool LXRenderPassLighting::IsValid() const
 
 const LXTextureD3D11* LXRenderPassLighting::GetOutputTexture() const 
 { 
-	return RenderTargetCompose->_TextureD3D11; 
+	return RenderTargetCompose->TextureD3D11; 
 }
 
 void LXRenderPassLighting::Render(LXRenderCommandList* r)
@@ -121,12 +121,12 @@ void LXRenderPassLighting::Render(LXRenderCommandList* r)
 	r->BeginEvent(L"Lighting");
 
 	static ID3D11RenderTargetView* RenderTargetViews[2] = { 0 };
-	RenderTargetViews[0] = RenderTargetDiffuse->_RenderTargetViewD3D11->D3D11RenderTargetView;
-	RenderTargetViews[1] = RenderTargetSpecular->_RenderTargetViewD3D11->D3D11RenderTargetView;
+	RenderTargetViews[0] = RenderTargetDiffuse->RenderTargetViewD3D11->D3D11RenderTargetView;
+	RenderTargetViews[1] = RenderTargetSpecular->RenderTargetViewD3D11->D3D11RenderTargetView;
 	r->OMSetRenderTargets3(2, RenderTargetViews, nullptr);
 	r->RSSetViewports(Renderer->Width, Renderer->Height);
-	r->ClearRenderTargetView(RenderTargetDiffuse->_RenderTargetViewD3D11);
-	r->ClearRenderTargetView(RenderTargetSpecular->_RenderTargetViewD3D11);
+	r->ClearRenderTargetView(RenderTargetDiffuse->RenderTargetViewD3D11);
+	r->ClearRenderTargetView(RenderTargetSpecular->RenderTargetViewD3D11);
 	
 	// To accumulate
 	r->OMSetBlendState(Renderer->GetBlendStateAdd());
@@ -140,7 +140,7 @@ void LXRenderPassLighting::Render(LXRenderCommandList* r)
 	{
 		r->BeginEvent(L"Compose");
 
-		r->OMSetRenderTargets2(RenderTargetCompose->_RenderTargetViewD3D11, nullptr);
+		r->OMSetRenderTargets2(RenderTargetCompose->RenderTargetViewD3D11, nullptr);
 		
 		_ShaderProgramComposeLight->Render(r);
 
@@ -149,8 +149,8 @@ void LXRenderPassLighting::Render(LXRenderCommandList* r)
 		LXTextureD3D11* Emissive = RenderPassGBuffer->TextureEmissive;
 		const LXTextureD3D11* TextureSSAO = RenderPassSSAO->GetOutputTexture();
 
-		LXTextureD3D11* Diffuse = RenderTargetDiffuse->_TextureD3D11;
-		LXTextureD3D11* Specular = RenderTargetSpecular->_TextureD3D11;
+		LXTextureD3D11* Diffuse = RenderTargetDiffuse->TextureD3D11;
+		LXTextureD3D11* Specular = RenderTargetSpecular->TextureD3D11;
 
 		r->PSSetShaderResources(1, 1, (LXTextureD3D11*)Color);
 		r->PSSetShaderResources(3, 1, (LXTextureD3D11*)MRUL);

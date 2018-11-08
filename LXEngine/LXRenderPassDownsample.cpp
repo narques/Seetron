@@ -7,6 +7,7 @@
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
+#include "LXMath.h"
 #include "LXRenderPassDownsample.h"
 #include "LXRenderer.h"
 #include "LXRenderPassToneMapping.h"
@@ -14,42 +15,30 @@
 #include "LXRenderTarget.h"
 #include "LXRenderCommandList.h"
 #include "LXShaderD3D11.h"
+#include "LXTextureD3D11.h"
 #include "LXInputElementDescD3D11Factory.h"
 #include "LXSettings.h"
+#include "LXRenderPipelineDeferred.h"
+#include "LXRenderPassLighting.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
-const wchar_t szDownSampleShader[] = L"Downsample.hlsl";
+namespace
+{
+	const wchar_t szDownSampleShader[] = L"Downsample.hlsl";
+}
 
 LXRenderPassDownsample::LXRenderPassDownsample(LXRenderer* InRenderer, EDownsampleFunction DownSampleFunction):LXRenderPass(InRenderer)
 {
-	uint HalfWidth = Renderer->Width;
-	uint HalfHeight = Renderer->Height;
-
-	if (DownSampleFunction == EDownsampleFunction::Downsample_HalfRes)
-	{ 
-		HalfWidth /= 2;
-		HalfHeight /= 2;
-		_RenderTargerts.push_back(new LXRenderTarget(HalfWidth, HalfHeight, DXGI_FORMAT_R16G16B16A16_FLOAT));
-	}
-	else
+	for (int i = 0; i < maxDownSample; i++)
 	{
-		while (1)
-		{
-			HalfWidth /= 2;
-			HalfHeight /= 2;
-
-			if (HalfWidth < 1 || HalfHeight < 1)
-			{
-				break;
-			}
-
-			_RenderTargerts.push_back(new LXRenderTarget(HalfWidth, HalfHeight, DXGI_FORMAT_R16G16B16A16_FLOAT));
-		}
+		_RenderTargerts[i] = nullptr;
 	}
+
+	CreateBuffers(Renderer->Width, Renderer->Height);
 
 	_VertexShader = new LXShaderD3D11();
 	_PixelShader = new LXShaderD3D11();
-
+ 
 	const LXArrayInputElementDesc& Layout = GetInputElementDescD3D11Factory().GetInputElement_PT();
 	
 	_VertexShader->CreateVertexShader(GetSettings().GetShadersFolder() + szDownSampleShader, &Layout[0], (uint)Layout.size());
@@ -75,42 +64,77 @@ bool LXRenderPassDownsample::IsValid() const
 void LXRenderPassDownsample::CreateBuffers(uint Width, uint Height)
 {
 	DeleteBuffers();
-	for (LXRenderTarget* RenderTarget : _RenderTargerts)
+	
+	uint HalfWidth = Width;
+	uint HalfHeight = Height;
+
+	LXRenderTarget* smallestRenderTarget = nullptr;
+		
+	for (int i=0; i<maxDownSample; i++ )
 	{
-		RenderTarget->CreateBuffers(Width, Height, DXGI_FORMAT_R16G16B16A16_FLOAT);
+		HalfWidth /= 2;
+		HalfHeight /= 2;
+
+		if (HalfWidth < 1 && HalfHeight < 1)
+		{
+			_RenderTargerts[i] = nullptr;
+		}
+		else
+		{
+			HalfWidth = LXMax(1, HalfWidth);
+			HalfHeight = LXMax(1, HalfHeight);
+			_RenderTargerts[i] = new LXRenderTarget(HalfWidth, HalfHeight, DXGI_FORMAT_R16G16B16A16_FLOAT);
+			smallestRenderTarget = _RenderTargerts[i];
+		}
+
+		LXRenderPipeline* RenderPipeline = Renderer->GetRenderPipeline();
+		const LXString bufferName = L"View.DownSample_" + LXString::Number(i);
+		const LXString commandName = bufferName + L"(" + LXString::Number((int)HalfWidth) + "x" + LXString::Number((int)HalfHeight) + L")";
+		RenderPipeline->AddToViewDebugger(bufferName, commandName, _RenderTargerts[i]?_RenderTargerts[i]->TextureD3D11:nullptr, ETextureChannel::ChannelRGB);
 	}
+
+	CHK(smallestRenderTarget->Width == 1 && smallestRenderTarget->Height == 1)
 }
 
 void LXRenderPassDownsample::DeleteBuffers()
 {
-	for (LXRenderTarget* RenderTarget : _RenderTargerts)
+	for (int i = 0; i<maxDownSample; i++)
 	{
-		RenderTarget->DeleteBuffers();
+		LX_SAFE_DELETE(_RenderTargerts[i]);
+		_RenderTargerts[i] = nullptr;
 	}
 }
 
 void LXRenderPassDownsample::Render(LXRenderCommandList* r)
 {
 	r->BeginEvent(L"Downsample");
+
+	LXRenderPipelineDeferred* RenderPipelineDeferred = dynamic_cast<LXRenderPipelineDeferred*>(Renderer->GetRenderPipeline());
+	CHK(RenderPipelineDeferred);
 	
-	for (int i=0; i<_RenderTargerts.size(); i++)
+	for (int i=0; i<maxDownSample; i++)
 	{
-		LXString EventName = L"Downsample" + LXString::Number(i);
+		LXString EventName = L"Downsample_" + LXString::Number(i);
 		r->BeginEvent(EventName.GetBuffer());
 		
 		LXRenderTarget* RenderTarget = _RenderTargerts[i];
-		r->OMSetRenderTargets2(RenderTarget->_RenderTargetViewD3D11, nullptr);
+
+		if (RenderTarget == nullptr)
+			continue;
+
+		r->OMSetRenderTargets2(RenderTarget->RenderTargetViewD3D11, nullptr);
+		r->RSSetViewports(RenderTarget->Width, RenderTarget->Height);
+
 		const LXTextureD3D11* Texture;
 		if (i == 0)
 		{
-			const LXRenderPass* RenderPass = Renderer->GetRenderPipeline()->GetPreviousRenderPass();
-			Texture = RenderPass->GetOutputTexture();
-			CHK(Texture);
+			Texture = RenderPipelineDeferred->RenderPassLighting->GetOutputTexture();
 		}
 		else
 		{
-			Texture = _RenderTargerts[i - 1]->_TextureD3D11;
+			Texture = _RenderTargerts[i - 1]->TextureD3D11;
 		}
+
 		r->IASetInputLayout(_VertexShader);
 		r->VSSetShader(_VertexShader);
 		r->PSSetShader(_PixelShader);
@@ -120,8 +144,10 @@ void LXRenderPassDownsample::Render(LXRenderCommandList* r)
 		r->PSSetShaderResources(0, 1, nullptr);
 		r->VSSetShader(nullptr);
 		r->PSSetShader(nullptr);
+		r->RSSetViewports(Renderer->Width, Renderer->Height);
 		r->EndEvent();
 	}
+
 	r->EndEvent();
 }
 
@@ -129,3 +155,4 @@ void LXRenderPassDownsample::Resize(uint Width, uint Height)
 {
 	CreateBuffers(Width, Height);
 }
+

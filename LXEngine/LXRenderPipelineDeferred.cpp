@@ -51,7 +51,7 @@ LXRenderPipelineDeferred::LXRenderPipelineDeferred(LXRenderer* Renderer):_Render
 	RenderPassTransparent = new LXRenderPassTransparency(Renderer);
 	RenderPassLighting = new LXRenderPassLighting(Renderer);
 	RenderPassToneMapping = new LXRenderPassToneMapping(Renderer);
-	RenderPassDownsample = new LXRenderPassDownsample(Renderer, EDownsampleFunction::Downsample_HalfRes);
+	RenderPassDownsample = new LXRenderPassDownsample(Renderer, EDownsampleFunction::Downsample_ToOne);
 	RenderPassUI = new LXRenderPassUI(Renderer);
 	RenderPassSSAO = new LXRenderPassSSAO(Renderer);
 
@@ -62,7 +62,7 @@ LXRenderPipelineDeferred::LXRenderPipelineDeferred(LXRenderer* Renderer):_Render
 	_RenderPasses.push_back(RenderPassSSAO);
 	_RenderPasses.push_back(RenderPassLighting);
 	_RenderPasses.push_back(RenderPassTransparent);
-	//RenderPasses.push_back(RenderPassDownsample);
+	_RenderPasses.push_back(RenderPassDownsample);
 	_RenderPasses.push_back(RenderPassToneMapping);
 	//_RenderPasses.push_back(RenderPassAA);
 		

@@ -12,10 +12,9 @@
 #include "LXRenderTargetViewD3D11.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
-LXRenderTarget::LXRenderTarget(uint Width, uint Height, DXGI_FORMAT Format)
+LXRenderTarget::LXRenderTarget(uint width, uint height, DXGI_FORMAT Format):Width(width), Height(height)
 {
-	//LogD(LXRenderTarget, L" Size: %ix%i", Width, Height);
-	CreateBuffers(Width, Height, Format);
+	CreateBuffers(width, height, Format);
 }
 
 LXRenderTarget::~LXRenderTarget()
@@ -23,25 +22,24 @@ LXRenderTarget::~LXRenderTarget()
 	DeleteBuffers();
 }
 
-void LXRenderTarget::CreateBuffers(uint Width, uint Height, DXGI_FORMAT Format)
+void LXRenderTarget::CreateBuffers(uint width, uint height, DXGI_FORMAT format)
 {
-	CHK(_TextureD3D11 == nullptr);
-	CHK(_RenderTargetViewD3D11 == nullptr);
+	CHK(TextureD3D11 == nullptr);
+	CHK(RenderTargetViewD3D11 == nullptr);
 
-	_TextureD3D11 = new LXTextureD3D11(Width, Height, Format);
-	_RenderTargetViewD3D11 = new LXRenderTargetViewD3D11(_TextureD3D11);
+	TextureD3D11 = new LXTextureD3D11(width, height, format);
+	RenderTargetViewD3D11 = new LXRenderTargetViewD3D11(TextureD3D11);
 }
 
 void LXRenderTarget::DeleteBuffers()
 {
-	LX_SAFE_DELETE(_RenderTargetViewD3D11); 
-	LX_SAFE_DELETE(_TextureD3D11);
+	LX_SAFE_DELETE(RenderTargetViewD3D11); 
+	LX_SAFE_DELETE(TextureD3D11);
 }
 
-LXRenderTargetDepth::LXRenderTargetDepth(uint Width, uint Height, DXGI_FORMAT Format)
+LXRenderTargetDepth::LXRenderTargetDepth(uint width, uint height, DXGI_FORMAT format)
 {
-	//LogD(LXRenderTargetDepth, L" Size: %ix%i", Width, Height);
-	CreateBuffers(Width, Height, Format);
+	CreateBuffers(width, height, format);
 }
 
 LXRenderTargetDepth::~LXRenderTargetDepth()
@@ -49,17 +47,17 @@ LXRenderTargetDepth::~LXRenderTargetDepth()
 	DeleteBuffers();
 }
 
-void LXRenderTargetDepth::CreateBuffers(uint Width, uint Height, DXGI_FORMAT Format)
+void LXRenderTargetDepth::CreateBuffers(uint width, uint height, DXGI_FORMAT format)
 {
-	CHK(_TextureD3D11 == nullptr);
-	CHK(_RenderTargetViewD3D11 == nullptr);
+	CHK(TextureD3D11 == nullptr);
+	CHK(RenderTargetViewD3D11 == nullptr);
 
-	_TextureD3D11 = new LXTextureD3D11(Width, Height, Format);
-	_RenderTargetViewD3D11 = new LXDepthStencilViewD3D11(_TextureD3D11);
+	TextureD3D11 = new LXTextureD3D11(width, height, format);
+	RenderTargetViewD3D11 = new LXDepthStencilViewD3D11(TextureD3D11);
 }
 
 void LXRenderTargetDepth::DeleteBuffers()
 {
-	LX_SAFE_DELETE(_RenderTargetViewD3D11);
-	LX_SAFE_DELETE(_TextureD3D11);
+	LX_SAFE_DELETE(RenderTargetViewD3D11);
+	LX_SAFE_DELETE(TextureD3D11);
 }

@@ -42,21 +42,30 @@ void LXRenderPipeline::Render(LXRenderCommandList* RenderCommandList)
 	_PreviousRenderPass = nullptr;
 }
 
-void LXRenderPipeline::AddToViewDebugger(const LXString& name, const LXTextureD3D11* textureD3D11, ETextureChannel textureChannel)
+void LXRenderPipeline::AddToViewDebugger(const LXString& Name, const LXTextureD3D11* TextureD3D11, ETextureChannel TextureChannel)
+{
+	AddToViewDebugger(Name, Name, TextureD3D11, TextureChannel);
+}
+
+void LXRenderPipeline::AddToViewDebugger(const LXString& name, const LXString& commandName, const LXTextureD3D11* textureD3D11, ETextureChannel textureChannel)
 {
 
 	for (auto &It : _DebugTextures)
 	{
 		if (It.Name == name)
 		{
+			// Update 
 			It.TextureD3D11 = textureD3D11;
+
+			// the buffer can change, update the command name. 
+			It.ConsoleCommand->Name = commandName;
 			return;
 		}
 	}
 
 	_DebugTextures.push_back(TVisualizableBuffer(name, textureD3D11, textureChannel));
 
-	LXConsoleCommandNoArg* consoleCommand = new LXConsoleCommandNoArg(name, [this, name]() 
+	_DebugTextures.back().ConsoleCommand = new LXConsoleCommandNoArg(commandName, [this, name]()
 	{
 		// Retrieve the texture to debug.
 		auto it = find_if(_DebugTextures.begin(), _DebugTextures.end(), [name](TVisualizableBuffer& visualizableBuffer)
@@ -82,3 +91,5 @@ void LXRenderPipeline::AddToViewDebugger(const LXString& name, const LXTextureD3
 		}
 	});
 }
+
+

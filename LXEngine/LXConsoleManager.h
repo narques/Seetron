@@ -22,7 +22,8 @@ public:
 	bool TryToExecute(const LXString& CommandLine);
 	void GetNearestCommand(const LXString& Str, vector<LXString>& ListSuggestion);
 	
-	void AddCommand(LXConsoleCommand* Command);
+	void AddCommand(LXConsoleCommand* command);
+	void RemoveCommand(LXConsoleCommand* command);
 
 	list<LXConsoleCommand*> ListCommands;
 };
@@ -34,10 +35,8 @@ class LXCORE_API LXConsoleCommand : public LXObject
 
 public:
 
-	LXConsoleCommand(const LXString& InName) :Name(InName)
-	{
-		GetConsoleManager().AddCommand(this);
-	}
+	LXConsoleCommand(const LXString& name);
+	virtual ~LXConsoleCommand();
 
 	virtual void Execute(const vector<LXString>& Arguments) = 0;
 
