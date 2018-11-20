@@ -207,10 +207,53 @@ void LXRenderCluster::UpdateLightParameters(LXActor* Actor)
 	
 	ConstantBufferDataSpotLight->MatrixLightView = Transpose(MatrixLightView);
 	ConstantBufferDataSpotLight->MatrixLightProjection = Transpose(MatrixLightProjection);
-	ConstantBufferDataSpotLight->LightPosition = LightPosition;
+	ConstantBufferDataSpotLight->LightPosition = vec4f(LightPosition, 0.f);
 	ConstantBufferDataSpotLight->LightIntensity = ActorLight->GetIntensity();
 	ConstantBufferDataSpotLight->Angle = LX_DEGTORAD(ActorLight->GetSpotAngle()) * 0.5f;
 	ConstantBufferDataSpotLight->CastShadow = ActorLight->GetCastShadow();
+}
+
+void LXRenderCluster::UpdateLightParameters()
+{
+	LXActorLight* ActorLight = dynamic_cast<LXActorLight*>(Actor);
+	CHK(ActorLight);
+	CHK(ConstantBufferDataSpotLight);
+
+	// Matrices are already computed during RenderPassShadow
+	if (ActorLight->GetCastShadow())
+	{
+		ConstantBufferDataSpotLight->MatrixLightView = LightView->View;
+		ConstantBufferDataSpotLight->MatrixLightProjection = LightView->Projection;
+		ConstantBufferDataSpotLight->LightPosition = LightView->CameraPosition;
+	}
+	else
+	{
+		ConstantBufferDataSpotLight->MatrixLightView = Transpose(Matrix);
+		ConstantBufferDataSpotLight->LightPosition = vec4f(ActorLight->GetPosition(), 0.0);
+	}
+
+	ConstantBufferDataSpotLight->LightDirection = vec4f(Matrix.GetVz(), 0.0) * -1.f;
+	
+	// ShadowMapCoords updated during RenderPassShadow
+	//ConstantBufferDataSpotLight->ShadowMapCoords;
+
+	if (ActorLight->GetType() != ELightType::Spot)
+	{
+		ConstantBufferDataSpotLight->CastShadow = false;
+	}
+	
+	// Misc.
+	ConstantBufferDataSpotLight->Color = ActorLight->GetColor();
+	ConstantBufferDataSpotLight->LightIntensity = ActorLight->GetIntensity();
+	ConstantBufferDataSpotLight->Angle = LX_DEGTORAD(ActorLight->GetSpotAngle()) * 0.5f;
+	ConstantBufferDataSpotLight->CastShadow = ActorLight->GetCastShadow();
+}
+
+ELightType LXRenderCluster::GetLightType() const
+{
+	LXActorLight* actorLight = dynamic_cast<LXActorLight*>(Actor);
+	CHK(actorLight);
+	return actorLight->GetType();
 }
 
 void LXRenderCluster::ReleaseShaders()

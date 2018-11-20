@@ -73,6 +73,11 @@ void LXRenderPassShadow::Render(LXRenderCommandList* RCL)
 			continue;
 		}
 
+		if (RenderClusterLight->GetLightType() != ELightType::Spot)
+		{
+			continue;
+		}
+
 		float x = RenderClusterLight->ConstantBufferDataSpotLight->ShadowMapCoords.x;
 		float y = RenderClusterLight->ConstantBufferDataSpotLight->ShadowMapCoords.y;
 		

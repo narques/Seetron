@@ -17,7 +17,9 @@ struct LXConstantBufferDataSpotLight
 	LXMatrix MatrixLightView;		// Row-major
 	LXMatrix MatrixLightProjection; // Row-major
 	vec4f ShadowMapCoords;
-	vec3f LightPosition;
+	vec4f LightPosition;
+	vec4f LightDirection;
+	vec4f Color;
 	float LightIntensity;
 	float Angle;
 	bool CastShadow;

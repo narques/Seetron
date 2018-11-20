@@ -25,6 +25,7 @@ class LXPrimitiveInstance;
 class LXRenderClusterManager;
 class LXRenderCommandList;
 class LXShaderD3D11;
+enum class ELightType;
 
 enum class ERenderClusterType
 {
@@ -60,6 +61,8 @@ public:
 	// Cluster Specialization according the type
 	void SetLightParameters(LXActor* Actor);
 	void UpdateLightParameters(LXActor* Actor);
+	void UpdateLightParameters();
+	ELightType GetLightType() const;
 
 public:
 

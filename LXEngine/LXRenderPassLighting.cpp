@@ -7,6 +7,8 @@
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
+#include "LXRenderPassLighting.h"
+#include "LXActorLight.h"
 #include "LXActorSceneCapture.h"
 #include "LXConstantBufferD3D11.h"
 #include "LXDirectX11.h"
@@ -15,9 +17,8 @@
 #include "LXRenderCluster.h"
 #include "LXRenderCommandList.h"
 #include "LXRenderPassGBuffer.h"
-#include "LXRenderPassLighting.h"
-#include "LXRenderPassShadow.h"
 #include "LXRenderPassSSAO.h"
+#include "LXRenderPassShadow.h"
 #include "LXRenderPipelineDeferred.h"
 #include "LXRenderTarget.h"
 #include "LXRenderTargetViewD3D11.h"
@@ -35,6 +36,8 @@ namespace
 {
 	const wchar_t kIBLShaderFilename[] = L"LightingIBL.hlsl";
 	const wchar_t kSpotShaderFilename[] = L"LightingSpot.hlsl";
+	const wchar_t kDirectionalShaderFilename[] = L"LightingDirectional.hlsl";
+	const wchar_t kPointShaderFilename[] = L"LightingPoint.hlsl";
 	const wchar_t kComposeShaderFilename[] = L"LightingCompose.hlsl";
 };
 
@@ -43,9 +46,11 @@ LXRenderPassLighting::LXRenderPassLighting(LXRenderer* InRenderer) :LXRenderPass
 	// Textures and Samplers
 	CreateBuffers(Renderer->Width, Renderer->Height);
 
-	_ShaderProgramIBLLight = new LXShaderProgramBasic();
-	_ShaderProgramSpotLight = new LXShaderProgramBasic();
-	_ShaderProgramComposeLight = new LXShaderProgramBasic();
+	_shaderProgramIBLLight = make_unique<LXShaderProgramBasic>();
+	_shaderProgramSpotLight = make_unique<LXShaderProgramBasic>();
+	_shaderProgramDirectionalLight = make_unique<LXShaderProgramBasic>();
+	_shaderProgramPointLight = make_unique<LXShaderProgramBasic>();
+	_shaderProgramComposeLight = make_unique<LXShaderProgramBasic>();
 
 	ConstantBufferDataIBL = new LXConstantBufferDataIBL();
 	ConstantBufferIBL = new LXConstantBufferD3D11(ConstantBufferDataIBL, sizeof(LXConstantBufferDataIBL));
@@ -57,8 +62,6 @@ LXRenderPassLighting::~LXRenderPassLighting()
 {
 	DeleteBuffers();
 	LX_SAFE_DELETE(TextureIBL);
-	LX_SAFE_DELETE(_ShaderProgramIBLLight);
-	LX_SAFE_DELETE(_ShaderProgramSpotLight);
 	LX_SAFE_DELETE(ConstantBufferDataIBL);
 	LX_SAFE_DELETE(ConstantBufferIBL);
 }
@@ -72,17 +75,19 @@ void LXRenderPassLighting::CreateBuffers(uint Width, uint Height)
 	RenderTargetCompose = new LXRenderTarget(Width, Height, DXGI_FORMAT_R16G16B16A16_FLOAT);
 
 	LXRenderPipeline* RenderPipeline = Renderer->GetRenderPipeline();
-	RenderPipeline->AddToViewDebugger(L"Lighting Diffuse", RenderTargetDiffuse->TextureD3D11, ETextureChannel::ChannelRGB);
-	RenderPipeline->AddToViewDebugger(L"Lighting Specular", RenderTargetSpecular->TextureD3D11, ETextureChannel::ChannelRGB);
-	RenderPipeline->AddToViewDebugger(L"Lighting Compose", RenderTargetCompose->TextureD3D11, ETextureChannel::ChannelRGB);
+	RenderPipeline->AddToViewDebugger(L"View.LightingDiffuse", RenderTargetDiffuse->TextureD3D11, ETextureChannel::ChannelRGB);
+	RenderPipeline->AddToViewDebugger(L"View.LightingSpecular", RenderTargetSpecular->TextureD3D11, ETextureChannel::ChannelRGB);
+	RenderPipeline->AddToViewDebugger(L"View.LightingCompose", RenderTargetCompose->TextureD3D11, ETextureChannel::ChannelRGB);
 }
 
 void LXRenderPassLighting::RebuildShaders()
 {
 	const LXArrayInputElementDesc& Layout = GetInputElementDescD3D11Factory().GetInputElement_PT();
-	_ShaderProgramIBLLight->CreateShaders(GetSettings().GetShadersFolder() + kIBLShaderFilename, &Layout[0], (uint)Layout.size());
-	_ShaderProgramSpotLight->CreateShaders(GetSettings().GetShadersFolder() + kSpotShaderFilename, &Layout[0], (uint)Layout.size());
-	_ShaderProgramComposeLight->CreateShaders(GetSettings().GetShadersFolder() + kComposeShaderFilename, &Layout[0], (uint)Layout.size());
+	_shaderProgramIBLLight->CreateShaders(GetSettings().GetShadersFolder() + kIBLShaderFilename, &Layout[0], (uint)Layout.size());
+	_shaderProgramSpotLight->CreateShaders(GetSettings().GetShadersFolder() + kSpotShaderFilename, &Layout[0], (uint)Layout.size());
+	_shaderProgramDirectionalLight->CreateShaders(GetSettings().GetShadersFolder() + kDirectionalShaderFilename, &Layout[0], (uint)Layout.size());
+	_shaderProgramPointLight->CreateShaders(GetSettings().GetShadersFolder() + kPointShaderFilename, &Layout[0], (uint)Layout.size());
+	_shaderProgramComposeLight->CreateShaders(GetSettings().GetShadersFolder() + kComposeShaderFilename, &Layout[0], (uint)Layout.size());
 }
 
 void LXRenderPassLighting::DeleteBuffers()
@@ -99,7 +104,11 @@ void LXRenderPassLighting::Resize(uint Width, uint Height)
 
 bool LXRenderPassLighting::IsValid() const
 {
-	return _ShaderProgramIBLLight->IsValid() && _ShaderProgramSpotLight->IsValid() && _ShaderProgramComposeLight->IsValid();
+	return _shaderProgramIBLLight->IsValid() && 
+		_shaderProgramSpotLight->IsValid() && 
+		_shaderProgramDirectionalLight->IsValid() &&
+		_shaderProgramPointLight->IsValid() &&
+		_shaderProgramComposeLight->IsValid();
 }
 
 const LXTextureD3D11* LXRenderPassLighting::GetOutputTexture() const 
@@ -133,7 +142,9 @@ void LXRenderPassLighting::Render(LXRenderCommandList* r)
 
 	RenderIBL(r, RenderPipelineDeferred);
 	RenderSpotLight(r, RenderPipelineDeferred);
-	
+	RenderDirectionalLight(r, RenderPipelineDeferred);
+	RenderPointLight(r, RenderPipelineDeferred);
+
 	r->OMSetBlendState(Renderer->GetBlendStateOpaque());
 	
 	// Compose
@@ -142,7 +153,7 @@ void LXRenderPassLighting::Render(LXRenderCommandList* r)
 
 		r->OMSetRenderTargets2(RenderTargetCompose->RenderTargetViewD3D11, nullptr);
 		
-		_ShaderProgramComposeLight->Render(r);
+		_shaderProgramComposeLight->Render(r);
 
 		LXTextureD3D11* Color = RenderPassGBuffer->TextureColor;
 		LXTextureD3D11* MRUL = RenderPassGBuffer->TextureSpecular;
@@ -188,7 +199,7 @@ void LXRenderPassLighting::RenderIBL(LXRenderCommandList* r, const LXRenderPipel
 	const LXActorSceneCapture* SceneCapture = GetCore().GetProject()->GetSceneCapture() ? GetCore().GetProject()->GetSceneCapture() : nullptr;
 	ConstantBufferDataIBL->AmbientIntensity = SceneCapture ? SceneCapture->GetIntensity() : 1.f;
 	
-	_ShaderProgramIBLLight->Render(r);
+	_shaderProgramIBLLight->Render(r);
 	r->PSSetConstantBuffers(0, 1, RenderPipelineDeferred->_CBViewProjection);
 	r->PSSetConstantBuffers(1, 1, ConstantBufferIBL);
 
@@ -222,11 +233,12 @@ void LXRenderPassLighting::RenderIBL(LXRenderCommandList* r, const LXRenderPipel
 	r->EndEvent();
 
 }
+
 void LXRenderPassLighting::RenderSpotLight(LXRenderCommandList* r, const LXRenderPipelineDeferred* RenderPipelineDeferred)
 {
 	r->BeginEvent(L"Spots");
 
-	_ShaderProgramSpotLight->Render(r);
+	_shaderProgramSpotLight->Render(r);
 	r->PSSetConstantBuffers(0, 1, RenderPipelineDeferred->_CBViewProjection);
 	r->PSSetConstantBuffers(1, 1, RenderPassShadow->ConstantBufferSpotLight.get());
 
@@ -244,16 +256,14 @@ void LXRenderPassLighting::RenderSpotLight(LXRenderCommandList* r, const LXRende
 	r->PSSetSamplers(3, 1, (LXTextureD3D11*)Specular);
 	if (TextureShadow) r->PSSetSamplers(6, 1, (LXTextureD3D11*)TextureShadow);
 	
-	for (const LXRenderCluster* SpotLight : *_ListRenderClusterLights)
+	for (LXRenderCluster* SpotLight : *_ListRenderClusterLights)
 	{
-		CHK(SpotLight->ConstantBufferDataSpotLight);
-
-		SpotLight->ConstantBufferDataSpotLight->MatrixLightView = SpotLight->LightView->View;
-		SpotLight->ConstantBufferDataSpotLight->MatrixLightProjection = SpotLight->LightView->Projection;
-		SpotLight->ConstantBufferDataSpotLight->LightPosition = SpotLight->LightView->CameraPosition;
-		
-		r->UpdateSubresource4(RenderPassShadow->ConstantBufferSpotLight->D3D11Buffer, SpotLight->ConstantBufferDataSpotLight);
-		Renderer->GetSSTriangle()->Render(r);
+		if (SpotLight->GetLightType() == ELightType::Spot)
+		{
+			SpotLight->UpdateLightParameters();
+			r->UpdateSubresource4(RenderPassShadow->ConstantBufferSpotLight->D3D11Buffer, SpotLight->ConstantBufferDataSpotLight);
+			Renderer->GetSSTriangle()->Render(r);
+		}
 	}
 
 	r->PSSetShaderResources(0, 1, nullptr); // Depth
@@ -261,5 +271,86 @@ void LXRenderPassLighting::RenderSpotLight(LXRenderCommandList* r, const LXRende
 	r->PSSetShaderResources(3, 1, nullptr); // Specular
 	r->PSSetShaderResources(6, 1, nullptr); // Shadows
 	
+	r->EndEvent();
+}
+
+
+void LXRenderPassLighting::RenderDirectionalLight(LXRenderCommandList* r, const LXRenderPipelineDeferred* RenderPipelineDeferred)
+{
+	r->BeginEvent(L"Directional");
+
+	_shaderProgramDirectionalLight->Render(r);
+	r->PSSetConstantBuffers(0, 1, RenderPipelineDeferred->_CBViewProjection);
+	r->PSSetConstantBuffers(1, 1, RenderPassShadow->ConstantBufferSpotLight.get());
+
+	LXTextureD3D11* Depth = RenderPassGBuffer->TextureDepth;
+	LXTextureD3D11* Normal = RenderPassGBuffer->TextureNormal;
+	LXTextureD3D11* Specular = RenderPassGBuffer->TextureSpecular;
+
+	r->PSSetShaderResources(0, 1, (LXTextureD3D11*)Depth);
+	r->PSSetShaderResources(2, 1, (LXTextureD3D11*)Normal);
+	r->PSSetShaderResources(3, 1, (LXTextureD3D11*)Specular);
+	r->PSSetShaderResources(6, 1, (LXTextureD3D11*)TextureShadow);
+
+	r->PSSetSamplers(0, 1, (LXTextureD3D11*)Depth);
+	r->PSSetSamplers(2, 1, (LXTextureD3D11*)Normal);
+	r->PSSetSamplers(3, 1, (LXTextureD3D11*)Specular);
+	if (TextureShadow) r->PSSetSamplers(6, 1, (LXTextureD3D11*)TextureShadow);
+
+	for (LXRenderCluster* SpotLight : *_ListRenderClusterLights)
+	{
+		if (SpotLight->GetLightType() == ELightType::Directional)
+		{
+			SpotLight->UpdateLightParameters();
+			r->UpdateSubresource4(RenderPassShadow->ConstantBufferSpotLight->D3D11Buffer, SpotLight->ConstantBufferDataSpotLight);
+			Renderer->GetSSTriangle()->Render(r);
+		}
+	}
+
+	r->PSSetShaderResources(0, 1, nullptr); // Depth
+	r->PSSetShaderResources(2, 1, nullptr); // Normal
+	r->PSSetShaderResources(3, 1, nullptr); // Specular
+	r->PSSetShaderResources(6, 1, nullptr); // Shadows
+
+	r->EndEvent();
+}
+
+void LXRenderPassLighting::RenderPointLight(LXRenderCommandList* r, const LXRenderPipelineDeferred* RenderPipelineDeferred)
+{
+	r->BeginEvent(L"Points");
+
+	_shaderProgramPointLight->Render(r);
+	r->PSSetConstantBuffers(0, 1, RenderPipelineDeferred->_CBViewProjection);
+	r->PSSetConstantBuffers(1, 1, RenderPassShadow->ConstantBufferSpotLight.get());
+
+	LXTextureD3D11* Depth = RenderPassGBuffer->TextureDepth;
+	LXTextureD3D11* Normal = RenderPassGBuffer->TextureNormal;
+	LXTextureD3D11* Specular = RenderPassGBuffer->TextureSpecular;
+
+	r->PSSetShaderResources(0, 1, (LXTextureD3D11*)Depth);
+	r->PSSetShaderResources(2, 1, (LXTextureD3D11*)Normal);
+	r->PSSetShaderResources(3, 1, (LXTextureD3D11*)Specular);
+	r->PSSetShaderResources(6, 1, (LXTextureD3D11*)TextureShadow);
+
+	r->PSSetSamplers(0, 1, (LXTextureD3D11*)Depth);
+	r->PSSetSamplers(2, 1, (LXTextureD3D11*)Normal);
+	r->PSSetSamplers(3, 1, (LXTextureD3D11*)Specular);
+	if (TextureShadow) r->PSSetSamplers(6, 1, (LXTextureD3D11*)TextureShadow);
+
+	for (LXRenderCluster* SpotLight : *_ListRenderClusterLights)
+	{
+		if (SpotLight->GetLightType() == ELightType::Omnidirectional)
+		{
+			SpotLight->UpdateLightParameters();
+			r->UpdateSubresource4(RenderPassShadow->ConstantBufferSpotLight->D3D11Buffer, SpotLight->ConstantBufferDataSpotLight);
+			Renderer->GetSSTriangle()->Render(r);
+		}
+	}
+
+	r->PSSetShaderResources(0, 1, nullptr); // Depth
+	r->PSSetShaderResources(2, 1, nullptr); // Normal
+	r->PSSetShaderResources(3, 1, nullptr); // Specular
+	r->PSSetShaderResources(6, 1, nullptr); // Shadows
+
 	r->EndEvent();
 }

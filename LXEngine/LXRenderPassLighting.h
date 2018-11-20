@@ -40,6 +40,8 @@ private:
 
 	void RenderIBL(LXRenderCommandList* r, const LXRenderPipelineDeferred* RenderPipelineDeferred);
 	void RenderSpotLight(LXRenderCommandList* RenderCommandList, const LXRenderPipelineDeferred* RenderPipelineDeferred);
+	void RenderDirectionalLight(LXRenderCommandList* RenderCommandList, const LXRenderPipelineDeferred* RenderPipelineDeferred);
+	void RenderPointLight(LXRenderCommandList* RenderCommandList, const LXRenderPipelineDeferred* RenderPipelineDeferred);
 
 public:
 
@@ -64,8 +66,10 @@ public:
 
 private:
 
-	LXShaderProgramBasic* _ShaderProgramIBLLight;
-	LXShaderProgramBasic* _ShaderProgramSpotLight;
-	LXShaderProgramBasic* _ShaderProgramComposeLight;
+	unique_ptr<LXShaderProgramBasic> _shaderProgramIBLLight;
+	unique_ptr<LXShaderProgramBasic> _shaderProgramSpotLight;
+	unique_ptr<LXShaderProgramBasic> _shaderProgramDirectionalLight;
+	unique_ptr<LXShaderProgramBasic> _shaderProgramPointLight;
+	unique_ptr<LXShaderProgramBasic> _shaderProgramComposeLight;
 };
 

@@ -18,17 +18,15 @@ class LXActorCamera;
 
 #define LX_MAX_INTENSITY 1000000.f
 
+enum class ELightType
+{
+	Spot,
+	Directional,
+	Omnidirectional
+};
+
 class LXCORE_API LXActorLight : public LXActorMesh
 {
-
-public:
-
-	enum LXLightType
-	{
-		LX_LIGHT_SPOT,
-		LX_LIGHT_DIRECTIONAL,
-		LX_LIGHT_OMNIDIRECTIONAL
-	};
 
 private:
 	
@@ -65,7 +63,7 @@ public:
 private:
 
 	GetSet(bool, _bLight, Light);
-	GetSet(LXLightType, _eLightType, Type);
+	GetSet(ELightType, _eLightType, Type);
 	GetSetDef(LXColor4f, _color, Color, WHITE);
 	GetSetDef(float, _intensity, Intensity, 1.f);
 	GetSetDef(bool, _bCastShadow, CastShadow, false);

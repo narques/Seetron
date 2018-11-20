@@ -33,9 +33,8 @@ LXActorMesh(pDocument)
 	SetCastShadow(false);
 	
 	_bLight = true;
-	_eLightType = LX_LIGHT_SPOT;
-
-	
+	_eLightType = ELightType::Spot;
+		
 	const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCone(50.0f, 100.0f);
 	Primitive->SetPersistent(false);
 	Primitive->ComputeTangents();
@@ -118,9 +117,9 @@ void LXActorLight::DefineProperties()
 
 	{
 		auto p = DefinePropertyEnum(L"Type", LXPropertyID::LIGHT_TYPE, (uint*)&_eLightType);
-		p->AddChoice(L"Spot", LX_LIGHT_SPOT); 
-		p->AddChoice(L"Directional", LX_LIGHT_DIRECTIONAL);
-		p->AddChoice(L"Omni directional", LX_LIGHT_OMNIDIRECTIONAL);
+		p->AddChoice(L"Spot", (uint)ELightType::Spot); 
+		p->AddChoice(L"Directional", (uint)ELightType::Directional);
+		p->AddChoice(L"Omni directional", (uint)ELightType::Omnidirectional);
 	}
 
 	DefinePropertyBool(L"CastShadow", LXPropertyID::LIGHT_CASTSHADOW, &_bCastShadow);
