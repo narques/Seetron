@@ -257,13 +257,6 @@ bool LXSmartObject::Load(const TLoadContext& loadContext, LXString* pName)
 	if (pName)
 		strClassName = *pName;
 
-#if LX_SUPPORT_LEGACY_FILE
-	if (strNodeName == L"LXGroup")
-	{
-		strNodeName = L"LXMesh";
-	}
-#endif
-		
 	if (strClassName == strNodeName)
 	{
 		for (LXMSXMLNode e = loadContext.node.begin(); e != loadContext.node.end(); e++)

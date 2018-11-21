@@ -58,7 +58,6 @@ public:
 	// Local Transformation
 	LXTransformation& GetTransformation() { return _Transformation; }
 	const LXMatrix& GetMatrix() { return _Transformation.GetMatrix(); }
-	void SetMatrix(const LXMatrix& Matrix);
 
 	// Misc
 	void SetMaterial(const LXString& Key);
@@ -70,9 +69,6 @@ private:
 
 	// Local Transformation
 	LXTransformation _Transformation;
-#if LX_SUPPORT_LEGACY_FILE
-	LXMatrix _Matrix;
-#endif
 
 	// Hierarchy
 	LXMesh*		_Parent = nullptr;

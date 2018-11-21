@@ -199,39 +199,6 @@ bool LXAssetMesh::OnLoadChild(const TLoadContext& loadContext)
 		bRet = true;
 	}
 
-#if LX_SUPPORT_LEGACY_FILE
-
-	else if (name == L"LXMaterialManager")
-	{
-		for (LXMSXMLNode e = loadContext.node.begin(); e != loadContext.node.end(); e++)
-		{
-			TLoadContext loadContextChild(e);
-			loadContextChild.pOwner = loadContext.pOwner;
-			loadContextChild.filepath = loadContext.filepath;
-
-			if (e.name() == L"LXMaterial")
-			{
-				// Create a volatile material to load the name.
-				LXMaterial* MaterialTmp = new LXMaterial();
-				MaterialTmp->LXSmartObject::Load(loadContextChild);
-				const LXString& MaterialName = MaterialTmp->GetName();
-
-				// Creates the definitive materials
-				// Not nice: if the material exists we recreate the shader again and again.
-				LXMaterial* Material = GetAssetManager()->CreateNewMaterial(MaterialName, LX_DEFAULT_MATERIAL_FOLDER);
-				LXShader* Shader = GetAssetManager()->CreateNewShader(MaterialName, LX_DEFAULT_SHADER_FOLDER);
-				Shader->SaveDefault();
-				Material->Save();
-				
-				// Delete the volatile material
-				delete MaterialTmp;
-			}
-		}
-		
-	}
-
-#endif
-	
 	return bRet;
 }
 

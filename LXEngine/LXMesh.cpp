@@ -62,26 +62,10 @@ LXMesh::LXMesh(LXAssetMesh* InOwner):_Owner(InOwner)
 		}
 	});
 
-#if LX_SUPPORT_LEGACY_FILE
-
-	// Local Matrix (Legacy import)
-	LXPropertyMatrix* propMatrixLCS = DefinePropertyMatrix(L"Transformation", LXPropertyID::TRANSFORMATION, &_Matrix);
-	propMatrixLCS->SetReadOnly(true);
-	propMatrixLCS->SetPersistent(false);
-	propMatrixLCS->SetLambdaOnChange([this](LXProperty* pProperty)
 	{
-		if (_Matrix.IsIdentity() == false)
 		{
-			vec3f t = _Matrix.GetOrigin();
-			vec3f r =  _Matrix.GetEulerAngles();
-			vec3f s = _Matrix.GetScale();
-			_Transformation.SetTranslation(t);
-			_Transformation.SetRotation(r);
-			_Transformation.SetScale(s);
 		}
 	});
-
-#endif
 }
 
 LXMesh::~LXMesh()
@@ -128,11 +112,7 @@ bool LXMesh::OnLoadChild(const TLoadContext& loadContext)
 	const LXString& name = loadContext.node.name();
 	bool bRet = false;
 
-#if LX_SUPPORT_LEGACY_FILE
-	if ((name == L"LXMesh")	|| (name == L"LXGroup"))
-#else
 	if (name == L"LXMesh")
-#endif
 	{
 		LXMesh* Mesh = new LXMesh(_Owner);
 		Mesh->Load(loadContext);
@@ -296,11 +276,6 @@ void LXMesh::InvalidateBounds()
 		// Notices the owner only when we are at the root level (no parent). Avoid redundant invalidation notifications.
 		_Owner->OnMeshesBoundingBoxInvalidated();
 	}
-}
-
-void LXMesh::SetMatrix(const LXMatrix& Matrix)
-{
-	_Matrix = Matrix;
 }
 
 void LXMesh::SetMaterial(const LXString& Key)
