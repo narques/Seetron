@@ -101,7 +101,10 @@ LXAssetManager::LXAssetManager(LXProject* Project) :_pDocument(Project)
 	LoadFromFolder(GetSettings().GetDataFolder(), EResourceOwner::LXResourceOwner_Engine);
 	
 	// Project Asset
-	LoadFromFolder(Project->GetAssetFolder(), EResourceOwner::LXResourceOwner_Project);
+	if (Project->GetSeetronProject())
+	{
+		LoadFromFolder(Project->GetAssetFolder(), EResourceOwner::LXResourceOwner_Project);
+	}
 }
 
 LXAssetManager::~LXAssetManager()

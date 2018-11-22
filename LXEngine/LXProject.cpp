@@ -36,10 +36,20 @@
 #include "LXViewStateManager.h"
 #include "LXMemory.h" // --- Must be the last included --- 
 
-LXProject::LXProject(const LXFilepath& Filepath)
+namespace
 {
-	LogI(Project, L"Project created: %s", Filepath.GetBuffer());
-	m_strFilepath = Filepath;
+	const vec3f kDefaultCameraPosition = vec3f(200.f, 180.f, 80.f);
+	const vec3f kDefaultLightPosition = vec3f(0.0f, 0.0f, 0.0f);
+}
+
+LXProject::LXProject(const LXFilepath& filepath)
+{
+	if (filepath.GetExtension() == LXString(LX_PROJECT_EXT).MakeLower())
+		_seetronProject = true;
+	else
+		_seetronProject = false;
+	
+	m_strFilepath = filepath;
 
 	// Refers to DocManager: Done first because some project managers can be use the link in their constructors
 	GetCore().GetDocumentManager().SetDocument(this);
@@ -76,6 +86,9 @@ LXProject::LXProject(const LXFilepath& Filepath)
 	
 	// To manipulate Anchor or Gizmo
 	GetCore().GetCommandManager().PushQuery(new LXQueryTransform());
+
+	// Done
+	_init = true;
 }
 
 LXProject::~LXProject(void)
@@ -106,48 +119,26 @@ bool LXProject::InitializeNewProject( const LXString& strName )
 
 	LXActorCamera* ActorCamera = new LXActorCamera(this);
 	ActorCamera->SetName(L"Camera");
+	ActorCamera->SetPosition(kDefaultCameraPosition);
 	m_pScene->AddChild(ActorCamera);
-
+		
 	//
 	// Default Lighting
 	//
 
 	LXActorLight* pLight = new LXActorLight(this);
-	pLight->SetName(L"Light 0");
-	pLight->SetDirection(vec3f(1.0f, 0.0f, -1.0f));
-	pLight->SetCastShadow(true);
+	pLight->SetName(L"Light");
+	pLight->SetType(ELightType::Directional);
+	pLight->SetPosition(kDefaultLightPosition);
 	m_pScene->AddChild(pLight);
 	
-	// Object count per axis:
-	int count = 4; // 64 Cubes/Spheres
-//	int toto = 10; // 1000
-//	int toto = 25; // 15625
-//	int toto = 32; // 32768
+	//
+	// Default object
+	//
 
-	int objectCount = 0;
-	for (int z = 0; z < count; z++)
-	{
-		for (int y = 0; y < count; y++)
-		{
-			for (int x = 0; x < count; x++)
-			{
-				LXActorMesh* Mesh;
-				if ((x % 2) == 0)
-				{
-					Mesh = new LXActorMeshCube(this);
-					Mesh->SetName(L"Cube" + LXString::Number(++objectCount));
-				}
-				else
-				{
-					Mesh = new LXActorMeshSphere(this);
-					Mesh->SetName(L"Sphere" + LXString::Number(++objectCount));
-				}
-				
-				Mesh->SetPosition(vec3f(x * 200.f, y * 200.f, z * 200.f));
-				m_pScene->AddChild(Mesh);
-			}
-		}
-	}
+	LXActorMesh* Mesh = new LXActorMeshCube(this);
+	Mesh->SetName(L"Cube");
+	m_pScene->AddChild(Mesh);
 
 	OnFilesLoaded(true);
 	return true;
@@ -188,9 +179,9 @@ bool LXProject::LoadFile( const LXFilepath& strFilepath )
 
 			// Default Lighting
 			LXActorLight* pLight = new LXActorLight(this);
-			pLight->SetName(L"Light 0");
-			pLight->SetDirection(vec3f(1.0f, 0.0f, -1.0f));
-			pLight->SetCastShadow(true);
+			pLight->SetName(L"Light");
+			pLight->SetType(ELightType::Directional);
+			pLight->SetPosition(kDefaultLightPosition);
 			m_pScene->AddChild(pLight);
 			
 			// ActorMesh 
@@ -458,51 +449,6 @@ const LXFilepath LXProject::GetFolder()
 		return L"";
 }
 
-const LXFilepath LXProject::GetScriptsFolder()
-{ 
-	if (!m_strFilepath.IsEmpty())
-	{
-		LXFilepath ret = m_strFilepath.GetFilepath() + L"Data/Scripts/";
-		return ret;
-	}
-	else
-		return L"";
-}
-
-const LXFilepath LXProject::GetShadersFolder()
-{
-	CHK(!m_strFilepath.IsEmpty());
-	if (!m_strFilepath.IsEmpty())
-	{
-		LXFilepath ret = m_strFilepath.GetFilepath() + L"Data/Shaders/";
-		return ret;
-	}
-	else
-		return L"";
-}
-
-const LXFilepath LXProject::GetTexturesFolder()
-{
-	if (!m_strFilepath.IsEmpty())
-	{
-		LXFilepath ret = m_strFilepath.GetFilepath() + L"Data/Textures/";
-		return ret;
-	}
-	else
-		return L"";
-}
-
-const LXFilepath LXProject::GetMaterialFolder()
-{
-	if (!m_strFilepath.IsEmpty())
-	{
-		LXFilepath ret = m_strFilepath.GetFilepath() + L"Data/Materials/";
-		return ret;
-	}
-	else
-		return L"";
-}
-
 void LXProject::CreateTerrainActor()
 {
 	LXTerrain* Actor = new LXTerrain(this);
@@ -529,11 +475,24 @@ void LXProject::CreateSphereActor()
 
 LXFilepath LXProject::GetAssetFolder() const
 {
-	LXFilepath AssetFolder = m_strFilepath.GetFilepath() + L"Assets/";
-	if (!AssetFolder.IsFolderExist())
+	LXFilepath AssetFolder;
+	
+	if (_seetronProject)
 	{
-		return L"";
+		AssetFolder = m_strFilepath.GetFilepath() + L"Assets/";
+		if (!AssetFolder.IsFolderExist())
+		{
+			CHK(0);
+			return L"";
+		}
 	}
+	else
+	{
+		// If the project is "volatile", acting as fbx viewer for example,
+		// use the Engine asset folder.
+		AssetFolder = GetSettings().GetDataFolder();
+	}
+
 	return AssetFolder;
 }
 

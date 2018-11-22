@@ -151,10 +151,9 @@ public:
 	//
 
 	const LXFilepath			GetFolder				( );
-	const LXFilepath			GetScriptsFolder		( );
-	const LXFilepath			GetShadersFolder		( );
-	const LXFilepath			GetTexturesFolder		( );
-	const LXFilepath			GetMaterialFolder		( );
+
+	bool GetSeetronProject() const { return _seetronProject; };
+	bool IsInitialized() const { return _init; }
 
 private:
 
@@ -192,4 +191,6 @@ private:
 	
 	vec3f*							m_pNewObjectPosition = nullptr;  // TREE : Position of the dropped tree
 
+	bool							_seetronProject = false;
+	bool							_init = false;
 };

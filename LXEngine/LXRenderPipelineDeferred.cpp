@@ -202,8 +202,7 @@ void LXRenderPipelineDeferred::Render(LXRenderCommandList* RenderCommandList)
 	// Prepare the ViewState (Camera) data
 	BuildRenderClusterLists();
 
-
-	if (GetProject())
+	if (GetProject() && GetProject()->IsInitialized())
 	{
 		if (LXTexture* Texture = GetAssetManager()->GetTexture(L"Textures/jittering4x4.stex"))
 		{
