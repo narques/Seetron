@@ -51,6 +51,7 @@ private:
 	// Misc
 	void OnMeshesdTransformationChanged();
 	void OnMeshesBoundingBoxInvalidated();
+	void OnMeshVisibilityChanged();
 
 private:
 

@@ -62,6 +62,8 @@ public:
 	// Misc
 	void SetMaterial(const LXString& Key);
 
+	bool Visible() const { return _visible; }
+
 private:
 
 	// Bounds
@@ -73,6 +75,9 @@ private:
 	// Hierarchy
 	LXMesh*		_Parent = nullptr;
 	ListMeshes  _Children;
+
+	// Renderer
+	bool		_visible = true;
 
 	// Owner
 	LXAssetMesh* _Owner = nullptr;

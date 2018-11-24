@@ -217,3 +217,8 @@ void LXAssetMesh::OnMeshesBoundingBoxInvalidated()
 {
 	InvokeCB(L"MeshesBoundingBoxInvalidated");
 }
+
+void LXAssetMesh::OnMeshVisibilityChanged()
+{
+	InvokeCB(L"VisibiltyChanged");
+}

@@ -62,8 +62,12 @@ LXMesh::LXMesh(LXAssetMesh* InOwner):_Owner(InOwner)
 		}
 	});
 
+	LXPropertyBool* property = DefineProperty(L"Visible", &_visible);
+	property->SetLambdaOnChange([this](LXProperty* pProperty)
 	{
+		if (_Owner != nullptr)
 		{
+			_Owner->OnMeshVisibilityChanged();
 		}
 	});
 }

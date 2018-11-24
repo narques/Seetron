@@ -110,6 +110,12 @@ void LXActorMesh::UpdateAssetMeshCallbacks()
 		{
 			InvalidateBounds(true);
 		});
+
+		_AssetMesh->RegisterCB(this, L"VisibiltyChanged", [this](LXSmartObject* SmartObject)
+		{
+			_bValidWorldPrimitives = false;
+			InvalidateRenderState();
+		});
 	}
 }
 
@@ -213,9 +219,11 @@ const LXWorldPrimitive* LXActorMesh::GetWorldPrimitive(const LXPrimitiveInstance
 
 void LXActorMesh::GetAllPrimitives(LXMesh* InMesh, TWorldPrimitives& OutWorldPrimitives, const LXMatrix& MatrixWCSParent)
 {
-	if (!InMesh)
+	if (!InMesh || !InMesh->Visible())
+	{
 		return;
-
+	}
+	
 	LXMatrix MatrixMeshWCS = MatrixWCSParent * InMesh->GetMatrix();
 	
 	// Primitives
