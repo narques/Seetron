@@ -43,6 +43,14 @@ LXPerformanceScope::~LXPerformanceScope()
 	GetStatManager()->UpdateAndCloseStat(_Name, ElapsedTime);
 }
 
+void LXPerformanceScope::Update()
+{
+	double ElapsedTime = GetTime();
+	GetStatManager()->UpdateAndCloseStat(_Name, ElapsedTime);
+	Reset();
+	GetStatManager()->OpenStat(_Name);
+}
+
 LXCountScopeIncrement::LXCountScopeIncrement(const wchar_t* Name)
 {
 	GetStatManager()->UpdateCounter(Name, 1);

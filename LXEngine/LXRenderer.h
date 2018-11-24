@@ -80,7 +80,6 @@ public:
 	
 	// Misc
 	void ResetShaders();
-	const LXTime& GetTime() { return Time; }
 	void Render_MainThread();
 	void DrawScreenSpacePrimitive(LXRenderCommandList* RCL);
 	const list<LXString>& GetConsoleBuffer() const { return ConsoleBuffer; }
@@ -165,9 +164,5 @@ private:
 	LXShaderManager* ShaderManager = nullptr;
 	LXTextureManager* TextureManager = nullptr;
 	LXRenderPipeline* _RenderPipeline = nullptr;
-
-	// Misc
-	LXTime Time;
-	unsigned __int64 Frame = 0;
 };
 

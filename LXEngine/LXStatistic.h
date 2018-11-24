@@ -45,6 +45,7 @@ public:
 
 	LXPerformanceScope(const wchar_t* Name);
 	~LXPerformanceScope();
+	void Update();
 
 private:
 		
@@ -52,6 +53,8 @@ private:
 
 };
 
+#define LX_CYCLEPERFOSCOPE(Name) static LXPerformanceScope PerformanceScope##Name(L#Name); \
+PerformanceScope##Name.Update();
 #define LX_PERFOSCOPE(Name) LXPerformanceScope PerformanceScope##Name(L#Name);
 
 

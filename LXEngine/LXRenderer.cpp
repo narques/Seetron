@@ -185,7 +185,7 @@ void LXRenderer::Init()
 
 void LXRenderer::Run()
 {
-	Init();
+	bool init = false;
 			
 	// Render !
 	while (!ExitRenderThread)
@@ -199,7 +199,18 @@ void LXRenderer::Run()
 		}
 
 		EventBeginFrame->Reset();
+
+		if (!init)
+		{
+			CHK(GetCore().Frame == 0);
+			LXPerformance perf;
+			Init();
+			init = true;
+			LogI(Renderer, L"Renderer initialized in %.2f ms.", perf.GetTime());
+		}
+
 		Render();
+
 		EventEndFrame->SetEvent();
 	}
 	
@@ -298,9 +309,8 @@ void LXRenderer::Render()
 {
 	LX_PERFOSCOPE(RenderThread_Render);
 
-	// RenderThread time ate
-	Time.Update();
-		
+	const LXTime& time = GetCore().Time;
+			
 	//
 	// Commands & Tasks
 	//
@@ -346,18 +356,16 @@ void LXRenderer::Render()
 	// Update the RenderClusters according the World/Scene content
 	UpdateStates();
 	
-	//GetInput();
 	if (_Project)
 	{
-		Frame++;
-		_Project->GetAnimationManager().Update(Time.DeltaTime());
+		_Project->GetAnimationManager().Update(time.DeltaTime());
 	}
 
-	Viewport->GetCameraManipulator()->Update(Time.DeltaTime());
+	Viewport->GetCameraManipulator()->Update(time.DeltaTime());
 
 	if (GetScene())
 	{
-		GetScene()->RunRT(Time.DeltaTime());
+		GetScene()->RunRT(time.DeltaTime());
 	}
 
 	// TODO END
@@ -425,7 +433,7 @@ void LXRenderer::Render()
 	LX_COUNT(L"PixelShaders : %f", (int)ShaderManager->PixelShaders.size());
 
 	// Frame
-	LX_COUNT(L"Frame : %f", (double)Frame);
+	LX_COUNT(L"Frame : %f", (double)GetCore().Frame);
 	
 	_RenderPipeline->PostRender();
 

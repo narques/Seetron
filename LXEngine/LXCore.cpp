@@ -437,23 +437,7 @@ void LXCore::SetDocument(LXProject* Document)
 
 void LXCore::Run()
 {
-	LX_PERFOSCOPE(MainThread_Run);
-
-	Time.Update();
-	
-	// Broadcast events posted outside the MainThread
-	GetEventManager()->BroadCastEvents();
-	
-	//
-	// MainThread Actors Update
-	//
-
-	if (GetScene())
-	{
-		GetScene()->Run(Time.DeltaTime());
-	}
-		
-	if (_Renderer && RenderThread)
+	if (_Renderer && RenderThread && Frame > -1)
 	{
 		// Wait for the RenderThread frame end.
 		// Do not remove the brackets, needed to measure the wait time.
@@ -463,31 +447,56 @@ void LXCore::Run()
 		}
 		_Renderer->GetEndEvent()->Reset();
 	}
-	
-	//
-	// --- Here, RenderThread is waiting ---
-	//
 
 	//
-	// Synchronize the data between MainThread and RenderThread
+	// --- End of the frame ---
 	//
+	// | /
+	// |/
+	// |
+	//
+	// --- Here, RenderThread is waiting ---
+
 	
+	//
+	// Synchronization
+	//
+
+	Frame++;
+	Time.Update();
+	LX_CYCLEPERFOSCOPE(MainThread_Run);
+
+
 	// Do not remove the brackets, needed to measure time.
 	{
 		LX_PERFOSCOPE(Thread_Synchronisation);
+		// Synchronize the data between MainThread and RenderThread
 		GetController()->Run();
 	}
-		
-	//
-	// Restart RenderThread
-	//
 
+	//
+	// --- Begin Frame ---
+	//
+	// | 
+	// |\
+	// | \
+	//
+	// --- Restart the RenderThread ---
 	if (_Renderer && RenderThread)
 	{
 		_Renderer->GetBeginEvent()->SetEvent();
 	}
+	
+	// Broadcast events posted outside the MainThread
+	GetEventManager()->BroadCastEvents();
 
-	// If RenderThread is not used, call the Render function now.
+	// MainThread Actors Update
+	if (GetScene())
+	{
+		GetScene()->Run(Time.DeltaTime());
+	}
+	
+	// If RenderThread is not used, call the Renderer
 	if (_Renderer && !LXRenderer::gUseRenderThread)
 	{
 		_Renderer->Render_MainThread();

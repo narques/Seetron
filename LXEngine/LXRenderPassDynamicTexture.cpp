@@ -78,6 +78,8 @@ void LXRenderPassDynamicTexture::Render(LXRenderCommandList* RCL)
 
 	if (ListRenderClusters.size() == 0)
 		return;
+
+	const LXTime& time = GetCore().Time;
 		
 	if (gResetSimulation)
 	{
@@ -96,7 +98,7 @@ void LXRenderPassDynamicTexture::Render(LXRenderCommandList* RCL)
 
 	// Update Time
 	static LXConstantBufferData2 CB;
-	CB.Time = (float)Renderer->GetTime().DeltaTime();
+	CB.Time = (float)time.DeltaTime();
 	RCL->UpdateSubresource4(CBTime->D3D11Buffer, &CB);
 
 	// Render
