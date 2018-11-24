@@ -53,7 +53,7 @@ bool LXBBox::TryToValidate()
 	if (m_ptMin.x == FLT_MAX)
 		return false;
 	if (m_ptMin.y == FLT_MAX)
-			return false;
+		return false;
 	if (m_ptMin.z == FLT_MAX)
 		return false;
 	if (m_ptMax.x == -FLT_MAX)
@@ -94,8 +94,11 @@ void LXBBox::Add(const vec3f& point)
 
 	m_bValid = TryToValidate();
 
-	ComputeCenter();
-	ComputeDiagonal();
+	if (m_bValid)
+	{
+		ComputeCenter();
+		ComputeDiagonal();
+	}
 }
 
 void LXBBox::ExtendZ(float z)
@@ -104,8 +107,11 @@ void LXBBox::ExtendZ(float z)
 
 	m_bValid = TryToValidate();
 
-	ComputeCenter();
-	ComputeDiagonal();
+	if (m_bValid)
+	{
+		ComputeCenter();
+		ComputeDiagonal();
+	}
 }
 
 void LXBBox::ComputeCenter()
@@ -118,6 +124,7 @@ void LXBBox::ComputeDiagonal()
 {
 	CHK(m_bValid);
 	m_fDiag = m_ptMin.Distance(m_ptMax);
+	m_bValid = m_fDiag > LX_SMALL_NUMBER6;
 }
 
 void LXBBox::GetPoints( vec3f* pPoints ) const
