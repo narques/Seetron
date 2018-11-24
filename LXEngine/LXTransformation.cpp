@@ -70,7 +70,7 @@ const LXMatrix& LXTransformation::GetMatrix()
 
 void LXTransformation::SetTranslation(const vec3f& v)
 {
-	if (!IsEqual(v, _Translation))
+	if (!IsNearlyEqual(v, _Translation))
 	{
 		_Translation = v;
 		InvalidateMatrixLocal();
@@ -81,7 +81,7 @@ void LXTransformation::SetRotation(const vec3f& v)
 {
 	CHK(IsValid(v));
 
-	if (!IsEqual(v, _Rotation))
+	if (!IsNearlyEqual(v, _Rotation))
 	{
 		_Rotation = v;
 		InvalidateMatrixLocal();
@@ -114,7 +114,7 @@ void LXTransformation::SetQuaternion(const vec4f& v)
 
 void LXTransformation::SetScale(const vec3f& v)
 {
-	if (!IsEqual(v, _Scale))
+	if (!IsNearlyEqual(v, _Scale))
 	{
 		_Scale = v;
 		InvalidateMatrixLocal();

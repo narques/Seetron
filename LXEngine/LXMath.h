@@ -110,15 +110,15 @@ __forceinline int RandomInt(int nMax)
 // float
 //------------------------------------------------------------------------------------------------------
 
-__forceinline bool IsEqual(float a, float b, float epsilon = LX_SMALL_NUMBER6)
+__forceinline bool IsNearlyEqual(float a, float b, float epsilon = LX_SMALL_NUMBER6)
 {
 	float diff = abs(a - b);
 	return diff < epsilon;
 }
 
-__forceinline bool IsNull(float x)
+__forceinline bool IsNearlyZero(float x, float epsilon = LX_SMALL_NUMBER6)
 {
-	return IsEqual(x, 0.f);
+	return abs(x) < epsilon;
 }
 
 //------------------------------------------------------------------------------------------------------
@@ -130,7 +130,7 @@ __forceinline vec3f Abs(const vec3f& v)
 	return vec3f(abs(v.x), abs(v.y), abs(v.z));
 }
 
-__forceinline bool IsEqual(const vec3f& a, const vec3f& b, float epsilon = LX_SMALL_NUMBER6)
+__forceinline bool IsNearlyEqual(const vec3f& a, const vec3f& b, float epsilon = LX_SMALL_NUMBER6)
 {
 	vec3f diff = Abs(a - b);
 	return (diff.x < epsilon) && (diff.y < epsilon) && (diff.z < epsilon);

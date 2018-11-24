@@ -196,7 +196,7 @@ void LXActor::InvalidateMatrixWCS()
 
 void LXActor::SetPosition(const vec3f& Translation)
 {
-	if (!IsEqual(Translation, _Transformation.GetTranslation()))
+	if (!IsNearlyEqual(Translation, _Transformation.GetTranslation()))
 	{
 		_Transformation.SetTranslation(Translation);
 		InvalidateMatrixWCS();
@@ -206,7 +206,7 @@ void LXActor::SetPosition(const vec3f& Translation)
 
 void LXActor::SetRotation(const vec3f& Rotation)
 {
-	if (!IsEqual(Rotation, _Transformation.GetRotation()))
+	if (!IsNearlyEqual(Rotation, _Transformation.GetRotation()))
 	{
 		_Transformation.SetRotation(Rotation);
 		InvalidateMatrixWCS();
@@ -216,7 +216,7 @@ void LXActor::SetRotation(const vec3f& Rotation)
 
 void LXActor::SetScale(const vec3f& Scale)
 {
-	if (!IsEqual(Scale, _Transformation.GetScale()))
+	if (!IsNearlyEqual(Scale, _Transformation.GetScale()))
 	{
 		_Transformation.SetScale(Scale);
 		InvalidateMatrixWCS();

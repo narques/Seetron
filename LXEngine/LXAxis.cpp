@@ -45,7 +45,7 @@ float LXAxis::Distance( LXAxis& axis, vec3f* pI1, vec3f* pI2) const
   
 	const float div = (1 - b*b);
   
-	if (IsNull(div))
+	if (IsNearlyZero(div))
 	{
 		return -1.f;
 	}
@@ -77,7 +77,7 @@ bool LXAxis::IntersectPlane( const LXAxis& plane, vec3f* outIntersection) const
 	const float a = -n.DotProduct(w0);
 	const float b = n.DotProduct(dir);
 	
-	if (IsNull(b)) 
+	if (IsNearlyZero(b)) 
 	{
 		CHK(0);
 		return false;    
