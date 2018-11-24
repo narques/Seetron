@@ -89,10 +89,10 @@ void LXConstantBuffer::UpdateAll()
 
 void LXConstantBuffer::Update(const LXString& Name, const float& Value)
 {
-	LXStringA NameA = &*Name.GetBufferA().begin();
+	LXStringA nameA = Name.ToStringA();
 	for (const LXVariableDeclaration& VD : VariableDeclarations)
 	{
-		if (VD.Name == NameA)
+		if (VD.Name == nameA)
 		{
 			uint Offset = VD.Offset;
 			float* p = (float*)&Buffer[Offset];
@@ -111,10 +111,10 @@ void LXConstantBuffer::Update(const LXString& Name, const float& Value)
 
 void LXConstantBuffer::Update(const LXString& Name, const vec4f& Value)
 {
-	LXStringA NameA = &*Name.GetBufferA().begin();
+	LXStringA nameA = Name.ToStringA();
 	for (const LXVariableDeclaration& VD : VariableDeclarations)
 	{
-		if (VD.Name == NameA)
+		if (VD.Name == nameA)
 		{
 			uint Offset = VD.Offset;
 			vec4f* p = (vec4f*)&Buffer[Offset];
@@ -134,9 +134,9 @@ void LXConstantBuffer::Update(const LXString& Name, const vec4f& Value)
 template<class T>
 bool LXConstantBuffer::AddVariable(EHLSLType inType, const LXString& Name, const T& Value)
 {
-	LXStringA NameA = &*Name.GetBufferA().begin();
+	LXStringA nameA = Name.ToStringA();
 
-	if (!IsNameFree(NameA, inType))
+	if (!IsNameFree(nameA, inType))
 		return true;
 
 	RemovePad();
@@ -150,7 +150,7 @@ bool LXConstantBuffer::AddVariable(EHLSLType inType, const LXString& Name, const
 
 	LXVariableDeclaration NewVariable;
 	NewVariable.Type = inType;
-	NewVariable.Name = NameA;
+	NewVariable.Name = nameA;
 	NewVariable.Offset = Offset;
 	NewVariable.Size = sizeof(T);
 	NewVariable.Value = (void*)&Value;

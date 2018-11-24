@@ -80,18 +80,7 @@ public:
 	LXString&	MakeLower( )											{ transform(m_str.begin(), m_str.end(), m_str.begin(), ::tolower); return( *this ); }
 	LXString	ToLower( ) const 										{ LXString str = *this; return str.MakeLower(); }
 	wchar_t*	GetBuffer( ) const										{ return (wchar_t*)m_str.c_str(); } // WARNING const
-	[[deprecated]]
-	ArrayChar	GetBufferA() const										
-	{ 
-		char l_char[256]; 
-		auto size = wcstombs(l_char, m_str.c_str(), 256); 
-		ArrayChar ac;
-		ac.insert(ac.begin(), l_char, l_char+size);
-		ac.push_back('\0');
-		return ac;
-	}
-
-	LXStringA ToStringA() const;
+	LXStringA   ToStringA( ) const;
 	
 	const wchar_t*	GetConstBuffer( ) const								{ return m_str.c_str(); }
 	void		SetString( const LXString& str )						{ m_str.assign(str); }
