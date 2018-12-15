@@ -61,7 +61,7 @@ public:
 	//
 
 	// Retrieve all the primitives with their corresponding world matrix
-	const TWorldPrimitives&			GetAllPrimitives();
+	const TWorldPrimitives&			GetAllPrimitives(bool bIgnoreValidity = false);
 
 	// Retrieve a primitive
 	const LXWorldPrimitive*			GetWorldPrimitive(const LXPrimitiveInstance* PrimitiveInstance);

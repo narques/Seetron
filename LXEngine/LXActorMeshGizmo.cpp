@@ -152,6 +152,11 @@ EConstraint LXActorMeshGizmo::GetConstraint(LXPrimitive* primitive) const
 
 void LXActorMeshGizmo::Run(double frameTime)
 {
+	UpdateScale();
+}
+
+void LXActorMeshGizmo::UpdateScale()
+{
 	if (LXActorCamera* ActorCamera = GetProject()->GetCamera())
 	{
 		// Set the scale according the distance to the current Camera.
@@ -179,6 +184,7 @@ void LXActorMeshGizmo::OnSelectionChanged()
 			SetPosition(Actor->GetPosition());
 			SetRotation(Actor->GetRotation());
 			_UpdateActorTransform = true;
+			UpdateScale();
 			SetVisible(true);
 			LogD(LXActorMeshGizmo, L"Rotation: %f %f %f", GetRotation().x, GetRotation().y, GetRotation().z);
 		}
@@ -187,6 +193,7 @@ void LXActorMeshGizmo::OnSelectionChanged()
 	{
 		LXBBox BBox = SelectionManager->GetBBoxWorld();
 		SetPosition(BBox.GetCenter());
+		UpdateScale();
 		SetVisible(true);
 	}
 	else

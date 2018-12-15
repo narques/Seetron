@@ -28,6 +28,8 @@ private:
 	void OnSelectionChanged() override;
 	void OnPositionChanged() override;
 	void OnRotationChanged() override;
+	
+	void UpdateScale();
 
 private:
 

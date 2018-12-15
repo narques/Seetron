@@ -96,7 +96,7 @@ void LXRenderClusterManager::AddActor(LXActor* Actor)
 
 	if (LXActorMesh* ActorMesh = LXCast<LXActorMesh>(Actor))
 	{
-		const TWorldPrimitives& WorldPrimitives = ActorMesh->GetAllPrimitives();
+		const TWorldPrimitives& WorldPrimitives = ActorMesh->GetAllPrimitives(true);
 
 		for(auto &It:WorldPrimitives)
 		{
