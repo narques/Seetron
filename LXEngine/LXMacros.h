@@ -14,6 +14,7 @@
 #define LogW(section, message, ...) Log2(ELogType::LogType_Warning, L#section, message, __VA_ARGS__);
 #define LogE(section, message, ...) Log2(ELogType::LogType_Error, L#section, message, __VA_ARGS__);
 #define LogD(section, message, ...) Log2(ELogType::LogType_Debug, L#section, message, __VA_ARGS__);
+#define Trace(section, message, ...) Output(ELogType::LogType_Debug, L#section, message, __VA_ARGS__);
 
 // Assertion Macros
 

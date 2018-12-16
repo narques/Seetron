@@ -96,7 +96,7 @@ void LXObject::TraceAll()
 	}
 	for(It2=mapObjects.begin(); It2!=mapObjects.end(); It2++)
 	{
-		LogD(LXObject, L"%s %i", It2->first.GetBuffer(), It2->second);
+		Trace(LXObject, L"%s %i", It2->first.GetBuffer(), It2->second);
 	}
 	mapObjects.clear();
 }

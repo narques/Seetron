@@ -22,8 +22,7 @@ enum LXERenderer
 
 LXSettings& GetSettings()
 {
-	static LXSettings sSettings;
-	return sSettings;
+	return *GetCore().GetSettings();
 }
 
 LXSettings::LXSettings(void)

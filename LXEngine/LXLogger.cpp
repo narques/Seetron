@@ -19,8 +19,8 @@
 
 LXLogger& GetLogger()
 {
-	static LXLogger log;
-	return log;
+	static LXLogger* logger = new LXLogger();
+	return *logger;
 }
 
 void LXLogger::PrintToConsoles(ELogType LogType, const LXString& msg)
@@ -144,6 +144,33 @@ LXCORE_API void Log2(ELogType LogType, const wchar_t* section, const char* Forma
 		SetWhite();
 }
 
+void Output(ELogType LogType, const wchar_t* section, const wchar_t* Format, ...)
+{
+	va_list arguments;
+	va_start(arguments, Format);
+	wchar_t out[LX_MAX_NUMBER_OF_CHAR];
+	vswprintf(out, LX_MAX_NUMBER_OF_CHAR - 1, Format, arguments);
+	va_end(arguments);
+
+	LXString msg = LXString(section) + LXString(L": ") + LXString(out);
+
+	SYSTEMTIME st;
+	::GetLocalTime(&st);
+	LXString logEntry = L"[";
+	logEntry += LXString::Format(L"%02d", st.wHour);
+	logEntry += L":" + LXString::Format(L"%02d", st.wMinute);;
+	logEntry += L":" + LXString::Format(L"%02d", st.wSecond);
+	logEntry += L"." + LXString::Format(L"%03d", st.wMilliseconds) + L"]" + msg;
+
+	wcout << logEntry.GetBuffer() << endl;
+
+	if (IsDebuggerPresent())
+	{
+		LXString msg2 = msg + L"\n";
+		OutputDebugString(msg2.GetBuffer());
+	}
+}
+
 LXLogger::LXLogger()
 {
 	Mutex = new LXMutex();
@@ -158,6 +185,12 @@ LXLogger::~LXLogger()
 {
 	delete File;
 	delete Mutex;
+}
+
+void LXLogger::DeleteSingleton()
+{
+	LXLogger* logger = &GetLogger();
+	delete logger;
 }
 
 void LXLogger::SetMode(ELogMode InLogModes)

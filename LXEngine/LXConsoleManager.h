@@ -19,6 +19,8 @@ public:
 	LXConsoleManager();
 	virtual ~LXConsoleManager();
 
+	static void DeleteSingleton();
+
 	bool TryToExecute(const LXString& CommandLine);
 	void GetNearestCommand(const LXString& Str, vector<LXString>& ListSuggestion);
 	
@@ -56,30 +58,31 @@ class LXCORE_API LXConsoleCommandT : public LXConsoleCommand
 public:
 
 	LXConsoleCommandT(const LXString& InName, T* inVar);
-	LXConsoleCommandT(const LXString& InFile, const LXString& InSection, const LXString& InName, const LXString& InDefault, T* inVar);
+	LXConsoleCommandT(const LXString& InFile, const LXString& InSection, const LXString& InName, const LXString& InDefault);
+	virtual ~LXConsoleCommandT();
 
-	const T& GetValue() const { return* Var; }
+	const T& GetValue();
+	void Execute(const vector<LXString>& Arguments) override;
+
+private:
+
 	void SetValue(const T& value) { *Var = value; }
 	void SetValueFromString(const LXString& Value);
-	void Execute(const vector<LXString>& Arguments) override;
-	T* Var;
-};
+	void ReadValueFromPrivateProfile();
 
+private:
 
-//------------------------------------------------------------------------------------------------------
-// ConsoleCommand based on a embedded variable 
-//------------------------------------------------------------------------------------------------------
+	T* Var = nullptr;
 
-template<typename T>
-class LXCORE_API LXConsoleCommand2T : public LXConsoleCommand
-{
-public:
+	struct LXPrivateProfile
+	{
+		LXString File;
+		LXString Section;
+		LXString Name;
+		LXString DefaultValue;
 
-	LXConsoleCommand2T(const LXString& InName, const T& DefaultValue);
-	const T& GetValue() const { return Var; }
-	void SetValue(const T& value) { Var = value; }
-	void Execute(const vector<LXString>& Arguments) override;
-	T Var;
+	}* _privateProfile = nullptr;
+	
 };
 
 //------------------------------------------------------------------------------------------------------

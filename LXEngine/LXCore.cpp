@@ -33,6 +33,7 @@
 #include "LXActorFactory.h"
 #include "LXStatManager.h"
 #include "LXEventManager.h"
+#include "LXSettings.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 //------------------------------------------------------------------------------------------------------
@@ -90,42 +91,13 @@ LXConsoleCommand2S CCLoadProject(L"LoadProject", [](const LXString& ProjectName,
 
 //------------------------------------------------------------------------------------------------------
 
+namespace
+{
+	LXCore* gCore = nullptr;
+}
+
 LXCore::LXCore()
 {
-	MainThread = GetCurrentThreadId();
-
-	LogI(Core,L"------ Seetron Engine ------");
-	StatManager = new LXStatManager();
-
-	GetLogger().LogConfigurationAndPlatform();
-	GetLogger().LogDateAndTime();
-
-	//LXPropertServer settings
-	SetManageDefaultProperties(true);
-	SetName(L"Application");
-
-	// Properties
-	m_nUndo = 16;
-	m_bImportTextures = true;
-	m_eSelectionMode = ESelectionMode::SelectionModeActor;
-	
-	// Load default properties
-	LoadDefaultProperties();
-
-	// Managers
-	m_documentManager = new LXDocumentManager;
-	m_viewportManager = new LXViewportManager;
-	m_commandManager = new LXCommandManager;
-	m_propertyManager = new LXPropertyManager;
-	_ActorFactory = std::make_unique<LXActorFactory>();
-	_Controller = std::make_unique<LXController>();
-	
-	// Observer
-	m_commandManager->AddObserver(m_viewportManager);
-	
-	// Plugins
-	EnumPlugins();
-	DefineProperties();
 }
 
 /*virtual*/
@@ -138,10 +110,53 @@ LXCore::~LXCore()
 	delete m_documentManager;
 	delete m_viewportManager;
 	delete m_propertyManager;
-	//delete m_pScriptEngine;
 	delete StatManager;
 
-	LogI(Core,L"------ Core deleted ------\n");
+	LXConsoleManager::DeleteSingleton();
+		
+	LogI(Core,L"------ Core deleted ------");
+
+	LXLogger::DeleteSingleton();
+}
+
+void LXCore::Init()
+{
+	MainThread = GetCurrentThreadId();
+
+	LogI(Core, L"------ Seetron Engine ------");
+
+	StatManager = new LXStatManager();
+	_settings = std::make_unique<LXSettings>();
+
+	GetLogger().LogConfigurationAndPlatform();
+	GetLogger().LogDateAndTime();
+
+	//LXPropertServer settings
+	SetManageDefaultProperties(true);
+	SetName(L"Application");
+
+	// Properties
+	m_nUndo = 16;
+	m_bImportTextures = true;
+	m_eSelectionMode = ESelectionMode::SelectionModeActor;
+
+	// Load default properties
+	LoadDefaultProperties();
+
+	// Managers
+	m_documentManager = new LXDocumentManager;
+	m_viewportManager = new LXViewportManager;
+	m_commandManager = new LXCommandManager;
+	m_propertyManager = new LXPropertyManager;
+	_ActorFactory = std::make_unique<LXActorFactory>();
+	_Controller = std::make_unique<LXController>();
+
+	// Observer
+	m_commandManager->AddObserver(m_viewportManager);
+
+	// Plugins
+	EnumPlugins();
+	DefineProperties();
 }
 
 /*virtual*/
@@ -176,13 +191,26 @@ void LXCore::DefineProperties( )
 
 LXCore& LXCore::GetCore()
 {
-	static LXCore core;
-	return core;
+	CHK(gCore != nullptr);
+	return *gCore;
+}
+
+LXCore*	LXCore::CreateCore()
+{
+	CHK(gCore == nullptr);
+	gCore = new LXCore();
+	gCore->Init();
+	return gCore;
+}
+
+void LXCore::Destroy()
+{
+	delete this;
 }
 
 void LXCore::EnumPlugins()
 {
-	LXString str = GetSettings().GetPluginsFolder() + "LXImporter*.dll";
+	LXString str = _settings->GetPluginsFolder() + "LXImporter*.dll";
 	LXDirectory dir(str);
 	
 	const ListFileInfos& list = dir.GetListFileNames();
@@ -303,7 +331,7 @@ ECreateProjectResult LXCore::CreateNewProject(const LXString& Name, const LXStri
 	if (!FolderPath.IsEmpty())
 		ValidatedFolder = FolderPath + Name + L"/";
 	else
-		ValidatedFolder = GetSettings().GetProjectsFolder() + Name + L"/";
+		ValidatedFolder = _settings->GetProjectsFolder() + Name + L"/";
 
 	if (ValidatedFolder.IsFolderExist())
 	{
@@ -360,7 +388,7 @@ bool LXCore::LoadProject(const LXString& ProjectName)
 	LXFilepath Filepath = ProjectName;
 	if (!Filepath.IsFileExist())
 	{
-		Filepath = GetSettings().GetProjectsFolder() + ProjectName + "/" + ProjectName + L"." LX_PROJECT_EXT;
+		Filepath = _settings->GetProjectsFolder() + ProjectName + "/" + ProjectName + L"." LX_PROJECT_EXT;
 	}
 	if (Filepath.IsFileExist())
 	{

@@ -31,13 +31,16 @@ enum ELogMode
 	LogMode_File = LX_BIT(3),
 };
 
-class LXCORE_API LXLogger
+class LXCORE_API LXLogger : public LXObject
 {
 
 public:
 
 	LXLogger();
-	~LXLogger();
+	virtual ~LXLogger();
+
+	static void DeleteSingleton();
+
 	void SetMode(ELogMode InLogModes);
 	ELogMode GetMode() const { return LogModes; }
 	void LogConfigurationAndPlatform();
@@ -60,5 +63,7 @@ LXCORE_API LXLogger& GetLogger();
 
 LXCORE_API void Log2(ELogType LogType, const wchar_t* section, const wchar_t* Format, ...);
 LXCORE_API void Log2(ELogType LogType, const wchar_t* section, const char* Format, ...);
+LXCORE_API void Output(ELogType LogType, const wchar_t* section, const wchar_t* Format, ...);
+
 
 

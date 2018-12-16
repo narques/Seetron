@@ -35,11 +35,8 @@ using namespace D2D1;
 
 namespace
 {
-	bool gCreateDeviceDebug = false;
-	LXConsoleCommandT<bool> CSet_CreateDeviceDebug(L"Engine.ini", L"D3D11", L"CreateDeviceDebug", L"false", &gCreateDeviceDebug);
-
-	bool gVSync = false;
-	LXConsoleCommandT<bool> CSet_VSync(L"Engine.ini", L"D3D11", L"VSync", L"false", &gVSync);
+	LXConsoleCommandT<bool> CSet_CreateDeviceDebug(L"Engine.ini", L"D3D11", L"CreateDeviceDebug", L"false");
+	LXConsoleCommandT<bool> CSet_VSync(L"Engine.ini", L"D3D11", L"VSync", L"false");
 
 	// Use Direct2D to display statistics
 	// not supported by Nsight
@@ -271,6 +268,8 @@ void LXDirectX11::ReleaseBuffers()
 
 bool LXDirectX11::InitD3D11AndD2D1(HWND hWND)
 {
+	bool gCreateDeviceDebug = CSet_CreateDeviceDebug.GetValue();
+
 	if (!hWND)
 	{
 		return false;
@@ -542,6 +541,8 @@ return CreateBuffers();
 
 bool LXDirectX11::Init(HWND hWND)
 {
+	bool gCreateDeviceDebug = CSet_CreateDeviceDebug.GetValue();
+
 	CHK(hWND);
 	if (!hWND)
 	{
@@ -768,6 +769,8 @@ void LXDirectX11::Resize(UINT Width, UINT Height)
 
 void LXDirectX11::Present()
 {
+	bool gVSync = CSet_VSync.GetValue();
+
 	if (_DXGISwapChain1)
 		_DXGISwapChain1->Present(gVSync ? 1 : 0, 0);
 	else if (_DXGISwapChain)

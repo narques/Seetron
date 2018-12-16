@@ -26,6 +26,7 @@ class LXRenderer;
 class LXScene;
 class LXScriptEngine;
 class LXSelectionManager;
+class LXSettings;
 class LXStatManager;
 class LXThread;
 class LXViewport;
@@ -53,12 +54,15 @@ class LXCORE_API LXCore : public LXDocumentBase // In order to load/save setting
 
 private:
 
-	LXCore(void);   
+	LXCore(void);  
+	void Init();
 	virtual ~LXCore();
 
 public:
 	
+	static LXCore*		CreateCore();
 	static LXCore&		GetCore();
+	void Destroy();
 	
 	// Properties Get/Set
 	uint				GetUndoStackSize() const { return m_nUndo; }
@@ -88,6 +92,7 @@ public:
 	LXScriptEngine&		GetScriptEngine(){ return *m_pScriptEngine;  }
 	LXActorFactory*		GetActorFactory() { return _ActorFactory.get();  }
 	LXController*		GetController() { return _Controller.get(); }
+	LXSettings*			GetSettings() { return _settings.get(); }
 	LXStatManager*		GetStatManager() { return StatManager; }
 
 	// Animation
@@ -150,6 +155,7 @@ private:
 	LXScriptEngine*		 m_pScriptEngine;
 	LXStatManager*		 StatManager;
 	
+	std::unique_ptr<LXSettings> _settings;
 	std::unique_ptr<LXActorFactory> _ActorFactory;
 	std::unique_ptr<LXController> _Controller;
 

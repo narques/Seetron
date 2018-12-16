@@ -160,7 +160,7 @@ public:
 
 	//Debug purpose. Default value is false. 
 	//Set true to immediately call the command.
-	static bool DirectMode;
+	bool DirectMode = false;
 
 #if LX_CHECK_BINDED_OBJECT
 

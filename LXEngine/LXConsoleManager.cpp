@@ -17,8 +17,8 @@
 
 LXConsoleManager& GetConsoleManager()
 {
-	static LXConsoleManager ConsoleManager;
-	return ConsoleManager;
+	static LXConsoleManager* ConsoleManager = new LXConsoleManager();
+	return *ConsoleManager;
 }
 
 LXConsoleManager::LXConsoleManager()
@@ -27,6 +27,12 @@ LXConsoleManager::LXConsoleManager()
 
 LXConsoleManager::~LXConsoleManager()
 {
+}
+
+void LXConsoleManager::DeleteSingleton()
+{
+	LXConsoleManager* consoleManager = &GetConsoleManager();
+	delete consoleManager;
 }
 
 bool LXConsoleManager::TryToExecute(const LXString& CommandLine)
@@ -92,7 +98,6 @@ LXConsoleCommand::LXConsoleCommand(const LXString& name):Name(name)
 
 LXConsoleCommand::~LXConsoleCommand()
 {
-	GetConsoleManager().RemoveCommand(this);
 }
 
 //------------------------------------------------------------------------------------------------------
@@ -106,12 +111,45 @@ LXConsoleCommandT<T>::LXConsoleCommandT(const LXString& InName, T* inVar) :LXCon
 }
 
 template<typename T>
-LXConsoleCommandT<T>::LXConsoleCommandT(const LXString& File, const LXString& Section, const LXString& InName, const LXString& Default, T* inVar) :LXConsoleCommand(InName), Var(inVar)
+LXConsoleCommandT<T>::LXConsoleCommandT(const LXString& file, const LXString& section, const LXString& name, const LXString& defaultValue) :LXConsoleCommand(name)
 { 
+	_privateProfile = new LXPrivateProfile();
+	_privateProfile->File = file;
+	_privateProfile->Section = section;
+	_privateProfile->Name = name;
+	_privateProfile->DefaultValue = defaultValue;
+}
+
+template<typename T>
+LXConsoleCommandT<T>::~LXConsoleCommandT()
+{
+	if (_privateProfile)
+	{
+		delete _privateProfile;
+		delete Var;
+	}
+}
+
+template<typename T>
+void LXConsoleCommandT<T>::ReadValueFromPrivateProfile()
+{
+	CHK(_privateProfile);
 	wchar_t str[256] = { 0 };
-	LXString Filepath = GetSettings().GetCoreFolder() + File;
-	GetPrivateProfileString(Section, InName, Default, str, 256, Filepath);
+	LXString Filepath = GetSettings().GetCoreFolder() + _privateProfile->File;
+	CHK(GetPrivateProfileString(_privateProfile->Section, _privateProfile->Name, _privateProfile->DefaultValue, str, 256, Filepath));
 	SetValueFromString(str);
+}
+
+template<typename T>
+const T& LXConsoleCommandT<T>::GetValue()
+{
+	if (!Var && _privateProfile)
+	{
+		Var = new T();
+		ReadValueFromPrivateProfile();
+	}
+	
+	return *Var;
 }
 
 template<>
@@ -143,20 +181,6 @@ void LXConsoleCommandT<bool>::Execute(const vector<LXString>& Arguments)
 
 // Explicit class Instantiation
 template class LXCORE_API LXConsoleCommandT<bool>;
-
-//------------------------------------------------------------------------------------------------------
-// LXConsoleCommand2T
-//------------------------------------------------------------------------------------------------------
-
-template<typename T>
-void LXConsoleCommand2T<T>::Execute(const vector<LXString>& Arguments)
-{
-}
-
-template<typename T>
-LXConsoleCommand2T<T>::LXConsoleCommand2T(const LXString& InName, const T& DefaultValue):LXConsoleCommand(InName), Var(DefaultValue)
-{
-}
 
 //------------------------------------------------------------------------------------------------------
 // LXConsoleCommandCall2

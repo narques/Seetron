@@ -21,15 +21,14 @@
 //#include <pix.h>
 #include "LXMemory.h" // --- Must be the last included ---
 
-bool LXRenderCommandList::DirectMode = false;
-
 namespace
 {
-	LXConsoleCommandT<bool> CSet_DirectMode(L"Engine.ini", L"Renderer", L"DirectMode", L"false", &LXRenderCommandList::DirectMode);
+	LXConsoleCommandT<bool> CSet_DirectMode(L"Engine.ini", L"Renderer", L"DirectMode", L"false");
 };
 
 LXRenderCommandList::LXRenderCommandList()
 {
+	DirectMode = CSet_DirectMode.GetValue();
 }
 
 LXRenderCommandList::~LXRenderCommandList()
