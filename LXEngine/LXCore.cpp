@@ -355,6 +355,13 @@ ECreateProjectResult LXCore::CreateNewProject(const LXString& Name, const LXStri
 			CreateDirectory(ValidatedFolder + L"Assets/Materials/", NULL);
 			CreateDirectory(ValidatedFolder + L"Assets/Shaders/", NULL);
 			CreateDirectory(ValidatedFolder + L"Assets/Meshes/", NULL);
+
+			//Copy common shader files.
+			CopyFile(_settings->GetShadersFolder() + "Common.hlsl", ValidatedFolder + L"Assets/Shaders/Common.hlsl", FALSE);
+			CopyFile(_settings->GetShadersFolder() + "Forward.hlsl", ValidatedFolder + L"Assets/Shaders/Forward.hlsl", FALSE);
+			CopyFile(_settings->GetShadersFolder() + "LightingFunctions.hlsl", ValidatedFolder + L"Assets/Shaders/LightingFunctions.hlsl", FALSE);
+			CopyFile(_settings->GetShadersFolder() + "LightingUtilities.hlsl", ValidatedFolder + L"Assets/Shaders/LightingUtilities.hlsl", FALSE);
+
 			CreateProject = true;
 		}
 		else
