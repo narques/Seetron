@@ -16,13 +16,8 @@ class LXProject;
 class LXAnchor;
 class LXPrimitive;
 
-typedef vector<LXAnchor*> ArrayAnchors;
 
-template<typename T>
-__forceinline T* LXCast(LXActor* Object)
-{
-	return Object ? ((Object->GetCID() & T::GetCIDBit()) ? (T*)Object : nullptr) : nullptr;
-}
+typedef vector<LXAnchor*> ArrayAnchors;
 
 #define LX_NODETYPE_GROUP	LX_BIT(0)
 #define LX_NODETYPE_ACTOR	LX_BIT(1)
@@ -188,3 +183,8 @@ private:
 	EConstraint			_eConstraint = EConstraint::None;
 }; 
 
+template<typename T>
+__forceinline T* LXCast(LXActor* actor)
+{
+	return actor ? ((actor->GetCID() & T::GetCIDBit()) ? (T*)actor : nullptr) : nullptr;
+}
