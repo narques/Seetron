@@ -222,6 +222,7 @@ EXECUTE(PSSetShader)
 	D3D11DeviceContext->PSSetShader(PixelShader?PixelShader->D3D11PixelShader:nullptr, nullptr, 0);
 #if LX_CHECK_BINDED_OBJECT
 	RCL->_PixelShader = PixelShader;
+	CHK(PixelShader ? PixelShader->GetState() == EShaderD3D11State::Ok : true);
 #endif
 }
 

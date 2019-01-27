@@ -26,6 +26,7 @@ class LXRenderPassSSAO;
 class LXRenderPassToneMapping;
 class LXRenderPassTransparency;
 class LXRenderPassUI;
+class LXRenderPassDepthOfField;
 
 enum class LXTextureSlot
 {
@@ -48,6 +49,7 @@ class LXRenderPipelineDeferred : public LXRenderPipeline
 	friend LXRenderPassToneMapping;
 	friend LXRenderPassTransparency;
 	friend LXRenderPassDownsample;
+	friend LXRenderPassDepthOfField;
 
 public:
 
@@ -100,6 +102,7 @@ private:
 	LXRenderPassUI* RenderPassUI = nullptr;
 	LXRenderPassSSAO* RenderPassSSAO = nullptr;
 	LXRenderPassAA* RenderPassAA = nullptr;
+	unique_ptr<LXRenderPassDepthOfField> _renderPassDOF;
 		
 	// View ConstantBuffer
 	LXConstantBufferD3D11* _CBViewProjection = nullptr;

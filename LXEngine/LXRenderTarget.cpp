@@ -22,8 +22,13 @@ LXRenderTarget::~LXRenderTarget()
 	DeleteBuffers();
 }
 
-void LXRenderTarget::CreateBuffers(uint width, uint height, DXGI_FORMAT format)
+void LXRenderTarget::CreateBuffers(uint width, uint height, DXGI_FORMAT format, bool deleteExisting)
 {
+	if (deleteExisting)
+	{
+		DeleteBuffers();
+	}
+	
 	CHK(TextureD3D11 == nullptr);
 	CHK(RenderTargetViewD3D11 == nullptr);
 

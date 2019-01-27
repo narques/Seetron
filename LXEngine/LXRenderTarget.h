@@ -22,7 +22,7 @@ public:
 	LXRenderTarget(uint width, uint height, DXGI_FORMAT format);
 	virtual ~LXRenderTarget();
 
-	void CreateBuffers(uint width, uint height, DXGI_FORMAT format);
+	void CreateBuffers(uint width, uint height, DXGI_FORMAT format, bool deleteExisting = false);
 	void DeleteBuffers();
 
 	LXTextureD3D11*  TextureD3D11 = nullptr;

@@ -13,6 +13,7 @@
 #include "LXTextureD3D11.h"
 #include "LXRenderCommandList.h"
 #include "LXRenderPassAux.h"
+#include "LXRenderPassDepthOfField.h"
 #include "LXRenderPassGBuffer.h"
 #include "LXRenderPassLighting.h"
 #include "LXRenderPipelineDeferred.h"
@@ -80,7 +81,7 @@ void LXRenderPassToneMapping::Render(LXRenderCommandList* r)
 	CHK(renderPipelineDeferred);
 
 	// Aux buffer contains 3D UI Items (Gizmo, LightIcons, Helpers, etc.)
-	const LXTextureD3D11* SceneColor = renderPipelineDeferred->RenderPassLighting->GetOutputTexture();
+	const LXTextureD3D11* SceneColor = renderPipelineDeferred->_renderPassDOF->GetOutputTexture();
 
 	if (renderPipelineDeferred->GetDebugTexture())
 	{

@@ -17,6 +17,7 @@
 #include "LXRenderer.h"
 //#include "LXRenderPassAA.h"
 #include "LXRenderPassAux.h"
+#include "LXRenderPassDepthOfField.h"
 #include "LXRenderPassDownsample.h"
 #include "LXRenderPassDynamicTexture.h"
 #include "LXRenderPassGBuffer.h"
@@ -54,14 +55,16 @@ LXRenderPipelineDeferred::LXRenderPipelineDeferred(LXRenderer* Renderer):_Render
 	RenderPassDownsample = new LXRenderPassDownsample(Renderer, EDownsampleFunction::Downsample_ToOne);
 	RenderPassUI = new LXRenderPassUI(Renderer);
 	RenderPassSSAO = new LXRenderPassSSAO(Renderer);
-
-	_RenderPasses.push_back(RenderPassAux);
+	_renderPassDOF = make_unique<LXRenderPassDepthOfField>(Renderer);
+	   
 	_RenderPasses.push_back(RenderPassDynamicTexture);
 	_RenderPasses.push_back(RenderPassShadow);
 	_RenderPasses.push_back(RenderPassGBuffer);
+	_RenderPasses.push_back(RenderPassAux);
 	_RenderPasses.push_back(RenderPassSSAO);
 	_RenderPasses.push_back(RenderPassLighting);
 	_RenderPasses.push_back(RenderPassTransparent);
+	_RenderPasses.push_back(_renderPassDOF.get());
 	_RenderPasses.push_back(RenderPassDownsample);
 	_RenderPasses.push_back(RenderPassToneMapping);
 	//_RenderPasses.push_back(RenderPassAA);
@@ -290,7 +293,7 @@ void LXRenderPipelineDeferred::GetTextureCoordinatesInAtlas(LXRenderCluster* Ren
 	const float kShadowMapHeight = 512.f;
 	const float AtlasWidth = 2048.f;
 	const float AtlasHeight = 2048.f;
-	float y = index / 4;
+	float y = (float)(index / 4);
 	float x = index - (y * 4);
 	outTextureCoordinates.x = x * kShadowMapWidth;
 	outTextureCoordinates.y = y * kShadowMapHeight;

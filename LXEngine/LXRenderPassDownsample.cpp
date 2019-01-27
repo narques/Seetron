@@ -128,7 +128,7 @@ void LXRenderPassDownsample::Render(LXRenderCommandList* r)
 		const LXTextureD3D11* Texture;
 		if (i == 0)
 		{
-			Texture = RenderPipelineDeferred->RenderPassLighting->GetOutputTexture();
+			Texture = RenderPipelineDeferred->GetPreviousRenderPass()->GetOutputTexture();
 		}
 		else
 		{
