@@ -8,7 +8,9 @@
 
 #include "stdafx.h"
 #include "LXRenderPassDepthOfField.h"
+#include "LXCore.h"
 #include "LXInputElementDescD3D11Factory.h"
+#include "LXProject.h"
 #include "LXRenderCommandList.h"
 #include "LXRenderPassLighting.h"
 #include "LXRenderPipelineDeferred.h"
@@ -52,6 +54,9 @@ void LXRenderPassDepthOfField::CreateBuffers(uint width, uint height)
 
 void LXRenderPassDepthOfField::Render(LXRenderCommandList* r)
 {
+	if (!GetProject() || !GetProject()->DepthOfField)
+		return;
+		   	
 	LXRenderPipelineDeferred* renderPipelineDeferred = dynamic_cast<LXRenderPipelineDeferred*>(Renderer->GetRenderPipeline());
 	CHK(renderPipelineDeferred);
 

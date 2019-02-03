@@ -155,6 +155,10 @@ public:
 	bool GetSeetronProject() const { return _seetronProject; };
 	bool IsInitialized() const { return _init; }
 
+public:
+
+	bool DepthOfField = false;
+
 private:
 
 	//

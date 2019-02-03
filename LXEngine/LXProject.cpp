@@ -87,6 +87,9 @@ LXProject::LXProject(const LXFilepath& filepath)
 	// To manipulate Anchor or Gizmo
 	GetCore().GetCommandManager().PushQuery(new LXQueryTransform());
 
+	// Properties
+	DefineProperty(L"DepthOfField", LXPropertyID::VIEWSTATE_DEPTHOFFIELD, &DepthOfField);
+	   	 
 	// Done
 	_init = true;
 }
