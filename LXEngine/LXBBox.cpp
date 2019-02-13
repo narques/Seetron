@@ -72,7 +72,6 @@ bool LXBBox::TryToValidate()
 
 void LXBBox::Add(const LXBBox& box)
 {
-	CHK(box.m_bValid);
 	if (box.m_bValid)
 	{
 		Add(box.m_ptMax);

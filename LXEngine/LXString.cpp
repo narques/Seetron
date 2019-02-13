@@ -46,16 +46,16 @@ LXString LXString::Left(const wchar_t* pszSub) const
 
 LXString LXString::Right(const wchar_t* pszSub) const
 {
-	int i = Find(pszSub) + wcslen(pszSub);
+	int i = Find(pszSub) + (int)wcslen(pszSub);
 	CHK(i != -1);
 	return LXString(m_str.substr(i, m_str.size() - i).c_str());
 }
 
 LXStringA LXString::ToStringA() const
 {
-	int len = m_str.size();
+	int len = (int)m_str.size();
 	char* sz = new char[len + 1];
-	int size = wcstombs(sz, m_str.c_str(), len + 1);
+	int size = (int)wcstombs(sz, m_str.c_str(), len + 1);
 	sz[size] = '\0';
 	LXStringA str(sz);
 	delete sz;
