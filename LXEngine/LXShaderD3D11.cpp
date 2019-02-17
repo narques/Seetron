@@ -2,17 +2,20 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
 #include "LXShaderD3D11.h"
+#include "LXCore.h"
 #include "LXDirectX11.h"
-#include <d3dcompiler.h>
-#include "LXPrimitiveD3D11.h"
 #include "LXLogger.h"
+#include "LXPrimitiveD3D11.h"
+#include "LXRenderer.h"
+#include "LXShaderManager.h"
 #include "LXStatistic.h"
+#include <d3dcompiler.h>
 #include "LXMemory.h" // --- Must be the last included ---
 
 #pragma comment(lib, "d3dcompiler.lib")
@@ -44,6 +47,46 @@ LXShaderD3D11::~LXShaderD3D11()
 void LXShaderD3D11::AddMacro(const char * Name, const char * Definition)
 {
 	ShaderMacros.push_back(LXShaderMacro(Name, Definition));
+}
+
+bool LXShaderD3D11::Create()
+{
+	CHK(!_filename.empty());
+	CHK(Type != EShaderType::Undefined);
+
+	switch (Type)
+	{
+	case EShaderType::VertexShader:
+	{
+		CHK(_layout != nullptr)
+		return CreateVertexShader(_filename.c_str(), _layout, _numElements);
+	}
+	break;
+	case EShaderType::HullShader:
+	{
+		return CreateHullShader(_filename.c_str());
+	}
+		break;
+	case EShaderType::DomainShader:
+	{
+		return CreateDomainShader(_filename.c_str());
+	}
+		break;
+	case EShaderType::GeometryShader:
+	{
+		return CreateGeometryShader(_filename.c_str());
+	}
+		break;
+	case EShaderType::PixelShader:
+	{
+		CHK(_entryPoint != nullptr);
+		return CreatePixelShader(_filename.c_str(), _entryPoint);
+	}
+		break;
+	default:
+		CHK(0) return false;
+		break;
+	}
 }
 
 HRESULT CompileShaderFromBuffer(char* Buffer, const char* szEntryPoint, const char* szShaderModel, ID3DBlob** ppBlobOut)
@@ -84,8 +127,18 @@ HRESULT CompileShaderFromBuffer(char* Buffer, const char* szEntryPoint, const ch
 	return S_OK;
 }
 
-HRESULT LXShaderD3D11::CompileShaderFromFile(wchar_t* Filename, const char* szEntryPoint, const char* szShaderModel, ID3DBlob** ppBlobOut)
+HRESULT LXShaderD3D11::CompileShaderFromFile(const wchar_t* Filename, const char* szEntryPoint, const char* szShaderModel, ID3DBlob** ppBlobOut)
 {
+	if (_filename.empty())
+	{
+		_filename = Filename;
+	}
+
+	if (1/*shaderDevelopment*/)
+	{
+		GetRenderer()->GetShaderManager()->AddMonitoredShaderFile(Filename, this);
+	}
+	   	 
 	HRESULT hr = S_OK;
 	DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
 	//DWORD dwShaderFlags = D3DCOMPILE_IEEE_STRICTNESS;
@@ -162,9 +215,14 @@ HRESULT LXShaderD3D11::CompileShaderFromFile(wchar_t* Filename, const char* szEn
 	return S_OK;
 }
 
-bool LXShaderD3D11::CreateVertexShader(wchar_t* Filename, const D3D11_INPUT_ELEMENT_DESC* Layout, UINT NumElements)
+bool LXShaderD3D11::CreateVertexShader(const wchar_t* Filename, const D3D11_INPUT_ELEMENT_DESC* Layout, UINT NumElements)
 {
-	LX_SAFE_RELEASE(D3D11PixelShader);
+	LX_SAFE_RELEASE(D3D11VertexShader);
+	LX_SAFE_RELEASE(D3D11VertexLayout);
+
+	_layout = Layout;
+	_numElements = NumElements;
+	Type = EShaderType::VertexShader;
 
 	ID3DBlob* pVSBlob = nullptr;
 	HRESULT hr = CompileShaderFromFile(Filename, "VS", VSSHADER_VERSION, &pVSBlob);
@@ -201,8 +259,12 @@ bool LXShaderD3D11::CreateVertexShader(wchar_t* Filename, const D3D11_INPUT_ELEM
 	return true;
 }
 
-bool LXShaderD3D11::CreateHullShader(wchar_t* Filename)
+bool LXShaderD3D11::CreateHullShader(const wchar_t* Filename)
 {
+	LX_SAFE_RELEASE(D3D11HullShader);
+
+	Type = EShaderType::HullShader;
+
 	// Compile the pixel shader
 	ID3DBlob* pHSBlob = nullptr;
 	HRESULT hr = CompileShaderFromFile(Filename, "HS", HSSHADER_VERSION, &pHSBlob);
@@ -225,8 +287,12 @@ bool LXShaderD3D11::CreateHullShader(wchar_t* Filename)
 	return true;
 }
 
-bool LXShaderD3D11::CreateDomainShader(wchar_t* Filename)
+bool LXShaderD3D11::CreateDomainShader(const wchar_t* Filename)
 {
+	LX_SAFE_RELEASE(D3D11DomainShader);
+
+	Type = EShaderType::DomainShader;
+
 	// Compile the domain shader
 	ID3DBlob* pDSBlob = nullptr;
 	HRESULT hr = CompileShaderFromFile(Filename, "DS", DSSHADER_VERSION, &pDSBlob);
@@ -249,9 +315,13 @@ bool LXShaderD3D11::CreateDomainShader(wchar_t* Filename)
 	return true;
 }
 
-bool LXShaderD3D11::CreateGeometryShader(wchar_t* Filename)
+bool LXShaderD3D11::CreateGeometryShader(const wchar_t* Filename)
 {
-	// Compile the pixel shader
+	LX_SAFE_RELEASE(D3D11GeometryShader);
+
+	Type = EShaderType::GeometryShader;
+
+	// Compile the shader
 	ID3DBlob* pGSBlob = nullptr;
 	HRESULT hr = CompileShaderFromFile(Filename, "GS", GSSHADER_VERSION, &pGSBlob);
 	if (FAILED(hr))
@@ -273,11 +343,16 @@ bool LXShaderD3D11::CreateGeometryShader(wchar_t* Filename)
 	return true;
 }
 
-bool LXShaderD3D11::CreatePixelShader(wchar_t* Filename, const char* EntryPoint)
+bool LXShaderD3D11::CreatePixelShader(const wchar_t* Filename, const char* entryPoint)
 {
-	// Compile the pixel shader
+	LX_SAFE_RELEASE(D3D11PixelShader);
+
+	_entryPoint = entryPoint;
+	Type = EShaderType::PixelShader;
+
+	// Compile the shader
 	ID3DBlob* pPSBlob = nullptr;
-	HRESULT hr = CompileShaderFromFile(Filename, EntryPoint/*"PS"*/, PSSHADER_VERSION, &pPSBlob);
+	HRESULT hr = CompileShaderFromFile(Filename, entryPoint/*"PS"*/, PSSHADER_VERSION, &pPSBlob);
 	if (FAILED(hr))
 	{
 		State = EShaderD3D11State::CompilationError;

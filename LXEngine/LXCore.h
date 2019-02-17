@@ -159,7 +159,7 @@ private:
 	std::unique_ptr<LXActorFactory> _ActorFactory;
 	std::unique_ptr<LXController> _Controller;
 
-	LXRenderer*		 _Renderer;
+	LXRenderer*		 _Renderer = nullptr;
 
 	//
 	// Plugins management 

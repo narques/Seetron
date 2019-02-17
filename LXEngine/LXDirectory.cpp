@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) 2019 Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -11,11 +11,35 @@
 #include <windows.h>
 #include "LXMemory.h" // --- Must be the last included ---
 
-LXDirectory::LXDirectory(wchar_t* folder)
+LX_PRAGMA_OPTIM_OFF
+
+LXDirectory::LXDirectory(const wchar_t* path)
 {
-	_BaseFolder = folder;
-	_BaseFolder = _BaseFolder.substr(0, _BaseFolder.length() - 1);
-	ScanFolder(folder);
+	std::wstring stdFolder = path;
+	
+	// If path not a regular expression create a default one.
+	if ((stdFolder.find(L'*') == string::npos) &&
+		(stdFolder.find(L'?') == string::npos))
+
+	{
+		_BaseFolder = path;
+		
+		std::wstring regExpression = path;
+		wchar_t lastCharacter = regExpression.back();
+		
+		if (lastCharacter != L'/' && 
+			lastCharacter != '\\')
+		{
+			regExpression.push_back(L'/');
+		}
+
+		regExpression.push_back(L'*');
+		ScanFolder(regExpression);
+	}
+	else
+	{
+		ScanFolder(path);
+	}
 }
 
 LXDirectory::~LXDirectory()
@@ -57,13 +81,14 @@ void LXDirectory::ScanFolder(const std::wstring& folder)
 	}
 }
 
-void LXDirectory::AddFillInfo(const std::wstring& folder, const WIN32_FIND_DATA& fd)
+void LXDirectory::AddFillInfo(const std::wstring& folder, const WIN32_FIND_DATA& findData)
 {
 	LXFileInfo fi;
-	fi.FileName = fd.cFileName;
+	fi.FileName = findData.cFileName;
 	fi.LocalFileName = folder.substr(0, folder.length() - 1);
 	fi.FullFileName = fi.LocalFileName + fi.FileName;
 	fi.LocalFileName = fi.LocalFileName.substr(_BaseFolder.length(), fi.LocalFileName.length() - _BaseFolder.length()) + fi.FileName;
+	fi.LastWriteTime = findData.ftLastWriteTime;
 	_listFiles.push_back(fi);
 }
 
@@ -82,7 +107,27 @@ bool LXDirectory::IsEmpty() const
 
 bool LXDirectory::Exists(wchar_t* folder)
 {
-	DWORD dwAttrib = GetFileAttributes(folder);
+	DWORD dwAttrib = GetFileAttributes(folder); 
 	return (dwAttrib != INVALID_FILE_ATTRIBUTES && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 }
 
+void LXDirectory::GetChangedLastWriteFiles(list<std::wstring>& filenames, bool update /*=true*/)
+{
+	for (LXFileInfo& fileInfo : _listFiles)
+	{
+		WIN32_FIND_DATA fd;
+		HANDLE hFind = FindFirstFile(fileInfo.FullFileName.c_str(), &fd);
+		
+		if ((fileInfo.LastWriteTime.dwHighDateTime != fd.ftLastWriteTime.dwHighDateTime) ||
+		   (fileInfo.LastWriteTime.dwLowDateTime != fd.ftLastWriteTime.dwLowDateTime))
+		{
+			filenames.push_back(fileInfo.FullFileName);
+			if (update)
+			{
+				fileInfo.LastWriteTime = fd.ftLastWriteTime;
+			}
+		}
+	}
+}
+
+LX_PRAGMA_OPTIM_ON

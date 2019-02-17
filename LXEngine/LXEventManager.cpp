@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -19,7 +19,7 @@ LXEventManager::LXEventManager()
 LXEventManager::~LXEventManager()
 {
 	CHK(EventActors.size() == 0);
-	CHK(EventFunctions.size() == 0);
+	CHK(_eventTypeFunctions.size() == 0);
 	CHK(EventDeferred.size() == 0);
 }
 
@@ -30,7 +30,14 @@ void LXEventManager::RegisterEvent(EEventType Event, LXActor* Actor)
 
 void LXEventManager::RegisterEventFunc(EEventType Event, void* Owner, std::function<void(LXEvent*)> Func)
 {
-	EventFunctions[Event].push_back(pair<void*, std::function<void(LXEvent*)>>(Owner, Func));
+	_eventTypeFunctions[Event].push_back(pair<void*, std::function<void(LXEvent*)>>(Owner, Func));
+}
+
+
+void LXEventManager::RegisterEventFunc(const LXString& eventName, void* Owner, std::function<void(LXEvent*)> function)
+{
+	GetCurrentThreadId();
+	_eventNameFunctions[eventName].push_back(pair<void*, std::function<void(LXEvent*)>>(Owner, function));
 }
 
 void LXEventManager::UnregisterEvent(EEventType EventType, LXActor* Actor)
@@ -46,10 +53,10 @@ void LXEventManager::UnregisterEvent(EEventType EventType, LXActor* Actor)
 
 void LXEventManager::UnregisterEventFunc(EEventType EventType, void* Owner)
 {
-	auto itEvent = EventFunctions.find(EventType);
-	CHK(itEvent != EventFunctions.end());
+	auto itEvent = _eventTypeFunctions.find(EventType);
+	CHK(itEvent != _eventTypeFunctions.end());
 	
-	auto& list = EventFunctions[EventType];
+	auto& list = _eventTypeFunctions[EventType];
 
 	// Find the pair using the Owner
 	auto itPair = std::find_if(list.begin(), list.end(), [Owner](std::pair<void*, std::function<void(LXEvent*)>>& element)
@@ -63,7 +70,30 @@ void LXEventManager::UnregisterEventFunc(EEventType EventType, void* Owner)
 
 	if (list.size() == 0)
 	{
-		EventFunctions.erase(itEvent);
+		_eventTypeFunctions.erase(itEvent);
+	}
+}
+
+void LXEventManager::UnregisterEventFunc(const LXString& eventName, void* Owner)
+{
+	auto itEvent = _eventNameFunctions.find(eventName);
+	CHK(itEvent != _eventNameFunctions.end());
+
+	auto& list = _eventNameFunctions[eventName];
+
+	// Find the pair using the Owner
+	auto itPair = std::find_if(list.begin(), list.end(), [Owner](std::pair<void*, std::function<void(LXEvent*)>>& element)
+	{
+		return element.first == Owner;
+	});
+
+	CHK(itPair != list.end());
+
+	list.erase(itPair);
+
+	if (list.size() == 0)
+	{
+		_eventNameFunctions.erase(itEvent);
 	}
 }
 
@@ -71,6 +101,22 @@ void LXEventManager::BroadCastEvent(EEventType Event)
 {
 	BroadCastEvent(new LXEvent(Event));
 }
+
+void LXEventManager::BroadCastEvent(const LXString& eventName)
+{
+	//LXEvent* event = LXEvent(Event);
+
+	auto It3 = _eventNameFunctions.find(eventName);
+	if (It3 != _eventNameFunctions.end())
+	{
+		for (auto Func : It3->second)
+		{
+			Func.second(nullptr/*Event*/);
+		}
+	}
+	//delete Event;
+}
+
 
 void LXEventManager::BroadCastEvent(LXEvent* Event)
 {
@@ -85,15 +131,15 @@ void LXEventManager::BroadCastEvent(LXEvent* Event)
 		}
 	}
 
-	auto It2 = EventFunctions.find(Event->EventType);
-	if (It2 != EventFunctions.end())
+	auto It2 = _eventTypeFunctions.find(Event->EventType);
+	if (It2 != _eventTypeFunctions.end())
 	{
 		for (auto Func : It2->second)
 		{
 			Func.second (Event);
 		}
 	}
-
+	
 	delete Event;
 }
 
@@ -153,13 +199,28 @@ void LXEventManager::PostEvent(LXEvent* event)
 	Mutex.Unlock();
 }
 
+void LXEventManager::PostEvent(const LXString& eventName)
+{
+	LXMutex Mutex;
+	Mutex.Lock();
+	eventNameDeferred.insert(eventName);
+	Mutex.Unlock();
+}
+
 void LXEventManager::BroadCastEvents()
 {
-	for (LXEvent* Event : EventDeferred)
+	for (LXEvent* event : EventDeferred)
 	{
-		BroadCastEvent(Event);
+		BroadCastEvent(event);
 	}
 
 	EventDeferred.clear();
+
+	for (const LXString& eventName : eventNameDeferred)
+	{
+		BroadCastEvent(eventName);
+	}
+
+	eventNameDeferred.clear();
 }
 

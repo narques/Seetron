@@ -171,6 +171,7 @@ void LXRenderer::Init()
 
 	// Misc
 	ShaderManager = new LXShaderManager();
+	ShaderManager->CreateDefaultShaders();
 	TextureManager = new LXTextureManager();
 	RenderClusterManager = new LXRenderClusterManager();
 	RenderCommandList->Renderer = this;

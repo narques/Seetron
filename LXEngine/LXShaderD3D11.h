@@ -39,13 +39,15 @@ public:
 	LXShaderD3D11();
 	virtual ~LXShaderD3D11();
 
-	void AddMacro(const char* Name, const char* Definition);
+	void AddMacro(const char* name, const char* definition);
 
-	bool CreateVertexShader(wchar_t* Filename, const D3D11_INPUT_ELEMENT_DESC* Layout, UINT NumElements);
-	bool CreateHullShader(wchar_t* Filename);
-	bool CreateDomainShader(wchar_t* Filename);
-	bool CreateGeometryShader(wchar_t* Filename);
-	bool CreatePixelShader(wchar_t* Filename, const char* EntryPoint = "PS");
+	bool Create();
+
+	bool CreateVertexShader(const wchar_t* filename, const D3D11_INPUT_ELEMENT_DESC* Layout, UINT NumElements);
+	bool CreateHullShader(const wchar_t* filename);
+	bool CreateDomainShader(const wchar_t* filename);
+	bool CreateGeometryShader(const wchar_t* filename);
+	bool CreatePixelShader(const wchar_t* filename, const char* EntryPoint = "PS");
 
 	EShaderD3D11State GetState() const { return State; }
 
@@ -53,7 +55,7 @@ public:
 
 private:
 
-	HRESULT CompileShaderFromFile(wchar_t* Filename, const char* szEntryPoint, const char* szShaderModel, ID3DBlob** ppBlobOut);
+	HRESULT CompileShaderFromFile(const wchar_t* filename, const char* szEntryPoint, const char* szShaderModel, ID3DBlob** ppBlobOut);
 
 public:
 		
@@ -70,5 +72,13 @@ private:
 	vector<LXShaderMacro> ShaderMacros;
 	EShaderD3D11State State = EShaderD3D11State::Unknown;
 	EShaderType Type = EShaderType::Undefined;
+	std::wstring _filename;
+		
+	// VertexShader
+	const D3D11_INPUT_ELEMENT_DESC* _layout = nullptr;
+	UINT _numElements = 0;
+
+	// PixelShader
+	const char* _entryPoint = nullptr;
 };
 

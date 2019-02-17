@@ -8,41 +8,54 @@
 
 #include "stdafx.h"
 #include "LXShaderManager.h"
-#include "LXShaderD3D11.h"
-#include "LXMaterialD3D11.h"
-#include "LXMaterial.h"
-#include "LXShader.h"
-#include "LXSettings.h"
+#include "LXConsoleManager.h"
 #include "LXCore.h"
-#include "LXProject.h"
 #include "LXDirectX11.h"
-#include "LXPrimitiveD3D11.h"
 #include "LXFile.h"
-#include "LXLogger.h"
+#include "LXFileWatcher.h"
 #include "LXInputElementDescD3D11Factory.h"
+#include "LXLogger.h"
+#include "LXMaterial.h"
+#include "LXMaterialD3D11.h"
+#include "LXPrimitiveD3D11.h"
+#include "LXProject.h"
 #include "LXRenderPass.h"
-#include "LXShaderProgramD3D11.h"
+#include "LXSettings.h"
+#include "LXShader.h"
+#include "LXShaderD3D11.h"
 #include "LXShaderFactory.h"
+#include "LXShaderProgramD3D11.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 #define DEFAULT_SHADER L"Default.hlsl"
 #define DRAWTOBACKBUFFER_SHADER L"DrawToBackBuffer.hlsl"
 
-LXShaderManager::LXShaderManager()
+namespace
 {
-	//
-	// ScreenSpace shader used to draw a RTV to BackBuffer
-	//
-	{
-		VSDrawToBackBuffer = new LXShaderD3D11();
-		PSDrawToBackBuffer = new LXShaderD3D11();
-
-		const LXArrayInputElementDesc&  Layout = GetInputElementDescD3D11Factory().GetInputElement_PT();
-		VSDrawToBackBuffer->CreateVertexShader(GetSettings().GetShadersFolder() + DRAWTOBACKBUFFER_SHADER, &Layout[0], (uint)Layout.size());
-		PSDrawToBackBuffer->CreatePixelShader(GetSettings().GetShadersFolder() + DRAWTOBACKBUFFER_SHADER);
-	}
+	LXConsoleCommandT<bool> CSet_EngineShaderDevMode(L"Engine.ini", L"Development", L"EngineShaderDevMode", L"false");
 }
 
+LXShaderManager::LXShaderManager()
+{
+	if (CSet_EngineShaderDevMode.GetValue())
+	{
+		_engineFileWatcher = make_unique<LXFileWatcher>(GetSettings().GetDataFolder(), true);
+		_engineFileWatcher->OnFileChanded([this](const wstring& filename)
+		{
+			if (filename.at(0) != L'_')
+			{
+				auto it = _monitoredShaderFiles.find(filename);
+				if (it != _monitoredShaderFiles.end())
+				{
+					for (LXShaderD3D11* shader : it->second)
+					{
+						_shaderToRebuild.insert(shader);
+					}
+				}
+			}
+		});
+	}
+}
 
 LXShaderManager::~LXShaderManager()
 {
@@ -50,6 +63,20 @@ LXShaderManager::~LXShaderManager()
 
 	LX_SAFE_DELETE(VSDrawToBackBuffer);
 	LX_SAFE_DELETE(PSDrawToBackBuffer);
+}
+
+void LXShaderManager::CreateDefaultShaders()
+{
+	//
+	// ScreenSpace shader used to draw a RTV to BackBuffer
+	//
+	
+	VSDrawToBackBuffer = new LXShaderD3D11();
+	PSDrawToBackBuffer = new LXShaderD3D11();
+
+	const LXArrayInputElementDesc&  Layout = GetInputElementDescD3D11Factory().GetInputElement_PT();
+	VSDrawToBackBuffer->CreateVertexShader(GetSettings().GetShadersFolder() + DRAWTOBACKBUFFER_SHADER, &Layout[0], (uint)Layout.size());
+	PSDrawToBackBuffer->CreatePixelShader(GetSettings().GetShadersFolder() + DRAWTOBACKBUFFER_SHADER);
 }
 
 void LXShaderManager::RebuildShaders()
@@ -229,10 +256,23 @@ LXShaderD3D11* LXShaderManager::GetTextureShader(const LXString& ShaderFilename)
 	return nullptr;
 }
 
+void LXShaderManager::AddMonitoredShaderFile(const wstring& filename, LXShaderD3D11* shaderD3D11)
+{
+	CHK(IsRenderThread());
+	_monitoredShaderFiles[filename].push_back(shaderD3D11);
+}
+
 void LXShaderManager::Run()
 {
-	CHK(IsRenderThread())
+	CHK(IsRenderThread());
+	
 	DeleteUnusedShaders();
+
+	for (LXShaderD3D11* shader : _shaderToRebuild)
+	{
+		shader->Create();
+	}
+	_shaderToRebuild.clear();
 }
 
 template<typename T, typename M>

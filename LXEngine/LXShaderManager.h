@@ -12,12 +12,14 @@
 #include "LXRenderPass.h"
 #include "LXMaterialNode.h"
 
-class LXShader;
-class LXPrimitiveD3D11;
+class LXFileWatcher;
 class LXMaterialD3D11;
+class LXPrimitiveD3D11;
+class LXShader;
 class LXShaderD3D11;
 class LXShaderProgramD3D11;
 struct D3D11_INPUT_ELEMENT_DESC;
+enum class EShaderType;
 
 struct LXVSSignature
 {
@@ -122,6 +124,9 @@ public:
 
 	LXShaderManager();
 	virtual ~LXShaderManager();
+	
+	void CreateDefaultShaders();
+
 	void RebuildShaders();
 	void DeleteUnusedShaders();
 
@@ -132,6 +137,10 @@ public:
 
 	// Retrieve Shader according the giving Material
 	LXShaderD3D11* GetTextureShader(const LXString& ShaderFilename);
+
+	// Add a shader file to the monitoring feature,
+	// the modified shaders will ne automatically reloaded and rebuilt.
+	void AddMonitoredShaderFile(const wstring& filename, LXShaderD3D11* shaderD3D11);
 
 	void Run();
 
@@ -156,5 +165,11 @@ public:
 	MapDomainShaders DomainShaders;
 	MapGeometryShaders GeometryShaders;
 	MapPixelShaders PixelShaders;
+
+private:
+
+	unique_ptr<LXFileWatcher> _engineFileWatcher;
+	map<std::wstring, list<LXShaderD3D11*>> _monitoredShaderFiles;
+	set< LXShaderD3D11*> _shaderToRebuild;
 };
 
