@@ -75,8 +75,8 @@ LXRenderer::LXRenderer(HWND hWND):_hWND(hWND)
 	if (gUseRenderThread)
 	{
 		Thread = new LXThread();
-		EventBeginFrame = new LXSyncEvent(L"Begin", FALSE);
-		EventEndFrame = new LXSyncEvent(L"End", TRUE);
+		EventBeginFrame = new LXSyncEvent(false);
+		EventEndFrame = new LXSyncEvent(true);
 		Thread->Run(&RenderFunc, this);
 	}
 

@@ -47,9 +47,9 @@ void LXThread::GetInformation()
 
 //----------------------------------------------------------------------------------------------------------
 
-LXSyncEvent::LXSyncEvent(const wchar_t* Name, BOOL InitialState)
+LXSyncEvent::LXSyncEvent(bool initialState)
 {
-	_handle = ::CreateEvent(NULL, TRUE, InitialState, Name);
+	_handle = ::CreateEvent(NULL, TRUE, initialState, nullptr);
 }
 
 LXSyncEvent::~LXSyncEvent()

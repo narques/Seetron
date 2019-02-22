@@ -37,7 +37,7 @@ class LXCORE_API LXSyncEvent
 {
 public:
 
-	LXSyncEvent(const wchar_t* Name,/*BOOL*/ int InitialState);
+	LXSyncEvent(bool initialState);
 	~LXSyncEvent();
 	void SetEvent();
 	void Wait();
