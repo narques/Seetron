@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -54,6 +54,8 @@ int OpenFunc(void* pData)
 	LXDocumentManager* pDocumentManager = (LXDocumentManager*)pData;
 	LXProject* Project = pDocumentManager->GetDocument();
 	Project->SetLoading();
+	
+	GetEventManager()->PostEvent(new LXEvent(EEventType::ProjectLoading));
 
 	bool bRet = false;
 

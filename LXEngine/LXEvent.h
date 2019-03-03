@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -15,6 +15,7 @@ enum class EEventType			// Known emitters
 	// Event
 	SelectionChanged,			// SelectionManager
 
+	ProjectLoading,
 	ProjectLoaded,				// ProjectManager  ( EventResult )
 	ProjectClosed,
 

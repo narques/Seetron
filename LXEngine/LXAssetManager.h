@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -84,7 +84,7 @@ public:
 	void				GetShaders(list<LXShader*>& listShader)const;
 	void				GetMeshes(list<LXAssetMesh*>& listMeshes)const;
 	void				GetAssets(list<LXAsset*>& listAssets)const;
-	void				GetAssetsOfType(list<LXAsset*>& listAssets, LXAsset* Asset)const;
+	void				GetAssetsOfType(list<LXAsset*>& listAssets, EAssetType assetType)const;
 	LXAsset*			FindAsset(const LXString& RelativeFilepath)const;
 	const MapAssets&	GetAssets() const { return _MapAssets; }
 

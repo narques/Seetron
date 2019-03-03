@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -130,8 +130,8 @@ bool LXFileUtility::GetFileLastWriteTime(const wchar_t* strFilename)
 	HANDLE hFile = ::CreateFile(strFilename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile != INVALID_HANDLE_VALUE)
 	{
-		LPFILETIME lpLastWriteTime;
-		if (GetFileTime(hFile, nullptr, nullptr, lpLastWriteTime))
+		FILETIME lastWriteTime;
+		if (GetFileTime(hFile, nullptr, nullptr, &lastWriteTime))
 		{
 			bResult = true;
 		}

@@ -2,27 +2,28 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
 #include "LXAssetManager.h"
 #include "LXAnimation.h"
-#include "LXProject.h"
-#include "LXSettings.h"
-#include "LXScript.h"
+#include "LXAssetMesh.h"
+#include "LXConsoleManager.h"
+#include "LXDirectory.h"
+#include "LXFileWatcher.h"
+#include "LXGraphTemplate.h"
+#include "LXImporter.h"
 #include "LXLogger.h"
 #include "LXMaterial.h"
+#include "LXMesh.h"
+#include "LXProceduralTexture.h"
+#include "LXProject.h"
+#include "LXScript.h"
+#include "LXSettings.h"
 #include "LXShader.h"
 #include "LXTexture.h"
-#include "LXProceduralTexture.h"
-#include "LXDirectory.h"
-#include "LXImporter.h"
-#include "LXAssetMesh.h"
-#include "LXMesh.h"
-#include "LXConsoleManager.h"
-#include "LXGraphTemplate.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 #define LX_DEFAULT_MATERIAL L"Materials/M_Default.smat"
@@ -31,7 +32,7 @@
 // Console commands
 //------------------------------------------------------------------------------------------------------
 
-LXConsoleCommand1S CCCreateNewMaterial(L"CreateNewMaterial", [](const LXString& inMaterialName)
+LXConsoleCommand1S CCCreateNewMaterial(L"Asset.CreateMaterial", [](const LXString& inMaterialName)
 {
 	LXProject* Project = GetCore().GetProject();
 	if (!Project)
@@ -44,7 +45,7 @@ LXConsoleCommand1S CCCreateNewMaterial(L"CreateNewMaterial", [](const LXString& 
 	}
 });
 
-LXConsoleCommand1S CCCreateNewTexture(L"CreateNewTexture", [](const LXString& inTextureName)
+LXConsoleCommand1S CCCreateNewTexture(L"Asset.CreateTexture", [](const LXString& inTextureName)
 {
 	LXProject* Project = GetCore().GetProject();
 	if (!Project)
@@ -57,7 +58,7 @@ LXConsoleCommand1S CCCreateNewTexture(L"CreateNewTexture", [](const LXString& in
 	}
 });
 
-LXConsoleCommand1S CCCreateNewShader(L"CreateNewShader", [](const LXString& inShaderName)
+LXConsoleCommand1S CCCreateNewShader(L"Asset.CreateShader", [](const LXString& inShaderName)
 {
 	LXProject* Project = GetCore().GetProject();
 	if (!Project)
@@ -70,7 +71,7 @@ LXConsoleCommand1S CCCreateNewShader(L"CreateNewShader", [](const LXString& inSh
 	}
 });
 
-LXConsoleCommand1S CCCreateNewAnimation(L"CreateNewAnimation", [](const LXString& inAnimationName)
+LXConsoleCommand1S CCCreateNewAnimation(L"Asset.CreateAnimation", [](const LXString& inAnimationName)
 {
 	LXProject* Project = GetCore().GetProject();
 	if (!Project)
@@ -595,32 +596,26 @@ void LXAssetManager::GetAssets(list<T>& listAssets) const
 	}
 }
 
-void LXAssetManager::GetAssetsOfType(list<LXAsset*>& listAssets, LXAsset* Asset) const
+void LXAssetManager::GetAssetsOfType(list<LXAsset*>& listAssets, EAssetType assetType) const
 {
-	if (dynamic_cast<LXMaterial*>(Asset))
+	switch (assetType)
 	{
+	case EAssetType::Material:
 		GetMaterials((list<LXMaterial*>&)listAssets);
-	}
-	else if (dynamic_cast<LXTexture*>(Asset))
-	{
+		break;
+	case EAssetType::Texture:
 		GetTextures((list<LXTexture*>&)listAssets);
-	}
-	else if (dynamic_cast<LXShader*>(Asset))
-	{
+		break;
+	case EAssetType::Shader:
 		GetShaders((list<LXShader*>&)listAssets);
-	}
-	else if (dynamic_cast<LXAssetMesh*>(Asset))
-	{
+		break;
+	case EAssetType::Mesh:
 		GetMeshes((list<LXAssetMesh*>&)listAssets);
-	}
-	else
-	{
-		if (Asset != nullptr)
-		{
-			LogE(AssetManager, L"Unknown asset type. Return all of them");
-		}
-
+		break;
+	case EAssetType::Undefined:
+	default:
 		GetAssets(listAssets);
+		break;
 	}
 }
 

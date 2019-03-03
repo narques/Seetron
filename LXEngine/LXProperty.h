@@ -2,19 +2,19 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #pragma once
 
-#include "LXVariant.h"
 #include "LXColor.h"
+#include "LXPropertyIdentifiers.h"
+#include "LXPropertyType.h"
+#include "LXVariant.h"
 #include "LXVec2.h"
 #include "LXVec3.h"
 #include "LXVec4.h"
-#include "LXPropertyIdentifiers.h"
-#include "LXPropertyType.h"
 
 typedef list<LXPropertyID> ListPropertyID;
 typedef pair<LXPropertyID, LXVariant*> PairPropetyIDVariant;
@@ -38,35 +38,25 @@ class LXPropertyInfo
 {
 public:
 
-	LXPropertyInfo() :
-		_bReadOnly(false),
-		_bPersistent(true),
-		_GroupName(_CurrentGroup),
-		_MinValue(nullptr),
-		_MaxValue(nullptr),
-		_ID(LXPropertyID::Undefined),
-		_bAnimatable(false),
-		_bEnable(nullptr),
-		_bUserProperty(false)
-	{
-	}
+	LXPropertyInfo(){}
 
 	// UI
 	LXString				_Label;				
-	LXString				_GroupName;
+	LXString				_GroupName = _CurrentGroup;
 	LXString				_Description;
 	// ID
 	LXString				_Name;
-	LXPropertyID			_ID;
+	LXPropertyID			_ID = LXPropertyID::Undefined;
 	// Misc
-	bool					_bReadOnly;
-	bool					_bPersistent;
-	void*					_MinValue;
-	void*					_MaxValue;
+	bool					_bReadOnly = false;
+	bool					_bPersistent = true;
+	void*					_MinValue = nullptr;
+	void*					_MaxValue = nullptr;
 	static LXString			_CurrentGroup;
-	bool					_bAnimatable;
-	bool*					_bEnable;	// Dependency to another propertyBool
-	bool					_bUserProperty;
+	bool					_bAnimatable = false;
+	bool*					_bEnable = nullptr;	// Dependency to another propertyBool
+	bool					_bUserProperty = false;
+	int64					_userData = 0;
 };
 
 //--------------------------------------------------------------------------
@@ -117,6 +107,9 @@ public:
 
 	bool					GetUserProperty ( ) const							{ return _PropInfo->_bUserProperty;}
 	void					SetUserProperty ( bool UserProperty )				{ _PropInfo->_bUserProperty = UserProperty; }
+
+	int64					GetUserData() const { return _PropInfo->_userData; }
+	void					SetUserData(int64 userData) { _PropInfo->_userData = userData; }
 
 	LXSmartObject*			GetLXObject		( ) const;
 	void					SetObject		( LXSmartObject* pObject );

@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -13,14 +13,16 @@
 
 LXActorSceneCapture::LXActorSceneCapture():LXActor(GetCore().GetProject())
 {
+	SetName(L"SceneCapture");
+
 	// --------------------------------------------------------------------------------------------------------------
 	LXProperty::SetCurrentGroup(L"ActorSceneCapture");
 	// --------------------------------------------------------------------------------------------------------------
-	DefineProperty(L"CubeMap", (LXAssetPtr*)&_Texture);
+	LXPropertyAssetPtr* propertyAsset = DefineProperty(L"CubeMap", (LXAssetPtr*)&_Texture);
+	propertyAsset->SetUserData((int64)EAssetType::Texture);
 
-	auto p = DefinePropertyFloat("Intensity", LXPropertyID::LIGHT_INTENSITY, &_Intensity);
-	p->SetMinMax(0.f, 8.f);
-
+	LXPropertyFloat* propertyFloat = DefinePropertyFloat("Intensity", LXPropertyID::LIGHT_INTENSITY, &_Intensity);
+	propertyFloat->SetMinMax(0.f, 8.f);
 }
 
 LXActorSceneCapture::~LXActorSceneCapture()

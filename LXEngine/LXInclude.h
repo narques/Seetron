@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -40,6 +40,7 @@ using namespace std;
 #include "LXDebug.h"
 #include "LXReference.h"
 #include "LXTypes.h"
+#include "LXAssetType.h"
 #include "LXString.h"
 #include "LXVec2.h"
 #include "LXVec3.h"
