@@ -90,7 +90,8 @@ LXProject* LXDocumentManager::LoadFile(const LXFilepath& strFilepath, bool bThre
 	CHK(_Project == nullptr);
 		
 	_Project = new LXProject(strFilepath);
-	
+	GetEventManager()->BroadCastEvent(new LXEventResult(EEventType::ProjectCreated, true));
+		
 	_FilesToLoad.push(strFilepath);
 	
 	if (bThreaded)

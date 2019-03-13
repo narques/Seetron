@@ -15,6 +15,12 @@ enum class EEventType			// Known emitters
 	// Event
 	SelectionChanged,			// SelectionManager
 
+	// Scene
+	ActorAdded,
+	ActorRemoved,
+
+	// Project
+	ProjectCreated,
 	ProjectLoading,
 	ProjectLoaded,				// ProjectManager  ( EventResult )
 	ProjectClosed,

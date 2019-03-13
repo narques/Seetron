@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -12,6 +12,7 @@
 
 typedef vector<class LXActorLight*> ArrayLights;
 class LXActorCamera;
+class LXEvent;
 
 class LXCORE_API LXScene : public LXActor
 {
@@ -20,31 +21,28 @@ class LXCORE_API LXScene : public LXActor
 
 public:
 
-	LXScene(LXProject* pDocument);
+	LXScene(LXProject* project);
 	virtual ~LXScene(void);
 
 	// Returns the actor of the given name (case sensitive)
-	LXActor* GetActor(const LXString& Name);
+	LXActor* GetActor(const LXString& name);
 
 	// Returns the current active Scene Camera
 	// null if no camera exists.
-	LXActorCamera* GetCamera() const { return _ActorCamera; }
+	LXActorCamera* GetCamera() const { return _actorCamera; }
 
-	void RegisterCB_OnActorAdded(void* Listener, std::function<void(LXActor*)>);
-	void UnregisterCB_OnActorAdded(void* Listener);
+	void RegisterCB_OnActorAdded(void* listener, std::function<void(LXEvent*)>);
+	void UnregisterCB_OnActorAdded(void* listener);
 
-	void RegisterCB_OnActorRemoved(void* Listener, std::function<void(LXActor*)>);
-	void UnregisterCB_OnActorRemoved(void* Listener);
-
-private:
-
-	void OnActorAdded(LXActor* Actor);
-	void OnActorRemoved(LXActor* Actor);
+	void RegisterCB_OnActorRemoved(void* listener, std::function<void(LXEvent*)>);
+	void UnregisterCB_OnActorRemoved(void* listener);
 
 private:
 
-	map<void*, std::function<void(LXActor*)>> _MapCBOnActorAdded;
-	map<void*, std::function<void(LXActor*)>> _MapCBOnActorRemoved;
+	void OnActorAdded(LXActor* actor);
+	void OnActorRemoved(LXActor* actor);
 
-	LXActorCamera* _ActorCamera = nullptr;
+private:
+
+	LXActorCamera* _actorCamera = nullptr;
 };

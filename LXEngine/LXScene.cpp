@@ -2,87 +2,81 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "StdAfx.h"
 #include "LXScene.h"
 #include "LXActorCamera.h"
+#include "LXCore.h"
+#include "LXEvent.h"
+#include "LXEventManager.h"
 #include "LXTraverserCallBack.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXScene::LXScene(LXProject* pDocument):
 LXActor(pDocument)
 {
-  SetName(L"Scene");
+	SetName(L"Scene");
 }
 
 LXScene::~LXScene(void)
 {
-	CHK(_MapCBOnActorAdded.size() == 0);
-	CHK(_MapCBOnActorRemoved.size() == 0);
 }
 
-LXActor* LXScene::GetActor(const LXString& Name)
+LXActor* LXScene::GetActor(const LXString& name)
 {
-	LXActor* Result = nullptr;
+	LXActor* result = nullptr;
 	LXTraverserLambda TraverserLambda(this);
-	TraverserLambda.SetLambdaOnGroup([this, &Name, &Result](LXActor* Actor)
+	TraverserLambda.SetLambdaOnGroup([this, &name, &result](LXActor* Actor)
 	{
-		if (Actor->GetName() == Name)
+		if (Actor->GetName() == name)
 		{
-			Result = Actor;
+			result = Actor;
 		}
 	});
 
 	TraverserLambda.Apply();
-	return Result;
+	return result;
 }
 
-void LXScene::RegisterCB_OnActorAdded(void* listener, std::function<void(LXActor*)> func)
+void LXScene::RegisterCB_OnActorAdded(void* listener, std::function<void(LXEvent*)> func)
 {
-	_MapCBOnActorAdded[listener] = func;
+	GetEventManager()->RegisterEventFunc(EEventType::ActorAdded, listener, func);
 }
 
 void LXScene::UnregisterCB_OnActorAdded(void* listener)
 {
-	_MapCBOnActorAdded.erase(listener);
+	GetEventManager()->UnregisterEventFunc(EEventType::ActorAdded, listener);
 }
 
-void LXScene::RegisterCB_OnActorRemoved(void* listener, std::function<void(LXActor*)> func)
+void LXScene::RegisterCB_OnActorRemoved(void* listener, std::function<void(LXEvent*)> func)
 {
-	_MapCBOnActorRemoved[listener] = func;
+	GetEventManager()->RegisterEventFunc(EEventType::ActorRemoved, listener, func);
 }
 
 void LXScene::UnregisterCB_OnActorRemoved(void* listener)
 {
-	_MapCBOnActorRemoved.erase(listener);
+	GetEventManager()->UnregisterEventFunc(EEventType::ActorRemoved, listener);
 }
 
-void LXScene::OnActorAdded(LXActor* Actor)
+void LXScene::OnActorAdded(LXActor* actor)
 {
-	if (LXActorCamera* ActorCamera = dynamic_cast<LXActorCamera*>(Actor))
+	if (LXActorCamera* ActorCamera = dynamic_cast<LXActorCamera*>(actor))
 	{
-		_ActorCamera = ActorCamera;
+		_actorCamera = ActorCamera;
 	}
-	
-	for (auto It : _MapCBOnActorAdded)
-	{
-		It.second(Actor);
-	}
+
+	GetEventManager()->PostEvent(new LXEventObjectCreated(EEventType::ActorAdded, actor));
 }
 
-void LXScene::OnActorRemoved(LXActor* Actor)
+void LXScene::OnActorRemoved(LXActor* actor)
 {
-	if (LXActorCamera* ActorCamera = dynamic_cast<LXActorCamera*>(Actor))
+	if (LXActorCamera* ActorCamera = dynamic_cast<LXActorCamera*>(actor))
 	{
-		_ActorCamera = nullptr;
+		_actorCamera = nullptr;
 	}
 
-	for (auto It : _MapCBOnActorRemoved)
-	{
-		It.second(Actor);
-	}
+	GetEventManager()->PostEvent(new LXEventObjectDeleted(EEventType::ActorRemoved, actor));
 }
-
