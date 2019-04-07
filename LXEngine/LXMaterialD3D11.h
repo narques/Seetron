@@ -14,7 +14,7 @@
 
 class LXRenderCommandList;
 class LXMaterial;
-class LXTextureD3D11;
+class LXTexture;
 class LXMaterialNodeTextureSampler;
 class LXConstantBufferD3D11;
 class LXShaderProgramD3D11;
@@ -38,8 +38,8 @@ public:
 	bool IsTransparent() const { return Transparent; }
 
 	const LXConstantBuffer& GetConstantBufferPS() const { return ConstantBufferPS; }
-	const list<LXTextureD3D11*>& GetTexturesVS() const { return ListVSTextures; }
-	const list<LXTextureD3D11*>& GetTexturesPS() const { return ListPSTextures; }
+	const list<LXTexture*>& GetTexturesVS() const { return ListVSTextures; }
+	const list<LXTexture*>& GetTexturesPS() const { return ListPSTextures; }
 			
 private:
 
@@ -53,8 +53,8 @@ public:
 private:
 
 	// List of texture to bind to the corresponding shader
-	list<LXTextureD3D11*> ListVSTextures;
-	list<LXTextureD3D11*> ListPSTextures;
+	list<LXTexture*> ListVSTextures;
+	list<LXTexture*> ListPSTextures;
 
 	// States
 	uint TwoSided : 1;

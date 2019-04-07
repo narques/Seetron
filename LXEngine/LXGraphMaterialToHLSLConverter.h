@@ -13,7 +13,6 @@ class LXGraph;
 class LXNode;
 class LXConstantBuffer;
 class LXConnector;
-class LXTextureD3D11;
 class LXTexture;
 class LXMaterialD3D11;
 enum class ERenderPass;
@@ -29,7 +28,7 @@ public:
 
 	LXStringA GenerateCode(const LXMaterialD3D11* materialD3D11, ERenderPass renderPass, EShader Shader, int layoutMask = -1);
 	bool GenerateConstanBuffer(const LXGraph* graph, EShader Shader, LXConstantBuffer& outConstantBuffer);
-	bool GatherTextures(const LXGraph* graph, EShader Shader, list<LXTextureD3D11*>& listTextures);
+	bool GatherTextures(const LXGraph* graph, EShader Shader, list<LXTexture*>& listTextures);
 
 private:
 
@@ -46,7 +45,7 @@ private:
 	bool IsConnectorUsableInContext(const LXConnector* connector);
 
 	bool ParseNodeCB(const LXNode& node, LXConstantBuffer& outConstantBuffer);
-	bool ParseNodeTexture(const LXNode& node, list<LXTextureD3D11*>& listTextures);
+	bool ParseNodeTexture(const LXNode& node, list<LXTexture*>& listTextures);
 	LXStringA GenerateHeaderComment() const;
 
 private:

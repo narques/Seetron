@@ -305,7 +305,7 @@ LXTexture* LXAssetManager::CreateNewTexture(const LXString& MaterialName, const 
 	Texture->Owner = EResourceOwner::LXResourceOwner_Project;
 	Texture->SetFilepath(TextureFilepath);
 	Texture->State = LXAsset::EResourceState::LXResourceState_Loaded;
-	Texture->TextureSource = ETextureSource::TextureSourceDynamic;
+	Texture->TextureSource = ETextureSource::TextureSourceMaterial;
 	Texture->Save();
 
 	LXFilepath RelativeAssetFilepath = AssetFolderpath.GetRelativeFilepath(TextureFilepath);

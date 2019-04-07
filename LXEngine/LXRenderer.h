@@ -28,6 +28,8 @@ class LXTextureManager;
 class LXRenderPipeline;
 class LXString;
 class LXSyncEvent;
+class LXTaskManager;
+class LXTexture;
 class LXTextureD3D11;
 class LXThread;
 class LXViewport;
@@ -70,6 +72,9 @@ public:
 	LXTextureManager* GetTextureManager() const { return TextureManager; }
 	LXRenderPipeline* GetRenderPipeline() const { return _RenderPipeline; }
 
+	void CreateDeviceTexture(LXTexture* texture);
+	void ReleaseDeviceTexture(LXTexture* texture);
+	
 	// Shared objects
 	ID3D11RasterizerState* GetDefaultRasterizerState () const { return D3D11RasterizerState; }
 	ID3D11BlendState* GetBlendStateOpaque() const { return D3D11BlendStateNoBlend; }
@@ -164,5 +169,11 @@ private:
 	LXShaderManager* ShaderManager = nullptr;
 	LXTextureManager* TextureManager = nullptr;
 	LXRenderPipeline* _RenderPipeline = nullptr;
+
+	//
+	// Tasks
+	//
+
+	std::unique_ptr<LXTaskManager> _mainTasks;
 };
 

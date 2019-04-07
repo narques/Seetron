@@ -15,6 +15,7 @@
 #include "LXFile.h"
 #include "LXMaterial.h"
 #include "LXMaterialD3D11.h"
+#include "LXTexture.h"
 #include "LXTextureD3D11.h"
 #include "LXGraphMaterialToHLSLConverter.h"
 #include "LXShader.h"
@@ -237,22 +238,27 @@ LXStringA LXShaderFactory::ConstantBufferToHLSL(const LXConstantBuffer& Constant
 	return HLSLDeclaration;
 }
 
-LXStringA LXShaderFactory::ListTexturesToHLSL(const list<LXTextureD3D11*>& listTextures, EShader shader)
+LXStringA LXShaderFactory::ListTexturesToHLSL(const list<LXTexture*>& listTextures, EShader shader)
 {
-
 	LXStringA HLSLDeclaration;
+
+	int pixelSlot = 0;
+	int vertexSlot = 0;
 	
-	for (LXTextureD3D11* textureD3D11 : listTextures)
+	for (LXTexture* texture : listTextures)
 	{
+		const LXTextureD3D11* textureD3D11 = texture->GetDeviceTexture();
+		CHK(textureD3D11);
+
 		if (shader == EShader::VertexShader)
 		{
-			LXStringA n = LXStringA::Number(textureD3D11->Slot);
+			LXStringA n = LXStringA::Number(vertexSlot++);
 			HLSLDeclaration += "Texture2D texture" + n + " : register(vs, t" + n + ");\n";
 			HLSLDeclaration += "SamplerState sampler" + n + " : register(vs, s" + n + ");\n\n";
 		}
 		else if (shader == EShader::PixelShader)
 		{
-			LXStringA n = LXStringA::Number(textureD3D11->Slot);
+			LXStringA n = LXStringA::Number(pixelSlot++);
 			HLSLDeclaration += "Texture2D texture" + n + " : register(ps, t" + n + ");\n";
 			HLSLDeclaration += "SamplerState sampler" + n + " : register(ps, s" + n + ");\n\n";
 		}

@@ -100,7 +100,7 @@ public:
 	CMD4_CLASS(DrawIndexedInstanced, UINT, IndexCountPerInstance, UINT, InstanceCount, UINT, StartIndexLocation, INT,  BaseVertexLocation)
 	CMD2_CLASS(RSSetViewports, UINT, Width, UINT, Height)
 	CMD4_CLASS(RSSetViewports2, float, TopLeftX, float, TopLeftY, float, Width, float, Height)
-	CMD3_CLASS(VSSetShaderResources, UINT, StartSlot, UINT, NumViews, LXTextureD3D11*, Texture)
+	CMD3_CLASS(VSSetShaderResources, UINT, StartSlot, UINT, NumViews, const LXTextureD3D11*, Texture)
 	CMD3_CLASS(PSSetShaderResources, UINT, StartSlot, UINT, NumViews, const LXTextureD3D11*, Texture)
 	CMD3_CLASS(PSSetShaderResources2, UINT, StartSlot, UINT, NumViews, ID3D11ShaderResourceView*, Texture)
 	CMD3_CLASS(PSSetSamplers, UINT, StartSlot, UINT, NumSamplers, const LXTextureD3D11*, Texture)

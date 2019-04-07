@@ -18,17 +18,21 @@
 LXTextureD3D11::LXTextureD3D11()
 {
 	LX_COUNTSCOPEINC(LXTextureD3D11)
+	CHK(IsRenderThread())
 }
 
 LXTextureD3D11::LXTextureD3D11(uint Width, uint Height, DXGI_FORMAT Format, bool bSupportAutoMipmap)
 {
 	LX_COUNTSCOPEINC(LXTextureD3D11)
+	CHK(IsRenderThread())
+	
 	Create(Format, Width, Height, bSupportAutoMipmap);
 }
 
 LXTextureD3D11::LXTextureD3D11(uint Width, uint Height, DXGI_FORMAT Format, void* Buffer, uint PixelSize, uint MipLevels, D3D11_FILTER Filter)
 {
 	LX_COUNTSCOPEINC(LXTextureD3D11)
+	CHK(IsRenderThread())
 
 	ID3D11Device* D3D11Device = LXDirectX11::GetCurrentDevice();
 	ID3D11DeviceContext* D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();
@@ -96,7 +100,7 @@ LXTextureD3D11* LXTextureD3D11::CreateFromTexture(LXTexture* InTexture)
 
 	if (InTexture->TextureSource == ETextureSource::TextureSourceBitmap)
 	{
-		CHK(InTexture->GetGraph() == nullptr);
+		CHK(InTexture->GetMaterial() == nullptr);
 		if (LXBitmap* Bitmap = InTexture->GetBitmap(0))
 		{
 			DXGI_FORMAT Format = DXGI_FORMAT_UNKNOWN;

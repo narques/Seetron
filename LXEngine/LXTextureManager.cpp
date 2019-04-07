@@ -53,7 +53,7 @@ shared_ptr<LXTextureD3D11> LXTextureManager::CreateTexture(const LXTexture* Text
 
 	if (Texture->TextureSource == ETextureSource::TextureSourceBitmap)
 	{
-		CHK(Texture->GetGraph() == nullptr);
+		CHK(Texture->GetMaterial() == nullptr);
 		if (LXBitmap* Bitmap = Texture->GetBitmap(0))
 		{
 			DXGI_FORMAT Format = LXTextureD3D11::GetDXGIFormat(Bitmap->GetInternalFormat());
@@ -64,9 +64,9 @@ shared_ptr<LXTextureD3D11> LXTextureManager::CreateTexture(const LXTexture* Text
 			LogE(LXTextureManager, L"CreateTexture fails, Bitmap is null");
 		}
 	}
-	else if (Texture->TextureSource == ETextureSource::TextureSourceDynamic)
+	else if (Texture->TextureSource == ETextureSource::TextureSourceMaterial)
 	{
-		CHK(Texture->GetGraph());
+		CHK(Texture->GetMaterial());
 		CHK(0); // Find a more generic way to access the rendered texture
 		//TextureD3D11 = GetCore().GetRenderer()->RenderPassDynamicTexture->AddGraph(Texture);
 	}
@@ -77,10 +77,10 @@ shared_ptr<LXTextureD3D11> LXTextureManager::CreateTexture(const LXTexture* Text
 		CHK(0);
 	}
 
-	if (TextureD3D11)
-		TextureD3D11->Slot = -1;
-	else
+	if (TextureD3D11 == nullptr)
+	{
 		LogE(LXTextureManager, L"CreateTexture fails, unknown error");
+	}
 
 	return TextureD3D11;
 }

@@ -16,6 +16,7 @@ struct LXVSSignature;
 class LXMaterialD3D11;
 class LXConstantBuffer;
 class LXFilepath;
+class LXTexture;
 
 class LXShaderFactory : public LXObject
 {
@@ -69,7 +70,7 @@ private:
 	// Generate the Textures and SamplerStates declaration
 	//
 
-	static LXStringA ListTexturesToHLSL(const list<LXTextureD3D11*>& listTextures, EShader shader);
+	static LXStringA ListTexturesToHLSL(const list<LXTexture*>& listTextures, EShader shader);
 	
 	//
 	// Generate all Shaders for the given material

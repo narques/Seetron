@@ -22,7 +22,6 @@
 #include "LXNode.h"
 #include "LXRenderPass.h"
 #include "LXTexture.h"
-#include "LXTextureD3D11.h"
 #include "LXMaterialD3D11.h"
 #include "LXReference.h"
 #include "LXInputElementDescD3D11Factory.h"
@@ -145,7 +144,7 @@ bool LXGraphMaterialToHLSLConverter::GenerateConstanBuffer(const LXGraph* graph,
 	return ParseNodeCB(*nodeRoot, outConstantBuffer);
 }
 
-bool LXGraphMaterialToHLSLConverter::GatherTextures(const LXGraph* graph, EShader Shader, list<LXTextureD3D11*>& listTextures)
+bool LXGraphMaterialToHLSLConverter::GatherTextures(const LXGraph* graph, EShader Shader, list<LXTexture*>& listTextures)
 {
 	//_renderPass = renderPass;
 	_shader = Shader;
@@ -528,7 +527,7 @@ bool LXGraphMaterialToHLSLConverter::ParseNodeCB(const LXNode& node, LXConstantB
 	return res;
 }
 
-bool LXGraphMaterialToHLSLConverter::ParseNodeTexture(const LXNode& node, list<LXTextureD3D11*>& listTextures)
+bool LXGraphMaterialToHLSLConverter::ParseNodeTexture(const LXNode& node, list<LXTexture*>& listTextures)
 {
 
 	//
@@ -578,9 +577,7 @@ bool LXGraphMaterialToHLSLConverter::ParseNodeTexture(const LXNode& node, list<L
 				{
 					if (_addedTextures.find(texture) == _addedTextures.end())
 					{
-						LXTextureD3D11* textureD3D11 = LXTextureD3D11::CreateFromTexture(texture);
-						textureD3D11->Slot = (uint)listTextures.size();
-						listTextures.push_back(textureD3D11);
+						listTextures.push_back(texture);
 						_addedTextures.insert(texture);
 					}
 

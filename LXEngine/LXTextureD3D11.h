@@ -48,6 +48,5 @@ public:
 	ID3D11SamplerState* D3D11SamplerState = nullptr;
 
 	DXGI_FORMAT _Format;
-	uint Slot;
 };
 

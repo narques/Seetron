@@ -21,12 +21,16 @@
 #include "LXRenderer.h"
 #include "LXScene.h"
 #include "LXShaderManager.h"
+#include "LXTask.h"
+#include "LXTexture.h"
+#include "LXTextureD3D11.h"
 #include "LXTextureManager.h"
 #include "LXThread.h"
 #include "LXTimeD3D11.h"
 #include "LXTrackBallCameraManipulator.h"
 #include "LXViewport.h"
 #include "LXStatManager.h"
+#include "LXTaskManager.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 //------------------------------------------------------------------------------------------------------
@@ -182,6 +186,9 @@ void LXRenderer::Init()
 	SSTriangle->CreateSSTriangle();
 	
 	_RenderPipeline = new LXRenderPipelineDeferred(this);
+
+	// Tasks
+	_mainTasks = std::make_unique<LXTaskManager>();
 }
 
 void LXRenderer::Run()
@@ -315,6 +322,9 @@ void LXRenderer::Render()
 	//
 	// Commands & Tasks
 	//
+
+   _mainTasks->Run(time.DeltaTime());
+
 
 	// If project changed
 	if (_Project != _NewProject)
@@ -539,3 +549,47 @@ void LXRenderer::Empty()
 	if (RenderClusterManager)
 		RenderClusterManager->Empty();
 }
+
+void LXRenderer::CreateDeviceTexture(LXTexture* texture)
+{
+	if (IsRenderThread())
+	{
+		LXTextureD3D11* texture3D11 = LXTextureD3D11::CreateFromTexture(texture);
+		texture->SetDeviceTexture(texture3D11);
+	}
+	else
+	{
+		LXTask* task = new LXTaskCallBack([texture]()
+		{
+			CHK(IsRenderThread());
+			LXTextureD3D11* texture3D11 = LXTextureD3D11::CreateFromTexture(texture);
+			texture->SetDeviceTexture(texture3D11);
+		});
+
+		_mainTasks->EnqueueTask(task);
+	}
+}
+
+void LXRenderer::ReleaseDeviceTexture(LXTexture* texture)
+{
+	if (IsRenderThread())
+	{
+		const LXTextureD3D11* textureD3D11 = texture->GetDeviceTexture();
+		texture->SetDeviceTexture(nullptr);
+		delete textureD3D11;
+	}
+	else
+	{
+		LXTask* task = new LXTaskCallBack([texture]()
+		{
+			CHK(IsRenderThread());
+			const LXTextureD3D11* textureD3D11 = texture->GetDeviceTexture();
+			texture->SetDeviceTexture(nullptr);
+			delete textureD3D11;
+		});
+
+		_mainTasks->EnqueueTask(task);
+	}
+}
+
+

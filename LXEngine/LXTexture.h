@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -12,8 +12,9 @@
 #include "LXFormats.h"
 
 class LXBitmap;
-class LXGraph;
 class LXFilepath;
+class LXMaterial;
+class LXTextureD3D11;
 
 enum class ETextureTarget
 {
@@ -28,7 +29,7 @@ enum class ETextureSource
 {
 	TextureSouceUndefined,
 	TextureSourceBitmap, 
-	TextureSourceDynamic
+	TextureSourceMaterial
 };
 
 class LXCORE_API LXTexture : public LXAsset
@@ -45,19 +46,19 @@ public:
 	bool			LoadSource			( );
 	void			SetSource			( const LXFilepath& Filepath );
 		
-	ETextureFormat GetInsternalFormat	( ) const { return _eInternalFormat; }
+	ETextureFormat	GetInsternalFormat	( ) const { return _eInternalFormat; }
 	void			SetInternalFormat	( ETextureFormat eInternalFormat) { _eInternalFormat = eInternalFormat; }
 	
 	void			SetTarget			( ETextureTarget eTarget) { _eTarget = eTarget; }
-	ETextureTarget GetTarget			( ) const { return _eTarget; }
+	ETextureTarget	GetTarget			( ) const { return _eTarget; }
 		
 	void			SetSize				( uint nWidth, uint nHeight ) { _nWidth = nWidth; _nHeight = nHeight; }
 	void			SetDepth			( uint nDepth ){ _nDepth = nDepth; }
 
 	LXBitmap*		GetBitmap			( int index ) const;
 	void			SetBitmap			( LXBitmap* Bitmap );
-	LXGraph*		GetGraph			( ) const { return _Graph; }
-	void			SetGraph			( LXGraph* InGraph );
+	LXMaterial*		GetMaterial			( ) const { return _material; }
+	void			SetMaterial			(LXMaterial* InGraph );
 
 	//
 	// Overridden From LXResource
@@ -66,9 +67,18 @@ public:
 	bool			Load() override;
 	LXString		GetFileExtension() override { return LX_TEXTURE_EXT; }
 
+	//
+	// Rendering
+	//
+
+	const LXTextureD3D11* GetDeviceTexture() const { return _textureD3D11; }
+	void SetDeviceTexture(LXTextureD3D11* textureD3D11) { _textureD3D11 = textureD3D11; }
+
 private:
 
 	void			DefineProperties();
+	void			CreateDeviceTexture();
+	void			ReleaseDeviceTexture();
 
 public:
 
@@ -87,6 +97,10 @@ private:
 	// Texture sources
 	LXFilepath				_SourceFilepath;
 	LXBitmap*				_Bitmap = nullptr;				
-	LXGraph*				_Graph = nullptr; 
+	LXMaterial*				_material = nullptr;
+
+	// Rendering
+	LXTextureD3D11*			_textureD3D11 = nullptr;
+
 };
 

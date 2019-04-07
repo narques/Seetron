@@ -24,6 +24,7 @@
 #include "LXRenderPipelineDeferred.h"
 #include "LXRenderCluster.h"
 #include "LXRenderTargetViewD3D11.h"
+#include "LXTexture.h"
 #include "LXTextureD3D11.h"
 #include "LXGraph.h"
 #include <dxgiformat.h>
@@ -50,18 +51,7 @@ LXMaterialD3D11::~LXMaterialD3D11()
 
 void LXMaterialD3D11::Release()
 {
-	for (LXTextureD3D11* Texture : ListVSTextures)
-	{
-		delete Texture;
-	}
-
 	ListVSTextures.clear();
-
-	for (LXTextureD3D11* Texture : ListPSTextures)
-	{
-		delete Texture;
-	}
-
 	ListPSTextures.clear();
 
 	LX_SAFE_DELETE(CBMaterialParemetersVS);
@@ -124,24 +114,29 @@ void LXMaterialD3D11::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 	}
 	*/
 
+	uint vertexSlot = 0;
+	uint pixelSlot = 0;
 
-	for (LXTextureD3D11* Texture : ListVSTextures)
+	for (LXTexture* texture : ListVSTextures)
 	{
-		uint Slot = Texture->Slot;
-		RCL->VSSetSamplers(Slot, 1, Texture);
-		RCL->VSSetShaderResources(Slot, 1, Texture);
+		if (const LXTextureD3D11* textureD3D11 = texture->GetDeviceTexture())
+		{
+			RCL->VSSetSamplers(vertexSlot, 1, textureD3D11);
+			RCL->VSSetShaderResources(vertexSlot, 1, textureD3D11);
+			vertexSlot++;
+		}
 	}
 		
 	if (RenderPass == ERenderPass::GBuffer)
 	{
 		// User Textures
-		for (LXTextureD3D11* Texture : ListPSTextures)
+		for (LXTexture* texture : ListPSTextures)
 		{
-			if (Texture)
+			if (const LXTextureD3D11* textureD3D11 = texture->GetDeviceTexture())
 			{
-				uint Slot = Texture->Slot;
-				RCL->PSSetSamplers(Slot, 1, Texture);
-				RCL->PSSetShaderResources(Slot, 1, Texture);
+				RCL->PSSetSamplers(pixelSlot, 1, textureD3D11);
+				RCL->PSSetShaderResources(pixelSlot, 1, textureD3D11);
+				pixelSlot++;
 			}
 		}
 

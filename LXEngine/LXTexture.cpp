@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -10,11 +10,12 @@
 #include "LXTexture.h"
 #include "LXBitmap.h"
 #include "LXLogger.h"
-#include "LXGraph.h"
-#include "LXXMLDocument.h"
 #include "LXMSXMLNode.h"
-#include "LXSettings.h"
+#include "LXMaterial.h"
 #include "LXProject.h"
+#include "LXRenderer.h"
+#include "LXSettings.h"
+#include "LXXMLDocument.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXTexture::LXTexture()
@@ -25,10 +26,12 @@ LXTexture::LXTexture()
 LXTexture::~LXTexture(void)
 {
 	LX_SAFE_DELETE_ARRAY(_Bitmap);
-	if (_Graph)
+	if (_material)
 	{
-		delete _Graph;
+		delete _material;
 	}
+
+	ReleaseDeviceTexture();
 }
 
 void Blit(BYTE* pSrc, int widthSrc, int heightSrc, BYTE* pDst, int widthDst, int heightDst)
@@ -59,6 +62,7 @@ bool LXTexture::Load()
 	{
 		LoadSource();
 		State = EResourceState::LXResourceState_Loaded;
+		CreateDeviceTexture();
 	}
 
 	return false;
@@ -154,10 +158,10 @@ void LXTexture::SetBitmap(LXBitmap* Bitmap)
 	_Bitmap = Bitmap;
 }
 
-void LXTexture::SetGraph(LXGraph* InGraph) 
+void LXTexture::SetMaterial(LXMaterial* material) 
 { 
-	CHK(!_Graph);
-	_Graph = InGraph; 
+	CHK(!_material);
+	_material = material; 
 }
 
 void LXTexture::DefineProperties()
@@ -175,7 +179,7 @@ void LXTexture::DefineProperties()
 
 	LXPropertyEnum* pPropSource = DefinePropertyEnum(L"TextureSource", GetAutomaticPropertyID(), (uint*)&TextureSource);
 	pPropSource->AddChoice(L"Bitmap", (uint)ETextureSource::TextureSourceBitmap);
-	pPropSource->AddChoice(L"Procedural", (uint)ETextureSource::TextureSourceDynamic);
+	pPropSource->AddChoice(L"Material", (uint)ETextureSource::TextureSourceMaterial);
 	pPropSource->SetPersistent(false);
 	pPropSource->SetReadOnly(true);
 
@@ -189,10 +193,10 @@ void LXTexture::DefineProperties()
 	pPropFormat->AddChoice(L"RGB32F", (uint)ETextureFormat::LX_RGB32F);
 	pPropFormat->AddChoice(L"RGBA8", (uint)ETextureFormat::LX_RGBA8);
 	pPropFormat->AddChoice(L"RGBA32F", (uint)ETextureFormat::LX_RGBA32F);
-	
+
 	pPropFormat->SetPersistent(false);
 	pPropFormat->SetReadOnly(true);
-	
+
 	LXProperty* PropWidth = DefineProperty("Width", &_nWidth);
 	PropWidth->SetPersistent(false);
 	PropWidth->SetReadOnly(true);
@@ -203,4 +207,18 @@ void LXTexture::DefineProperties()
 
 	LXPropertyFilepath* PropFilePath = DefinePropertyFilepath("SourceFile", GetAutomaticPropertyID(), &_SourceFilepath);
 	PropHeight->SetReadOnly(true);
+}
+
+void LXTexture::CreateDeviceTexture()
+{
+	CHK(_textureD3D11 == nullptr);
+	GetRenderer()->CreateDeviceTexture(this);
+}
+
+void LXTexture::ReleaseDeviceTexture()
+{
+	if (_textureD3D11)
+	{
+		GetRenderer()->ReleaseDeviceTexture(this);
+	}
 }
