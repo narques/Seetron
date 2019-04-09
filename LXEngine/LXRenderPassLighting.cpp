@@ -27,6 +27,7 @@
 #include "LXSettings.h"
 #include "LXShaderD3D11.h"
 #include "LXShaderManager.h"
+#include "LXTexture.h"
 #include "LXTextureD3D11.h"
 #include "LXViewport.h"
 #include "LXWorldTransformation.h"
@@ -61,7 +62,6 @@ LXRenderPassLighting::LXRenderPassLighting(LXRenderer* InRenderer) :LXRenderPass
 LXRenderPassLighting::~LXRenderPassLighting()
 {
 	DeleteBuffers();
-	LX_SAFE_DELETE(TextureIBL);
 	LX_SAFE_DELETE(ConstantBufferDataIBL);
 	LX_SAFE_DELETE(ConstantBufferIBL);
 }
@@ -206,12 +206,14 @@ void LXRenderPassLighting::RenderIBL(LXRenderCommandList* r, const LXRenderPipel
 	LXTextureD3D11* Depth = RenderPassGBuffer->TextureDepth;
 	LXTextureD3D11* Normal = RenderPassGBuffer->TextureNormal;
 	LXTextureD3D11* Specular = RenderPassGBuffer->TextureSpecular;
-	if (!TextureIBL && SceneCapture && SceneCapture->GetTexture())
-	{
-		const LXTexture* Texture = SceneCapture->GetTexture();
-		TextureIBL = LXTextureD3D11::CreateFromTexture(const_cast<LXTexture*>(Texture));
-	}
 
+	TextureIBL = nullptr;
+
+	if (SceneCapture && SceneCapture->GetTexture())
+	{
+		TextureIBL = SceneCapture->GetTexture()->GetDeviceTexture();
+	}
+	
 	r->PSSetShaderResources(0, 1, (LXTextureD3D11*)Depth);
 	r->PSSetShaderResources(2, 1, (LXTextureD3D11*)Normal);
 	r->PSSetShaderResources(3, 1, (LXTextureD3D11*)Specular);

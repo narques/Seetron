@@ -53,7 +53,6 @@ public:
 	list<LXRenderCluster*>* _ListRenderClusterLights = nullptr;
 
 	// Test: texture reflection
-	LXTextureD3D11* TextureIBL = nullptr;
 	LXConstantBufferD3D11* ConstantBufferIBL = nullptr;
 	LXConstantBufferDataIBL* ConstantBufferDataIBL = nullptr;
 	
@@ -65,6 +64,9 @@ public:
 	LXRenderPassSSAO* RenderPassSSAO;
 
 private:
+
+	// Project Ref.
+	const LXTextureD3D11* TextureIBL = nullptr;
 
 	unique_ptr<LXShaderProgramBasic> _shaderProgramIBLLight;
 	unique_ptr<LXShaderProgramBasic> _shaderProgramSpotLight;
