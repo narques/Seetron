@@ -68,11 +68,13 @@ public:
 
 	// Add a primitive to the root mesh
 	void							AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, LXMatrix* Matrix = nullptr, LXMaterial* Material = nullptr);
+	void							ReleaseAllPrimitives();
 		
 	// Misc
 	void							SetMesh(LXMesh* Mesh);
 	LXMesh*							GetMesh() { return Mesh; }
 	void							SetAssetMesh(LXAssetMesh* AssetMesh);
+	void							InvalidateWorldPrimitives();
 
 private:
 

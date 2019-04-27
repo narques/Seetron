@@ -184,6 +184,19 @@ void LXActorMesh::AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, LXMatri
 	InvalidateRenderState();
 }
 
+void LXActorMesh::ReleaseAllPrimitives()
+{
+	Mesh->RemoveAllPrimitives();
+	InvalidateWorldPrimitives();
+	InvalidateBounds(true);
+	InvalidateRenderState();
+}
+
+void LXActorMesh::InvalidateWorldPrimitives()
+{
+	_bValidWorldPrimitives = false;
+}
+
 const TWorldPrimitives& LXActorMesh::GetAllPrimitives(bool bIgnoreValidity)
 {
 	if (_bValidWorldPrimitives || bIgnoreValidity)
