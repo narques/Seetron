@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -61,10 +61,10 @@ class LXConstantBufferD3D11
 public:
 
 	LXConstantBufferD3D11();
-	LXConstantBufferD3D11(void* Buffer, int BufferSize);
+	LXConstantBufferD3D11(const void* buffer, int bufferSize);
 	~LXConstantBufferD3D11();
 
-	bool CreateConstantBuffer(void* Buffer, int BufferSize);
+	bool CreateConstantBuffer(const void* buffer, int bufferSize);
 
 	ID3D11Buffer* D3D11Buffer = nullptr;
 };

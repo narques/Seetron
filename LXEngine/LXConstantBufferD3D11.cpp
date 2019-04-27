@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -17,10 +17,10 @@ LXConstantBufferD3D11::LXConstantBufferD3D11()
 	LX_COUNTSCOPEINC(LXConstantBufferD3D11)
 }
 
-LXConstantBufferD3D11::LXConstantBufferD3D11(void* Buffer, int BufferSize)
+LXConstantBufferD3D11::LXConstantBufferD3D11(const void* buffer, int bufferSize)
 {
 	LX_COUNTSCOPEINC(LXConstantBufferD3D11)
-	VRF(CreateConstantBuffer(Buffer, BufferSize));
+	VRF(CreateConstantBuffer(buffer, bufferSize));
 }
 
 LXConstantBufferD3D11::~LXConstantBufferD3D11()
@@ -30,9 +30,9 @@ LXConstantBufferD3D11::~LXConstantBufferD3D11()
 	LX_SAFE_RELEASE(D3D11Buffer);
 }
 
-bool LXConstantBufferD3D11::CreateConstantBuffer(void* Buffer, int BufferSize)
+bool LXConstantBufferD3D11::CreateConstantBuffer(const void* buffer, int bufferSize)
 {
-	CHK(((16 - (BufferSize % 16)) % 16) == 0);
+	CHK(((16 - (bufferSize % 16)) % 16) == 0);
 
 	auto *D3D11Device = LXDirectX11::GetCurrentDevice();
 	auto *D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();
@@ -58,11 +58,11 @@ bool LXConstantBufferD3D11::CreateConstantBuffer(void* Buffer, int BufferSize)
 	D3D11_SUBRESOURCE_DATA subdata;
 	ZeroMemory(&subdata, sizeof(subdata));
 	//subdata.pSysMem = &EmptyConstantBufferData;
-	subdata.pSysMem = Buffer;
+	subdata.pSysMem = buffer;
 
 	//bd.ByteWidth = sizeof(LXConstantBufferData);
 	//bd.ByteWidth = sizeof(T);
-	bd.ByteWidth = BufferSize;
+	bd.ByteWidth = bufferSize;
 
 	HRESULT hr = D3D11Device->CreateBuffer(&bd, &subdata, &D3D11Buffer);
 	if (FAILED(hr))
