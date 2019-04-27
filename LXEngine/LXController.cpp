@@ -2,12 +2,13 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
 #include "LXController.h"
+#include "LXAssetType.h"
 #include "LXThread.h"
 #include "LXMaterial.h"
 #include "LXActor.h"
@@ -46,7 +47,11 @@ LXController::LXController()
 		{
 			if (LXPropertyAssetPtr* PropertyAsset = dynamic_cast<LXPropertyAssetPtr*>(Property))
 			{
-				if (LXMaterial* Marterial = dynamic_cast<LXMaterial*>(PropertyAsset->GetValue()))
+				if ((EAssetType)(PropertyAsset->GetUserData()) == EAssetType::Material)
+				{
+					Actor->InvalidateRenderState();
+				}
+				else if (LXMaterial* Marterial = dynamic_cast<LXMaterial*>(PropertyAsset->GetValue()))
 				{
 					// this will call AddActorToUpdateRenderStateSet
 					Actor->InvalidateRenderState();
