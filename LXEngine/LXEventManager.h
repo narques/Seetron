@@ -47,6 +47,8 @@ private:
 
 private:
 
+	LXMutex* _mutex;
+
 	// Predefined Actor Callbacks. See LXActor.h
 	map < EEventType, set<LXActor*>> EventActors;
 

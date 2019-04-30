@@ -53,6 +53,7 @@ private:
 		
 protected:
 
+	bool _bAttachedToExistingHWND = false;
 	HWND _hWND = NULL;
 
 };

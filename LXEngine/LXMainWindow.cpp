@@ -87,6 +87,14 @@ void LXCoreWindow::OnCreate()
 
 void LXCoreWindow::OnClose()
 {
+	if (!_bAttachedToExistingHWND)
+	{
+		GetEventManager()->UnregisterEventFunc(EEventType::ProjectLoaded, this);
+		GetEventManager()->UnregisterEventFunc(EEventType::ProjectClosed, this);
+	}
+
+	GetCore().CloseProject();
+
 	LX_SAFE_DELETE(_Renderer);
 	LX_SAFE_DELETE(_Viewport);
 	LXWindow::OnClose();

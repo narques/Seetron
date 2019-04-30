@@ -93,6 +93,7 @@ LXWindow::LXWindow()
 
 LXWindow::LXWindow(HWND hWND)
 {
+	_bAttachedToExistingHWND = true;
 	_hWND = hWND;
 }
 
@@ -102,7 +103,10 @@ LXWindow::~LXWindow()
 
 void LXWindow::OnClose()
 {
-	::DestroyWindow(_hWND);
+	if (!_bAttachedToExistingHWND)
+	{
+		::DestroyWindow(_hWND);
+	}
 }
 
 LRESULT LXWindow::Run(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)

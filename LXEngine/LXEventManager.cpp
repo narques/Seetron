@@ -14,6 +14,7 @@
 
 LXEventManager::LXEventManager()
 {
+	_mutex = new LXMutex();
 }
 
 LXEventManager::~LXEventManager()
@@ -21,6 +22,7 @@ LXEventManager::~LXEventManager()
 	CHK(EventActors.size() == 0);
 	CHK(_eventTypeFunctions.size() == 0);
 	CHK(EventDeferred.size() == 0);
+	delete _mutex;
 }
 
 void LXEventManager::RegisterEvent(EEventType Event, LXActor* Actor)
@@ -193,22 +195,21 @@ void LXEventManager::PostEvent(EEventType eventType)
 
 void LXEventManager::PostEvent(LXEvent* event)
 {
-	LXMutex Mutex;
-	Mutex.Lock();
+	_mutex->Lock();
 	EventDeferred.insert(event);
-	Mutex.Unlock();
+	_mutex->Unlock();
 }
 
 void LXEventManager::PostEvent(const LXString& eventName)
 {
-	LXMutex Mutex;
-	Mutex.Lock();
+	_mutex->Lock();
 	eventNameDeferred.insert(eventName);
-	Mutex.Unlock();
+	_mutex->Unlock();
 }
 
 void LXEventManager::BroadCastEvents()
 {
+	_mutex->Lock();
 	for (LXEvent* event : EventDeferred)
 	{
 		BroadCastEvent(event);
@@ -222,5 +223,6 @@ void LXEventManager::BroadCastEvents()
 	}
 
 	eventNameDeferred.clear();
+	_mutex->Unlock();
 }
 
