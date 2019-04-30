@@ -56,7 +56,7 @@ public:
 	bool					_bAnimatable = false;
 	bool*					_bEnable = nullptr;	// Dependency to another propertyBool
 	bool					_bUserProperty = false;
-	int64					_userData = 0;
+	int64					_userData = -1;
 };
 
 //--------------------------------------------------------------------------

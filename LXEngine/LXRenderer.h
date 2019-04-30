@@ -75,6 +75,9 @@ public:
 	void CreateDeviceTexture(LXTexture* texture);
 	void ReleaseDeviceTexture(LXTexture* texture);
 	
+	void CreateDeviceMaterial(LXMaterial* material);
+	void ReleaseDeviceMaterial(LXMaterial* material);
+
 	// Shared objects
 	ID3D11RasterizerState* GetDefaultRasterizerState () const { return D3D11RasterizerState; }
 	ID3D11BlendState* GetBlendStateOpaque() const { return D3D11BlendStateNoBlend; }

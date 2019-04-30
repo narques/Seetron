@@ -33,6 +33,8 @@ public:
 	virtual ~LXAsset();
 
 	virtual bool Load() = 0;
+	virtual bool Reload() { return false; }
+
 	virtual bool Save();
 
 	bool CanBeSaved();

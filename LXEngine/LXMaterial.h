@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -13,6 +13,7 @@
 
 class LXShader;
 class LXGraphMaterial;
+class LXMaterialD3D11;
 class LXTexture;
 
 enum class EMaterialType // ! DataModel 
@@ -49,8 +50,10 @@ public:
 
 	LXString GetFileExtension() override { return LX_MATERIAL_EXT; }
 	bool Load() override;
-	
+	bool Reload() override;
+
 	// Misc
+	
 	bool IsTransparent() const { return _LightingModel == EMaterialLightingModel::Transparent; }
 	bool GetTwoSided() const { return _bTwoSided; }
 	void SetTwoSided(bool b) { _bTwoSided = b; }
@@ -59,12 +62,22 @@ public:
 	EMaterialLightingModel GetLightingModel() const { return _LightingModel; }
 
 	// Graph
+	
 	LXGraphMaterial* GetGraph() const;
 	void ReleaseGraph();
+
+	//
+	// Rendering
+	//
+
+	const LXMaterialD3D11* GetDeviceMaterial() const { return _materialD3D11; }
+	void SetDeviceMaterial(LXMaterialD3D11* materialD3D11) { _materialD3D11 = materialD3D11; }
 
 private:
 	
 	void DefineProperties();
+	void CreateDeviceMaterial();
+	void ReleaseDeviceMaterial();
 
 public:
 
@@ -78,5 +91,8 @@ private:
 
 	EMaterialLightingModel _LightingModel = EMaterialLightingModel::Lit;
 	bool  _bTwoSided = false;
+
+	// Rendering
+	LXMaterialD3D11* _materialD3D11 = nullptr;
 };
 

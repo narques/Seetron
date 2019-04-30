@@ -111,7 +111,7 @@ public:
 	CMD2_CLASS(UpdateSubresource, ID3D11Buffer*, D3D11Buffer, LXPrimitiveD3D11*, Primitive)
 	CMD2_CLASS(UpdateSubresource2, ID3D11Buffer*, D3D11Buffer, LXConstantBufferData*, ConstantBufferData)
 	CMD2_CLASS(UpdateSubresource3, LXConstantBufferD3D11*, ConstantBuffer, LXConstantBufferData*, ConstantBufferData)
-	CMD2_CLASS(UpdateSubresource4, ID3D11Buffer*, D3D11Buffer, void*, ConstantBufferData)
+	CMD2_CLASS(UpdateSubresource4, ID3D11Buffer*, D3D11Buffer, const void*, ConstantBufferData)
 	CMD3_CLASS(VSSetConstantBuffers, UINT, StartSlot, UINT, NumBuffers, LXConstantBufferD3D11*, ConstantBuffer)
 	CMD3_CLASS(PSSetConstantBuffers, UINT, StartSlot, UINT, NumBuffers, const LXConstantBufferD3D11*, ConstantBuffer)
 	CMD1_CLASS(ClearDepthStencilView, LXDepthStencilViewD3D11*, DepthStencilView)

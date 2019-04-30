@@ -48,7 +48,7 @@ public:
 	bool AddMatrix(const LXString& Name, const LXMatrix& Value);
 
 	const list<LXVariableDeclaration>&  GetVariables() const { return VariableDeclarations; }
-	void* GetData() { return &*Buffer.begin(); }
+	const void* GetData() const { return &*Buffer.begin(); }
 	bool HasData() const;
 
 	uint GetSize();
@@ -73,7 +73,7 @@ private:
 
 public:
 
-	bool ValueHasChanged = false;
+	mutable bool ValueHasChanged = false;
 
 private:
 

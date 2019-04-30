@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -15,6 +15,7 @@
 #include "LXMaterialNode.h"
 #include "LXNode.h"
 #include "LXProject.h"
+#include "LXRenderer.h"
 #include "LXMemory.h" // --- Must be the last included ---*
 
 LXMaterial::LXMaterial(EMaterialType InMaterialType):MaterialType(InMaterialType)
@@ -26,6 +27,7 @@ LXMaterial::LXMaterial(EMaterialType InMaterialType):MaterialType(InMaterialType
 
 LXMaterial::~LXMaterial(void)
 {
+	ReleaseDeviceMaterial();
 }
 
 void LXMaterial::DefineProperties()
@@ -47,25 +49,6 @@ void LXMaterial::DefineProperties()
 	PropLightingModel->AddChoice(L"Transparent", (uint)EMaterialLightingModel::Transparent);
 
 	DefineProperty("Graph", (LXSmartObject*)GraphMaterial.get());
-
-	// --------------------------------------------------------------------------------------------------------------
-	LXProperty::SetCurrentGroup(L"PrecompiledData");
-	// --------------------------------------------------------------------------------------------------------------
-
-// 	// ConstantBuffer
-// 	LXConstantBuffer ConstantBufferPS;
-// 	DefineProperty("ConstantBufferPS", (LXAssetPtr*)&ConstantBufferPS);
-// 
-// 	// Texture lists
-// 	list<LXAsset*> ListTexturesVS;
-// 	DefineProperty("TexturesPS", (ListSmartObjects*)&ListTexturesVS);
-// 
-// 	list<LXAsset*> ListTexturesPS;
-// 	DefineProperty("TexturesPS", (ListSmartObjects*)&ListTexturesPS);
-// 	
-// 	// Shader list
-// 	list<LXAsset*> ListShaders;
-// 	DefineProperty("Shaders", (ListSmartObjects*)&ListShaders);
 }
 
 void LXMaterial::GetChildProperties(ListProperties& listProperties) const
@@ -84,9 +67,19 @@ bool LXMaterial::Load()
 	if (Result)
 	{
 		State = EResourceState::LXResourceState_Loaded;
+		CreateDeviceMaterial();
 	}
 
 	return false;
+}
+
+bool LXMaterial::Reload()
+{
+	ReleaseGraph();
+	State = LXAsset::EResourceState::LXResourceState_Unloaded;
+	Load();
+	GetController()->AddMaterialToRebuild(this);
+	return true;
 }
 
 LXTexture* LXMaterial::GetTextureDisplacement(const LXString& textureName) const
@@ -131,4 +124,18 @@ LXGraphMaterial* LXMaterial::GetGraph() const
 void LXMaterial::ReleaseGraph()
 {
 	GraphMaterial->Clear();
+}
+
+void LXMaterial::CreateDeviceMaterial()
+{
+	CHK(_materialD3D11 == nullptr);
+	GetRenderer()->CreateDeviceMaterial(this);
+}
+
+void LXMaterial::ReleaseDeviceMaterial()
+{
+	if (_materialD3D11)
+	{
+		GetRenderer()->ReleaseDeviceMaterial(this);
+	}
 }

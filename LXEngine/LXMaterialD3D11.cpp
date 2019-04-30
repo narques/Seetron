@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -37,15 +37,16 @@
 #include "LXShaderFactory.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
-LXMaterialD3D11::LXMaterialD3D11(const LXMaterial* InMaterial)
+LXMaterialD3D11::LXMaterialD3D11()
 {
 	LX_COUNTSCOPEINC(LXMaterialD3D11)
-	Create(InMaterial);
+	CHK(IsRenderThread());
 }
 
 LXMaterialD3D11::~LXMaterialD3D11()
 {
 	LX_COUNTSCOPEDEC(LXMaterialD3D11)
+	CHK(IsRenderThread());
 	Release();
 }
 
@@ -61,16 +62,12 @@ void LXMaterialD3D11::Release()
 	ConstantBufferPS.Release();
 }
 
-void LXMaterialD3D11::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
+void LXMaterialD3D11::Render(ERenderPass RenderPass, LXRenderCommandList* RCL) const
 {
 	LXRenderer* Renderer = RCL->Renderer;
 
-	// TODO : TMP : Not here: Once in rendering; objects should be valid ! 
-	if (!_bValid)
-	{
-		Create(Material);
-	}
-	
+	CHK(_bValid);
+		
 	// ConstantBuffer
 	// if (NeedUpdate
 	//{
@@ -181,6 +178,13 @@ void LXMaterialD3D11::Update(const LXMaterial* Material)
 		Transparent = Material->IsTransparent();
 	}
 
+}
+
+LXMaterialD3D11* LXMaterialD3D11::CreateFromMaterial(const LXMaterial* material)
+{
+	LXMaterialD3D11* materialD3D11 = new LXMaterialD3D11();
+	CHK(materialD3D11->Create(material));
+	return materialD3D11;
 }
 
 bool LXMaterialD3D11::Create(const LXMaterial* InMaterial)

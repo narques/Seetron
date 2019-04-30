@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -48,21 +48,6 @@ void LXRenderClusterManager::Empty()
 	MapMaterialD3D11.clear();
 }
 
-void LXRenderClusterManager::DeleteUnusedMaterials()
-{
-	for (auto It = MapMaterialD3D11.begin(); It != MapMaterialD3D11.end();)
-	{
-		if (It->second.use_count() == 1)
-		{
-			It=MapMaterialD3D11.erase(It);
-		}
-		else
-		{
-			It++;
-		}
-	}
-}
-
 void LXRenderClusterManager::Tick()
 {
 	auto it = MapPrimitiveD3D11.begin();
@@ -80,8 +65,6 @@ void LXRenderClusterManager::Tick()
 			++it;
 		}
 	}
-
-	DeleteUnusedMaterials();
 }
 
 void LXRenderClusterManager::AddActor(LXActor* Actor)
@@ -252,7 +235,7 @@ void LXRenderClusterManager::RemoveRenderCluster(LXRenderCluster* RenderCluster)
 	
 	*/
 
-	LXMaterial* Material = const_cast<LXMaterial*>(RenderCluster->Material->GetMaterial());
+	LXMaterial* Material = const_cast<LXMaterial*>(RenderCluster->Material);
 	CHK(Material);
 	MaterialRenderClusters[Material].remove(RenderCluster);
 	
@@ -282,7 +265,7 @@ void LXRenderClusterManager::UpdateMaterial(const LXMaterial* Material)
 	}
 }
 
-shared_ptr<LXMaterialD3D11>& LXRenderClusterManager::GetMaterialD3D11(const LXMaterial* Material)
+LXMaterialD3D11* LXRenderClusterManager::GetMaterialD3D11(const LXMaterial* Material)
 {
 	if (!Material)
 	{
@@ -297,7 +280,7 @@ shared_ptr<LXMaterialD3D11>& LXRenderClusterManager::GetMaterialD3D11(const LXMa
 	}
 	else
 	{
-		MapMaterialD3D11[Material] = make_shared<LXMaterialD3D11>(Material);;
+		MapMaterialD3D11[Material] = const_cast<LXMaterialD3D11*>(Material->GetDeviceMaterial());
 		return MapMaterialD3D11[Material];
 	}		
 }
@@ -321,13 +304,15 @@ shared_ptr<LXPrimitiveD3D11>& LXRenderClusterManager::GetPrimitiveD3D11(LXPrimit
 
 bool LXRenderClusterManager::GetMaterialAndShadersD3D11(LXRenderCluster* renderCluster, const LXMaterial* Material, const LXPrimitiveD3D11* PrimitiveD3D11)
 {
-	shared_ptr<LXMaterialD3D11>& MaterialD3D11 = GetMaterialD3D11(Material);
+	LXMaterialD3D11* materialD3D11 = GetMaterialD3D11(Material);
+
+	CHK(materialD3D11);
 	
 	for (auto i = 0; i < (int)ERenderPass::Last; i++)
 	{
 		ERenderPass RenderPass = (ERenderPass)i;
 		LXShaderProgramD3D11 shaderProgram;
-		if (GetShadersD3D11(RenderPass, PrimitiveD3D11, MaterialD3D11.get(), &shaderProgram))
+		if (GetShadersD3D11(RenderPass, PrimitiveD3D11, materialD3D11, &shaderProgram))
 		{
 			LXShaderProgramD3D11* RenderClusterShaderProgram = &renderCluster->ShaderPrograms[(int)RenderPass];
 			RenderClusterShaderProgram->VertexShader = shaderProgram.VertexShader;
@@ -342,7 +327,7 @@ bool LXRenderClusterManager::GetMaterialAndShadersD3D11(LXRenderCluster* renderC
 		}
 	}
 
-	renderCluster->SetMaterial(MaterialD3D11);
+	renderCluster->SetMaterial(const_cast<LXMaterial*>(Material));
 
 	return true;
 }
@@ -356,17 +341,12 @@ void LXRenderClusterManager::RebuildMaterial(const LXMaterial* material)
 		for (LXRenderCluster* RenderCluster : (*It).second)
 		{
 			RenderCluster->ReleaseShaders();
-			RenderCluster->Material.reset();
 		}
 	}
 
 	// Delete unused Shaders
 	LXRenderer* Renderer = GetCore().GetRenderer();
 	Renderer->GetShaderManager()->DeleteUnusedShaders();
-
-	// Delete unused MaterialD3D11
-	DeleteUnusedMaterials();
-	
 
 	// Rebuild
 	if (It != MaterialRenderClusters.end())
@@ -406,7 +386,7 @@ LXMaterialD3D11* LXRenderClusterManager::GetMaterial(const LXMaterial* Material)
 	auto It = MapMaterialD3D11.find(Material);
 	if (It != MapMaterialD3D11.end())
 	{
-		return (*It).second.get();
+		return (*It).second;
 	}
 	else
 	{

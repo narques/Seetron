@@ -53,8 +53,7 @@ public:
 	
 private:
 
-	void DeleteUnusedMaterials();
-	shared_ptr<LXMaterialD3D11>& GetMaterialD3D11(const LXMaterial* Material);
+	LXMaterialD3D11* GetMaterialD3D11(const LXMaterial* Material);
 	shared_ptr<LXPrimitiveD3D11>& GetPrimitiveD3D11(LXPrimitive* Primitive, const ArrayVec3f* ArrayInstancePosition = nullptr);
 	bool GetMaterialAndShadersD3D11(LXRenderCluster* renderCluster, const LXMaterial* Material, const LXPrimitiveD3D11* PrimitiveD3D11);
 	bool GetShadersD3D11(ERenderPass renderPass, const LXPrimitiveD3D11* primitiveD3D11, const LXMaterialD3D11* materialD3D11, LXShaderProgramD3D11* shaderProgram);
@@ -83,7 +82,7 @@ private:
 	// D3D11 Shared Resources
 	//
 
-	map<const LXMaterial*, shared_ptr<LXMaterialD3D11>> MapMaterialD3D11;
+	map<const LXMaterial*, LXMaterialD3D11*> MapMaterialD3D11;
 	map<pair<LXPrimitive*, uint>, shared_ptr<LXPrimitiveD3D11>> MapPrimitiveD3D11;
 };
 

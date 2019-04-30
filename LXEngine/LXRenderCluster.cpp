@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -65,10 +65,9 @@ LXRenderCluster::~LXRenderCluster()
 	LX_SAFE_DELETE(LightView);
 }
 
-bool LXRenderCluster::SetMaterial(shared_ptr<LXMaterialD3D11>& InMaterial)
+void LXRenderCluster::SetMaterial(LXMaterial* material)
 {
-	Material = InMaterial;
-	return true;
+ 	Material = material;
 }
 
 void LXRenderCluster::SetPrimitive(shared_ptr<LXPrimitiveD3D11>& InPrimitiveD3D11)
@@ -163,8 +162,10 @@ void LXRenderCluster::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 	if (bHasShader)
 	{
 		// Material (Shader resources)
-		if (Material)
-			Material->Render(RenderPass, RCL);
+		if (Material && Material->GetDeviceMaterial())
+		{
+			Material->GetDeviceMaterial()->Render(RenderPass, RCL);
+		}
 
 		Primitive->Render(RCL);
 	}

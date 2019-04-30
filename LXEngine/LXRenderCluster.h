@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -18,6 +18,7 @@
 class LXActor;
 class LXActorMesh;
 class LXConstantBufferD3D11;
+class LXMaterial;
 class LXMaterialD3D11;
 class LXMatrix;
 class LXPrimitiveD3D11;
@@ -48,7 +49,7 @@ public:
 
 	void ReleaseShaders();
 
-	bool SetMaterial(shared_ptr<LXMaterialD3D11>& InMaterial);
+	void SetMaterial(LXMaterial* material);
 	void SetPrimitive(shared_ptr<LXPrimitiveD3D11>& InPrimitiveD3D11);
 			
 	void SetMatrix(const LXMatrix& InMatrix);
@@ -75,7 +76,7 @@ public:
 	LXConstantBufferDataSpotLight* ConstantBufferDataSpotLight = nullptr;
 	LXConstantBufferData0* LightView = nullptr;
 		
-	shared_ptr<LXMaterialD3D11> Material;
+	LXMaterial* Material;
 	shared_ptr<LXPrimitiveD3D11> Primitive;
 		
 	LXBBox BBoxWorld;

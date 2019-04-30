@@ -13,6 +13,7 @@
 #include "LXController.h"
 #include "LXCore.h"
 #include "LXMaterial.h"
+#include "LXMaterialD3D11.h"
 #include "LXPrimitiveD3D11.h"
 #include "LXProject.h"
 #include "LXRenderClusterManager.h"
@@ -572,19 +573,18 @@ void LXRenderer::CreateDeviceTexture(LXTexture* texture)
 
 void LXRenderer::ReleaseDeviceTexture(LXTexture* texture)
 {
+	const LXTextureD3D11* textureD3D11 = texture->GetDeviceTexture();
+	texture->SetDeviceTexture(nullptr);
+
 	if (IsRenderThread())
 	{
-		const LXTextureD3D11* textureD3D11 = texture->GetDeviceTexture();
-		texture->SetDeviceTexture(nullptr);
 		delete textureD3D11;
 	}
 	else
 	{
-		LXTask* task = new LXTaskCallBack([texture]()
+		LXTask* task = new LXTaskCallBack([textureD3D11]()
 		{
 			CHK(IsRenderThread());
-			const LXTextureD3D11* textureD3D11 = texture->GetDeviceTexture();
-			texture->SetDeviceTexture(nullptr);
 			delete textureD3D11;
 		});
 
@@ -592,4 +592,43 @@ void LXRenderer::ReleaseDeviceTexture(LXTexture* texture)
 	}
 }
 
+void LXRenderer::CreateDeviceMaterial(LXMaterial* material)
+{
+	if (IsRenderThread())
+	{
+		LXMaterialD3D11* materialD3D11 = LXMaterialD3D11::CreateFromMaterial(material);
+		material->SetDeviceMaterial(materialD3D11);
+	}
+	else
+	{
+		LXTask* task = new LXTaskCallBack([material]()
+		{
+			CHK(IsRenderThread());
+			LXMaterialD3D11* texture3D11 = LXMaterialD3D11::CreateFromMaterial(material);
+			material->SetDeviceMaterial(texture3D11);
+		});
 
+		_mainTasks->EnqueueTask(task);
+	}
+}
+
+void LXRenderer::ReleaseDeviceMaterial(LXMaterial* material)
+{
+	const LXMaterialD3D11* materialD3D11 = material->GetDeviceMaterial();
+	material->SetDeviceMaterial(nullptr);
+
+	if (IsRenderThread())
+	{
+		delete materialD3D11;
+	}
+	else
+	{
+		LXTask* task = new LXTaskCallBack([materialD3D11]()
+		{
+			CHK(IsRenderThread());
+			delete materialD3D11;
+		});
+
+		_mainTasks->EnqueueTask(task);
+	}
+}

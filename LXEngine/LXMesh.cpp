@@ -289,3 +289,12 @@ void LXMesh::SetMaterial(const LXString& Key)
 		PrimitiveInstance->Primitive->SetMaterial(Key);
 	}
 }
+
+void LXMesh::SetMaterial(LXMaterial* material)
+{
+	for (const unique_ptr<LXPrimitiveInstance>& PrimitiveInstance : _vectorPrimitives)
+	{
+		PrimitiveInstance->Primitive->SetMaterial(material);
+	}
+}
+

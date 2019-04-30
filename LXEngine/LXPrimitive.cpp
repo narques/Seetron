@@ -171,6 +171,7 @@ void LXPrimitive::DefineProperties( )
 	
 	LXPropertyAssetPtr* pPropMaterial = DefinePropertyAsset(L"Material", LXPropertyID::PRIMITIVE_MATERIAL, (LXAsset**)&m_pMaterial);
 	pPropMaterial->SetName(L"Material");
+	pPropMaterial->SetUserData((int64)EAssetType::Material);
 	pPropMaterial->SetPersistent(false);
 }
 
