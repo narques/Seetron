@@ -2,16 +2,17 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "StdAfx.h"
 #include "LXLogger.h"
 #include "LXCore.h"
+#include "LXConsoleManager.h"
 #include "LXPlatform.h"
-#include "LXThread.h"
 #include "LXFile.h"
+#include "LXMutex.h"
 #include <sstream>
 #include <fstream>
 #include <stdarg.h>

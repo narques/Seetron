@@ -8,19 +8,19 @@
 
 #include "stdafx.h"
 #include "LXController.h"
-#include "LXAssetType.h"
-#include "LXThread.h"
-#include "LXMaterial.h"
 #include "LXActor.h"
-#include "LXMaterialD3D11.h"
-#include "LXCore.h"
-#include "LXRenderer.h"
+#include "LXActor.h"
 #include "LXActorMesh.h"
-#include "LXProperty.h"
-#include "LXActor.h"
-#include "LXNode.h"
+#include "LXAssetType.h"
+#include "LXCore.h"
 #include "LXGraph.h"
 #include "LXGraphMaterial.h"
+#include "LXMaterial.h"
+#include "LXMaterialD3D11.h"
+#include "LXMutex.h"
+#include "LXNode.h"
+#include "LXProperty.h"
+#include "LXRenderer.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXController::LXController()

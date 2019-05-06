@@ -8,8 +8,8 @@
 
 #include "StdAfx.h"
 #include "LXObject.h"
+#include "LXMutex.h"
 #include <typeinfo>
-#include "LXThread.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 #if LX_TRACE_OBJECTS

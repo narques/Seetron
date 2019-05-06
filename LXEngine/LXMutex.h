@@ -8,26 +8,22 @@
 
 #pragma once
 
-#include "LXObject.h"
-#include "LXPlatform.h"
-
-class LXThread : public LXObject
+class LXCORE_API LXMutex
 {
 
 public:
 
-	LXThread();
-	virtual ~LXThread();
+	LXMutex();
+	virtual ~LXMutex();
 
-	void Run(void* lpStartAddr, void* param);
-	void Wait();
-
-	void Suspend();
-	void Resume();
-
-	void GetInformation();
+	bool Lock(/*DWORD*/ unsigned long dwTimeOut = 0xFFFFFFFF/*INFINITE*/);
+	bool Unlock();
 
 private:
 
-	void* _handle = nullptr;
+#if LX_WINDOWS_MUTEX
+	void* _hMutex = nullptr;
+#else
+	std::mutex _mutex;
+#endif
 };

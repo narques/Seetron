@@ -9,7 +9,7 @@
 #include "stdafx.h"
 #include "LXActor.h"
 #include "LXEventManager.h"
-#include "LXThread.h"
+#include "LXMutex.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXEventManager::LXEventManager()

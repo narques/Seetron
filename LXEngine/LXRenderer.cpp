@@ -22,6 +22,7 @@
 #include "LXRenderer.h"
 #include "LXScene.h"
 #include "LXShaderManager.h"
+#include "LXSyncEvent.h"
 #include "LXTask.h"
 #include "LXTexture.h"
 #include "LXTextureD3D11.h"

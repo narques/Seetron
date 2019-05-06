@@ -9,25 +9,21 @@
 #pragma once
 
 #include "LXObject.h"
-#include "LXPlatform.h"
 
-class LXThread : public LXObject
+class LXCORE_API LXSyncEvent : public LXObject
 {
-
 public:
 
-	LXThread();
-	virtual ~LXThread();
+	LXSyncEvent(bool initialState);
+	virtual ~LXSyncEvent();
 
-	void Run(void* lpStartAddr, void* param);
+	void SetEvent();
 	void Wait();
-
-	void Suspend();
-	void Resume();
-
-	void GetInformation();
+	void Reset();
 
 private:
 
-	void* _handle = nullptr;
+	HANDLE _handle = nullptr;
+
 };
+

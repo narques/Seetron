@@ -2,38 +2,39 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "StdAfx.h"
 #include "LXCore.h"
-#include "LXSettings.h"
-#include "LXProject.h"
-#include "LXViewport.h"
-#include "LXImporter.h"
-#include "LXLogger.h"
-#include "LXPropertyManager.h"
-#include "LXCommandManager.h"
-#include "LXDocumentManager.h"
-#include "LXViewportManager.h"
+#include "LXActorFactory.h"
 #include "LXAnimationManager.h"
 #include "LXAssetManager.h"
-#include "LXRenderer.h"
-#include "LXThread.h"
-#include "LXWindow.h"
+#include "LXCommandManager.h"
+#include "LXConsoleManager.h"
+#include "LXController.h"
+#include "LXDirectory.h"
+#include "LXDocumentManager.h"
+#include "LXEventManager.h"
+#include "LXImporter.h"
+#include "LXLibrary.h"
+#include "LXLogger.h"
 #include "LXPerformance.h"
 #include "LXPlatform.h"
-#include "LXLibrary.h"
-#include "LXDirectory.h"
-#include "LXStatistic.h"
-#include "LXConsoleManager.h"
+#include "LXProject.h"
+#include "LXPropertyManager.h"
+#include "LXRenderer.h"
 #include "LXScene.h"
-#include "LXController.h"
-#include "LXActorFactory.h"
-#include "LXStatManager.h"
-#include "LXEventManager.h"
 #include "LXSettings.h"
+#include "LXSettings.h"
+#include "LXStatManager.h"
+#include "LXStatistic.h"
+#include "LXSyncEvent.h"
+#include "LXThread.h"
+#include "LXViewport.h"
+#include "LXViewportManager.h"
+#include "LXWindow.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 //------------------------------------------------------------------------------------------------------
