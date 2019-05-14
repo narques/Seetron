@@ -212,12 +212,13 @@ void LXTexture::DefineProperties()
 void LXTexture::CreateDeviceTexture()
 {
 	CHK(_textureD3D11 == nullptr);
-	GetRenderer()->CreateDeviceTexture(this);
+	if (GetRenderer())
+		GetRenderer()->CreateDeviceTexture(this);
 }
 
 void LXTexture::ReleaseDeviceTexture()
 {
-	if (_textureD3D11)
+	if (_textureD3D11 && GetRenderer())
 	{
 		GetRenderer()->ReleaseDeviceTexture(this);
 	}

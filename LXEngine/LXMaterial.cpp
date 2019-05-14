@@ -129,12 +129,13 @@ void LXMaterial::ReleaseGraph()
 void LXMaterial::CreateDeviceMaterial()
 {
 	CHK(_materialD3D11 == nullptr);
-	GetRenderer()->CreateDeviceMaterial(this);
+	if (GetRenderer())
+		GetRenderer()->CreateDeviceMaterial(this);
 }
 
 void LXMaterial::ReleaseDeviceMaterial()
 {
-	if (_materialD3D11)
+	if (_materialD3D11 && GetRenderer())
 	{
 		GetRenderer()->ReleaseDeviceMaterial(this);
 	}
