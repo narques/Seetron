@@ -18,6 +18,11 @@
 #include <stdarg.h>
 #include "LXMemory.h" // --- Must be the last included ---
 
+namespace
+{
+	LXConsoleCommandT<bool> CSet_UseLogFile(L"Engine.ini", L"Log", L"UseLogFile", L"false");
+}
+
 LXLogger& GetLogger()
 {
 	static LXLogger* logger = new LXLogger();
@@ -52,14 +57,12 @@ void LXLogger::PrintToConsoles(ELogType LogType, const LXString& msg)
 	}
 
 	// File
-
-	LXStringA msgA = logEntry.ToStringA();
-	msgA += "\n";
-
-	if (File->Open(LXCore::GetAppPath() + "/log.txt", L"a"))
+	if (_file && _file->Open(LXCore::GetAppPath() + "/log.txt", L"a"))
 	{
-		File->Write(msgA.GetBuffer(), msgA.size(), true);
-		File->Close();
+		LXStringA msgA = logEntry.ToStringA();
+		msgA += "\n";
+		_file->Write(msgA.GetBuffer(), msgA.size(), true);
+		_file->Close();
 	}
 
 	Mutex->Unlock();
@@ -175,16 +178,21 @@ void Output(ELogType LogType, const wchar_t* section, const wchar_t* Format, ...
 LXLogger::LXLogger()
 {
 	Mutex = new LXMutex();
-	File = new LXFile();
+
+	if (CSet_UseLogFile.GetValue() == true)
+	{
+		_file = new LXFile();
+		// Clear the existing file.
+		_file->Open(LXCore::GetAppPath() + "/log.txt", L"wt");
+		_file->Close();
+	}
+
 	LogModes = (ELogMode)(LogMode_DebuggerConsole | LogMode_CoreConsole);
-	// Clear the existing file.
-	File->Open(LXCore::GetAppPath() + "/log.txt", L"wt");
-	File->Close();
 }
 
 LXLogger::~LXLogger()
 {
-	delete File;
+	LX_SAFE_DELETE(_file);
 	delete Mutex;
 }
 

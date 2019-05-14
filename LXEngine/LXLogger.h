@@ -55,7 +55,7 @@ private:
 	map<void*, std::function<void(ELogType, const wchar_t*)>> MapCallbacks;
 	ELogMode LogModes;
 	LXMutex* Mutex;
-	LXFile* File;
+	LXFile* _file = nullptr;
 
 };
 
