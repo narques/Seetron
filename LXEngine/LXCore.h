@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -19,6 +19,7 @@ class LXCounter;
 class LXDocumentManager;
 class LXEventManager;
 class LXImporter;
+class LXMessageManager;
 class LXPrimitiveFactory;
 class LXProject;
 class LXPropertyManager;
@@ -189,3 +190,4 @@ LXCORE_API LXController* GetController();
 LXCORE_API LXRenderer* GetRenderer();
 LXCORE_API LXStatManager* GetStatManager();
 LXCORE_API LXEventManager* GetEventManager();
+LXCORE_API LXMessageManager* GetMessageManager();

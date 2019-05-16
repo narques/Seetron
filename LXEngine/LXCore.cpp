@@ -20,6 +20,7 @@
 #include "LXImporter.h"
 #include "LXLibrary.h"
 #include "LXLogger.h"
+#include "LXMessageManager.h"
 #include "LXPerformance.h"
 #include "LXPlatform.h"
 #include "LXProject.h"
@@ -522,7 +523,10 @@ void LXCore::Run()
 	{
 		_Renderer->GetBeginEvent()->SetEvent();
 	}
-	
+
+	// Dispatch Core Messages
+	GetMessageManager()->Run();
+
 	// Broadcast events posted outside the MainThread
 	GetEventManager()->BroadCastEvents();
 
@@ -599,6 +603,11 @@ LXEventManager* GetEventManager()
 {
 	static LXEventManager EventManager;
 	return &EventManager;
+
+LXMessageManager* GetMessageManager()
+{
+	static LXMessageManager messageManager;
+	return &messageManager;
 }
 
 LXController* GetController()
