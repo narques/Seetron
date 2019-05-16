@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -32,31 +32,41 @@ LXString LXCounter::GetSentence()
 
 #endif
 
-LXPerformanceScope::LXPerformanceScope(const wchar_t* Name):_Name(Name)
+LXPerformanceLogger::LXPerformanceLogger(const wchar_t* name):_name(name)
 {
-	GetStatManager()->OpenStat(_Name);
+}
+
+LXPerformanceLogger::~LXPerformanceLogger()
+{
+	double elapsedTime = GetTime();
+	LogD(Performance, L"%s : %f", _name.c_str(), elapsedTime);
+}
+
+LXPerformanceScope::LXPerformanceScope(const wchar_t* name):_name(name)
+{
+	GetStatManager()->OpenStat(_name);
 }
 
 LXPerformanceScope::~LXPerformanceScope()
 {
-	double ElapsedTime = GetTime();
-	GetStatManager()->UpdateAndCloseStat(_Name, ElapsedTime);
+	double elapsedTime = GetTime();
+	GetStatManager()->UpdateAndCloseStat(_name, elapsedTime);
 }
 
 void LXPerformanceScope::Update()
 {
-	double ElapsedTime = GetTime();
-	GetStatManager()->UpdateAndCloseStat(_Name, ElapsedTime);
+	double elapsedTime = GetTime();
+	GetStatManager()->UpdateAndCloseStat(_name, elapsedTime);
 	Reset();
-	GetStatManager()->OpenStat(_Name);
+	GetStatManager()->OpenStat(_name);
 }
 
-LXCountScopeIncrement::LXCountScopeIncrement(const wchar_t* Name)
+LXCountScopeIncrement::LXCountScopeIncrement(const wchar_t* name)
 {
-	GetStatManager()->UpdateCounter(Name, 1);
+	GetStatManager()->UpdateCounter(name, 1);
 }
 
-LXCountScopeDecrement::LXCountScopeDecrement(const wchar_t* Name)
+LXCountScopeDecrement::LXCountScopeDecrement(const wchar_t* name)
 {
-	GetStatManager()->UpdateCounter(Name, -1);
+	GetStatManager()->UpdateCounter(name, -1);
 }

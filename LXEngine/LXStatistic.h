@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -37,19 +37,31 @@ typedef vector<LXCounter*> ArrayCounters;
 
 #endif
 
-
-class LXPerformanceScope : protected LXPerformance
+class LXCORE_API LXPerformanceLogger : protected LXPerformance
 {
 
 public:
 
-	LXPerformanceScope(const wchar_t* Name);
+	LXPerformanceLogger(const wchar_t* name);
+	~LXPerformanceLogger();
+
+private:
+
+	wstring _name;
+};
+
+class LXCORE_API LXPerformanceScope : protected LXPerformance
+{
+
+public:
+
+	LXPerformanceScope(const wchar_t* name);
 	~LXPerformanceScope();
 	void Update();
 
 private:
 		
-	wstring _Name;
+	wstring _name;
 
 };
 
