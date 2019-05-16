@@ -188,12 +188,6 @@ void LXCommandManager::UndoLastCommand()
 	}
 	else if (LXCommandDeleteActor* pCmdDeleteActors = dynamic_cast<LXCommandDeleteActor*>(pCmd))
 	{
-		if (m_bNotifyListerners)
-		{
-			const SetActors& setActors = pCmdDeleteActors->GetActors();
-			for (ListObservers::iterator It = m_listObservers.begin(); It != m_listObservers.end(); It++)
-				static_cast<LXObserverCommandManager*>(*It)->OnAddActors(setActors);
-		}
 		pCmdDeleteActors->ClearActors();
 	}
 	else if (LXCommandDeleteKey* pCmdDeleteKeys = dynamic_cast<LXCommandDeleteKey*>(pCmd))
@@ -256,14 +250,6 @@ void LXCommandManager::DeleteActors(const SetActors& setActors)
 	for(LXSmartObject* pObject:setActors)
 		GetCore().GetProject()->GetSelectionManager().RemoveToSelection(pObject);
 
-	if (m_bNotifyListerners)
-	{
-		for (ListObservers::iterator It = m_listObservers.begin(); It != m_listObservers.end(); It++)
-		{
-			static_cast<LXObserverCommandManager*>(*It)->OnDeleteActors(pCmd->GetActors());
-		}
-	}
-
 	PushCommand(pCmd);
 }
 
@@ -280,12 +266,6 @@ void LXCommandManager::DeleteMaterials( const SetMaterials& setMaterials )
 	for (LXSmartObject* pObject : setMaterials)
 		GetCore().GetProject()->GetSelectionManager().RemoveToSelection(pObject);
 		
-	if (m_bNotifyListerners)
-	{
-		for (ListObservers::iterator It = m_listObservers.begin(); It!=m_listObservers.end(); It++)
-			static_cast<LXObserverCommandManager*>(*It)->OnDeleteMaterials(pCmd->GetMaterials());
-	}
-
 	PushCommand(pCmd);
 }
 
