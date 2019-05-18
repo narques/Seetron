@@ -21,36 +21,37 @@ LXMessageManager::~LXMessageManager()
 
 }
 
-void LXMessageManager::Connect(const LXObject* sender, const LXString& messageID, const LXObject* receiver, std::function<void()> callback)
+const LXChannel* LXMessageManager::Connect(const LXObject* sender, const LXString& messageID, const LXObject* receiver, std::function<void()> callback)
 {
-	LXMessagePipes& messagePipes = _connections[sender];
-	LXMessageReceiver& messageReceiver = messagePipes.messageReceivers[messageID];
-	CHK(messageReceiver.Receiver == nullptr)
-	messageReceiver.Receiver = receiver;
-	messageReceiver.Callback = callback;
+	LXChannel* channel = new LXChannel{ sender, messageID, receiver, callback };
+	_channels.push_back(channel);
+	return channel;
 }
 
-void LXMessageManager::Post(const LXObject* sender, const LXString& messageID)
+void LXMessageManager::Disconnect(const LXChannel* channel)
+{
+	_channels.remove(channel);
+	delete channel;
+}
+
+void LXMessageManager::Post(const LXChannel* channel)
 {
 	_mutex->Lock();
-	_messages.push_back(pair<const LXObject*, LXString>(sender, messageID));
+	_sent.push_back(channel);
 	_mutex->Unlock();
 }
 
 void LXMessageManager::Run()
 {
 	_mutex->Lock();
-	for (auto& it : _messages)
+	for (const LXChannel* channel : _sent)
 	{
-		const LXObject* sender = it.first;
-		const LXString& messageID = it.second;
-
-		LXMessagePipes& messagePipes = _connections[sender];
-		LXMessageReceiver& messageReceiver = messagePipes.messageReceivers[messageID];
-		
-		messageReceiver.Callback();
+ 		const LXObject* sender = channel->Sender;
+ 		const LXString& messageID = channel->MessageID;
+ 		const LXObject* receiver = channel->Receiver;
+		channel->Callback();
 	}
-
-	_messages.clear();
+	_sent.clear();
 	_mutex->Unlock();
 }
+

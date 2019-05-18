@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2019 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -15,7 +15,6 @@
 struct LXFileInfo
 {
 	std::wstring FileName;
-	std::wstring LocalFileName;
 	std::wstring FullFileName;
 	FILETIME LastWriteTime;
 };
@@ -38,15 +37,16 @@ public:
 	// returns the filenames when different.
 	// updates the cached value.
 
-	void GetChangedLastWriteFiles(list<std::wstring>& filenames, bool update = true);
+	void GetChangedLastWriteFiles(list<std::wstring>& addedFiles, list<std::wstring>& removedFiles, list<std::wstring>& updatedFiles, bool update = true);
 
 private:
 
-	void ScanFolder(const std::wstring& folder);
-	void AddFillInfo(const std::wstring& folder, const WIN32_FIND_DATA& fd);
+	void ScanFolder(const std::wstring& folder, bool update, list<std::wstring>* outAddedFiles);
+	void AddFillInfo(const std::wstring& folder, const WIN32_FIND_DATA& fd, bool update, list<std::wstring>* outAddedFiles);
 	
 private:
 
-	std::wstring _BaseFolder;
+	std::wstring _searchRegExpression;
+	std::wstring _baseFolder;
 	ListFileInfos _listFiles;
 };

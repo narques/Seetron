@@ -13,6 +13,7 @@
 
 class LXAnimation;
 class LXAssetMesh;
+class LXFileWatcher;
 class LXGraphTemplate;
 class LXGraphTexture;
 class LXMaterial;
@@ -101,8 +102,12 @@ private:
 	template <typename T>
 	T GetResourceT(const LXString& Name) const;
 
-	void LoadFromFolder(const LXFilepath& Folderpath, EResourceOwner ResourceOwner);
+	void LoadFromFolder(const LXFilepath& assetFolderpath, EResourceOwner resourceOwner);
+	void AddAsset(const LXFilepath& filepath, const LXFilepath& assetFolderpath, EResourceOwner resourceOwner);
+	void UpdateAsset(const LXFilepath& filepath, const LXFilepath& assetFolderpath, EResourceOwner resourceOwner);
+	void RemoveAsset(const LXFilepath& filepath, const LXFilepath& assetFolderpath, EResourceOwner resourceOwner);
 	void Add(LXAsset* Resource);
+	bool IsValidFile(const LXFilepath& filepath);
 	LXMaterial* CreateEngineMaterial(const wchar_t* szName);
 	LXString BuildKey(EResourceOwner ResourceOwner, const LXString& RelativeFilepath);
 	
@@ -114,8 +119,10 @@ protected:
 private:
 
 	unique_ptr<LXGraphTemplate> _graphMaterialTemplate;
-	list<LXString>	_ListAssetExtentions;
 
+	unique_ptr<LXFileWatcher> _projectFileWatcher;
+
+	list<LXString>	_ListAssetExtentions;
 };
 
 

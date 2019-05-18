@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2019 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -11,35 +11,75 @@
 #include <windows.h>
 #include "LXMemory.h" // --- Must be the last included ---
 
-LX_PRAGMA_OPTIM_OFF
+wstring GetFolderFromPartialFilepath(const wstring& partialFilepath)
+{
+	if ((partialFilepath.find(L'*') != string::npos) ||
+		(partialFilepath.find(L'?') != string::npos))
+	{
+		size_t pos = partialFilepath.rfind(L"\\");
+		if (pos == wstring::npos)
+		{
+			pos = partialFilepath.rfind(L"/");
+		}
+
+		if (pos != wstring::npos)
+		{
+			return partialFilepath.substr(0, pos + 1);
+		}
+		else
+		{
+			CHK(0);
+			return L"";
+		}
+	}
+	else
+	{
+		return partialFilepath;
+	}
+}
 
 LXDirectory::LXDirectory(const wchar_t* path)
 {
 	std::wstring stdFolder = path;
 	
-	// If path not a regular expression create a default one.
-	if ((stdFolder.find(L'*') == string::npos) &&
-		(stdFolder.find(L'?') == string::npos))
-
+	if ((stdFolder.find(L'*') != string::npos) ||
+		(stdFolder.find(L'?') != string::npos))
 	{
-		_BaseFolder = path;
-		
-		std::wstring regExpression = path;
-		wchar_t lastCharacter = regExpression.back();
-		
-		if (lastCharacter != L'/' && 
-			lastCharacter != '\\')
-		{
-			regExpression.push_back(L'/');
-		}
+		_searchRegExpression = path;
 
-		regExpression.push_back(L'*');
-		ScanFolder(regExpression);
+		size_t pos =  _searchRegExpression.rfind(L"\\");
+		if (pos == wstring::npos)
+		{
+			pos = _searchRegExpression.rfind(L"/");
+		}
+		
+		if (pos != wstring::npos)
+		{
+			_baseFolder = _searchRegExpression.substr(0, pos + 1);
+		}
+		else
+		{
+			CHK(0);
+		}
 	}
 	else
 	{
-		ScanFolder(path);
+		// If path not a regular expression create a default one.
+		_baseFolder = path;
+
+		_searchRegExpression = path;
+		
+		wchar_t lastCharacter = _searchRegExpression.back();
+		if (lastCharacter != L'/' && 
+			lastCharacter != '\\')
+		{
+			_searchRegExpression.push_back(L'/');
+		}
+
+		_searchRegExpression.push_back(L'*');
 	}
+	
+	ScanFolder(_searchRegExpression, true, nullptr);
 }
 
 LXDirectory::~LXDirectory()
@@ -47,7 +87,7 @@ LXDirectory::~LXDirectory()
 	_listFiles.clear();
 }
 
-void LXDirectory::ScanFolder(const std::wstring& folder)
+void LXDirectory::ScanFolder(const std::wstring& folder, bool update, list<std::wstring>* outAddedFiles)
 {
 	WIN32_FIND_DATA fd;
 	HANDLE hFind = FindFirstFile(folder.c_str(), &fd);
@@ -56,7 +96,7 @@ void LXDirectory::ScanFolder(const std::wstring& folder)
 	{
 		if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 		{
-			AddFillInfo(folder, fd);
+			AddFillInfo(folder, fd, update, outAddedFiles);
 		}
 
 		while (FindNextFile(hFind, &fd))
@@ -69,39 +109,57 @@ void LXDirectory::ScanFolder(const std::wstring& folder)
 					newFolder = newFolder.substr(0, newFolder.length() - 1);
 					newFolder += fd.cFileName;
 					newFolder += L"/*";
-					ScanFolder(newFolder.c_str());
+					ScanFolder(newFolder.c_str(), update, outAddedFiles);
 				}
 			}
 			else
 			{
-				AddFillInfo(folder, fd);
+				AddFillInfo(folder, fd, update, outAddedFiles);
 			}
 		}
 		FindClose(hFind);
 	}
 }
 
-void LXDirectory::AddFillInfo(const std::wstring& folder, const WIN32_FIND_DATA& findData)
+void LXDirectory::AddFillInfo(const std::wstring& folder, const WIN32_FIND_DATA& findData, bool update, list<std::wstring>* outAddedFiles)
 {
+	wstring absoluteFolder = GetFolderFromPartialFilepath(folder);
+	   
 	LXFileInfo fi;
 	fi.FileName = findData.cFileName;
-	fi.LocalFileName = folder.substr(0, folder.length() - 1);
-	fi.FullFileName = fi.LocalFileName + fi.FileName;
-	fi.LocalFileName = fi.LocalFileName.substr(_BaseFolder.length(), fi.LocalFileName.length() - _BaseFolder.length()) + fi.FileName;
+	fi.FullFileName = absoluteFolder + fi.FileName;
 	fi.LastWriteTime = findData.ftLastWriteTime;
-	_listFiles.push_back(fi);
+	
+	// Check if exist
+	auto it = std::find_if(_listFiles.begin(), _listFiles.end(), [fi](LXFileInfo& fileIndo)
+	{
+		return fi.FullFileName.compare(fileIndo.FullFileName) == 0;
+	});
+
+	if (it == _listFiles.end())
+	{
+		if (update)
+		{
+			_listFiles.push_back(fi);
+		}
+		
+		if (outAddedFiles)
+		{
+			outAddedFiles->push_back(fi.FullFileName);
+		}
+	}
 }
 
 bool LXDirectory::Exist() const
 {
-	DWORD dwAttrib = GetFileAttributes(_BaseFolder.c_str());
+	DWORD dwAttrib = GetFileAttributes(_baseFolder.c_str());
 	return (dwAttrib != INVALID_FILE_ATTRIBUTES && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 }
 
 bool LXDirectory::IsEmpty() const
 {
 	WIN32_FIND_DATA fd;
-	HANDLE hFind = FindFirstFile(_BaseFolder.c_str(), &fd);
+	HANDLE hFind = FindFirstFile(_baseFolder.c_str(), &fd);
 	return false;
 }
 
@@ -111,23 +169,37 @@ bool LXDirectory::Exists(wchar_t* folder)
 	return (dwAttrib != INVALID_FILE_ATTRIBUTES && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 }
 
-void LXDirectory::GetChangedLastWriteFiles(list<std::wstring>& filenames, bool update /*=true*/)
+void LXDirectory::GetChangedLastWriteFiles(list<std::wstring>& addedFiles, list<std::wstring>& removedFiles, list<std::wstring>& updatedFiles, bool update /*=true*/)
 {
 	for (LXFileInfo& fileInfo : _listFiles)
 	{
 		WIN32_FIND_DATA fd;
-		HANDLE hFind = FindFirstFile(fileInfo.FullFileName.c_str(), &fd);
 		
-		if ((fileInfo.LastWriteTime.dwHighDateTime != fd.ftLastWriteTime.dwHighDateTime) ||
-		   (fileInfo.LastWriteTime.dwLowDateTime != fd.ftLastWriteTime.dwLowDateTime))
+		HANDLE hFind = FindFirstFile(fileInfo.FullFileName.c_str(), &fd);
+
+		if (hFind == INVALID_HANDLE_VALUE)
 		{
-			filenames.push_back(fileInfo.FullFileName);
-			if (update)
+			// Removed file
+			removedFiles.push_back(fileInfo.FullFileName);
+		}
+		else
+		{
+			// Modified file (based on the Last write time)
+			if ((fileInfo.LastWriteTime.dwHighDateTime != fd.ftLastWriteTime.dwHighDateTime) ||
+				(fileInfo.LastWriteTime.dwLowDateTime != fd.ftLastWriteTime.dwLowDateTime))
 			{
-				fileInfo.LastWriteTime = fd.ftLastWriteTime;
+				updatedFiles.push_back(fileInfo.FullFileName);
+				
+				if (update)
+				{
+					fileInfo.LastWriteTime = fd.ftLastWriteTime;
+				}
 			}
+
+			FindClose(hFind);
 		}
 	}
-}
 
-LX_PRAGMA_OPTIM_ON
+	// Added file
+	ScanFolder(_searchRegExpression, update, &addedFiles);
+}

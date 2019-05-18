@@ -10,15 +10,12 @@
 
 #include "LXObject.h"
 
-struct LXMessageReceiver
+struct LXChannel
 {
+	const LXObject* Sender;
+	const LXString MessageID;
 	const LXObject* Receiver;
-	std::function<void()> Callback;
-};
-
-struct LXMessagePipes
-{
-	map<LXString, LXMessageReceiver> messageReceivers;
+	function<void()> Callback;
 };
 
 class LXCORE_API LXMessageManager : public LXObject
@@ -29,14 +26,16 @@ public:
 	virtual ~LXMessageManager();
 		
 	void Run();
-	void Connect(const LXObject* sender, const LXString& messageID, const LXObject* destination, std::function<void()> callback);
-	void Post(const LXObject* sender, const LXString& messageID);
+	
+	const LXChannel* Connect(const LXObject* sender, const LXString& messageID, const LXObject* destination, std::function<void()> callback);
+	void Disconnect(const LXChannel* channel);
+	void Post(const LXChannel* channel);
 
 private:
 
 	unique_ptr<LXMutex> _mutex;
-	map<const LXObject*, LXMessagePipes> _connections;
-	list<pair<const LXObject*, LXString>> _messages;
-
+	list<const LXChannel*> _channels;
+	list<const LXChannel*> _sent;
 };
+
 

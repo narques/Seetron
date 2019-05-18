@@ -90,6 +90,8 @@ const bool ForceLowercase = false;
 
 LXAssetManager::LXAssetManager(LXProject* Project) :_pDocument(Project)
 {
+	CHK(IsMainThread());
+
 	_graphMaterialTemplate = make_unique<LXGraphTemplate>();
 	VRF(_graphMaterialTemplate->LoadWithMSXML(GetSettings().GetCoreFolder() + L"/GraphMaterialTempale.xml"));
 				
@@ -105,6 +107,22 @@ LXAssetManager::LXAssetManager(LXProject* Project) :_pDocument(Project)
 	if (Project->GetSeetronProject())
 	{
 		LoadFromFolder(Project->GetAssetFolder(), EResourceOwner::LXResourceOwner_Project);
+
+		_projectFileWatcher = make_unique<LXFileWatcher>(Project->GetAssetFolder(), true);
+		_projectFileWatcher->OnFileChanded([this, Project](const wstring& filepath)
+		{
+			UpdateAsset(filepath.c_str(), Project->GetAssetFolder(), EResourceOwner::LXResourceOwner_Project);
+		});
+
+		_projectFileWatcher->OnFileAdded([this, Project](const wstring& filepath)
+		{
+			AddAsset(filepath.c_str(), Project->GetAssetFolder(), EResourceOwner::LXResourceOwner_Project);
+		});
+
+		_projectFileWatcher->OnFileRemoved([this, Project](const wstring& filepath)
+		{
+			RemoveAsset(filepath.c_str(), Project->GetAssetFolder(), EResourceOwner::LXResourceOwner_Project);
+		});
 	}
 }
 
@@ -211,7 +229,7 @@ LXMaterial* LXAssetManager::CreateNewMaterial(const LXString& MaterialName, cons
 		MaterialFilepath = AssetFolderpath + RelativeAssetFolder + MaterialName + L"." + LX_MATERIAL_EXT;
 		if (MaterialFilepath.IsFileExist())
 		{
-			LogW(ResourceManager, L"Material %s already exist (%S).", MaterialName.GetBuffer(), MaterialFilepath.GetBuffer());
+			LogW(LXAssetManager, L"Material %s already exist (%S).", MaterialName.GetBuffer(), MaterialFilepath.GetBuffer());
 			return GetMaterial(RelativeAssetFolder + MaterialName + L"." + LX_MATERIAL_EXT);
 		}
 	}
@@ -227,7 +245,7 @@ LXMaterial* LXAssetManager::CreateNewMaterial(const LXString& MaterialName, cons
 	RelativeAssetFilepath.MakeLower();
 	_MapAssets[RelativeAssetFilepath] = Material;
 
-	LogI(ResourceManager, L"Material %s created (%s).", MaterialName.GetBuffer(), MaterialFilepath.GetBuffer());
+	LogI(LXAssetManager, L"Material %s created (%s).", MaterialName.GetBuffer(), MaterialFilepath.GetBuffer());
 	return Material;
 }
 
@@ -492,87 +510,105 @@ void LXAssetManager::Add(LXAsset* Resource)
 	_MapAssets[key] = Resource;
 }
 
-void LXAssetManager::LoadFromFolder(const LXFilepath& Folderpath, EResourceOwner ResourceOwner)
+bool LXAssetManager::IsValidFile(const LXFilepath& filepath)
 {
-	LXFilepath AssetFolderpath = Folderpath;
-	LXFilepath Path = AssetFolderpath + "*";
-	//Path += "*";
-	LXDirectory dir(Path);
-	for (auto& FileInfo : dir.GetListFileNames())
+	// Ignore the temp and generated file
+	if (filepath.GetFilename().Left(1) == L"_")
 	{
-		LXFilepath Filepath(FileInfo.FullFileName);
-		LXFilepath RelativeFilepath = AssetFolderpath.GetRelativeFilepath(Filepath);
-		LXString Extension = Filepath.GetExtension().MakeLower();
-		
-		LXString AssetKey = BuildKey(ResourceOwner, RelativeFilepath);
-		AssetKey.MakeLower();
+		return false;
+	}
 
-		LXAsset* Asset = FindAsset(AssetKey);
-		if (Asset)
-		{
-			LogE(AssetManager, L"Asset %s already exist", AssetKey.GetBuffer())
-			continue;
-		}
-		
-		if (Extension == LX_MATERIAL_EXT)
-		{
-			LXMaterial* pMaterial = new LXMaterial;
-			pMaterial->SetFilepath(Filepath);
-			pMaterial->Owner = ResourceOwner;
-			_MapAssets[AssetKey] = pMaterial;
-			LogI(AssetManager,L"Added %s", Filepath.GetBuffer());
-		}
-		else if (Extension == LX_TEXTURE_EXT)
-		{
-			LXTexture* pTexture = new LXTexture();
-			pTexture->SetFilepath(Filepath);
-			pTexture->Owner = ResourceOwner;
-			_MapAssets[AssetKey] = pTexture;
-			LogI(AssetManager,L"Added %s", Filepath.GetBuffer());
-		}
-		else if (Extension == LX_MESH_EXT)
-		{
-			LXAssetMesh* pMesh = new LXAssetMesh();
-			pMesh->SetFilepath(Filepath);
-			pMesh->Owner = ResourceOwner;
-			_MapAssets[AssetKey] = pMesh;
-			LogI(AssetManager, L"Added %s", Filepath.GetBuffer());
-		}
-		else if (Extension == LX_SHADER_EXT)
-		{
-			LXShader* Shader = new LXShader();
-			Shader->SetFilepath(Filepath);
-			Shader->Owner = ResourceOwner;
-			_MapAssets[AssetKey] = Shader;
-			LogI(AssetManager, L"Added %s", Filepath.GetBuffer());
-		}
-		else if (Extension == LX_ANIMATION_EXT)
-		{
-			LXAnimation* Shader = new LXAnimation();
-			Shader->SetFilepath(Filepath);
-			Shader->Owner = ResourceOwner;
-			_MapAssets[AssetKey] = Shader;
-			LogI(AssetManager, L"Added %s", Filepath.GetBuffer());
-		}
-				
+	return true;
+}
+
+void LXAssetManager::AddAsset(const LXFilepath& filepath, const LXFilepath& assetFolderpath, EResourceOwner resourceOwner)
+{
+	if (!IsValidFile(filepath))
+		return;
+	
+	LXFilepath RelativeFilepath = assetFolderpath.GetRelativeFilepath(filepath);
+	LXString Extension = filepath.GetExtension().MakeLower();
+	LXString AssetKey = BuildKey(resourceOwner, RelativeFilepath);
+	AssetKey.MakeLower();
+
+	LXAsset* asset = FindAsset(AssetKey);
+	
+	if (asset)
+	{
+		LogE(AssetManager, L"Asset %s already exist", AssetKey.GetBuffer())
+		return;
+	}
+	
+	if (Extension == LX_MATERIAL_EXT)
+	{
+		asset = new LXMaterial();
+	}
+	else if (Extension == LX_TEXTURE_EXT)
+	{
+		asset = new LXTexture();
+	}
+	else if (Extension == LX_MESH_EXT)
+	{
+		asset = new LXAssetMesh();
+	}
+	else if (Extension == LX_SHADER_EXT)
+	{
+		asset = new LXShader();
+	}
+	else if (Extension == LX_ANIMATION_EXT)
+	{
+		asset = new LXAnimation();
+	}
 
 #ifdef LX_USE_RAW_TEXTURES_AS_ASSETS
-		else if ((Extension == L"jpg") || 
-				 (Extension == L"pbm") || 
-				 (Extension == L"png") || 
-				 (Extension == L"tga"))
-		{
-			LXTexture* pTexture = new LXTexture();
-			pTexture->SetSource(RelativeFilepath);
-			pTexture->Owner = ResourceOwner;
-			_MapAssets[AssetKey] = pTexture;
-			LogI(AssetManager,L"Added %s", Filepath.GetBuffer());
-		}
+	else if ((Extension == L"jpg") ||
+		(Extension == L"pbm") ||
+		(Extension == L"png") ||
+		(Extension == L"tga"))
+	{
+		asset = new LXTexture();
+	}
 #endif 	
-		else
-		{
-			//LogE(AssetManager, L"Unknow resource file format %s", Filepath.GetBuffer());
-		}
+	
+	if (asset)
+	{
+		asset->SetFilepath(filepath);
+		asset->Owner = resourceOwner;
+		_MapAssets[AssetKey] = asset;
+		LogI(AssetManager, L"Added %s", filepath.GetBuffer());
+	}
+}
+void LXAssetManager::RemoveAsset(const LXFilepath& filepath, const LXFilepath& assetFolderpath, EResourceOwner resourceOwner)
+{
+	if (!IsValidFile(filepath))
+		return;
+}
+
+void LXAssetManager::UpdateAsset(const LXFilepath& filepath, const LXFilepath& assetFolderpath, EResourceOwner resourceOwner)
+{
+	if (!IsValidFile(filepath))
+		return;
+
+	LXFilepath RelativeFilepath = assetFolderpath.GetRelativeFilepath(filepath);
+	LXString Extension = filepath.GetExtension().MakeLower();
+	LXString AssetKey = BuildKey(resourceOwner, RelativeFilepath);
+	AssetKey.MakeLower();
+
+	LXAsset* asset = FindAsset(AssetKey);
+
+	if (asset)
+	{
+		asset->Reload();
+	}
+}
+
+void LXAssetManager::LoadFromFolder(const LXFilepath& assetFolderpath, EResourceOwner ResourceOwner)
+{
+	LXDirectory dir(assetFolderpath);
+	for (auto& FileInfo : dir.GetListFileNames())
+	{
+		LXFilepath filepath(FileInfo.FullFileName);
+		AddAsset(filepath, assetFolderpath, ResourceOwner);
 	}
 }
 
