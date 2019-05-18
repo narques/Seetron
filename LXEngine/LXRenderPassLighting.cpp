@@ -118,13 +118,9 @@ const LXTextureD3D11* LXRenderPassLighting::GetOutputTexture() const
 
 void LXRenderPassLighting::Render(LXRenderCommandList* r)
 {
-	if (!Renderer->GetProject())
-		return;
-
 	LXRenderPipelineDeferred* RenderPipelineDeferred = dynamic_cast<LXRenderPipelineDeferred*>(Renderer->GetRenderPipeline());
 	CHK(RenderPipelineDeferred);
 
-	const LXActorSceneCapture* SceneCapture = GetCore().GetProject()->GetSceneCapture() ? GetCore().GetProject()->GetSceneCapture() : nullptr;
 	LXRenderPassShadow* RenderPassShadow = RenderPipelineDeferred->RenderPassShadow;
 
 	r->BeginEvent(L"Lighting");
@@ -194,6 +190,9 @@ void LXRenderPassLighting::Render(LXRenderCommandList* r)
 
 void LXRenderPassLighting::RenderIBL(LXRenderCommandList* r, const LXRenderPipelineDeferred* RenderPipelineDeferred)
 {
+	if (!Renderer->GetProject())
+		return;
+
 	r->BeginEvent(L"IBL");
 
 	const LXActorSceneCapture* SceneCapture = GetCore().GetProject()->GetSceneCapture() ? GetCore().GetProject()->GetSceneCapture() : nullptr;
