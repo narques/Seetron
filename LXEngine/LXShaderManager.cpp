@@ -39,10 +39,13 @@ LXShaderManager::LXShaderManager()
 {
 	if (CSet_EngineShaderDevMode.GetValue())
 	{
-		_engineFileWatcher = make_unique<LXFileWatcher>(GetSettings().GetDataFolder(), true);
-		_engineFileWatcher->OnFileChanded([this](const wstring& filename)
+		_engineFileWatcher = make_unique<LXFileWatcher>(GetSettings().GetShadersFolder(), true);
+		_engineFileWatcher->OnFileChanded([this](const wstring& filepath)
 		{
-			if (filename.at(0) != L'_')
+			wchar_t buffer[MAX_PATH];
+			wchar_t* filename = nullptr;
+			GetFullPathNameW(filepath.c_str(), MAX_PATH, (LPWSTR)&buffer, (LPWSTR*)& filename);
+			if (filename[0] != '_')
 			{
 				auto it = _monitoredShaderFiles.find(filename);
 				if (it != _monitoredShaderFiles.end())
