@@ -42,11 +42,6 @@ void LXTaskManager::Run(float deltaTime)
 		
 		task->Run();
 		delete task;
-
-		if (performance.GetTime() > 0.01f)
-		{
-			break;
-		}
 	}
 }
 
