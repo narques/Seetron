@@ -89,6 +89,7 @@ LXProject::LXProject(const LXFilepath& filepath)
 
 	// Properties
 	DefineProperty(L"DepthOfField", LXPropertyID::VIEWSTATE_DEPTHOFFIELD, &DepthOfField);
+	DefineProperty(L"AmbientOcclusion", LXPropertyID::SSOA, &SSAO);
 	   	 
 	// Done
 	_init = true;
