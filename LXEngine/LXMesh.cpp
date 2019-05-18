@@ -126,21 +126,6 @@ bool LXMesh::OnLoadChild(const TLoadContext& loadContext)
 
 	if (loadContext.node.name() == L"Geometry")
 	{
-		// Material
-		LXString MaterialName = loadContext.node.attr(L"Material");
-
-		if (MaterialName != L"")
-		{
-			// Check if the material exists
-			LXAssetManager* AssetManager = GetAssetManager();
-			if (AssetManager->GetMaterial(MaterialName) == nullptr)
-			{
-				LXString MaterialKey = LX_DEFAULT_MATERIAL_FOLDER + MaterialName + L"." + LX_MATERIAL_EXT;
-				if (AssetManager->GetMaterial(MaterialKey))
-					MaterialName = MaterialKey;
-			}
-		}
- 
 		// Geometry ID
 		int nGeoId = loadContext.node.attrInt(L"Id", -1);
 		if (nGeoId != -1)
@@ -159,6 +144,7 @@ bool LXMesh::OnLoadChild(const TLoadContext& loadContext)
 					AddPrimitive(Primitive);
 				}
 
+				LXString MaterialName = loadContext.node.attr(L"Material");
 				Primitive->SetMaterial(MaterialName);
 			}
 			else

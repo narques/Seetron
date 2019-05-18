@@ -125,11 +125,12 @@ void LXCore::Init()
 {
 	MainThread = GetCurrentThreadId();
 
+	_settings = std::make_unique<LXSettings>();
+
 	LogI(Core, L"------ Seetron Engine ------");
 
 	StatManager = new LXStatManager();
-	_settings = std::make_unique<LXSettings>();
-
+	
 	GetLogger().LogConfigurationAndPlatform();
 	GetLogger().LogDateAndTime();
 
@@ -157,7 +158,10 @@ void LXCore::Init()
 	m_commandManager->AddObserver(m_viewportManager);
 
 	// Plugins
+#ifdef LX_EDITOR
 	EnumPlugins();
+#endif
+
 	DefineProperties();
 }
 
@@ -383,10 +387,14 @@ ECreateProjectResult LXCore::CreateNewProject(const LXString& Name, const LXStri
 	if (CreateProject)
 	{
 		CloseProject();
-		LXProject* Document = new LXProject(ValidatedFolder + Name + L"." + LX_PROJECT_EXT);
+		LXFilepath filapath = ValidatedFolder + Name + L"." + LX_PROJECT_EXT;
+		LXProject* Document = new LXProject(filapath);
+		GetEventManager()->BroadCastEvent(new LXEventResult(EEventType::ProjectCreated, true));
 		Document->InitializeNewProject(Name);
 		SetDocument(Document);
 		result = ECreateProjectResult::Success;
+		Document->SaveFile();
+		GetEventManager()->PostEvent(new LXEventResult(EEventType::ProjectLoaded, true));
 	}
 					
 	return result;
@@ -460,6 +468,8 @@ void LXCore::SetDocument(LXProject* Document)
 
 	if (LXViewport* Viewport = GetViewportManager().GetViewport())
 		Viewport->SetDocument(Document);
+
+	GetCore().GetDocumentManager().SetDocument(Document);
 
 	if (_Renderer)
 	{
