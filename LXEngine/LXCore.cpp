@@ -211,6 +211,7 @@ LXCore*	LXCore::CreateCore()
 
 void LXCore::Destroy()
 {
+	gCore = nullptr;
 	delete this;
 }
 
@@ -606,13 +607,14 @@ LXActorFactory* GetActorFactory()
 
 LXStatManager* GetStatManager()
 {
-	return GetCore().GetStatManager();
+	return gCore ? gCore->GetStatManager() : nullptr;
 }
 
 LXEventManager* GetEventManager()
 {
 	static LXEventManager EventManager;
 	return &EventManager;
+}
 
 LXMessageManager* GetMessageManager()
 {
