@@ -50,7 +50,10 @@ LXPerformanceScope::LXPerformanceScope(const wchar_t* name):_name(name)
 LXPerformanceScope::~LXPerformanceScope()
 {
 	double elapsedTime = GetTime();
-	GetStatManager()->UpdateAndCloseStat(_name, elapsedTime);
+	if (GetStatManager())
+	{
+		GetStatManager()->UpdateAndCloseStat(_name, elapsedTime);
+	}
 }
 
 void LXPerformanceScope::Update()
