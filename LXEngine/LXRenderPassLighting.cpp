@@ -52,7 +52,9 @@ LXRenderPassLighting::LXRenderPassLighting(LXRenderer* InRenderer) :LXRenderPass
 	_shaderProgramDirectionalLight = make_unique<LXShaderProgramBasic>();
 	_shaderProgramPointLight = make_unique<LXShaderProgramBasic>();
 	_shaderProgramComposeLight = make_unique<LXShaderProgramBasic>();
-
+	_shaderProgramComposeLight->PixelShader->AddMacro("SSAO", "1");
+	_shaderProgramComposeLightNoSSAO = make_unique<LXShaderProgramBasic>();
+	
 	ConstantBufferDataIBL = new LXConstantBufferDataIBL();
 	ConstantBufferIBL = new LXConstantBufferD3D11(ConstantBufferDataIBL, sizeof(LXConstantBufferDataIBL));
 	
@@ -88,6 +90,7 @@ void LXRenderPassLighting::RebuildShaders()
 	_shaderProgramDirectionalLight->CreateShaders(GetSettings().GetShadersFolder() + kDirectionalShaderFilename, &Layout[0], (uint)Layout.size());
 	_shaderProgramPointLight->CreateShaders(GetSettings().GetShadersFolder() + kPointShaderFilename, &Layout[0], (uint)Layout.size());
 	_shaderProgramComposeLight->CreateShaders(GetSettings().GetShadersFolder() + kComposeShaderFilename, &Layout[0], (uint)Layout.size());
+	_shaderProgramComposeLightNoSSAO->CreateShaders(GetSettings().GetShadersFolder() + kComposeShaderFilename, &Layout[0], (uint)Layout.size());
 }
 
 void LXRenderPassLighting::DeleteBuffers()
@@ -104,11 +107,12 @@ void LXRenderPassLighting::Resize(uint Width, uint Height)
 
 bool LXRenderPassLighting::IsValid() const
 {
-	return _shaderProgramIBLLight->IsValid() && 
-		_shaderProgramSpotLight->IsValid() && 
+	return _shaderProgramIBLLight->IsValid() &&
+		_shaderProgramSpotLight->IsValid() &&
 		_shaderProgramDirectionalLight->IsValid() &&
 		_shaderProgramPointLight->IsValid() &&
-		_shaderProgramComposeLight->IsValid();
+		_shaderProgramComposeLight->IsValid() &&
+		_shaderProgramComposeLightNoSSAO->IsValid();
 }
 
 const LXTextureD3D11* LXRenderPassLighting::GetOutputTexture() const 
@@ -122,6 +126,8 @@ void LXRenderPassLighting::Render(LXRenderCommandList* r)
 	CHK(RenderPipelineDeferred);
 
 	LXRenderPassShadow* RenderPassShadow = RenderPipelineDeferred->RenderPassShadow;
+
+	bool SSAO = GetProject() ? GetProject()->SSAO : false;
 
 	r->BeginEvent(L"Lighting");
 
@@ -149,11 +155,14 @@ void LXRenderPassLighting::Render(LXRenderCommandList* r)
 
 		r->OMSetRenderTargets2(RenderTargetCompose->RenderTargetViewD3D11, nullptr);
 		
-		_shaderProgramComposeLight->Render(r);
+		if (SSAO)
+			_shaderProgramComposeLight->Render(r);
+		else
+			_shaderProgramComposeLightNoSSAO->Render(r);
 
-		LXTextureD3D11* Color = RenderPassGBuffer->TextureColor;
-		LXTextureD3D11* MRUL = RenderPassGBuffer->TextureSpecular;
-		LXTextureD3D11* Emissive = RenderPassGBuffer->TextureEmissive;
+		const LXTextureD3D11* Color = RenderPassGBuffer->TextureColor;
+		const LXTextureD3D11* MRUL = RenderPassGBuffer->TextureSpecular;
+		const LXTextureD3D11* Emissive = RenderPassGBuffer->TextureEmissive;
 		const LXTextureD3D11* TextureSSAO = RenderPassSSAO->GetOutputTexture();
 
 		LXTextureD3D11* Diffuse = RenderTargetDiffuse->TextureD3D11;
@@ -164,14 +173,16 @@ void LXRenderPassLighting::Render(LXRenderCommandList* r)
 		r->PSSetShaderResources(4, 1, (LXTextureD3D11*)Emissive);
 		r->PSSetShaderResources(5, 1, (LXTextureD3D11*)Diffuse);
 		r->PSSetShaderResources(6, 1, (LXTextureD3D11*)Specular);
-		r->PSSetShaderResources(7, 1, (LXTextureD3D11*)TextureSSAO);
+		if (SSAO)
+			r->PSSetShaderResources(7, 1, (LXTextureD3D11*)TextureSSAO);
 
 		r->PSSetSamplers(1, 1, (LXTextureD3D11*)Color);
 		r->PSSetSamplers(3, 1, (LXTextureD3D11*)MRUL);
 		r->PSSetSamplers(4, 1, (LXTextureD3D11*)Emissive);
 		r->PSSetSamplers(5, 1, (LXTextureD3D11*)Diffuse);
 		r->PSSetSamplers(6, 1, (LXTextureD3D11*)Specular);
-		r->PSSetSamplers(7, 1, (LXTextureD3D11*)TextureSSAO);
+		if (SSAO)
+			r->PSSetSamplers(7, 1, (LXTextureD3D11*)TextureSSAO);
 
 		Renderer->GetSSTriangle()->Render(r);
 
@@ -180,7 +191,8 @@ void LXRenderPassLighting::Render(LXRenderCommandList* r)
 		r->PSSetShaderResources(4, 1, nullptr); // Emissive
 		r->PSSetShaderResources(5, 1, nullptr); // Diffuse
 		r->PSSetShaderResources(6, 1, nullptr); // Specular
-		r->PSSetShaderResources(7, 1, nullptr); // SSAO
+		if (SSAO)
+			r->PSSetShaderResources(7, 1, nullptr); // SSAO
 
 		r->EndEvent();
 	}

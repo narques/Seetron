@@ -73,5 +73,6 @@ private:
 	unique_ptr<LXShaderProgramBasic> _shaderProgramDirectionalLight;
 	unique_ptr<LXShaderProgramBasic> _shaderProgramPointLight;
 	unique_ptr<LXShaderProgramBasic> _shaderProgramComposeLight;
+	unique_ptr<LXShaderProgramBasic> _shaderProgramComposeLightNoSSAO;
 };
 

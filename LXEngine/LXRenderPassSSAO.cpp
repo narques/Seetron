@@ -9,6 +9,7 @@
 #include "stdafx.h"
 #include "LXRenderPassSSAO.h"
 #include "LXInputElementDescD3D11Factory.h"
+#include "LXProject.h"
 #include "LXRenderer.h"
 #include "LXRenderCommandList.h"
 #include "LXRenderPassGBuffer.h"
@@ -89,7 +90,7 @@ void LXRenderPassSSAO::Resize(uint Width, uint Height)
 
 void LXRenderPassSSAO::Render(LXRenderCommandList* RCL)
 {
-	if (!Renderer->GetProject())
+	if (!Renderer->GetProject() || !Renderer->GetProject()->SSAO)
 		return;
 
 	LXRenderPipelineDeferred* RenderPipelineDeferred = dynamic_cast<LXRenderPipelineDeferred*>(Renderer->GetRenderPipeline());

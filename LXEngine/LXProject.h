@@ -158,7 +158,7 @@ public:
 public:
 
 	bool DepthOfField = false;
-	bool SSAO = false;
+	bool SSAO = true;
 
 private:
 
