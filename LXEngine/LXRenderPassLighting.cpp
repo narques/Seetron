@@ -52,7 +52,7 @@ LXRenderPassLighting::LXRenderPassLighting(LXRenderer* InRenderer) :LXRenderPass
 	_shaderProgramDirectionalLight = make_unique<LXShaderProgramBasic>();
 	_shaderProgramPointLight = make_unique<LXShaderProgramBasic>();
 	_shaderProgramComposeLight = make_unique<LXShaderProgramBasic>();
-	_shaderProgramComposeLight->PixelShader->AddMacro("SSAO", "1");
+	_shaderProgramComposeLight->PixelShader->AddMacro("LX_SSAO", "1");
 	_shaderProgramComposeLightNoSSAO = make_unique<LXShaderProgramBasic>();
 	
 	ConstantBufferDataIBL = new LXConstantBufferDataIBL();
