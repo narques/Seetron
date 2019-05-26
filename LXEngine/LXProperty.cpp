@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -316,6 +316,8 @@ void LXPropertyT<T>::SetValue( const T& value, bool InvokeOnProperyChanged )
 	}
 
 	CHK(CheckRange(value));
+
+	LoadValue(value);
 
 	if (_Var)
 		*_Var = value;
@@ -672,6 +674,19 @@ void LXPropertyT<LXAssetPtr>::SaveXML2(const TSaveContext& saveContext,  const L
 	::SaveXML(saveContext, strXMLName, strFilename);
 }
 
+template<>
+void LXPropertyT<LXAssetPtr>::LoadValue(const LXAssetPtr& value)
+{
+	if (value)
+	{
+		value->Load();
+	}
+}
+
+//
+// --- LXAssetPtr ---
+//
+
 map<LXString, int> groupPositions;
 
 int LXProperty::GetGroupPosition(const LXString& strGroup)
@@ -995,3 +1010,11 @@ LXString LXPropertyT<T>::GetMaxXMLAttribute()
 	return L"";
 }
 
+//
+// --- Additional non-specialized --- 
+//
+
+template<class T>
+void LXPropertyT<T>::LoadValue(const T& value)
+{
+}

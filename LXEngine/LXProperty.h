@@ -178,7 +178,7 @@ public:
 	
 	const T&			GetValue		( ) const;
 	void				SetValue		( const T& value, bool InvokeOnPropertyChanged = true);
-	
+
 	bool				HasMinMax		( ) const									{ return _PropInfo->_MaxValue && _PropInfo->_MinValue; }
 	bool				HasMax			( ) const									{ return _PropInfo->_MaxValue != nullptr; }
 	bool				HasMin			( ) const									{ return _PropInfo->_MinValue != nullptr; }
@@ -208,9 +208,14 @@ protected:
 
 	void				SaveXML2		 ( const TSaveContext& saveContext, const LXString& strXMLName, const T& value );
 	LXString			GetTypeName() override;
-		LXString		GetMinXMLAttribute() override;
+	LXString			GetMinXMLAttribute() override;
 	LXString			GetMaxXMLAttribute() override;
 	void				GetValueFromXML2 ( const TLoadContext& LoadContext );
+
+private:
+
+	// Some property type could need an extra load, like assets.
+	void				LoadValue(const T& value);
 
 private:
 
