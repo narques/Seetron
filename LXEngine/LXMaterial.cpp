@@ -78,7 +78,6 @@ bool LXMaterial::Reload()
 	ReleaseGraph();
 	State = LXAsset::EResourceState::LXResourceState_Unloaded;
 	Load();
-	GetController()->AddMaterialToRebuild(this);
 	return true;
 }
 
@@ -130,7 +129,9 @@ void LXMaterial::CreateDeviceMaterial()
 {
 	CHK(_materialD3D11 == nullptr);
 	if (GetRenderer())
+	{
 		GetRenderer()->CreateDeviceMaterial(this);
+	}
 }
 
 void LXMaterial::ReleaseDeviceMaterial()
@@ -138,5 +139,13 @@ void LXMaterial::ReleaseDeviceMaterial()
 	if (_materialD3D11 && GetRenderer())
 	{
 		GetRenderer()->ReleaseDeviceMaterial(this);
+	}
+}
+
+void LXMaterial::OnPropertyChanged(LXProperty* pProperty)
+{
+	if (_materialD3D11 && GetRenderer())
+	{
+		GetRenderer()->UpdateDeviceMaterial(this);
 	}
 }

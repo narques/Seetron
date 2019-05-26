@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -25,6 +25,10 @@ public:
 	void GetChildProperties(ListProperties& UserProperties) const override;
 	LXTexture* GetTextureDisplacement(const LXString& textureName) const;
 	bool GetFloatParameter(const LXString& textureName, float& outValue) const;
+
+private:
+
+	void OnPropertyChanged(LXProperty* property) override;
 
 public:
 

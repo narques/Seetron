@@ -2,13 +2,14 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
 #include "LXGraphMaterial.h"
 #include "LXConnector.h"
+#include "LXMaterial.h"
 #include "LXNode.h"
 #include "LXTexture.h"
 
@@ -80,4 +81,9 @@ bool LXGraphMaterial::GetFloatParameter(const LXString& paramName, float& outVal
 	}
 	
 	return false;
+}
+
+void LXGraphMaterial::OnPropertyChanged(LXProperty* property)
+{
+	Material->OnPropertyChanged(property);
 }

@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -11,6 +11,7 @@
 #include "LXAssetManager.h"
 #include "LXConnector.h"
 #include "LXCore.h"
+#include "LXGraph.h"
 #include "LXGraphTemplate.h"
 #include "LXMSXMLNode.h"
 #include "LXMemory.h" // --- Must be the last included ---
@@ -139,6 +140,11 @@ void LXNode::OnLoaded()
 	{
 		GetProperty(LXPropertyID::NAME)->SetReadOnly(true);
 	}
+}
+
+void LXNode::OnPropertyChanged(LXProperty* property)
+{
+	Graph->OnPropertyChanged(property);
 }
 
 void LXNode::Update(const LXString& templateID)

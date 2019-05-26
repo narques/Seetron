@@ -28,7 +28,8 @@
 #include "LXWorldTransformation.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
-LXRenderCluster::LXRenderCluster(LXRenderClusterManager* RenderClusterManager, LXActor* InActor, const LXMatrix& MatrixWCS)
+LXRenderCluster::LXRenderCluster(LXRenderClusterManager* renderClusterManager, LXActor* InActor, const LXMatrix& MatrixWCS):
+	_renderClusterManager(renderClusterManager)
 {
 	LX_COUNTSCOPEINC(LXRenderCluster)
 
@@ -68,6 +69,30 @@ LXRenderCluster::~LXRenderCluster()
 void LXRenderCluster::SetMaterial(LXMaterial* material)
 {
  	Material = material;
+
+	// Shaders
+	const LXMaterialD3D11* materialD3D11 = material->GetDeviceMaterial();
+
+	CHK(materialD3D11);
+	   	   
+	for (auto i = 0; i < (int)ERenderPass::Last; i++)
+	{
+		ERenderPass RenderPass = (ERenderPass)i;
+		LXShaderProgramD3D11 shaderProgram;
+		if (_renderClusterManager->GetShadersD3D11(RenderPass, Primitive.get(), materialD3D11, &shaderProgram))
+		{
+			LXShaderProgramD3D11* RenderClusterShaderProgram = &ShaderPrograms[(int)RenderPass];
+			RenderClusterShaderProgram->VertexShader = shaderProgram.VertexShader;
+			RenderClusterShaderProgram->HullShader = shaderProgram.HullShader;
+			RenderClusterShaderProgram->DomainShader = shaderProgram.DomainShader;
+			RenderClusterShaderProgram->GeometryShader = shaderProgram.GeometryShader;
+			RenderClusterShaderProgram->PixelShader = shaderProgram.PixelShader;
+		}
+		else
+		{
+			CHK(0);
+		}
+	}
 }
 
 void LXRenderCluster::SetPrimitive(shared_ptr<LXPrimitiveD3D11>& InPrimitiveD3D11)

@@ -90,6 +90,10 @@ public:
 	bool CastShadow = false;
 
 	LXFlagsRenderCluster Flags = ERenderClusterType::Surface;
+
+private:
+
+	LXRenderClusterManager* _renderClusterManager;
 };
 
 static bool SortRenderCluster(const LXRenderCluster& RC0, const LXRenderCluster& RC1)

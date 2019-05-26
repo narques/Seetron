@@ -14,7 +14,6 @@
 #include "LXBBox.h"
 
 class LXPrimitiveInstance;
-class LXMaterial;
 class LXMutex;
 class LXRenderer;
 class LXString;
@@ -57,16 +56,13 @@ public:
 	//
 
 	void AddMaterialToUpdateRenderStateSet(LXMaterial* Material);
-	void AddMaterialToRebuild(LXMaterial* material);
-
+	
 	//
 	// Actor
 	//
 
 	void AddActorToUpdateRenderStateSet(LXActor* Actor);
 	void AddActorToDeleteSet(LXActor* Actor);
-	void MaterialChanged(LXActor* Actor, LXMaterial* Material);
-
 	void ActorWorldMatrixChanged(LXActor* Actor);
 
 	//
@@ -75,9 +71,8 @@ public:
 		
 	SetActors& GetActorsToDeleteRT() { return _SetActorToDelete_RT; }
 	SetActors& GetActorToUpdateRenderStateSetRT() { return _SetActorToUpdateRenderState_RT; }
-	SetMaterials& GetMaterialToUpdateRenderStateSetRT() { return _SetMaterialToUpdateRenderState_RT; }
-	SetMaterials& GetMaterialToRebuild_RT() { return _SetMaterialToRebuild_RT; }
-
+	
+	
 	ListRendererUpdates& GetRendererUpdate() { return _RendererUpdates; }
 	
 	// Prepare the Data for RenderThread
@@ -93,15 +88,11 @@ private:
 	SetActors		_SetActorToUpdateRenderState;
 	SetActors		_SetActorToDelete;
 	SetActors		_SetActorToMove;
-	SetMaterials	_SetMaterialToUpdateRenderState;
-	SetMaterials	_SetMaterialToRebuild;
-	
+		
 	// Consumed by RenderThread
 	SetActors		_SetActorToUpdateRenderState_RT;
 	SetActors		_SetActorToDelete_RT;
-	SetMaterials	_SetMaterialToUpdateRenderState_RT;
-	SetMaterials	_SetMaterialToRebuild_RT;
-
+		
 	// Shared
 	ListRendererUpdates	_RendererUpdates;
 

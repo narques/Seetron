@@ -42,7 +42,7 @@ public:
 	//
 
 	void GetChildProperties(ListProperties& UserProperties) const override;
-
+	void OnPropertyChanged(LXProperty* pProperty) override;
 	
 	//
 	// Overridden From LXAsset
@@ -73,12 +73,10 @@ public:
 	const LXMaterialD3D11* GetDeviceMaterial() const { return _materialD3D11; }
 	void SetDeviceMaterial(LXMaterialD3D11* materialD3D11) { _materialD3D11 = materialD3D11; }
 
-private:
-	
 	void DefineProperties();
 	void CreateDeviceMaterial();
 	void ReleaseDeviceMaterial();
-
+	
 public:
 
 	// Misc

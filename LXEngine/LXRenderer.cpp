@@ -305,11 +305,6 @@ bool LXRenderer::ShowBounds() const
 	return bShowBounds;
 }
 
-LXMaterialD3D11* LXRenderer::GetMaterialD3D11(const LXMaterial* Material)
-{
-	return RenderClusterManager->GetMaterial(Material);
-}
-
 void LXRenderer::ResetShaders()
 {
 	gResetShaders = true;
@@ -325,7 +320,7 @@ void LXRenderer::Render()
 	// Commands & Tasks
 	//
 
-   _mainTasks->Run(time.DeltaTime());
+   _mainTasks->Run((float)time.DeltaTime());
 
 
 	// If project changed
@@ -463,20 +458,6 @@ void LXRenderer::UpdateStates()
 	}
 	GetController()->GetActorToUpdateRenderStateSetRT().clear();
 
-	for (LXMaterial* material : GetController()->GetMaterialToUpdateRenderStateSetRT())
-	{
-		LogI(Renderer, L"Update Material %s", material->GetName().GetBuffer());
-		RenderClusterManager->UpdateMaterial(material);
-	}
-	GetController()->GetMaterialToUpdateRenderStateSetRT().clear();
-
-	for (LXMaterial* material : GetController()->GetMaterialToRebuild_RT())
-	{
-		LogI(Renderer, L"Rebuild Material %s", material->GetName().GetBuffer());
-		RenderClusterManager->RebuildMaterial(material);
-	}
-	GetController()->GetMaterialToRebuild_RT().clear();
-	
 	// Actor Matrix
 // 	for (LXActor* Actor : GetController()->GetActorToMoveRT())
 // 	{
@@ -628,6 +609,26 @@ void LXRenderer::ReleaseDeviceMaterial(LXMaterial* material)
 		{
 			CHK(IsRenderThread());
 			delete materialD3D11;
+		});
+
+		_mainTasks->EnqueueTask(task);
+	}
+}
+
+void LXRenderer::UpdateDeviceMaterial(LXMaterial* material)
+{
+	LXMaterialD3D11* materialD3D11 = const_cast<LXMaterialD3D11*>(material->GetDeviceMaterial());
+
+	if (IsRenderThread())
+	{
+		materialD3D11->Update(material);
+	}
+	else
+	{
+		LXTask* task = new LXTaskCallBack([materialD3D11, material]()
+		{
+			CHK(IsRenderThread());
+			materialD3D11->Update(material);
 		});
 
 		_mainTasks->EnqueueTask(task);

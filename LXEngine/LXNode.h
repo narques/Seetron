@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -45,6 +45,7 @@ private:
 
 	void DefineProperties();
 	void OnLoaded() override;
+	void OnPropertyChanged(LXProperty* property) override;
 	
 	// Add missing connectors
 	void Update(const LXString& templateID);

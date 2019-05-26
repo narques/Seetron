@@ -67,7 +67,6 @@ public:
 	bool ShowBounds() const;
 
 	// Resources
-	LXMaterialD3D11* GetMaterialD3D11(const LXMaterial* Material);
 	LXShaderManager* GetShaderManager() const { return ShaderManager; }
 	LXTextureManager* GetTextureManager() const { return TextureManager; }
 	LXRenderPipeline* GetRenderPipeline() const { return _RenderPipeline; }
@@ -77,6 +76,7 @@ public:
 	
 	void CreateDeviceMaterial(LXMaterial* material);
 	void ReleaseDeviceMaterial(LXMaterial* material);
+	void UpdateDeviceMaterial(LXMaterial* material);
 
 	// Shared objects
 	ID3D11RasterizerState* GetDefaultRasterizerState () const { return D3D11RasterizerState; }

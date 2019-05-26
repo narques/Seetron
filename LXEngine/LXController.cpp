@@ -13,10 +13,6 @@
 #include "LXActorMesh.h"
 #include "LXAssetType.h"
 #include "LXCore.h"
-#include "LXGraph.h"
-#include "LXGraphMaterial.h"
-#include "LXMaterial.h"
-#include "LXMaterialD3D11.h"
 #include "LXMutex.h"
 #include "LXNode.h"
 #include "LXProperty.h"
@@ -31,29 +27,12 @@ LXController::LXController()
 
 	LXSmartObject::RegisterCB_OnPropertiesChanged(this, [this](LXSmartObject* SmartObject, LXProperty* Property)
 	{
-		if (LXMaterial* Material = dynamic_cast<LXMaterial*>(SmartObject))
-		{
-			AddMaterialToUpdateRenderStateSet(Material);
-		}
-		else if (LXNode* node = dynamic_cast<LXNode*>(SmartObject))
-		{
-			if (const LXGraphMaterial* graphMaterial = dynamic_cast<LXGraphMaterial*>(node->Graph))
-			{
-				Material = graphMaterial->Material;
-				AddMaterialToUpdateRenderStateSet(Material);
-			}
-		}
-		else if (LXActor* Actor = dynamic_cast<LXActor*>(SmartObject))
+		if (LXActor* Actor = dynamic_cast<LXActor*>(SmartObject))
 		{
 			if (LXPropertyAssetPtr* PropertyAsset = dynamic_cast<LXPropertyAssetPtr*>(Property))
 			{
 				if ((EAssetType)(PropertyAsset->GetUserData()) == EAssetType::Material)
 				{
-					Actor->InvalidateRenderState();
-				}
-				else if (LXMaterial* Marterial = dynamic_cast<LXMaterial*>(PropertyAsset->GetValue()))
-				{
-					// this will call AddActorToUpdateRenderStateSet
 					Actor->InvalidateRenderState();
 				}
 			}
@@ -78,26 +57,16 @@ void LXController::Purge()
 	_SetActorToUpdateRenderState.clear();
 	_SetActorToDelete.clear();
 	_SetActorToMove.clear();
-	_SetMaterialToUpdateRenderState.clear();
-	_SetMaterialToRebuild.clear();
-
+	
 	_SetActorToUpdateRenderState_RT.clear();
 	_SetActorToDelete_RT.clear();
-	_SetMaterialToUpdateRenderState_RT.clear();
-	_SetMaterialToRebuild_RT.clear();
-
+		
 	for (LXRendererUpdate* RendererUpdate : _RendererUpdates)
 	{
 		delete RendererUpdate;
 	}
 
 	_RendererUpdates.clear();
-}
-
-LXMaterialD3D11* GetMaterialD3D11(const LXMaterial* Material)
-{
-	CHK(IsRenderThread());
-	return GetRenderer()->GetMaterialD3D11(Material);
 }
 
 void LXController::AddActorToUpdateRenderStateSet(LXActor* Actor)
@@ -113,24 +82,6 @@ void LXController::AddActorToDeleteSet(LXActor* Actor)
 {
 	CHK(IsMainThread());
 	_SetActorToDelete.insert(Actor);
-}
-
-void LXController::AddMaterialToUpdateRenderStateSet(LXMaterial* Material)
-{
-	CHK(IsMainThread());
-	_SetMaterialToUpdateRenderState.insert(Material);
-}
-
-void LXController::AddMaterialToRebuild(LXMaterial* material)
-{
-	CHK(IsMainThread());
-	_SetMaterialToRebuild.insert(material);
-}
-
-void LXController::MaterialChanged(LXActor* ActorMesh, LXMaterial* Material)
-{
-	CHK(IsMainThread());
-	AddActorToUpdateRenderStateSet(ActorMesh);
 }
 
 void LXController::ActorWorldMatrixChanged(LXActor* Actor)
@@ -226,22 +177,6 @@ void LXController::Run()
 		
 		Actors.clear();
 		_mutex->Unlock();
-	}
-
-	//
-	// Material
-	//
-	
-	{
-		// Previous materials should be consumed
-		CHK(_SetMaterialToUpdateRenderState_RT.size() == 0);
-		CHK(_SetMaterialToRebuild_RT.size() == 0);
-
-		_SetMaterialToUpdateRenderState_RT.insert(_SetMaterialToUpdateRenderState.begin(), _SetMaterialToUpdateRenderState.end());
-		_SetMaterialToRebuild_RT.insert(_SetMaterialToRebuild.begin(), _SetMaterialToRebuild.end());
-
-		_SetMaterialToUpdateRenderState.clear();
-		_SetMaterialToRebuild.clear();
 	}
 
 	//
