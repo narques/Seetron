@@ -211,6 +211,7 @@ LXCore*	LXCore::CreateCore()
 
 void LXCore::Destroy()
 {
+	CloseProject();
 	gCore = nullptr;
 	delete this;
 }
