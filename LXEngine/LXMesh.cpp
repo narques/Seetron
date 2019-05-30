@@ -15,6 +15,7 @@
 #include "LXMesh.h"
 #include "LXPrimitive.h"
 #include "LXPrimitiveInstance.h"
+#include "LXProject.h"
 #include "LXStatistic.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
@@ -268,19 +269,18 @@ void LXMesh::InvalidateBounds()
 	}
 }
 
-void LXMesh::SetMaterial(const LXString& Key)
+void LXMesh::SetMaterial(const LXString& key)
 {
-	for (const unique_ptr<LXPrimitiveInstance>& PrimitiveInstance : _vectorPrimitives)
-	{
-		PrimitiveInstance->Primitive->SetMaterial(Key);
-	}
+	LXAssetManager& rm = GetCore().GetProject()->GetAssetManager();
+	LXMaterial* Material = rm.GetMaterial(key);
+	SetMaterial(Material);
 }
 
 void LXMesh::SetMaterial(LXMaterial* material)
 {
 	for (const unique_ptr<LXPrimitiveInstance>& PrimitiveInstance : _vectorPrimitives)
 	{
-		PrimitiveInstance->Primitive->SetMaterial(material);
+		PrimitiveInstance->SetMaterial(material);
 	}
 }
 

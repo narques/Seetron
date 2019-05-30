@@ -68,10 +68,19 @@ LXRenderCluster::~LXRenderCluster()
 
 void LXRenderCluster::SetMaterial(LXMaterial* material)
 {
- 	Material = material;
+	if (Material != material)
+	{
+		Material = material;
+		_deviceMaterialDirty = true;
+	}
+}
 
+bool LXRenderCluster::UpdateDeviceMaterialAndShaders()
+{
+	CHK(IsRenderThread());
+	
 	// Shaders
-	const LXMaterialD3D11* materialD3D11 = material->GetDeviceMaterial();
+	const LXMaterialD3D11* materialD3D11 = Material->GetDeviceMaterial();
 
 	CHK(materialD3D11);
 	   	   
@@ -87,12 +96,17 @@ void LXRenderCluster::SetMaterial(LXMaterial* material)
 			RenderClusterShaderProgram->DomainShader = shaderProgram.DomainShader;
 			RenderClusterShaderProgram->GeometryShader = shaderProgram.GeometryShader;
 			RenderClusterShaderProgram->PixelShader = shaderProgram.PixelShader;
+			
+			_deviceMaterial = materialD3D11;
+			_deviceMaterialDirty = false;
 		}
 		else
 		{
 			CHK(0);
 		}
 	}
+
+	return true;
 }
 
 void LXRenderCluster::SetPrimitive(shared_ptr<LXPrimitiveD3D11>& InPrimitiveD3D11)
@@ -119,6 +133,17 @@ bool LXRenderCluster::IsTransparent() const
 
 void LXRenderCluster::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 {
+	if (_deviceMaterialDirty)
+	{
+		bool result = UpdateDeviceMaterialAndShaders();
+		
+		if (!result)
+		{
+			return;
+		}
+	}
+	
+
 	LXShaderProgramD3D11* ShaderProgram = &ShaderPrograms[(int)RenderPass];
 
 	if (1/*!ValidConstantBufferMatrix*/ && CBWorld)
@@ -186,12 +211,7 @@ void LXRenderCluster::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 
 	if (bHasShader)
 	{
-		// Material (Shader resources)
-		if (Material && Material->GetDeviceMaterial())
-		{
-			Material->GetDeviceMaterial()->Render(RenderPass, RCL);
-		}
-
+		_deviceMaterial->Render(RenderPass, RCL);
 		Primitive->Render(RCL);
 	}
 }

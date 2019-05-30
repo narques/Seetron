@@ -14,8 +14,6 @@
 #include "LXVec3.h"
 #include "LXVec2.h"
 
-class LXRenderCluster;
-
 #define POSITION3F vec3f position;
 #define TEXCOORD2F vec2f texCoord;
 #define NORMAL3F vec3f normal;
@@ -182,9 +180,6 @@ public:
 
 	void*				CreateInterleavedVertexArray(const int Mask, const int VertexCount, int *OutVertexStructSize);
 
-	// Rendering
-	void SetRenderCluster(const LXRenderCluster* renderCluster);
-
 private:
 
 	template<class T, class U>
@@ -228,9 +223,6 @@ public :
 	#ifdef LX_DEBUG_PRIMITIVE_PROPVISIBLE
 	bool			_bVisible = true;
 	#endif
-
-	// Rendering
-	const LXRenderCluster* _renderCluster = nullptr;
 };
 
 typedef list<shared_ptr<LXPrimitive>> ListPrimitives;

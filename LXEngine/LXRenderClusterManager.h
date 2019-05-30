@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -68,7 +68,6 @@ private:
 	//
 
 	map<LXActor*, list<LXRenderCluster*>> ActorRenderCluster;
-	map<const LXMaterial*, list<LXRenderCluster*>> MaterialRenderClusters;
 	map<LXPrimitiveInstance*, LXRenderCluster*> PrimitiveInstanceRenderClusters;
 
 	//

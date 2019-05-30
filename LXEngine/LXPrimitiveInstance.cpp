@@ -10,6 +10,7 @@
 #include "LXPrimitiveInstance.h"
 #include "LXPrimitive.h"
 #include "LXMatrix.h"
+#include "LXRenderCluster.h"
 #include "LXStatistic.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
@@ -25,5 +26,15 @@ LXPrimitiveInstance::~LXPrimitiveInstance()
 {
 	LX_COUNTSCOPEDEC(LXPrimitiveInstance)
 	LX_SAFE_DELETE(Matrix);
+}
+
+void LXPrimitiveInstance::SetMaterial(LXMaterial* material)
+{
+	Primitive->SetMaterial(material);
+	
+	if (RenderCluster)
+	{
+		const_cast<LXRenderCluster*>(RenderCluster)->SetMaterial(material);
+	}
 }
 

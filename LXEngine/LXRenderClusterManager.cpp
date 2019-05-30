@@ -41,7 +41,6 @@ void LXRenderClusterManager::Empty()
 	ListRenderClusters.clear();
 	ActorRenderCluster.clear();
 	PrimitiveInstanceRenderClusters.clear();
-	MaterialRenderClusters.clear();
 	MapPrimitiveD3D11.clear();
 }
 
@@ -226,16 +225,6 @@ void LXRenderClusterManager::RemoveRenderCluster(LXRenderCluster* RenderCluster)
 	ListRenderClusters.remove(RenderCluster);
 	
 	// Helper maps
-	/*
-	map<LXActor*, list<LXRenderCluster*>> ActorRenderCluster;
-	
-	
-	*/
-
-	LXMaterial* Material = const_cast<LXMaterial*>(RenderCluster->Material);
-	CHK(Material);
-	MaterialRenderClusters[Material].remove(RenderCluster);
-	
 	PrimitiveInstanceRenderClusters.erase(RenderCluster->PrimitiveInstance);
 }
 
@@ -295,6 +284,7 @@ LXRenderCluster* LXRenderClusterManager::CreateRenderCluster(LXActorMesh* Actor,
 
 	// PrimitiveInstance 
 	RenderCluster->PrimitiveInstance = PrimitiveInstance;
+	PrimitiveInstance->RenderCluster = RenderCluster;
 
 	// Create or Retrieve the PrimitiiveD3D11 according the Primitive
 	shared_ptr<LXPrimitiveD3D11>& PrimitiveD3D11 = GetPrimitiveD3D11(Primitive, (Actor->GetInsanceCount()) > 0 ? &Actor->GetArrayInstancePosition() : nullptr);
@@ -310,8 +300,7 @@ LXRenderCluster* LXRenderClusterManager::CreateRenderCluster(LXActorMesh* Actor,
 
 	ListRenderClusters.push_back(RenderCluster);
 	ActorRenderCluster[Actor].push_back(RenderCluster);
-	MaterialRenderClusters[Material].push_back(RenderCluster);
-
+	
 	// May happen with the BoudingVolume
 	CHK(PrimitiveInstanceRenderClusters.find(PrimitiveInstance) == PrimitiveInstanceRenderClusters.end());
 	PrimitiveInstanceRenderClusters[PrimitiveInstance] = RenderCluster;

@@ -11,6 +11,7 @@
 class LXPrimitive;
 class LXMatrix;
 class LXMaterial;
+class LXRenderCluster;
 
 // Represents an instanced Primitive in a Mesh 
 // CPU/DataModel instantiation feature, different of the DrawInstanced GPU features
@@ -25,6 +26,8 @@ public:
 	LXPrimitiveInstance(const shared_ptr<LXPrimitive>& InPrimitive, LXMatrix* InMatrix, LXMaterial* InMaterial);
 	~LXPrimitiveInstance();
 
+	void SetMaterial(LXMaterial* material);
+
 public:
 
 	// Ref
@@ -36,5 +39,8 @@ public:
 	// Material (Optional)
 	LXMaterial* Material = nullptr;
 
+	// Rendering
+	const LXRenderCluster* RenderCluster = nullptr;
 };
+
 

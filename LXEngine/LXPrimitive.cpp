@@ -18,7 +18,6 @@
 #include "LXAssetMesh.h"
 #include "LXMaterial.h"
 #include "LXPrimitiveFactory.h"
-#include "LXRenderCluster.h"
 #include "LXStatistic.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
@@ -320,11 +319,6 @@ int LXPrimitive::GetId()
 void LXPrimitive::SetMaterial( LXMaterial* pMaterial )
 { 
 	m_pMaterial = pMaterial;
-
- 	if (_renderCluster)
- 	{
- 		const_cast<LXRenderCluster*>(_renderCluster)->SetMaterial(pMaterial);
- 	}
 }
 
 void LXPrimitive::SetMaterial(const LXString& Filename)
@@ -1189,9 +1183,3 @@ void* LXPrimitive::CreateInterleavedVertexArray(const int Mask, const int Vertex
 	*OutVertexStructSize = VertexStructSize;
 	return VertexStruct;
 }
-
-void LXPrimitive::SetRenderCluster(const LXRenderCluster* renderCluster)
-{
-	_renderCluster = renderCluster;
-}
-

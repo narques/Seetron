@@ -65,6 +65,10 @@ public:
 	void UpdateLightParameters();
 	ELightType GetLightType() const;
 
+private:
+
+	bool UpdateDeviceMaterialAndShaders();
+
 public:
 
 	LXActor* Actor = nullptr;
@@ -94,6 +98,8 @@ public:
 private:
 
 	LXRenderClusterManager* _renderClusterManager;
+	const LXMaterialD3D11* _deviceMaterial = nullptr;
+	bool _deviceMaterialDirty = true;
 };
 
 static bool SortRenderCluster(const LXRenderCluster& RC0, const LXRenderCluster& RC1)

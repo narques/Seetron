@@ -8,41 +8,18 @@
 
 #include "stdafx.h"
 #include "LXController.h"
-#include "LXActor.h"
-#include "LXActor.h"
 #include "LXActorMesh.h"
-#include "LXAssetType.h"
-#include "LXCore.h"
 #include "LXMutex.h"
-#include "LXNode.h"
-#include "LXProperty.h"
 #include "LXRenderer.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXController::LXController()
 {
 	_mutex = new LXMutex();
-
-	// Listen the properties
-
-	LXSmartObject::RegisterCB_OnPropertiesChanged(this, [this](LXSmartObject* SmartObject, LXProperty* Property)
-	{
-		if (LXActor* Actor = dynamic_cast<LXActor*>(SmartObject))
-		{
-			if (LXPropertyAssetPtr* PropertyAsset = dynamic_cast<LXPropertyAssetPtr*>(Property))
-			{
-				if ((EAssetType)(PropertyAsset->GetUserData()) == EAssetType::Material)
-				{
-					Actor->InvalidateRenderState();
-				}
-			}
-		}
-	});
 }
 
 LXController::~LXController()
 {
-	LXSmartObject::UnregisterCB_OnPropertiesChanged(this);
 	Purge();
 	delete _mutex;;
 }
