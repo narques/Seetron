@@ -50,7 +50,7 @@ LXFileWatcher::LXFileWatcher(const wchar_t* pathName, bool watchSubtree)
 			_mutex->Lock();
 			for (const std::wstring& filename: _fileChanged)
 			{
-				  (filename);
+				_onFileChanged(filename);
 			}
 			_fileChanged.clear();
 			_mutex->Unlock();
@@ -128,6 +128,8 @@ void LXFileWatcher::OnFileRemoved(std::function<void(const std::wstring& filenam
 
 void LXFileWatcher::Process()
 {
+#if !LX_USE_RDC
+
 	// WatcherThread
 
 	list<std::wstring> addedFiles;
@@ -162,6 +164,8 @@ void LXFileWatcher::Process()
 		_mutex->Unlock();
 		GetMessageManager()->Post(_channelOnFileChanged);
 	}
+
+#endif
 }
 
 #if LX_USE_RDC
@@ -202,16 +206,17 @@ void LXFileWatcher::Run(LXFileWatcher* fw, const wchar_t* pathName)
 
 			while (1)
 			{
+
+				const int strLength = fineNotifyInformation->FileNameLength / 2;
+				wstring filename = wstring(fineNotifyInformation->FileName, strLength);
+
 				switch (fineNotifyInformation->Action)
 				{
 				case FILE_ACTION_ADDED:
 				{
 					//LogD(FileWatcher, L"%i ADDED: %s", actionIndex, fineNotifyInformation->FileName);
 					fw->_mutex->Lock();
-
 					//Size in byte to sting length 
-					const int strLength = fineNotifyInformation->FileNameLength / 2;
-					wstring filename = wstring(fineNotifyInformation->FileName, strLength);
 					fw->_fileAdded.insert(filename);
 					fw->_mutex->Unlock();
 					GetMessageManager()->Post(fw->_channelOnFileAdded);
@@ -222,7 +227,7 @@ void LXFileWatcher::Run(LXFileWatcher* fw, const wchar_t* pathName)
 				{
 					//LogD(FileWatcher, L"%i REMOVED: %s", actionIndex, fineNotifyInformation->FileName);
 					fw->_mutex->Lock();
-					fw->_fileRemoved.insert(fineNotifyInformation->FileName);
+					fw->_fileRemoved.insert(filename);
 					fw->_mutex->Unlock();
 					GetMessageManager()->Post(fw->_channelOnFileRemoved);
 				}
@@ -232,7 +237,7 @@ void LXFileWatcher::Run(LXFileWatcher* fw, const wchar_t* pathName)
 				{
 					//LogD(FileWatcher, L"%i MODIFIED: %s", actionIndex, fineNotifyInformation->FileName);
 					fw->_mutex->Lock();
-					fw->_fileChanged.insert(fineNotifyInformation->FileName);
+					fw->_fileChanged.insert(filename);
 					fw->_mutex->Unlock();
 					GetMessageManager()->Post(fw->_channelOnFileChanged);
 				}
