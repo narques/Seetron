@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -243,48 +243,56 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNode(const LXMaterialD3D11* mater
 		{
 			// Add include
 			LXPropertyAssetPtr* propertyShader = dynamic_cast<LXPropertyAssetPtr*>(node->GetProperty(L"Shader"));
-			LXStringA include = propertyShader->GetValue()->GetFilepath().GetFilename().ToStringA();
-			_includes.insert(include);
-
-			// Function name
-			LXPropertyString* propertyFunction = dynamic_cast<LXPropertyString*>(node->GetProperty(L"Function"));
-			LXStringA function = propertyFunction->GetValue().ToStringA();
-			
-			// Parameters
-			ListProperties properties;
-			node->GetUserProperties(properties);
-
-			LXStringA userParameters;
-
-			for (const LXConnector* connector : node->Inputs)
+			if (propertyShader->GetValue())
 			{
-				if ((connector->GetName() == L"Shader") || (connector->GetName() == L"Function"))
-					continue;
+				LXStringA include = propertyShader->GetValue()->GetFilepath().GetFilename().ToStringA();
+				_includes.insert(include);
+			
+				// Function name
+				LXPropertyString* propertyFunction = dynamic_cast<LXPropertyString*>(node->GetProperty(L"Function"));
+				LXStringA function = propertyFunction->GetValue().ToStringA();
 
-				if (connector->Type == EConnectorType::Float)
+				// Parameters
+				ListProperties properties;
+				node->GetUserProperties(properties);
+
+				LXStringA userParameters;
+
+				for (const LXConnector* connector : node->Inputs)
 				{
-					userParameters += ",/*float*/ $" + connector->GetName().ToStringA();
+					if ((connector->GetName() == L"Shader") || (connector->GetName() == L"Function"))
+						continue;
+
+					if (connector->Type == EConnectorType::Float)
+					{
+						userParameters += ",/*float*/ $" + connector->GetName().ToStringA();
+					}
+					else if (connector->Type == EConnectorType::Float2)
+					{
+						userParameters += ",/*float2*/ $" + connector->GetName().ToStringA();
+					}
+					else if (connector->Type == EConnectorType::Float3)
+					{
+						userParameters += ",/*float3*/ $" + connector->GetName().ToStringA();
+					}
+					else if (connector->Type == EConnectorType::Float4)
+					{
+						userParameters += ",/*float4*/ $" + connector->GetName().ToStringA();
+					}
+					else
+					{
+						CHK(0);
+					}
 				}
-				else if (connector->Type == EConnectorType::Float2)
-				{
-					userParameters += ",/*float2*/ $" + connector->GetName().ToStringA();
-				}
-				else if (connector->Type == EConnectorType::Float3)
-				{
-					userParameters += ",/*float3*/ $" + connector->GetName().ToStringA();
-				}
-				else if (connector->Type == EConnectorType::Float4)
-				{
-					userParameters += ",/*float4*/ $" + connector->GetName().ToStringA();
-				}
-				else
-				{
-					CHK(0);
-				}
+
+				code.Replace("$CustomFunction", function);
+				code.Replace("$Parameters", userParameters);
 			}
-
-			code.Replace("$CustomFunction", function);
-			code.Replace("$Parameters", userParameters);
+			else
+			{
+				LogE(LXGraphMaterialToHLSLConverter, L"Missing shader file for CustomFunction.");
+				code = "float4(0,0,0,0)";
+			}
 		}
 	}
 
