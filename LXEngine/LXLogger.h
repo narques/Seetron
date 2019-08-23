@@ -41,6 +41,7 @@ public:
 
 	static void DeleteSingleton();
 
+	void Tick();
 	void SetMode(ELogMode InLogModes);
 	ELogMode GetMode() const { return LogModes; }
 	void LogConfigurationAndPlatform();
@@ -56,6 +57,7 @@ private:
 	ELogMode LogModes;
 	LXMutex* Mutex;
 	LXFile* _file = nullptr;
+	list<LXString> _logs;
 
 };
 

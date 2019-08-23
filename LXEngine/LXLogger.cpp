@@ -40,15 +40,7 @@ void LXLogger::PrintToConsoles(ELogType LogType, const LXString& msg)
 	logEntry += L":" + LXString::Format(L"%02d", st.wMinute);;
 	logEntry += L":" + LXString::Format(L"%02d", st.wSecond);
 	logEntry += L"." + LXString::Format(L"%03d", st.wMilliseconds) + L"]" + msg;
-
-	//if (LogModes & ELogMode::LogMode_OSConsole)
-	wcout << logEntry.GetBuffer() << endl;
-
-	if (LogModes & ELogMode::LogMode_CoreConsole)
-	{
-		for (auto It : MapCallbacks)
-			It.second(LogType, logEntry);
-	}
+	_logs.push_back(logEntry);
 
 	if ((LogModes & ELogMode::LogMode_DebuggerConsole) && IsDebuggerPresent())
 	{
@@ -56,17 +48,40 @@ void LXLogger::PrintToConsoles(ELogType LogType, const LXString& msg)
 		OutputDebugString(msg2.GetBuffer());
 	}
 
-	// File
-	if (_file && _file->Open(LXCore::GetAppPath() + "/log.txt", L"a"))
+	Mutex->Unlock();
+}
+
+void LXLogger::Tick()
+{
+	Mutex->Lock();
+
+	for (const LXString& logEntry : _logs)
 	{
-		LXStringA msgA = logEntry.ToStringA();
-		msgA += "\n";
-		_file->Write(msgA.GetBuffer(), msgA.size(), true);
-		_file->Close();
+
+		//if (LogModes & ELogMode::LogMode_OSConsole)
+		wcout << logEntry.GetBuffer() << endl;
+
+		if (LogModes & ELogMode::LogMode_CoreConsole)
+		{
+			for (auto It : MapCallbacks)
+				It.second(/*LogType*/ELogType::LogType_Info, logEntry);
+		}
+
+		// File
+		if (_file && _file->Open(LXCore::GetAppPath() + "/log.txt", L"a"))
+		{
+			LXStringA msgA = logEntry.ToStringA();
+			msgA += "\n";
+			_file->Write(msgA.GetBuffer(), msgA.size(), true);
+			_file->Close();
+		}
 	}
+
+	_logs.clear();
 
 	Mutex->Unlock();
 }
+
 
 void SetWhite()
 {

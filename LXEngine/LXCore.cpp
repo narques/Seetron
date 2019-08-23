@@ -536,6 +536,9 @@ void LXCore::Run()
 		_Renderer->GetBeginEvent()->SetEvent();
 	}
 
+	// Logs
+	GetLogger().Tick();
+
 	// Dispatch Core Messages
 	GetMessageManager()->Run();
 
