@@ -187,8 +187,22 @@ template class LXCORE_API LXConsoleCommandT<bool>;
 //------------------------------------------------------------------------------------------------------
 
 template<typename FunctionSignature>
+LXConsoleCommandCall2<FunctionSignature>::LXConsoleCommandCall2(const LXString& InName) :LXConsoleCommand(InName)
+{
+}
+
+template<typename FunctionSignature>
 LXConsoleCommandCall2<FunctionSignature>::LXConsoleCommandCall2(const LXString& InName, std::function<FunctionSignature> InFunction) :LXConsoleCommand(InName), Function(InFunction)
 {
+}
+
+template<typename FunctionSignature>
+LXConsoleCommandCall2<FunctionSignature>::LXConsoleCommandCall2(const LXString& InName, std::function<FunctionSignature> InFunction, std::function<bool()> InOnCanExecute):
+	LXConsoleCommand(InName), 
+	Function(InFunction), 
+	OnCanExecute(InOnCanExecute)
+{
+
 }
 
 // Tools
@@ -206,6 +220,15 @@ template<>
 void LXConsoleCommandCall2<void()>::Execute(const vector<LXString>& Arguments)
 {
 	Function();
+}
+
+template<typename FunctionSignature>
+bool LXConsoleCommandCall2<FunctionSignature>::CanExecute()
+{
+	if (OnCanExecute)
+		return OnCanExecute();
+	else
+		return true;
 }
 
 template<>

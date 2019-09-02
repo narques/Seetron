@@ -43,6 +43,9 @@ LXConsoleCommand1S CCCreateNewMaterial(L"Asset.CreateMaterial", [](const LXStrin
 	{
 		Project->GetAssetManager().CreateNewMaterial(inMaterialName, LX_DEFAULT_MATERIAL_FOLDER);
 	}
+}, []()
+{
+	return GetCore().GetProject() != nullptr;
 });
 
 LXConsoleCommand1S CCCreateNewTexture(L"Asset.CreateTexture", [](const LXString& inTextureName)
@@ -56,6 +59,9 @@ LXConsoleCommand1S CCCreateNewTexture(L"Asset.CreateTexture", [](const LXString&
 	{
 		Project->GetAssetManager().CreateNewTexture(inTextureName, LX_DEFAULT_TEXTURE_FOLDER);
 	}
+}, []()
+{
+	return GetCore().GetProject() != nullptr;
 });
 
 LXConsoleCommand1S CCCreateNewShader(L"Asset.CreateShader", [](const LXString& inShaderName)
@@ -69,6 +75,9 @@ LXConsoleCommand1S CCCreateNewShader(L"Asset.CreateShader", [](const LXString& i
 	{
 		Project->GetAssetManager().CreateNewShader(inShaderName, LX_DEFAULT_SHADER_FOLDER);
 	}
+}, []()
+{
+	return GetCore().GetProject() != nullptr;
 });
 
 LXConsoleCommand1S CCCreateNewAnimation(L"Asset.CreateAnimation", [](const LXString& inAnimationName)
@@ -82,6 +91,9 @@ LXConsoleCommand1S CCCreateNewAnimation(L"Asset.CreateAnimation", [](const LXStr
 	{
 		Project->GetAssetManager().CreateNewAnimation(inAnimationName, LX_DEFAULT_ANIMATION_FOLDER);
 	}
+}, []()
+{
+	return GetCore().GetProject() != nullptr;
 });
 
 //------------------------------------------------------------------------------------------------------

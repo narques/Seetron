@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -32,6 +32,10 @@ public:
 
 LXCORE_API LXConsoleManager& GetConsoleManager();
 
+//------------------------------------------------------------------------------------------------------
+// ConsoleCommand base class
+//------------------------------------------------------------------------------------------------------
+
 class LXCORE_API LXConsoleCommand : public LXObject
 {
 
@@ -41,6 +45,7 @@ public:
 	virtual ~LXConsoleCommand();
 
 	virtual void Execute(const vector<LXString>& Arguments) = 0;
+	virtual bool CanExecute() { return true; }
 
 public:
 	
@@ -95,10 +100,15 @@ class LXCORE_API LXConsoleCommandCall2 : public LXConsoleCommand
 
 public:
 
+	LXConsoleCommandCall2(const LXString& InName);
 	LXConsoleCommandCall2(const LXString& InName, std::function<FunctionSignature> InFunction);
+	LXConsoleCommandCall2(const LXString& InName, std::function<FunctionSignature> InFunction, std::function<bool()> InOnCanExecute);
+
 	void Execute(const vector<LXString>& Arguments) override;
+	bool CanExecute() override;
 
 	std::function<FunctionSignature> Function;
+	std::function<bool()> OnCanExecute;
 };
 
 typedef LXConsoleCommandCall2<void()> LXConsoleCommandNoArg;

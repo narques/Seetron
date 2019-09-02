@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -32,6 +32,9 @@ LXConsoleCommandNoArg CCCreateCylinder(L"Create.Cylinder", []()
 		LXActorMesh* Actor = new LXActorMeshCylinder(Project);
 		Project->GetScene()->AddChild(Actor);
 	}
+}, []()
+{
+	return GetCore().GetProject() != nullptr;
 });
 
 LXConsoleCommandNoArg CCCreateCube(L"Create.Cube", []()
@@ -41,6 +44,9 @@ LXConsoleCommandNoArg CCCreateCube(L"Create.Cube", []()
 		LXActorMesh* Actor = new LXActorMeshCube(Project);
 		Project->GetScene()->AddChild(Actor);
 	}
+}, []()
+{
+	return GetCore().GetProject() != nullptr;
 });
 
 LXConsoleCommandNoArg CCCreateCone(L"Create.Cone", []()
@@ -50,6 +56,9 @@ LXConsoleCommandNoArg CCCreateCone(L"Create.Cone", []()
 		LXActor* Actor = new LXActorMeshCone();
 		Project->GetScene()->AddChild(Actor);
 	}
+}, []()
+{
+	return GetCore().GetProject() != nullptr;
 });
 
 LXConsoleCommandNoArg CCCreateSphere(L"Create.Sphere", []()
@@ -59,6 +68,9 @@ LXConsoleCommandNoArg CCCreateSphere(L"Create.Sphere", []()
 		LXActorMesh* Actor = new LXActorMeshSphere(Project);
 		Project->GetScene()->AddChild(Actor);
 	}
+}, []()
+{
+	return GetCore().GetProject() != nullptr;
 });
 
 LXConsoleCommandNoArg CCCreatePlane(L"Create.Plane", []()
@@ -68,6 +80,9 @@ LXConsoleCommandNoArg CCCreatePlane(L"Create.Plane", []()
 		LXActor* Actor = new LXActorMeshPlane(Project);
 		Project->GetScene()->AddChild(Actor);
 	}
+}, []()
+{
+	return GetCore().GetProject() != nullptr;
 });
 
 LXConsoleCommandNoArg CCCreateLight(L"Create.Light", []()
@@ -77,6 +92,9 @@ LXConsoleCommandNoArg CCCreateLight(L"Create.Light", []()
 		LXActor* Actor = new LXActorLight(Project);
 		Project->GetScene()->AddChild(Actor);
 	}
+}, []()
+{
+	return GetCore().GetProject() != nullptr;
 });
 
 LXConsoleCommandNoArg CCCreateSceneCapture(L"Create.SceneCapture", []()
@@ -86,6 +104,9 @@ LXConsoleCommandNoArg CCCreateSceneCapture(L"Create.SceneCapture", []()
 		LXActor* Actor = new LXActorSceneCapture();
 		Project->GetScene()->AddChild(Actor);
 	}
+}, []()
+{
+	return GetCore().GetProject() != nullptr;
 });
 
 LXConsoleCommandNoArg CCCreateTerrain(L"Create.Terrain", []()
@@ -95,6 +116,9 @@ LXConsoleCommandNoArg CCCreateTerrain(L"Create.Terrain", []()
 		LXTerrain* Actor = new LXTerrain(Project);
 		Project->GetScene()->AddChild(Actor);
 	}
+}, []()
+{
+	return GetCore().GetProject() != nullptr;
 });
 
 LXConsoleCommandNoArg CCCreateForest(L"Create.Forest", []()
@@ -104,6 +128,9 @@ LXConsoleCommandNoArg CCCreateForest(L"Create.Forest", []()
 		LXActor* Actor = new LXActorForest();
 		Project->GetScene()->AddChild(Actor);
 	}
+}, []()
+{
+	return GetCore().GetProject() != nullptr;
 });
 
 LXActorFactory::LXActorFactory()

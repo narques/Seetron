@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -40,6 +40,9 @@ LXConsoleCommandNoArg CCGetOpenFileName(FileOpenCommandName, []()
 LXConsoleCommandNoArg CCClose(FileCloseCommandName, []()
 {
 	GetCore().CloseProject();
+},[]()
+{
+	return GetCore().GetProject() != nullptr;
 });
 
 LXConsoleCommandNoArg CCQuit(FileQuitCommandName, []()
@@ -57,6 +60,9 @@ LXConsoleCommandNoArg CCShowBounds(L"View.ShowBounds", []()
 {
 	bool Bounds = !GetCore().GetRenderer()->ShowBounds();
 	GetCore().GetRenderer()->ShowBounds(Bounds);
+}, []()
+{
+	return GetCore().GetProject() != nullptr;
 });
 
 LXConsoleCommandNoArg CCTraceObject(L"Debug.DumpObject", []()
