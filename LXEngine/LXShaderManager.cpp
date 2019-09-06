@@ -198,7 +198,6 @@ bool LXShaderManager::GetShaders(ERenderPass RenderPass, const LXPrimitiveD3D11*
 		VSSignature.Layout = &(*InPrimitive->Layout2)[0];
 		VSSignature.LayoutElements = (uint)InPrimitive->Layout2->size();
 		VSSignature.LayoutMask = InPrimitive->layoutMask;
-		VSSignature.displacement = InMaterial->HasDisplacement() ? true : false;
 		VSSignature.RenderPass = RenderPass;
 		OutShaderProgram->VertexShader = FindOrCreate(VSSignature, VertexShaders);
 		if (!OutShaderProgram->VertexShader || OutShaderProgram->VertexShader->GetState() != EShaderD3D11State::Ok)
@@ -297,9 +296,6 @@ shared_ptr<LXShaderD3D11> LXShaderManager::FindOrCreate(T& Signature, M& Shaders
 
 bool LXShaderManager::CreateShader(const LXVSSignature& VSSignature, LXShaderD3D11* Shader)
 {
-	if (VSSignature.displacement)
-		Shader->AddMacro("DISPLACEMENT", "1");
-
 	// Retrieve the shader filename
 	LXFilepath ShaderFilePath = VSSignature.Material->GetMaterial()->GetFilepath();
 

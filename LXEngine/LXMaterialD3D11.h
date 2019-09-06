@@ -33,7 +33,6 @@ public:
 
 	const LXMaterial* GetMaterial() const { return Material; }
 	bool DoComputeNormals() const { return ComputeNormals; }
-	bool HasDisplacement() const { return Displacement; }
 	bool IsTransparent() const { return Transparent; }
 
 	const LXConstantBuffer& GetConstantBufferPS() const { return ConstantBufferPS; }
@@ -64,7 +63,6 @@ private:
 
 	// VertexShader option
 	uint ComputeNormals : 1;
-	uint Displacement : 1;
 	uint Transparent : 1;
 
 	// Ref.

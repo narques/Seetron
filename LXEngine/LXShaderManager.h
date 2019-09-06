@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -24,7 +24,6 @@ enum class EShaderType;
 struct LXVSSignature
 {
 	const LXMaterialD3D11* Material = nullptr;
-	uint displacement;					// DEPRECATED
 	D3D11_INPUT_ELEMENT_DESC* Layout;	// Layout description array pointer
 	UINT LayoutElements;				// Layout array element count
 	int LayoutMask;						// Layout Mask TODO : TO CLARIFY
@@ -55,11 +54,7 @@ struct LXPSSignature
 struct CmpLXVSSignature{
 	bool operator()(const LXVSSignature& a, const LXVSSignature& b) const
 	{
-		if (a.displacement < b.displacement)
-			return true;
-		else if (a.displacement > b.displacement)
-			return false;
-		else if (a.Layout < b.Layout)
+		if (a.Layout < b.Layout)
 			return true;
 		else if (a.Layout > b.Layout)
 			return false;

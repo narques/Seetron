@@ -202,7 +202,6 @@ bool LXMaterialD3D11::Create(const LXMaterial* InMaterial)
 	//	ComputeNormals = 1;
 	
 	TwoSided = Material->GetTwoSided() == true;
-	Displacement = 0;
 	Transparent = Material->IsTransparent();
 
 	LXGraphMaterialToHLSLConverter graphMaterialToHLSLConverter;
