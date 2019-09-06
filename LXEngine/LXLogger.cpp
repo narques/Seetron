@@ -208,6 +208,7 @@ LXLogger::LXLogger()
 LXLogger::~LXLogger()
 {
 	LX_SAFE_DELETE(_file);
+	CHK(MapCallbacks.size() == 0);
 	delete Mutex;
 }
 
