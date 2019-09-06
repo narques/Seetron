@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -349,9 +349,17 @@ template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties
 
 template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const float&);
 template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const double&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const int&);
 template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const uint&);
+template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const int&);
+template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const LXString&);
+template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const LXFilepath&);
+template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const bool&);
+template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const vec2f&);
+template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const vec3f&);
+template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const vec4f&);
 template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const LXColor4f&);
+template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const LXMatrix&);
+template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const LXAssetPtr&);
 
 template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<float>*, const float&);
 template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<double>*, const double&);
