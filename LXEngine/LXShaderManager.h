@@ -9,7 +9,7 @@
 #pragma once
 
 #include "LXObject.h"
-#include "LXRenderPass.h"
+#include "LXRenderPassType.h"
 #include "LXMaterialNode.h"
 
 class LXFileWatcher;

@@ -2,14 +2,14 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #pragma once
 
 #include "LXObject.h" 
-#include "LXRenderPass.h"
+#include "LXRenderPassType.h"
 #include "LXMaterialNode.h"
 
 struct LXVSSignature;

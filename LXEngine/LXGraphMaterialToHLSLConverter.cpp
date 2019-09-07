@@ -20,7 +20,7 @@
 #include "LXGraphTemplate.h"
 #include "LXMaterial.h"
 #include "LXNode.h"
-#include "LXRenderPass.h"
+#include "LXRenderPassType.h"
 #include "LXTexture.h"
 #include "LXMaterialD3D11.h"
 #include "LXReference.h"

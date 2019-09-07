@@ -12,7 +12,7 @@
 #include "LXMatrix.h"
 #include "LXConstantBufferD3D11.h"
 #include "LXShaderProgramD3D11.h"
-#include "LXRenderPass.h"
+#include "LXRenderPassType.h"
 #include "LXFlags.h"
 
 class LXActor;

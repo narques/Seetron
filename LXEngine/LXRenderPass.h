@@ -21,15 +21,6 @@ class LXRenderTargetViewD3D11;
 class LXPrimitiveD3D11;
 class LXRenderer;
 
-enum class ERenderPass
-{
-	Depth,
-	Shadow,
-	GBuffer,
-	Transparency,
-	Last // To count and iterate
-};
-
 class LXRenderPass : public LXObject
 {
 	

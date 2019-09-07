@@ -10,7 +10,7 @@
 
 #include "LXString.h"
 #include "LXConstantBuffer.h"
-#include "LXRenderPass.h"
+#include "LXRenderPassType.h"
 
 class LXRenderCommandList;
 class LXMaterial;
