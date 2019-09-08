@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -65,7 +65,7 @@ void LXShaderFactory::GenerateVertexShader(const LXFilepath& Filename, const LXM
 
 	if (materialD3D11->GetTexturesVS().size() > 0)
 	{
-		LXStringA texturesDecl = ListTexturesToHLSL(materialD3D11->GetTexturesPS(), EShader::VertexShader);
+		LXStringA texturesDecl = ListTexturesToHLSL(materialD3D11->GetTexturesVS(), EShader::VertexShader);
 		int Start = ShaderBuffer.Find(kTexturesInsersionPos);
 		if (Start == -1)
 		{
