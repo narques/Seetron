@@ -81,6 +81,18 @@ bool LXMaterial::Reload()
 	return true;
 }
 
+bool LXMaterial::Compile()
+{
+	if (State != EResourceState::LXResourceState_Loaded)
+	{
+		CHK(0);
+		return false;
+	}
+
+	CreateDeviceMaterial();
+	return true;
+}
+
 LXTexture* LXMaterial::GetTextureDisplacement(const LXString& textureName) const
 {
 	if (LXGraphMaterial* graphMaterial = GetGraph())
@@ -127,7 +139,6 @@ void LXMaterial::ReleaseGraph()
 
 void LXMaterial::CreateDeviceMaterial()
 {
-	CHK(_materialD3D11 == nullptr);
 	if (GetRenderer())
 	{
 		GetRenderer()->CreateDeviceMaterial(this);

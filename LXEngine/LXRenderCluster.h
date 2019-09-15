@@ -19,7 +19,6 @@ class LXActor;
 class LXActorMesh;
 class LXConstantBufferD3D11;
 class LXMaterial;
-class LXMaterialD3D11;
 class LXMatrix;
 class LXPrimitiveD3D11;
 class LXPrimitiveInstance;
@@ -98,8 +97,6 @@ public:
 private:
 
 	LXRenderClusterManager* _renderClusterManager;
-	const LXMaterialD3D11* _deviceMaterial = nullptr;
-	bool _deviceMaterialDirty = true;
 };
 
 static bool SortRenderCluster(const LXRenderCluster& RC0, const LXRenderCluster& RC1)

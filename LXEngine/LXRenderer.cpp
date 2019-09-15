@@ -577,7 +577,12 @@ void LXRenderer::ReleaseDeviceTexture(LXTexture* texture)
 void LXRenderer::CreateDeviceMaterial(LXMaterial* material)
 {
 	if (IsRenderThread())
-	{
+	{ 
+		if (material->GetDeviceMaterial())
+		{
+			delete material->GetDeviceMaterial();
+		}
+
 		LXMaterialD3D11* materialD3D11 = LXMaterialD3D11::CreateFromMaterial(material);
 		material->SetDeviceMaterial(materialD3D11);
 	}
@@ -586,6 +591,12 @@ void LXRenderer::CreateDeviceMaterial(LXMaterial* material)
 		LXTask* task = new LXTaskCallBack([material]()
 		{
 			CHK(IsRenderThread());
+
+			if (material->GetDeviceMaterial())
+			{
+				delete material->GetDeviceMaterial();
+			}
+			
 			LXMaterialD3D11* texture3D11 = LXMaterialD3D11::CreateFromMaterial(material);
 			material->SetDeviceMaterial(texture3D11);
 		});
@@ -597,17 +608,18 @@ void LXRenderer::CreateDeviceMaterial(LXMaterial* material)
 void LXRenderer::ReleaseDeviceMaterial(LXMaterial* material)
 {
 	const LXMaterialD3D11* materialD3D11 = material->GetDeviceMaterial();
-	material->SetDeviceMaterial(nullptr);
-
+	
 	if (IsRenderThread())
 	{
+		material->SetDeviceMaterial(nullptr);
 		delete materialD3D11;
 	}
 	else
 	{
-		LXTask* task = new LXTaskCallBack([materialD3D11]()
+		LXTask* task = new LXTaskCallBack([material, materialD3D11]()
 		{
 			CHK(IsRenderThread());
+			material->SetDeviceMaterial(nullptr);
 			delete materialD3D11;
 		});
 

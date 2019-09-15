@@ -261,19 +261,6 @@ shared_ptr<LXPrimitiveD3D11>& LXRenderClusterManager::GetPrimitiveD3D11(LXPrimit
 	}
 }
 
-bool LXRenderClusterManager::GetShadersD3D11(ERenderPass renderPass, const LXPrimitiveD3D11* primitiveD3D11, const LXMaterialD3D11* materialD3D11, LXShaderProgramD3D11* shaderProgram)
-{
-	LXRenderer* Renderer = GetCore().GetRenderer();
-	if (Renderer->GetShaderManager()->GetShaders(renderPass, primitiveD3D11, materialD3D11, shaderProgram))
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
 LXRenderCluster* LXRenderClusterManager::CreateRenderCluster(LXActorMesh* Actor, LXPrimitiveInstance* PrimitiveInstance, const LXMatrix& MatrixWCS, const LXBBox& BBoxWorld, LXPrimitive* Primitive, LXMaterial* Material)
 {
 	LogD(LXRenderClusterManager, L"CreateRenderCluster %s", Actor->GetName().GetBuffer());

@@ -51,6 +51,7 @@ public:
 	LXString GetFileExtension() override { return LX_MATERIAL_EXT; }
 	bool Load() override;
 	bool Reload() override;
+	bool Compile();
 
 	// Misc
 	
@@ -71,7 +72,7 @@ public:
 	//
 
 	const LXMaterialD3D11* GetDeviceMaterial() const { return _materialD3D11; }
-	void SetDeviceMaterial(LXMaterialD3D11* materialD3D11) { _materialD3D11 = materialD3D11; }
+	void SetDeviceMaterial(LXMaterialD3D11* materialD3D11) { CHK(IsRenderThread());  _materialD3D11 = materialD3D11; }
 
 	void DefineProperties();
 	void CreateDeviceMaterial();

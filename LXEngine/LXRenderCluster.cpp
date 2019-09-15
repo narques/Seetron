@@ -23,6 +23,7 @@
 #include "LXRenderCommandList.h"
 #include "LXRenderer.h"
 #include "LXRenderPassShadow.h"
+#include "LXShaderManager.h"
 #include "LXShaderProgramD3D11.h"
 #include "LXStatistic.h"
 #include "LXWorldTransformation.h"
@@ -71,7 +72,6 @@ void LXRenderCluster::SetMaterial(LXMaterial* material)
 	if (Material != material)
 	{
 		Material = material;
-		_deviceMaterialDirty = true;
 	}
 }
 
@@ -79,16 +79,33 @@ bool LXRenderCluster::UpdateDeviceMaterialAndShaders()
 {
 	CHK(IsRenderThread());
 	
-	// Shaders
+	LXRenderer* renderer = GetCore().GetRenderer();
 	const LXMaterialD3D11* materialD3D11 = Material->GetDeviceMaterial();
 
-	CHK(materialD3D11);
+	if (!materialD3D11)
+		return false;
 	   	   
 	for (auto i = 0; i < (int)ERenderPass::Last; i++)
 	{
 		ERenderPass RenderPass = (ERenderPass)i;
 		LXShaderProgramD3D11 shaderProgram;
-		if (_renderClusterManager->GetShadersD3D11(RenderPass, Primitive.get(), materialD3D11, &shaderProgram))
+		if (renderer->GetShaderManager()->GetShaders(RenderPass, Primitive.get(), materialD3D11, &shaderProgram))
+		{
+			LXShaderProgramD3D11* RenderClusterShaderProgram = &ShaderPrograms[(int)RenderPass];
+			RenderClusterShaderProgram->VertexShader = shaderProgram.VertexShader;
+			RenderClusterShaderProgram->HullShader = shaderProgram.HullShader;
+			RenderClusterShaderProgram->DomainShader = shaderProgram.DomainShader;
+			RenderClusterShaderProgram->GeometryShader = shaderProgram.GeometryShader;
+			RenderClusterShaderProgram->PixelShader = shaderProgram.PixelShader;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
 		{
 			LXShaderProgramD3D11* RenderClusterShaderProgram = &ShaderPrograms[(int)RenderPass];
 			RenderClusterShaderProgram->VertexShader = shaderProgram.VertexShader;
@@ -133,17 +150,13 @@ bool LXRenderCluster::IsTransparent() const
 
 void LXRenderCluster::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 {
-	if (_deviceMaterialDirty)
-	{
-		bool result = UpdateDeviceMaterialAndShaders();
+	bool result = UpdateDeviceMaterialAndShaders();
 		
-		if (!result)
-		{
-			return;
-		}
+	if (!result)
+	{
+		return;
 	}
 	
-
 	LXShaderProgramD3D11* ShaderProgram = &ShaderPrograms[(int)RenderPass];
 
 	if (1/*!ValidConstantBufferMatrix*/ && CBWorld)
@@ -211,7 +224,7 @@ void LXRenderCluster::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 
 	if (bHasShader)
 	{
-		_deviceMaterial->Render(RenderPass, RCL);
+		Material->GetDeviceMaterial()->Render(RenderPass, RCL);
 		Primitive->Render(RCL);
 	}
 }

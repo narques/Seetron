@@ -45,7 +45,6 @@ public:
 private:
 
 	bool Create(const LXMaterial*);
-	bool CreateShaders();
 	void UpdateConstantBufferDataValues();
 
 public:

@@ -19,7 +19,6 @@ class LXPrimitiveD3D11;
 class LXRenderCluster;
 class LXRendererUpdateMatrix;
 class LXPrimitiveD3D11;
-class LXShaderProgramD3D11;
 class LXPrimitiveInstance;
 
 class LXRenderClusterManager
@@ -49,7 +48,6 @@ public:
 private:
 
 	shared_ptr<LXPrimitiveD3D11>& GetPrimitiveD3D11(LXPrimitive* Primitive, const ArrayVec3f* ArrayInstancePosition = nullptr);
-	bool GetShadersD3D11(ERenderPass renderPass, const LXPrimitiveD3D11* primitiveD3D11, const LXMaterialD3D11* materialD3D11, LXShaderProgramD3D11* shaderProgram);
 	LXRenderCluster* CreateRenderCluster(LXActorMesh* Actor, LXPrimitiveInstance* PrimitiveInstance, const LXMatrix& MatrixWCS, const LXBBox& BBoxWorld, LXPrimitive* Primitive, LXMaterial* Material);
 
 	// Remove the RenderCluster from the Rendering (ListRendersClusters)
