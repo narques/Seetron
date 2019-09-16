@@ -350,11 +350,8 @@ void LXRenderer::Render()
 	// Resize if needed
 	if (Width != Viewport->GetWidth() || Height != Viewport->GetHeight())
 	{
-		Width = Viewport->GetWidth();
-		Height = Viewport->GetHeight();
-
-		CHK(Width > 0);
-		CHK(Height > 0);
+		Width = max(Viewport->GetWidth(), (uint)32);
+		Height = max(Viewport->GetHeight(), (uint)32);
 
 		DirectX11->Resize(Width, Height);
 						

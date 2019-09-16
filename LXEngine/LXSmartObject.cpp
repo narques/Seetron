@@ -198,10 +198,12 @@ bool LXSmartObject::Save(const TSaveContext& saveContext, LXString* pName, LXStr
 	for (ListProperties::const_iterator It = _listProperties.begin(); It!= _listProperties.end(); It++)
 	{
 		LXProperty* pProperty = *It;
-		if (pProperty->GetPersistent())
+
+		CHK(pProperty);
+
+		if (pProperty && pProperty->GetPersistent())
 		{
 			pProperty->SaveXML(saveContext);
-
 		}
 	}
 
