@@ -2,15 +2,17 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #pragma once
 
 #include "LXSmartObject.h"
+#include "LXDelegate.h"
 
 class LXConnection;
+class LXConnector;
 class LXNode;
 
 class LXCORE_API LXGraph : public LXSmartObject
@@ -22,10 +24,9 @@ public:
 	virtual ~LXGraph();
 
 	void Clear();
-	
-	void AddNode(LXNode* node);
-	void AddConnection(LXConnection* connection);
 
+	LXConnection* CreateConnection(LXConnector* source, LXConnector* destination);
+	void AddNode(LXNode* node);
 	void DeleteNode(LXNode* node);
 	void DeleteConnection(LXConnection* conection);
 
@@ -37,6 +38,8 @@ private:
 
 public:
 
+	LXDelegate<> OnConnectionDeleted;
+		
 	list<LXNode*> Nodes;
 	list<LXConnection*> Connections;
 

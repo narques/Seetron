@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -74,16 +74,31 @@ void LXGraph::DeleteNode(LXNode* node)
 	delete node;
 }
 
+LXConnection* LXGraph::CreateConnection(LXConnector* source, LXConnector* destination)
+{
+	// Delete previous connection to the destination.
+	if (destination->Connections.size() > 0)
+	{
+		while (destination->Connections.size() > 0)
+		{
+			LXConnection* oldConnection = destination->Connections.back();
+			DeleteConnection(oldConnection);
+		}
+	}
+	
+	LXConnection* connection = new LXConnection(source, destination);
+	Connections.push_back(connection);
+
+	return connection;
+}
+
 void LXGraph::DeleteConnection(LXConnection* connection)
 {
+	CHK(std::find(Connections.begin(), Connections.end(), connection) != Connections.end());
 	Connections.remove(connection);
 	connection->Detach(nullptr);
 	delete connection;
-}
-
-void LXGraph::AddConnection(LXConnection* connection)
-{
-	Connections.push_back(connection);
+	OnConnectionDeleted.Invoke();
 }
 
 const LXNode* LXGraph::GetMain() const

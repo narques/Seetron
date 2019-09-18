@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -25,11 +25,13 @@ void LXConnection::Detach(LXConnector* owner)
 	if (owner != Source)
 	{
 		Source->Connections.remove(this);
+		Source = nullptr;
 	}
 
 	if (owner != Destination)
 	{
 		Destination->Connections.remove(this);
+		Destination = nullptr;
 	}
 }
 
@@ -37,18 +39,6 @@ LXConnection::LXConnection(LXConnector* source, LXConnector* destination)
 {
 	Source = source;
 	Destination = destination;
-	
-	// Input is unique, remove existing
-	if (Destination->Connections.size() > 0)
-	{
-		for(LXConnection* connection : destination->Connections)
-		{
-			Detach(nullptr);
-			delete connection;
-		}
-
-		destination->Connections.clear();
-	}
 	
 	Source->Connections.push_back(this);
 	Destination->Connections.push_back(this);
@@ -64,13 +54,17 @@ void LXConnection::DefineProperties()
 
 void LXConnection::OnLoaded()
 {
-	if (Destination->Connections.size() == 0)
+	if (Source.get() && 
+		Destination.get() && 
+		Destination->Connections.size() == 0)
 	{
 		Source->Connections.push_back(this);
 		Destination->Connections.push_back(this);
 	}
 	else
 	{
-		// Broken or duplicated
+		// Broken or duplicated 
+		CHK(0);
+		LogE(LXConnection, L"Loaded a broken connection.");
 	}
 }
