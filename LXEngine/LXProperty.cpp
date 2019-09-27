@@ -843,6 +843,25 @@ void LXPropertyT<ListSmartObjects>::SaveXML2(const TSaveContext& saveContext, co
 	}
 }
 
+template <>
+void LXPropertyT<ListSmartObjects>::GetChoices(ArrayStrings& arrayStrings)
+{
+	GetChoiceNames.Invoke(arrayStrings);
+}
+
+template <>
+bool LXPropertyT<ListSmartObjects>::AddItem(const LXString& itemName)
+{
+	OnAddItem.Invoke(itemName);
+	return true;
+}
+
+template <>
+bool LXPropertyT<ListSmartObjects>::RemoveItem(LXSmartObject* item)
+{
+	OnRemoveItem.Invoke(item);
+	return true;
+}
 
 //
 // --- ArrayVec3f ---
@@ -964,6 +983,27 @@ void LXPropertyT<LXReference<LXSmartObject>>::SaveXML2(const TSaveContext& saveC
 		pUID = v->GetUID(true);
 	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 	fwprintf(saveContext.pXMLFile, L"<%s Value=\"%s\"/>\n", strXMLName.GetBuffer(), pUID ? pUID->GetBuffer() : L"");
+}
+
+//
+// --- Default ---
+//
+
+template <class T>
+void LXPropertyT<T>::GetChoices(ArrayStrings& arrayStrings)
+{
+}
+
+template <class T>
+bool LXPropertyT<T>::AddItem(const LXString& itemName)
+{
+	return true;
+}
+
+template <class T>
+bool LXPropertyT<T>::RemoveItem(LXSmartObject* item)
+{
+	return true;
 }
 
 //

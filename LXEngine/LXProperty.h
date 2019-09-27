@@ -9,6 +9,7 @@
 #pragma once
 
 #include "LXColor.h"
+#include "LXDelegate.h"
 #include "LXPropertyIdentifiers.h"
 #include "LXPropertyType.h"
 #include "LXVariant.h"
@@ -203,6 +204,16 @@ public:
 	}
 
 	int GetDataSize() const override { return sizeof(T); }
+
+	//
+	// ListSmartObjects specifics
+	//
+	void GetChoices(ArrayStrings& arrayStrings);
+	bool AddItem(const LXString& itemName);
+	bool RemoveItem(LXSmartObject* item);
+	LXDelegate<ArrayStrings&> GetChoiceNames;
+	LXDelegate<const LXString&> OnAddItem;
+	LXDelegate<LXSmartObject*> OnRemoveItem;
 		
 protected:
 
