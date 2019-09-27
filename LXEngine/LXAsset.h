@@ -38,6 +38,7 @@ public:
 	virtual bool Save();
 
 	bool CanBeSaved();
+	bool CanBeReloaded();
 	
 	LXString GetRelativeFilename() const;
 	virtual LXString GetFileExtension() = 0;

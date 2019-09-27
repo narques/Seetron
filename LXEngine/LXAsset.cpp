@@ -28,6 +28,11 @@ bool LXAsset::CanBeSaved()
 	return (State == EResourceState::LXResourceState_Loaded);
 }
 
+bool LXAsset::CanBeReloaded()
+{
+	return true;
+}
+
 bool LXAsset::Save()
 {
 	if (!GetPersistent())
