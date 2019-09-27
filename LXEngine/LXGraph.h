@@ -28,7 +28,9 @@ public:
 	LXConnection* CreateConnection(LXConnector* source, LXConnector* destination);
 	void AddNode(LXNode* node);
 	void DeleteNode(LXNode* node);
-	void DeleteConnection(LXConnection* conection);
+	void DeleteConnection(LXConnection* connection);
+	void DeleteConnector(LXConnector* connector);
+
 
 	const LXNode* GetMain() const;
 
@@ -39,6 +41,7 @@ private:
 public:
 
 	LXDelegate<> OnConnectionDeleted;
+	LXDelegate<> OnConnectorDeleted;
 		
 	list<LXNode*> Nodes;
 	list<LXConnection*> Connections;

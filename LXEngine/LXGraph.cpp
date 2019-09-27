@@ -101,6 +101,19 @@ void LXGraph::DeleteConnection(LXConnection* connection)
 	OnConnectionDeleted.Invoke();
 }
 
+void LXGraph::DeleteConnector(LXConnector* connector)
+{
+	while (connector->Connections.size())
+	{
+		LXConnection* connection = connector->Connections.back();
+		DeleteConnection(connection);
+		connector->Connections.pop_back();
+	}
+
+	delete connector;
+	OnConnectorDeleted.Invoke();
+}
+
 const LXNode* LXGraph::GetMain() const
 {
 	return _main;
