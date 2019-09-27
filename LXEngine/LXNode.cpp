@@ -128,6 +128,31 @@ void LXNode::OnLoaded()
 	if (TemplateID == L"CustomFunction")
 	{
 		EditableInputs = true;
+		LXPropertyListSmartObjects* property = dynamic_cast<LXPropertyListSmartObjects*>(GetProperty(L"Inputs"));
+		property->SetReadOnly(false);
+		property->GetChoiceNames.AttachLambda([](ArrayStrings& arrayStrings)
+			{
+				for (int i = 0; i < (int)EConnectorType::Last; i++)
+				{
+					arrayStrings.push_back(GetConnectorTypename((EConnectorType)i));
+				}
+			});
+
+		property->OnAddItem.AttachMemberLambda([this](const LXString& name)
+			{
+				EConnectorType type = GetConnectorTypeFromName(name);
+				LXConnector* connector = new LXConnector(this, EConnectorRole::Input, type);
+				connector->SetName(name);
+				this->Inputs.push_back(connector);
+			});
+
+		property->OnRemoveItem.AttachMemberLambda([this](LXSmartObject* item)
+			{
+				LXConnector* connector = dynamic_cast<LXConnector*>(item);
+				std::find(this->Inputs.begin(), this->Inputs.end(), item);
+				this->Inputs.remove(connector);
+				Graph->DeleteConnector(connector);
+			});
 	}
 
 	const LXNodeTemplate* nodeTemplate = GetAssetManager()->GetGraphMaterialTemplate()->GetNodeTemplate(TemplateID);

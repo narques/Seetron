@@ -43,8 +43,10 @@ enum class EConnectorType
 	Float4,
 	Texture2D,
 	SamplerState,
+	Last
 };
 
 EPropertyType GetPropertyTypeFromName(const wchar_t* typeName);
 EConnectorType GetConnectorTypeFromName(const wchar_t* typeName);
+const wchar_t* GetConnectorTypename(EConnectorType type);
 

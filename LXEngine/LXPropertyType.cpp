@@ -67,10 +67,34 @@ EConnectorType GetConnectorTypeFromName(const wchar_t* typeName)
 	{
 		return  EConnectorType::Undefined;
 	}
-
 			
 	CHK(0);
 	LogE(LXPropertyType, L"GetConnectorTypeFromName: undefined type %s", typeName);
 	
 	return EConnectorType::Undefined;
+}
+
+const wchar_t* GetConnectorTypename(EConnectorType type)
+{
+	switch (type)
+	{
+	case EConnectorType::Float: return L"Float";
+		break;
+	case EConnectorType::Float2: return L"Float2";
+		break;
+	case EConnectorType::Float3: return L"Float3";
+		break;
+	case EConnectorType::Float4: return L"Float4";
+		break;
+	case EConnectorType::Texture2D: return L"Texture2D";
+		break;
+	case EConnectorType::SamplerState: return L"SamplerState";
+		break;
+	case EConnectorType::Undefined: return L"*";
+		break;
+	default:
+		CHK(0);
+		return nullptr;
+		break;
+	}
 }
