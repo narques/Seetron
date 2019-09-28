@@ -44,7 +44,10 @@ LXPerformanceLogger::~LXPerformanceLogger()
 
 LXPerformanceScope::LXPerformanceScope(const wchar_t* name):_name(name)
 {
-	GetStatManager()->OpenStat(_name);
+	if (GetStatManager())
+	{
+		GetStatManager()->OpenStat(_name);
+	}
 }
 
 LXPerformanceScope::~LXPerformanceScope()
