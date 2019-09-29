@@ -96,6 +96,8 @@ LXConsoleCommand1S CCCreateNewAnimation(L"Asset.CreateAnimation", [](const LXStr
 	return GetCore().GetProject() != nullptr;
 });
 
+LXConsoleCommandT<bool> CSet_MonitorAssetFiles(L"Engine.ini", L"AssetManager", L"MonitorAssetFiles", L"false");
+
 //------------------------------------------------------------------------------------------------------
 
 const bool ForceLowercase = false;
@@ -120,21 +122,24 @@ LXAssetManager::LXAssetManager(LXProject* Project) :_pDocument(Project)
 	{
 		LoadFromFolder(Project->GetAssetFolder(), EResourceOwner::LXResourceOwner_Project);
 
-		_projectFileWatcher = make_unique<LXFileWatcher>(Project->GetAssetFolder(), true);
-		_projectFileWatcher->OnFileChanded([this, Project](const wstring& filepath)
+		if (CSet_MonitorAssetFiles.GetValue() == true)
 		{
-			UpdateAsset(filepath.c_str(), Project->GetAssetFolder(), EResourceOwner::LXResourceOwner_Project);
-		});
+			_projectFileWatcher = make_unique<LXFileWatcher>(Project->GetAssetFolder(), true);
+			_projectFileWatcher->OnFileChanded([this, Project](const wstring& filepath)
+				{
+					UpdateAsset(filepath.c_str(), Project->GetAssetFolder(), EResourceOwner::LXResourceOwner_Project);
+				});
 
-		_projectFileWatcher->OnFileAdded([this, Project](const wstring& filepath)
-		{
-			AddAsset(filepath.c_str(), Project->GetAssetFolder(), EResourceOwner::LXResourceOwner_Project);
-		});
+			_projectFileWatcher->OnFileAdded([this, Project](const wstring& filepath)
+				{
+					AddAsset(filepath.c_str(), Project->GetAssetFolder(), EResourceOwner::LXResourceOwner_Project);
+				});
 
-		_projectFileWatcher->OnFileRemoved([this, Project](const wstring& filepath)
-		{
-			RemoveAsset(filepath.c_str(), Project->GetAssetFolder(), EResourceOwner::LXResourceOwner_Project);
-		});
+			_projectFileWatcher->OnFileRemoved([this, Project](const wstring& filepath)
+				{
+					RemoveAsset(filepath.c_str(), Project->GetAssetFolder(), EResourceOwner::LXResourceOwner_Project);
+				});
+		}
 	}
 }
 
