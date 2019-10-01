@@ -36,6 +36,7 @@ public:
 	bool IsTransparent() const { return Transparent; }
 
 	const LXConstantBuffer& GetConstantBufferPS() const { return ConstantBufferPS; }
+	const LXConstantBuffer& GetConstantBufferVS() const { return ConstantBufferVS; }
 	const list<LXTexture*>& GetTexturesVS() const { return ListVSTextures; }
 	const list<LXTexture*>& GetTexturesPS() const { return ListPSTextures; }
 

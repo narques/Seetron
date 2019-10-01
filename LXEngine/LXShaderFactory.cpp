@@ -44,20 +44,20 @@ void LXShaderFactory::GenerateVertexShader(const LXFilepath& Filename, const LXM
 	// Insert the constant buffer declaration.
 	//
 
-// 	if (materialD3D11->GetConstantBufferVS().HasData())
-// 	{
-// 		LXStringA constantBufferDecl = ConstantBufferToHLSL(materialD3D11->GetConstantBufferPS());
-// 		int Start = ShaderBuffer.Find(kConstantBufferInsertionPos);
-// 		if (Start == -1)
-// 		{
-// 			CHK(0);
-// 		}
-// 		else
-// 		{
-// 			Start += (int)strlen(kConstantBufferInsertionPos) + 1;
-// 			ShaderBuffer.Insert(Start, constantBufferDecl.GetBuffer());
-// 		}
-// 	}
+	if (materialD3D11->GetConstantBufferVS().HasData())
+	{
+		LXStringA constantBufferDecl = ConstantBufferToHLSL(materialD3D11->GetConstantBufferVS());
+		int Start = ShaderBuffer.Find(kConstantBufferInsertionPos);
+		if (Start == -1)
+		{
+			CHK(0);
+		}
+		else
+		{
+			Start += (int)strlen(kConstantBufferInsertionPos) + 1;
+			ShaderBuffer.Insert(Start, constantBufferDecl.GetBuffer());
+		}
+	}
 
 	//
 	// Insert Textures and SamplerStates
@@ -247,9 +247,6 @@ LXStringA LXShaderFactory::ListTexturesToHLSL(const list<LXTexture*>& listTextur
 	
 	for (LXTexture* texture : listTextures)
 	{
-		const LXTextureD3D11* textureD3D11 = texture->GetDeviceTexture();
-		CHK(textureD3D11);
-
 		if (shader == EShader::VertexShader)
 		{
 			LXStringA n = LXStringA::Number(vertexSlot++);

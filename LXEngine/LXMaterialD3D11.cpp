@@ -213,7 +213,7 @@ bool LXMaterialD3D11::Create(const LXMaterial* InMaterial)
 	VRF(graphMaterialToHLSLConverter.GenerateConstanBuffer((const LXGraph*)Material->GetGraph(), EShader::VertexShader, ConstantBufferVS));
 	VRF(graphMaterialToHLSLConverter.GatherTextures((const LXGraph*)Material->GetGraph(), EShader::VertexShader, ListVSTextures));
 
-	if (ConstantBufferPS.HasData())
+	if (ConstantBufferVS.HasData())
 	{
 		// Create the D3D11 Constant Buffer
 		CBMaterialParemetersVS = new LXConstantBufferD3D11();
@@ -246,6 +246,7 @@ bool LXMaterialD3D11::Create(const LXMaterial* InMaterial)
 
 void LXMaterialD3D11::UpdateConstantBufferDataValues()
 {
+	ConstantBufferVS.UpdateAll();
 	ConstantBufferPS.UpdateAll();
 }
 
