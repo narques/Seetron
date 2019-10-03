@@ -74,16 +74,24 @@ void LXMaterialD3D11::Render(ERenderPass RenderPass, LXRenderCommandList* RCL) c
 	//RCL->UpdateSubresource4(CBMaterialParemetersVS->D3D11Buffer, &MaterialParameters);
 	//RCL->VSSetConstantBuffers(2, 1, CBMaterialParemetersVS);
 	//}
+
+	if (CBMaterialParemetersVS)
+	{
+		if (ConstantBufferVS.ValueHasChanged)
+		{
+			RCL->UpdateSubresource4(CBMaterialParemetersVS->D3D11Buffer, ConstantBufferVS.GetData());
+			ConstantBufferVS.ValueHasChanged = false;
+		}
+		RCL->VSSetConstantBuffers((uint)LXConstantBufferSlot::CB_Material_Data, 1, CBMaterialParemetersVS);
+	}
 	
 	if (CBMaterialParemetersPS)
 	{
 		if (ConstantBufferPS.ValueHasChanged)
 		{
-			// TODO MUTEX
 			RCL->UpdateSubresource4(CBMaterialParemetersPS->D3D11Buffer, ConstantBufferPS.GetData());
 			ConstantBufferPS.ValueHasChanged = false;
 		}
-		RCL->VSSetConstantBuffers((uint)LXConstantBufferSlot::CB_Material_Data, 1, CBMaterialParemetersPS);
 		RCL->PSSetConstantBuffers((uint)LXConstantBufferSlot::CB_Material_Data, 1, CBMaterialParemetersPS);
 	}
 
