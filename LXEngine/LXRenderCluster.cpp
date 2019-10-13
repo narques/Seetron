@@ -106,25 +106,6 @@ bool LXRenderCluster::UpdateDeviceMaterialAndShaders()
 
 	return true;
 }
-		{
-			LXShaderProgramD3D11* RenderClusterShaderProgram = &ShaderPrograms[(int)RenderPass];
-			RenderClusterShaderProgram->VertexShader = shaderProgram.VertexShader;
-			RenderClusterShaderProgram->HullShader = shaderProgram.HullShader;
-			RenderClusterShaderProgram->DomainShader = shaderProgram.DomainShader;
-			RenderClusterShaderProgram->GeometryShader = shaderProgram.GeometryShader;
-			RenderClusterShaderProgram->PixelShader = shaderProgram.PixelShader;
-			
-			_deviceMaterial = materialD3D11;
-			_deviceMaterialDirty = false;
-		}
-		else
-		{
-			CHK(0);
-		}
-	}
-
-	return true;
-}
 
 void LXRenderCluster::SetPrimitive(shared_ptr<LXPrimitiveD3D11>& InPrimitiveD3D11)
 {
