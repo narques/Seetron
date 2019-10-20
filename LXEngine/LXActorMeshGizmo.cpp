@@ -32,7 +32,7 @@ LXActorMeshGizmo::LXActorMeshGizmo()
 	// Register Events.
 	GetEventManager()->RegisterEvent(EEventType::SelectionChanged, this);
 
-	Mesh = new LXMesh(nullptr);
+	Mesh = make_shared<LXMesh>(nullptr);
 
 	// Translations Lines 
 	const float LineWidth = 0.075f;
@@ -131,14 +131,14 @@ LXActorMeshGizmo::LXActorMeshGizmo()
 		_primitiveConstraints[Primitive.get()] = EConstraint::Local_Rotate_Y;
 		AddPrimitive(Primitive);
 	}
+
+	GatherPrimitives();
 }
 
 LXActorMeshGizmo::~LXActorMeshGizmo()
 {
 	// Unregister Events.
 	GetEventManager()->UnregisterEvent(EEventType::SelectionChanged, this);
-
-	delete Mesh;
 }
 
 EConstraint LXActorMeshGizmo::GetConstraint(LXPrimitive* primitive) const

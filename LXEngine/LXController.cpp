@@ -98,12 +98,13 @@ void LXController::AddRendererUpdateMatrix(LXActor* Actor)
 	if (LXActorMesh* ActorMesh = dynamic_cast<LXActorMesh*>(Actor))
 	{
 		const TWorldPrimitives& WorldPrimitives = ActorMesh->GetAllPrimitives();
-		for (const LXWorldPrimitive& WorldPrimitive : WorldPrimitives)
+		for (const LXWorldPrimitive* WorldPrimitive : WorldPrimitives)
 		{
 			LXRendererUpdateMatrix* RendererUpdateMatrix = new LXRendererUpdateMatrix();
-			RendererUpdateMatrix->PrimitiveInstance = WorldPrimitive.PrimitiveInstance;
-			RendererUpdateMatrix->Matrix = WorldPrimitive.MatrixWorld;
-			RendererUpdateMatrix->BBox = WorldPrimitive.BBoxWorld;
+			RendererUpdateMatrix->Actor = Actor;
+			RendererUpdateMatrix->WorldPrimitive = const_cast<LXWorldPrimitive*>(WorldPrimitive);
+			RendererUpdateMatrix->Matrix = WorldPrimitive->MatrixWorld;
+			RendererUpdateMatrix->BBox = WorldPrimitive->BBoxWorld;
 			_RendererUpdates.push_back(RendererUpdateMatrix);
 		}
 	}

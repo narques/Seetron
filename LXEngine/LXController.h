@@ -13,10 +13,10 @@
 #include "LXMatrix.h"
 #include "LXBBox.h"
 
-class LXPrimitiveInstance;
 class LXMutex;
 class LXRenderer;
 class LXString;
+class LXWorldPrimitive;
 
 class LXRendererUpdate
 {
@@ -33,7 +33,8 @@ public:
 class LXRendererUpdateMatrix : public LXRendererUpdate
 {
 public:
-	LXPrimitiveInstance* PrimitiveInstance;
+	LXActor* Actor;
+	LXWorldPrimitive* WorldPrimitive;
 	LXMatrix Matrix; // World Matrix
 	LXBBox BBox;	 // World BBox
 };

@@ -49,7 +49,10 @@ public:
 	void RemovePrimitive(LXPrimitive* Primitive);
 	void RemoveAllPrimitives();
 	const VectorPrimitiveInstances& GetPrimitives() { return _vectorPrimitives; }
-	 
+
+	// Return the primitives, including child primitives
+	void GetAllPrimitives(vector<LXPrimitiveInstance*>& primitives);
+
 	//Bounds
 	const LXBBox& GetBounds();
 	void ComputeBounds();
@@ -59,11 +62,17 @@ public:
 	LXTransformation& GetTransformation() { return _Transformation; }
 	const LXMatrix& GetMatrix() { return _Transformation.GetMatrix(); }
 
+	void ComputeMatrixRCS();
+
 	// Misc
 	void SetMaterial(const LXString& Key);
 	void SetMaterial(LXMaterial* material);
 
 	bool Visible() const { return _visible; }
+
+private:
+
+	void ComputeMatrixRCS(const LXMatrix* matrixParentRCS);
 
 private:
 

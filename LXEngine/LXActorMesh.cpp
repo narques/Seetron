@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -16,11 +16,32 @@
 #include "LXMesh.h"
 #include "LXPrimitive.h"
 #include "LXPrimitiveInstance.h"
-#include "LXPrimitiveInstance.h"
 #include "LXProject.h"
+#include "LXRenderCluster.h"
 #include "LXSettings.h"
 #include "LXThread.h"
 #include "LXMemory.h" // --- Must be the last included ---
+
+LXWorldPrimitive::LXWorldPrimitive(LXPrimitiveInstance* InPrimitiveInstance, const LXMatrix& Matrix, LXBBox& BBox) :
+	PrimitiveInstance(InPrimitiveInstance),
+	MatrixWorld(Matrix),
+	BBoxWorld(BBox)
+{
+	PrimitiveInstance->Owners.push_back(this);
+}
+
+LXWorldPrimitive::~LXWorldPrimitive()
+{
+	PrimitiveInstance->Owners.remove(this);
+}
+
+void LXWorldPrimitive::SetMaterial(LXMaterial* material)
+{
+	if (RenderCluster)
+	{
+		RenderCluster->SetMaterial(material);
+	}
+}
 
 LXActorMesh::LXActorMesh():
 LXActor(GetCore().GetProject())
@@ -40,6 +61,10 @@ LXActor(pDocument)
 
 LXActorMesh::~LXActorMesh(void)
 {
+	for (LXWorldPrimitive* worldPrimitive : _worldPrimitives)
+	{
+		delete worldPrimitive;
+	}
 }
 
 void LXActorMesh::SetInstancePosition(uint i, const vec3f& Position)
@@ -135,10 +160,10 @@ void LXActorMesh::OnPropertyChanged(LXProperty* Property)
 	}
 }
 
-void LXActorMesh::SetMesh(LXMesh* InMesh)
+void LXActorMesh::SetMesh(shared_ptr<LXMesh>& mesh)
 {
 	CHK(Mesh == nullptr);
-	Mesh = InMesh;
+	Mesh = mesh;
 	InvalidateBounds(true);
 }
 
@@ -197,78 +222,59 @@ void LXActorMesh::InvalidateWorldPrimitives()
 	_bValidWorldPrimitives = false;
 }
 
+void LXActorMesh::OnLoaded()
+{
+	GatherPrimitives();
+}
+
 const TWorldPrimitives& LXActorMesh::GetAllPrimitives(bool bIgnoreValidity)
 {
-	if (_bValidWorldPrimitives || bIgnoreValidity)
+	if (!_bValidWorldPrimitives)
 	{
-		return _WorldPrimitives;
-	}
-	else
-	{
-		CHK(!IsRenderThread())
-		_WorldPrimitives.clear();
-		GetAllPrimitives(Mesh, _WorldPrimitives, GetMatrixWCS());
+		ComputePrimitiveWorldMatrices();
 		_bValidWorldPrimitives = true;
-		return _WorldPrimitives;
+	}
+
+	return _worldPrimitives;
+}
+
+
+void LXActorMesh::GatherPrimitives() // AKA BuildPrimitiveProxy And Compute Martix
+{
+	CHK(_worldPrimitives.size() == 0);
+
+	if (Mesh)
+	{
+		vector<LXPrimitiveInstance*> primitives;
+		Mesh->GetAllPrimitives(primitives);
+
+		for (LXPrimitiveInstance* primitiveInstance : primitives)
+		{
+			const LXMatrix* matrix = primitiveInstance->MatrixRCS;
+
+			LXMatrix matrixMeshWCS = matrix ? GetMatrixWCS() * *matrix : GetMatrixWCS();
+
+			// Compute the primitive world BBox.
+			LXBBox BBoxWorld = primitiveInstance->Primitive->GetBBoxLocal();
+			BBoxWorld.ExtendZ(_ExtendZ);
+			matrixMeshWCS.LocalToParent(BBoxWorld);
+
+			_worldPrimitives.push_back(new LXWorldPrimitive(primitiveInstance, matrixMeshWCS, BBoxWorld));
+		}
 	}
 }
 
-const LXWorldPrimitive* LXActorMesh::GetWorldPrimitive(const LXPrimitiveInstance* PrimitiveInstance)
+void LXActorMesh::ComputePrimitiveWorldMatrices()
 {
-	const TWorldPrimitives& WorldPrimitives = GetAllPrimitives();
-
-	for (const LXWorldPrimitive& WorldPrimitive : WorldPrimitives)
+	for (LXWorldPrimitive* worldPrimitive : _worldPrimitives)
 	{
-		if (WorldPrimitive.PrimitiveInstance == PrimitiveInstance)
-		{
-			return &WorldPrimitive;
-		}
-	}
-
-	// The PrimitiveInstance does not exist in this object.
-	CHK(0);
-	return nullptr;
-}
-
-void LXActorMesh::GetAllPrimitives(LXMesh* InMesh, TWorldPrimitives& OutWorldPrimitives, const LXMatrix& MatrixWCSParent)
-{
-	if (!InMesh || !InMesh->Visible())
-	{
-		return;
-	}
-	
-	LXMatrix MatrixMeshWCS = MatrixWCSParent * InMesh->GetMatrix();
-	
-	// Primitives
-	for (const unique_ptr<LXPrimitiveInstance>& PrimitiveInstance : InMesh->GetPrimitives())
-	{
-		
-		if (PrimitiveInstance->Matrix)
-		{
-			CHK(InMesh->GetMatrix().IsIdentity()); // In case of, integrate below
-			MatrixMeshWCS = MatrixWCSParent * *PrimitiveInstance->Matrix;
-		}
-
-		LXBBox BBoxWorld = PrimitiveInstance->Primitive->GetBBoxLocal();
-
+		const LXMatrix* matrix = worldPrimitive->PrimitiveInstance->MatrixRCS;
+		LXMatrix matrixMeshWCS = matrix ? GetMatrixWCS() * *matrix : GetMatrixWCS();
+		LXBBox BBoxWorld = worldPrimitive->PrimitiveInstance->Primitive->GetBBoxLocal();
 		BBoxWorld.ExtendZ(_ExtendZ);
-
-		MatrixMeshWCS.LocalToParent(BBoxWorld);
-
-		// Instance position are in world
-		for (const vec3f& Position : _ArrayInstancePosition)
-		{
-			// TODO : Use a real Position "matrix" transformation
-			BBoxWorld.Add(Position);
-		}
-		
-		OutWorldPrimitives.push_back(LXWorldPrimitive(PrimitiveInstance.get(), MatrixMeshWCS, BBoxWorld));
-	}
-
-	// Mesh Child
-	for (LXMesh* Child: InMesh->GetChild())
-	{
-		GetAllPrimitives(Child, OutWorldPrimitives, MatrixMeshWCS);
+		matrixMeshWCS.LocalToParent(BBoxWorld);
+		worldPrimitive->MatrixWorld = matrixMeshWCS;
+		worldPrimitive->BBoxWorld = BBoxWorld;
 	}
 }
 

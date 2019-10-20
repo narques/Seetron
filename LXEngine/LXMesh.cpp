@@ -77,6 +77,12 @@ LXMesh::~LXMesh()
 {
 	LX_COUNTSCOPEDEC(LXMesh)
 
+	for (VectorPrimitiveInstances::const_iterator It = _vectorPrimitives.begin(); It != _vectorPrimitives.end(); It++)
+	{
+		const unique_ptr<LXPrimitiveInstance>& primitiveInstance = *It;
+		CHK(primitiveInstance->Owners.size() == 0);
+	}
+
 	_vectorPrimitives.clear();
 
 	for (LXMesh* Mesh : _Children)
@@ -182,6 +188,7 @@ void LXMesh::AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, LXMatrix* In
 	_vectorPrimitives.push_back(make_unique<LXPrimitiveInstance>(Primitive, Matrix, InMaterial));
 	
 	InvalidateBounds();
+	ComputeMatrixRCS();
 }
 
 void LXMesh::RemovePrimitive(LXPrimitive* Primitive)
@@ -204,6 +211,48 @@ void LXMesh::RemoveAllPrimitives()
 		PrimitiveInstance->Primitive->Release();
 	}
 	_vectorPrimitives.clear();
+}
+
+void LXMesh::GetAllPrimitives(vector<LXPrimitiveInstance*>& primitives)
+{
+	for (const auto& it : _vectorPrimitives)
+	{
+		LXPrimitiveInstance* primitiveInstance = &*it;
+		primitives.push_back(primitiveInstance);
+	}
+	
+	for (LXMesh* child : _Children)
+	{
+		child->GetAllPrimitives(primitives);
+	}
+}
+
+void LXMesh::ComputeMatrixRCS()
+{
+	if (_Parent == nullptr)
+		ComputeMatrixRCS(nullptr);
+}
+
+void LXMesh::ComputeMatrixRCS(const LXMatrix* matrixParentRCS)
+{
+	LXMatrix matrixMeshRCS = matrixParentRCS ? *matrixParentRCS * GetMatrix() : GetMatrix();
+
+	for (const auto& it : _vectorPrimitives)
+	{
+		LXPrimitiveInstance* primitiveInstance = &*it;
+
+		if (primitiveInstance->Matrix != nullptr)
+		{
+			matrixMeshRCS = matrixParentRCS ? *matrixParentRCS * *primitiveInstance->Matrix : *primitiveInstance->Matrix; // * GetMatrix()
+		}
+		
+		primitiveInstance->MatrixRCS = matrixMeshRCS.IsIdentity() ? nullptr : new LXMatrix(matrixMeshRCS);
+	}
+
+	for (LXMesh* child : _Children)
+	{
+		child->ComputeMatrixRCS(&matrixMeshRCS);
+	}
 }
 
 const LXBBox& LXMesh::GetBounds()

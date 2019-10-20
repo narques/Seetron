@@ -18,7 +18,7 @@ LXActorMeshSphere::LXActorMeshSphere(LXProject* pDocument) :LXActorMesh(pDocumen
 {
 	SetName(L"Sphere");
 
-	Mesh = new LXMesh(nullptr);
+	Mesh = make_shared<LXMesh>(nullptr);
 
 	LXProperty::SetCurrentGroup(L"Sphere");
 	
@@ -44,7 +44,6 @@ LXActorMeshSphere::LXActorMeshSphere(LXProject* pDocument) :LXActorMesh(pDocumen
 
 LXActorMeshSphere::~LXActorMeshSphere()
 {
-	delete Mesh;
 }
 
 void LXActorMeshSphere::OnPropertyChanged(LXProperty* Property)
@@ -65,7 +64,7 @@ LXActorMeshCylinder::LXActorMeshCylinder(LXProject* pDocument) :LXActorMesh(pDoc
 {
 	SetName(L"Cylinder");
 
-	Mesh = new LXMesh(nullptr);
+	Mesh = make_shared<LXMesh>(nullptr);
 
 	LXProperty::SetCurrentGroup(L"Cylinder");
 
@@ -91,7 +90,6 @@ LXActorMeshCylinder::LXActorMeshCylinder(LXProject* pDocument) :LXActorMesh(pDoc
 
 LXActorMeshCylinder::~LXActorMeshCylinder()
 {
-	delete Mesh;
 }
 
 void LXActorMeshCylinder::OnPropertyChanged(LXProperty* Property)
@@ -112,7 +110,7 @@ LXActorMeshCone::LXActorMeshCone():LXActorMesh(GetCore().GetProject())
 {
 	SetName(L"Cone");
 
-	Mesh = new LXMesh(nullptr);
+	Mesh = make_shared<LXMesh>(nullptr);
 
 	LXProperty::SetCurrentGroup(L"Cone");
 
@@ -138,7 +136,6 @@ LXActorMeshCone::LXActorMeshCone():LXActorMesh(GetCore().GetProject())
 
 LXActorMeshCone::~LXActorMeshCone()
 {
-	delete Mesh;
 }
 
 void LXActorMeshCone::OnPropertyChanged(LXProperty* Property)

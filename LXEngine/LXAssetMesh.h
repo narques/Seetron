@@ -22,7 +22,7 @@ class LXAssetMesh : public LXAsset
 public:
 
 	LXAssetMesh();
-	LXAssetMesh(LXMesh* Mesh);
+	LXAssetMesh(shared_ptr<LXMesh>& mesh);
 	virtual ~LXAssetMesh();
 	
 	//
@@ -32,7 +32,7 @@ public:
 	bool Load() override;
 	LXString GetFileExtension() override { return LX_MESH_EXT; }
 
-	LXMesh* GetMesh();
+	shared_ptr<LXMesh>& GetMesh();
 
 private:
 
@@ -47,6 +47,7 @@ private:
 
 	bool OnLoadChild(const TLoadContext& loadContext) override;
 	bool OnSaveChild(const TSaveContext& saveContext) const override;
+	void OnLoaded() override;
 	
 	// Misc
 	void OnMeshesdTransformationChanged();
@@ -55,8 +56,7 @@ private:
 
 private:
 
-	LXMesh* _Root = nullptr;
-	LXAssetMesh* _AssetMesh = nullptr;
+	shared_ptr<LXMesh> _Root;
 	MapGeometries _mapGeometries; 
 
 };

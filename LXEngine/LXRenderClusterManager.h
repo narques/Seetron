@@ -19,7 +19,6 @@ class LXPrimitiveD3D11;
 class LXRenderCluster;
 class LXRendererUpdateMatrix;
 class LXPrimitiveD3D11;
-class LXPrimitiveInstance;
 
 class LXRenderClusterManager
 {
@@ -48,12 +47,11 @@ public:
 private:
 
 	shared_ptr<LXPrimitiveD3D11>& GetPrimitiveD3D11(LXPrimitive* Primitive, const ArrayVec3f* ArrayInstancePosition = nullptr);
-	LXRenderCluster* CreateRenderCluster(LXActorMesh* Actor, LXPrimitiveInstance* PrimitiveInstance, const LXMatrix& MatrixWCS, const LXBBox& BBoxWorld, LXPrimitive* Primitive, LXMaterial* Material);
+	LXRenderCluster* CreateRenderCluster(LXActorMesh* Actor, LXWorldPrimitive* worldPrimitive, const LXMatrix& MatrixWCS, const LXBBox& BBoxWorld, LXPrimitive* Primitive, LXMaterial* Material);
 
 	// Remove the RenderCluster from the Rendering (ListRendersClusters)
 	// Plus the additional helper maps
 	// The RenderCluster is not deleted.
-	void RemoveRenderCluster(LXRenderCluster* RenderCluster);
 
 public:
 
@@ -66,7 +64,7 @@ private:
 	//
 
 	map<LXActor*, list<LXRenderCluster*>> ActorRenderCluster;
-	map<LXPrimitiveInstance*, LXRenderCluster*> PrimitiveInstanceRenderClusters;
+	map<LXWorldPrimitive*, LXRenderCluster*> PrimitiveInstanceRenderClusters;
 
 	//
 	// D3D11 Shared Resources

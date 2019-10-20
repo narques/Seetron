@@ -25,7 +25,7 @@ LXActorLight::LXActorLight(LXProject* pDocument):
 LXActorMesh(pDocument)
 {
 	_nCID |= LX_NODETYPE_LIGHT;
-	Mesh = new LXMesh(nullptr);
+	Mesh = make_shared<LXMesh>(nullptr);
 
 	SetName("Light");
 
@@ -81,7 +81,6 @@ LXActorMesh(pDocument)
 
 LXActorLight::~LXActorLight(void)
 {
-	delete Mesh;
 }
 
 void LXActorLight::OnTrashed()

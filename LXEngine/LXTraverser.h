@@ -15,7 +15,7 @@ class LXActor;
 class LXActorMesh;
 class LXPrimitiveInstance;
 class LXMatrix;
-struct LXWorldPrimitive;
+class LXWorldPrimitive;
 
 class LXCORE_API LXTraverser : public LXObject
 {

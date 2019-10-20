@@ -18,7 +18,7 @@ LXActorMeshCube::LXActorMeshCube(LXProject* pDocument):LXActorMesh(pDocument)
 {
 	SetName(L"Cube");
 
-	Mesh = new LXMesh(nullptr);
+	Mesh = make_shared<LXMesh>(nullptr);
 
 	LXProperty::SetCurrentGroup(L"Cube");
 	
@@ -42,5 +42,4 @@ LXActorMeshCube::LXActorMeshCube(LXProject* pDocument):LXActorMesh(pDocument)
 
 LXActorMeshCube::~LXActorMeshCube()
 {
-	delete Mesh;
 }

@@ -25,7 +25,7 @@ LXAssetMesh::LXAssetMesh()
 	LX_COUNTSCOPEINC(LXAssetMesh)
 }
 
-LXAssetMesh::LXAssetMesh(LXMesh* Mesh) :_Root(Mesh)
+LXAssetMesh::LXAssetMesh(shared_ptr<LXMesh>& mesh) :_Root(mesh)
 {
 	LX_COUNTSCOPEINC(LXAssetMesh)
 }
@@ -33,7 +33,6 @@ LXAssetMesh::LXAssetMesh(LXMesh* Mesh) :_Root(Mesh)
 LXAssetMesh::~LXAssetMesh()
 {
 	LX_COUNTSCOPEDEC(LXAssetMesh)
-	LX_SAFE_DELETE(_Root);
 }
 
 bool LXAssetMesh::Load()
@@ -55,7 +54,7 @@ bool LXAssetMesh::Load()
 	return false;
 }
 
-LXMesh* LXAssetMesh::GetMesh()
+shared_ptr<LXMesh>& LXAssetMesh::GetMesh()
 {
 	return _Root;
 }
@@ -193,13 +192,18 @@ bool LXAssetMesh::OnLoadChild(const TLoadContext& loadContext)
 	if (name == L"LXMesh")
 	{
 		CHK(_Root == nullptr);
-		LXMesh* Mesh = new LXMesh(this);
-		Mesh->Load(loadContext);
-		_Root = Mesh;
+		shared_ptr<LXMesh> mesh = make_shared<LXMesh>(this);
+		mesh->Load(loadContext);
+		_Root = mesh;
 		bRet = true;
 	}
 
 	return bRet;
+}
+
+void LXAssetMesh::OnLoaded()
+{
+	_Root->ComputeMatrixRCS();
 }
 
 bool LXAssetMesh::OnSaveChild(const TSaveContext& saveContext) const

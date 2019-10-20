@@ -19,8 +19,7 @@ LXActorMeshPlane::LXActorMeshPlane(LXProject* pDocument):
 LXActorMesh(pDocument)
 {
 	SetName(L"Plane");
-
-	Mesh = new LXMesh(nullptr); 
+	Mesh = make_shared<LXMesh>(nullptr);
 
 	LXProperty::SetCurrentGroup(L"Plane");
 
@@ -43,7 +42,6 @@ LXActorMesh(pDocument)
 
 LXActorMeshPlane::~LXActorMeshPlane()
 {
-	delete Mesh;
 }
 
 void LXActorMeshPlane::OnPropertyChanged(LXProperty* Property)

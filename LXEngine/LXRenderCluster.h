@@ -21,10 +21,10 @@ class LXConstantBufferD3D11;
 class LXMaterial;
 class LXMatrix;
 class LXPrimitiveD3D11;
-class LXPrimitiveInstance;
 class LXRenderClusterManager;
 class LXRenderCommandList;
 class LXShaderD3D11;
+class LXWorldPrimitive;
 enum class ELightType;
 
 enum class ERenderClusterType
@@ -71,7 +71,7 @@ private:
 public:
 
 	LXActor* Actor = nullptr;
-	LXPrimitiveInstance* PrimitiveInstance = nullptr;
+	LXWorldPrimitive* PrimitiveInstance = nullptr;
 
 	LXConstantBufferD3D11* CBWorld = nullptr;
 	LXConstantBufferData1 cb1;
@@ -79,7 +79,7 @@ public:
 	LXConstantBufferDataSpotLight* ConstantBufferDataSpotLight = nullptr;
 	LXConstantBufferData0* LightView = nullptr;
 		
-	LXMaterial* Material;
+	LXMaterial* Material = nullptr;
 	shared_ptr<LXPrimitiveD3D11> Primitive;
 		
 	LXBBox BBoxWorld;

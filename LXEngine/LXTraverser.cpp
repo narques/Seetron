@@ -54,8 +54,8 @@ void LXTraverser::OnActor(LXActor* pActor)
 void LXTraverser::OnMesh(LXActorMesh* pMesh)
 {
 	const TWorldPrimitives& WorldPrimitive = pMesh->GetAllPrimitives();
-	for (const LXWorldPrimitive& It : WorldPrimitive)
+	for (const LXWorldPrimitive* It : WorldPrimitive)
 	{
-		OnPrimitive(pMesh, const_cast<LXWorldPrimitive*>(&It));
+		OnPrimitive(pMesh, const_cast<LXWorldPrimitive*>(It));
 	}
 }

@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -11,7 +11,7 @@
 class LXPrimitive;
 class LXMatrix;
 class LXMaterial;
-class LXRenderCluster;
+class LXWorldPrimitive;
 
 // Represents an instanced Primitive in a Mesh 
 // CPU/DataModel instantiation feature, different of the DrawInstanced GPU features
@@ -33,14 +33,17 @@ public:
 	// Ref
 	shared_ptr<LXPrimitive> Primitive;
 
+	// Owners
+	list<LXWorldPrimitive*> Owners;
+
 	// Local (Optional)
 	LXMatrix* Matrix = nullptr;
+
+	LXMatrix* MatrixRCS = nullptr;
 
 	// Material (Optional)
 	LXMaterial* Material = nullptr;
 
-	// Rendering
-	const LXRenderCluster* RenderCluster = nullptr;
 };
 
 

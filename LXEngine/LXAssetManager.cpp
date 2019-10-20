@@ -467,8 +467,8 @@ LXAsset* LXAssetManager::Import(const LXFilepath& Filepath, const LXString& Rela
 	else if (LXImporter* Importer = GetCore().GetPlugin(_pDocument, Extension))
 	{
 		LXAssetMesh* AssetMesh = nullptr;
-		LXMesh* Mesh = Importer->Load(Filepath);
-		
+		shared_ptr<LXMesh>& Mesh = Importer->Load(Filepath);
+				
 		if (Mesh)
 		{
 			// Path

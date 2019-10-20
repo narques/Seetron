@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -13,22 +13,26 @@
 class LXAssetMesh;
 class LXMesh;
 class LXPrimitiveInstance;
+class LXRenderCluster;
 
-struct LXWorldPrimitive
+class LXWorldPrimitive
 {
-	LXWorldPrimitive(LXPrimitiveInstance* InPrimitiveInstance, const LXMatrix& Matrix, LXBBox& BBox):
-		PrimitiveInstance(InPrimitiveInstance), 
-		MatrixWorld(Matrix), 
-		BBoxWorld(BBox)
-	{
-	}
+
+public:
+
+	LXWorldPrimitive(LXPrimitiveInstance* InPrimitiveInstance, const LXMatrix& Matrix, LXBBox& BBox);
+	~LXWorldPrimitive();
+	void SetMaterial(LXMaterial* material);
 
 	LXPrimitiveInstance* PrimitiveInstance;
 	LXMatrix MatrixWorld;
 	LXBBox BBoxWorld;
+
+	// Rendering
+	LXRenderCluster* RenderCluster = nullptr;
 };
 
-typedef vector<LXWorldPrimitive> TWorldPrimitives;
+typedef vector<LXWorldPrimitive*> TWorldPrimitives;
 
 class LXCORE_API LXActorMesh : public LXActor
 {
@@ -63,29 +67,31 @@ public:
 	// Retrieve all the primitives with their corresponding world matrix
 	const TWorldPrimitives&			GetAllPrimitives(bool bIgnoreValidity = false);
 
-	// Retrieve a primitive
-	const LXWorldPrimitive*			GetWorldPrimitive(const LXPrimitiveInstance* PrimitiveInstance);
-
 	// Add a primitive to the root mesh
 	void							AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, LXMatrix* Matrix = nullptr, LXMaterial* Material = nullptr);
 	void							ReleaseAllPrimitives();
 		
 	// Misc
-	void							SetMesh(LXMesh* Mesh);
-	LXMesh*							GetMesh() { return Mesh; }
+	void							SetMesh(shared_ptr<LXMesh>& Mesh);
+	shared_ptr<LXMesh>&				GetMesh() { return Mesh; }
 	void							SetAssetMesh(LXAssetMesh* AssetMesh);
 	void							InvalidateWorldPrimitives();
 
+protected:
+
+	void							GatherPrimitives();
+
 private:
 
-	void							GetAllPrimitives(LXMesh* InMesh, TWorldPrimitives& OutWorldPrimitives, const LXMatrix& MatrixWCSParent);
+	virtual void					OnLoaded() override;
 	void							UpdateAssetMeshCallbacks();
 	void							UpdateMesh();
 	void							OnInvalidateMatrixWCS() override;
+	void							ComputePrimitiveWorldMatrices();
 		
 protected:
 
-	LXMesh* Mesh = nullptr;
+	shared_ptr<LXMesh> Mesh;
 	LXAssetMesh* _AssetMesh = nullptr;
 
 	// Additional size applied to the primitive BBoxWorlds ( in the LXWorldPrimitive structure )
@@ -99,7 +105,8 @@ protected:
 private:
 
 	bool _bValidWorldPrimitives = false;
-	TWorldPrimitives _WorldPrimitives;
+	bool _bValidWorldPrimitiveMatrices = false;
+	TWorldPrimitives _worldPrimitives;
 
 	// Instances
 	uint _InstanceCount = 0;

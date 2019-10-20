@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -10,8 +10,8 @@
 #include "LXPrimitiveInstance.h"
 #include "LXPrimitive.h"
 #include "LXMatrix.h"
-#include "LXRenderCluster.h"
 #include "LXStatistic.h"
+#include "LXActorMesh.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXPrimitiveInstance::LXPrimitiveInstance(const shared_ptr<LXPrimitive>& InPrimitive, LXMatrix* InMatrix, LXMaterial* InMaterial)
@@ -19,6 +19,10 @@ LXPrimitiveInstance::LXPrimitiveInstance(const shared_ptr<LXPrimitive>& InPrimit
 	LX_COUNTSCOPEINC(LXPrimitiveInstance)
 	Primitive = InPrimitive;
 	Matrix = InMatrix;
+	if (Matrix)
+	{
+		MatrixRCS = new LXMatrix();
+	}
 	Material = InMaterial;
 }
 
@@ -26,15 +30,15 @@ LXPrimitiveInstance::~LXPrimitiveInstance()
 {
 	LX_COUNTSCOPEDEC(LXPrimitiveInstance)
 	LX_SAFE_DELETE(Matrix);
+	LX_SAFE_DELETE(MatrixRCS);
 }
 
 void LXPrimitiveInstance::SetMaterial(LXMaterial* material)
 {
 	Primitive->SetMaterial(material);
-	
-	if (RenderCluster)
+	for (LXWorldPrimitive* worldPrimitive : Owners)
 	{
-		const_cast<LXRenderCluster*>(RenderCluster)->SetMaterial(material);
+		worldPrimitive->SetMaterial(material);
 	}
 }
 
