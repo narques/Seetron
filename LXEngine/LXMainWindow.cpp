@@ -28,7 +28,7 @@ namespace
 
 LXCoreWindow::LXCoreWindow()
 {
-	Create();
+	Create(nullptr);
 	Init();
 }
 

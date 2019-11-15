@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -68,33 +68,15 @@ ATOM registerClass(HINSTANCE hInstance)
 	return RegisterClassEx(&wcex);
 }
 
-HWND createWindow(void* lpParam)
-{
-#ifdef LX_CORE_STATIC
-	HINSTANCE hInstance = GetModuleHandle(nullptr);
-#else
-	HINSTANCE hInstance = GetModuleHandle(L"LXCore.dll");
-#endif
-	CHK(hInstance);
-	registerClass(hInstance);
-
-	HWND hWnd = ::CreateWindow(szWindowClassName, szWindowTitle, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, lpParam);
-
-	SetWindowText(hWnd, szWindowTitle);
-	ShowWindow(hWnd, 1);
-	UpdateWindow(hWnd);
-	return hWnd;
-}
-
 LXWindow::LXWindow()
 {
 	
 }
 
-LXWindow::LXWindow(HWND hWND)
+LXWindow::LXWindow(HWND hWnd)
 {
 	_bAttachedToExistingHWND = true;
-	_hWND = hWND;
+	_hWND = hWnd;
 }
 
 LXWindow::~LXWindow()
@@ -105,7 +87,8 @@ void LXWindow::OnClose()
 {
 	if (!_bAttachedToExistingHWND)
 	{
-		::DestroyWindow(_hWND);
+		BOOL res = ::DestroyWindow(_hWND);
+		CHK(res);
 	}
 }
 
@@ -147,10 +130,50 @@ LRESULT LXWindow::Run(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-bool LXWindow::Create()
+bool LXWindow::Create(HWND hWndParent)
 {
-	_hWND = createWindow(this);
-	return true;
+#ifdef LX_CORE_STATIC
+	HINSTANCE hInstance = GetModuleHandle(nullptr);
+#else
+	HINSTANCE hInstance = GetModuleHandle(L"LXEngine.dll");
+#endif
+	CHK(hInstance);
+	registerClass(hInstance);
+	
+	DWORD style = 0;
+	
+	if (hWndParent)
+	{
+		style = WS_CHILD | WS_VISIBLE;
+	}
+	else
+	{
+		style = WS_OVERLAPPEDWINDOW;
+	}
+	
+	_hWND = ::CreateWindow(szWindowClassName, szWindowTitle, style, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, hWndParent, nullptr, hInstance, this);
+
+	if (_hWND)
+	{
+		if (hWndParent)
+		{
+			style = GetWindowLong(_hWND, GWL_STYLE);
+			style = style & ~(WS_CAPTION | WS_THICKFRAME);
+			SetWindowLong(_hWND, GWL_STYLE, style);
+		}
+		else
+		{
+			SetWindowText(_hWND, szWindowTitle);
+		}
+
+		ShowWindow(_hWND, 1);
+		UpdateWindow(_hWND);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void LXWindow::OnCreate()

@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -46,7 +46,7 @@ public:
 
 protected:
 
-	bool Create();
+	bool Create(HWND hWndParent);
 
 private:
 	
