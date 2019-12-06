@@ -743,6 +743,36 @@ bool LXViewport::PickPoint(float x, float y, vec3f& vPoint)
 	return false;
 }
 
+void LXViewport::ToggleShowBBoxes()
+{
+	_showBBoxes = !_showBBoxes;
+
+	if (_pDocument)
+	{
+		SetActors setActors;
+		_pDocument->GetActors(setActors);
+		for (LXActor* actor : setActors)
+		{
+			actor->SetBBoxVisible(_showBBoxes);
+		}
+	}
+}
+
+void LXViewport::ToggleShowPrimitiveBBoxes()
+{
+	_showPrimitiveBBoxes = !_showPrimitiveBBoxes;
+
+	if (_pDocument)
+	{
+		SetActors setActors;
+		_pDocument->GetActors(setActors);
+		for (LXActor* actor : setActors)
+		{
+			actor->SetPrimitiveBBoxVisible(_showPrimitiveBBoxes);
+		}
+	}
+}
+
 LXActor* LXViewport::PickActor( int x, int y, vec3f* intersection, LXPrimitive** primitive )
 {
 	if (!_pDocument)

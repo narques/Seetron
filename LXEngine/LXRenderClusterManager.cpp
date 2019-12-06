@@ -12,6 +12,7 @@
 #include "LXController.h"
 #include "LXCore.h"
 #include "LXLogger.h"
+#include "LXMaterial.h"
 #include "LXPrimitive.h"
 #include "LXPrimitiveD3D11.h"
 #include "LXPrimitiveFactory.h"
@@ -63,9 +64,16 @@ void LXRenderClusterManager::Tick()
 	}
 }
 
-void LXRenderClusterManager::AddActor(LXActor* Actor)
+void LXRenderClusterManager::AddActor(LXActor* Actor, LXFlagsRenderClusterRole renderClusterRole)
 {
-	CHK(ActorRenderCluster.find(Actor) == ActorRenderCluster.end());
+	auto it = ActorRenderCluster.find(Actor);
+	if (it != ActorRenderCluster.end())
+	{
+		for (const LXRenderCluster* renderCluster : it->second)
+		{
+			CHK(!(renderCluster->Role & renderClusterRole));
+		}
+	}
 	
 	if (Actor->GetCID() & LX_NODETYPE_ANCHOR)
 		return;
@@ -88,37 +96,43 @@ void LXRenderClusterManager::AddActor(LXActor* Actor)
 				const LXBBox& BBoxWorld = It->BBoxWorld;
 				LXWorldPrimitive* worldPrimitive = const_cast<LXWorldPrimitive*>(It);
 
-				// Create and add
-				LXRenderCluster* RenderCluster = CreateRenderCluster(ActorMesh, worldPrimitive, MatrixWCS, BBoxWorld, PrimitiveInstance->Primitive.get(), PrimitiveInstance->Primitive->GetMaterial());
-
-				if (!RenderCluster)
-					continue;
-				
-				// Cluster specialization
-				if (Actor->GetCID() & LX_NODETYPE_LIGHT)
+				// Creates the default RenderCluster 
+				if (renderClusterRole & ERenderClusterRole::Default)
 				{
-					RenderCluster->Flags = ERenderClusterType::Light;
-					RenderCluster->SetLightParameters(ActorMesh);
-				}
-				else if (Actor->GetCID() & LX_NODETYPE_CS)
-				{
-					RenderCluster->Flags = ERenderClusterType::Auxiliary;
-				}
-				else
-				{	
-					// Surface
-					RenderCluster->CastShadow = ActorMesh->GetCastShadows();
+					LXRenderCluster* renderCluster = CreateRenderCluster(ActorMesh, worldPrimitive, MatrixWCS, BBoxWorld, PrimitiveInstance->Primitive.get(), PrimitiveInstance->Primitive->GetMaterial());
+					renderCluster->Role = ERenderClusterRole::Default;
+					worldPrimitive->RenderCluster = renderCluster;
+
+					// Cluster specialization
+					if (Actor->GetCID() & LX_NODETYPE_LIGHT)
+					{
+						renderCluster->Flags = ERenderClusterType::Light;
+						renderCluster->SetLightParameters(ActorMesh);
+					}
+					else if (Actor->GetCID() & LX_NODETYPE_CS)
+					{
+						renderCluster->Flags = ERenderClusterType::Auxiliary;
+					}
+					else
+					{
+						// Surface
+						renderCluster->CastShadow = ActorMesh->GetCastShadows();
+					}
 				}
 
-				// Create and add primitive bounds
-				if (0)
+				// Creates the primitive bounds RenderCluster
+				if (renderClusterRole & ERenderClusterRole::PrimitiveBBox && 
+					Actor->IsPrimitiveBBoxVisible() &&
+					!(Actor->GetCID() & LX_NODETYPE_CS))
 				{
 					LXMatrix MatrixScale, MatrixTranslation;
 					// Max/1.f to avoid a 0 scale value ( possible with the "flat" geometries )
 					MatrixScale.SetScale(max(BBoxWorld.GetSizeX(), 1.f), max(BBoxWorld.GetSizeY(), 1.f), max(BBoxWorld.GetSizeZ(), 1.f));
 					MatrixTranslation.SetTranslation(BBoxWorld.GetCenter());
 					const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->GetWireframeCube();
-					CreateRenderCluster(ActorMesh, worldPrimitive, MatrixTranslation * MatrixScale, BBoxWorld, Primitive.get(), Primitive->GetMaterial());
+					LXRenderCluster* renderClusterBBox = CreateRenderCluster(ActorMesh, worldPrimitive, /*MatrixWCS*/MatrixTranslation * MatrixScale, BBoxWorld, Primitive.get(), Primitive->GetMaterial());
+					renderClusterBBox->Flags = ERenderClusterType::Auxiliary;
+					renderClusterBBox->Role = ERenderClusterRole::PrimitiveBBox;
 					
 					// For debug purpose. Creates a WireFrameCube primitive matching the BBoxWord. So no transformation is used.
 					// Useful to verify the real BBoxWorld data
@@ -133,8 +147,9 @@ void LXRenderClusterManager::AddActor(LXActor* Actor)
 		}
 
 
-		// Create and add actor bounds
-		if (0)
+		// Creates the actor bounds RenderCluster
+		if (renderClusterRole & ERenderClusterRole::ActorBBox && 
+			Actor->IsBBoxVisible())
 		{
 			const LXBBox& BBoxWorld = ActorMesh->GetBBoxWorld();
 
@@ -143,7 +158,9 @@ void LXRenderClusterManager::AddActor(LXActor* Actor)
 			MatrixScale.SetScale(max(BBoxWorld.GetSizeX(), 1.f), max(BBoxWorld.GetSizeY(), 1.f), max(BBoxWorld.GetSizeZ(), 1.f));
 			MatrixTranslation.SetTranslation(BBoxWorld.GetCenter());
 			LXPrimitive* Primitive = GetPrimitiveFactory()->GetWireframeCube().get();
-			CreateRenderCluster(ActorMesh, nullptr, MatrixTranslation * MatrixScale, BBoxWorld, Primitive, Primitive->GetMaterial());
+			LXRenderCluster* renderClusterBBox = CreateRenderCluster(ActorMesh, nullptr, MatrixTranslation * MatrixScale, BBoxWorld, Primitive, Primitive->GetMaterial());
+			renderClusterBBox->Flags = ERenderClusterType::Auxiliary;
+			renderClusterBBox->Role = ERenderClusterRole::ActorBBox;
 
 			// For debug purpose. Creates a WireFrameCube primitive matching the BBoxWord. So no transformation is used.
 			// Useful to verify the real BBoxWorld data
@@ -157,7 +174,7 @@ void LXRenderClusterManager::AddActor(LXActor* Actor)
 	}
 }
 
-void LXRenderClusterManager::UpdateActor(LXActor* Actor)
+void LXRenderClusterManager::UpdateActor(LXActor* Actor, LXFlagsRenderClusterRole renderClusterRole)
 {
 	if (Actor->IsRenderStateValid())
 	{
@@ -166,34 +183,28 @@ void LXRenderClusterManager::UpdateActor(LXActor* Actor)
 	}
 
 	// Remove previous RenderStates
-	RemoveActor(Actor);
+	RemoveActor(Actor, renderClusterRole);
 
 	// Try to add
 	// Actor without parent is in "recycle bin" state
 	if (Actor->IsVisible() && Actor->GetParent())
-		AddActor(Actor);
+		AddActor(Actor, renderClusterRole);
 }
 
-void LXRenderClusterManager::RemoveActor(LXActor* Actor)
+void LXRenderClusterManager::RemoveActor(LXActor* Actor, LXFlagsRenderClusterRole renderClusterRole)
 {
+
+	list<LXRenderCluster*> renderClustersToRemove;
+
+	//
 	// Remove from helper maps
+	//
 
-	if (LXActorMesh* actorMesh = dynamic_cast<LXActorMesh*>(Actor))
+	ActorRenderCluster[Actor].remove_if([renderClusterRole, &renderClustersToRemove](LXRenderCluster* renderCluster)
 	{
-		const TWorldPrimitives& worldPrimtives = actorMesh->GetAllPrimitives(true);
-		for (LXWorldPrimitive* worldPrimitive : worldPrimtives)
+		if (renderCluster->Role & renderClusterRole)
 		{
-			PrimitiveInstanceRenderClusters.erase(worldPrimitive);
-		}
-	}
-
-	ActorRenderCluster.erase(Actor);
-	
-	ListRenderClusters.remove_if([Actor](LXRenderCluster* renderCluster)
-	{
-		if (renderCluster->Actor == Actor)
-		{
-			delete renderCluster;
+			renderClustersToRemove.push_back(renderCluster);
 			return true;
 		}
 		else
@@ -201,6 +212,26 @@ void LXRenderClusterManager::RemoveActor(LXActor* Actor)
 			return false;
 		}
 	});
+
+	if (ActorRenderCluster[Actor].size() == 0)
+		ActorRenderCluster.erase(Actor);
+
+
+	for (LXRenderCluster* renderCuster : renderClustersToRemove)
+	{
+		
+		PrimitiveInstanceRenderClusters.erase(renderCuster->PrimitiveInstance);
+	}
+	
+	//
+	// Remove from main list
+	//
+
+	for (LXRenderCluster* renderCuster : renderClustersToRemove)
+	{
+		ListRenderClusters.remove(renderCuster);
+		delete renderCuster;
+	}
 }
 
 
@@ -209,11 +240,11 @@ void LXRenderClusterManager::UpdateMatrix(const LXRendererUpdateMatrix& Renderer
 	LXWorldPrimitive* worldPrimitive = RendererUpdateMatrix.WorldPrimitive;
 	CHK(worldPrimitive);
 
-	auto It = PrimitiveInstanceRenderClusters.find(worldPrimitive);
+	auto range = PrimitiveInstanceRenderClusters.equal_range(worldPrimitive);
 	
-	if (It != PrimitiveInstanceRenderClusters.end())
+	for ( auto it = range.first; it != range.second; it++)
 	{
-		LXRenderCluster* RenderCluster = It->second;
+		LXRenderCluster* RenderCluster = it->second;
 		RenderCluster->SetMatrix(RendererUpdateMatrix.Matrix);
 		RenderCluster->SetBBoxWorld(RendererUpdateMatrix.BBox);
 	}
@@ -238,7 +269,7 @@ shared_ptr<LXPrimitiveD3D11>& LXRenderClusterManager::GetPrimitiveD3D11(LXPrimit
 
 LXRenderCluster* LXRenderClusterManager::CreateRenderCluster(LXActorMesh* Actor, LXWorldPrimitive* worldPrimitive, const LXMatrix& MatrixWCS, const LXBBox& BBoxWorld, LXPrimitive* Primitive, LXMaterial* Material)
 {
-	LogD(LXRenderClusterManager, L"CreateRenderCluster %s", Actor->GetName().GetBuffer());
+	//LogD(LXRenderClusterManager, L"CreateRenderCluster %s (%s)", Actor->GetName().GetBuffer(), Material?Material->GetName().GetBuffer():L"No material");
 
 	// Create the RenderCluster
 	LXRenderCluster* RenderCluster = new LXRenderCluster(this, Actor, MatrixWCS);
@@ -246,9 +277,6 @@ LXRenderCluster* LXRenderClusterManager::CreateRenderCluster(LXActorMesh* Actor,
 
 	// PrimitiveInstance 
 	RenderCluster->PrimitiveInstance = worldPrimitive;
-
-	// Ref.
-	worldPrimitive->RenderCluster = RenderCluster;
 
 	// Create or Retrieve the PrimitiiveD3D11 according the Primitive
 	shared_ptr<LXPrimitiveD3D11>& PrimitiveD3D11 = GetPrimitiveD3D11(Primitive, (Actor->GetInsanceCount()) > 0 ? &Actor->GetArrayInstancePosition() : nullptr);
@@ -265,9 +293,7 @@ LXRenderCluster* LXRenderClusterManager::CreateRenderCluster(LXActorMesh* Actor,
 	ListRenderClusters.push_back(RenderCluster);
 	ActorRenderCluster[Actor].push_back(RenderCluster);
 	
-	// May happen with the BoudingVolume
-	CHK(PrimitiveInstanceRenderClusters.find(worldPrimitive) == PrimitiveInstanceRenderClusters.end());
-	PrimitiveInstanceRenderClusters[worldPrimitive] = RenderCluster;
+	PrimitiveInstanceRenderClusters.insert(pair<LXWorldPrimitive*, LXRenderCluster*>(worldPrimitive, RenderCluster));
 
 	return RenderCluster;
 }

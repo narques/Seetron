@@ -94,13 +94,13 @@ void LXActor::DefineProperties()
 	}
 }
 
-void LXActor::InvalidateRenderState()
+void LXActor::InvalidateRenderState(LXFlagsRenderClusterRole renderStates)
 {
 	if (GetParent() == nullptr)
 		return;
 
 	_RenderStateValid = false;
-	GetController()->AddActorToUpdateRenderStateSet(this);
+	GetController()->AddActorToUpdateRenderStateSet(this, renderStates);
 }
 
 void LXActor::ValidateRensterState()
@@ -358,6 +358,24 @@ void LXActor::SetVisible(bool bVisible)
 
 		if (!(GetCID() & LX_NODETYPE_CAMERA))
 			InvalidateBounds(true);
+	}
+}
+
+void LXActor::SetBBoxVisible(bool visible)
+{
+	if (_bBBoxVisible != visible)
+	{
+		_bBBoxVisible = visible;
+		InvalidateRenderState(ERenderClusterRole::ActorBBox);
+	}
+}
+
+void LXActor::SetPrimitiveBBoxVisible(bool visible)
+{
+	if (_bPrimitiveBBoxVisible != visible)
+	{
+		_bPrimitiveBBoxVisible = visible;
+		InvalidateRenderState(ERenderClusterRole::PrimitiveBBox);
 	}
 }
 

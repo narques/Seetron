@@ -6,9 +6,9 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#pragma 
+#pragma once
 
-#include "LXRenderPass.h"
+#include "LXRenderClusterType.h"
 
 class LXActor;
 class LXActorMesh;
@@ -33,10 +33,9 @@ public:
 	void Tick();
 
 	// Actor
-	void AddActor(LXActor* Actor);
-	//void MoveActor(LXActor* Actor);
-	void UpdateActor(LXActor* Actor);
-	void RemoveActor(LXActor* Actor);
+	void AddActor(LXActor* Actor, LXFlagsRenderClusterRole renderClusterRole);
+	void UpdateActor(LXActor* Actor, LXFlagsRenderClusterRole renderClusterRole);
+	void RemoveActor(LXActor* Actor, LXFlagsRenderClusterRole renderClusterRole);
 
 	// PrimitiveInstance
 	void UpdateMatrix(const LXRendererUpdateMatrix& RendererUpdateMatrix);
@@ -64,7 +63,7 @@ private:
 	//
 
 	map<LXActor*, list<LXRenderCluster*>> ActorRenderCluster;
-	map<LXWorldPrimitive*, LXRenderCluster*> PrimitiveInstanceRenderClusters;
+	multimap<LXWorldPrimitive*, LXRenderCluster*> PrimitiveInstanceRenderClusters;
 
 	//
 	// D3D11 Shared Resources

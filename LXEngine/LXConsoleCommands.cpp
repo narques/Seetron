@@ -10,7 +10,7 @@
 #include "LXConsoleCommands.h"
 #include "LXConsoleManager.h"
 #include "LXCore.h"
-#include "LXRenderer.h"
+#include "LXViewport.h"
 #include <commdlg.h>
 #include "LXMemory.h" // --- Must be the last included ---
 
@@ -58,12 +58,19 @@ LXConsoleCommandNoArg CCOpenConsole(L"OpenConsole", []()
 
 LXConsoleCommandNoArg CCShowBounds(L"View.ShowBounds", []()
 {
-	bool Bounds = !GetCore().GetRenderer()->ShowBounds();
-	GetCore().GetRenderer()->ShowBounds(Bounds);
+	GetCore().GetViewport()->ToggleShowBBoxes();
 }, []()
 {
 	return GetCore().GetProject() != nullptr;
 });
+
+LXConsoleCommandNoArg CCShowPrimtitiveBounds(L"View.ShowPrimitiveBounds", []()
+	{
+		GetCore().GetViewport()->ToggleShowPrimitiveBBoxes();
+	}, []()
+	{
+		return GetCore().GetProject() != nullptr;
+	});
 
 LXConsoleCommandNoArg CCTraceObject(L"Debug.DumpObject", []()
 {

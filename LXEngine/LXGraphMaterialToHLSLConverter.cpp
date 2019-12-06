@@ -279,6 +279,14 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNode(const LXMaterialD3D11* mater
 					{
 						userParameters += ",/*float4*/ $" + connector->GetName().ToStringA();
 					}
+					else if (connector->Type == EConnectorType::Texture2D)
+					{
+						userParameters += ",/*Texture2D*/ $" + connector->GetName().ToStringA();
+					}
+					else if (connector->Type == EConnectorType::SamplerState)
+					{
+						userParameters += ",/*SamplerState*/ $" + connector->GetName().ToStringA();
+					}
 					else
 					{
 						CHK(0);

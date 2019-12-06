@@ -131,6 +131,7 @@ void LXRenderer::Init()
 	// Default rasterizer
 	CD3D11_RASTERIZER_DESC RasterizerDesc = CD3D11_RASTERIZER_DESC(CD3D11_DEFAULT());
 	RasterizerDesc.FrontCounterClockwise = TRUE;
+	RasterizerDesc.AntialiasedLineEnable = TRUE;
 	HRESULT hr = DirectX11->GetCurrentDevice()->CreateRasterizerState(&RasterizerDesc, &D3D11RasterizerState);
 	DirectX11->GetCurrentDeviceContext()->RSSetState(D3D11RasterizerState);
 
@@ -287,23 +288,6 @@ LXSyncEvent* LXRenderer::GetEndEvent() const
 	return EventEndFrame;
 }
 
-void LXRenderer::ShowBounds(bool Show)
-{
-	if (bShowBounds != Show)
-	{
-		if (Show)
-			DoShowBounds = true;
-		else
-			DoHideBounds = true;
-	}
-
-	bShowBounds = Show;
-}
-
-bool LXRenderer::ShowBounds() const
-{
-	return bShowBounds;
-}
 
 void LXRenderer::ResetShaders()
 {
@@ -447,11 +431,11 @@ void LXRenderer::Render()
 
 void LXRenderer::UpdateStates()
 {
-	for (LXActor* Actor : GetController()->GetActorToUpdateRenderStateSetRT())
+	for (const ActorUpdate& actorUpdate : GetController()->GetActorToUpdateRenderStateSetRT())
 	{
-		LogI(Renderer, L"Updated actor %s", Actor->GetName().GetBuffer());
-		RenderClusterManager->UpdateActor(Actor);
-		Actor->ValidateRensterState();
+		LogI(Renderer, L"Updated actor %s", actorUpdate.first->GetName().GetBuffer());
+		RenderClusterManager->UpdateActor(actorUpdate.first, actorUpdate.second);
+		actorUpdate.first->ValidateRensterState();
 	}
 	GetController()->GetActorToUpdateRenderStateSetRT().clear();
 
@@ -478,28 +462,8 @@ void LXRenderer::UpdateStates()
 	}
 	RendererUpdates.clear();
 	
-	if (DoShowBounds)
-	{
-		DoShowBounds = false;
-	}
-
-	if (DoHideBounds)
-	{
-		DoHideBounds = false;
-	}
-
 	RenderClusterManager->Tick();
 
-}
-
-void LXRenderer::AddActor(LXActor* Actor)
-{
-	RenderClusterManager->AddActor(Actor);
-}
-
-void LXRenderer::RemoveActor(LXActor* Actor)
-{
-	RenderClusterManager->RemoveActor(Actor);
 }
 
 bool LXRenderer::SetShaders(LXRenderClusterJobTexture* RenderCluster)

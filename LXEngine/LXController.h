@@ -8,10 +8,10 @@
 
 #pragma once
 
-#include "LXObject.h"
-#include "LXVec4.h"
-#include "LXMatrix.h"
 #include "LXBBox.h"
+#include "LXMatrix.h"
+#include "LXRenderClusterType.h"
+#include "LXVec4.h"
 
 class LXMutex;
 class LXRenderer;
@@ -40,6 +40,8 @@ public:
 };
 
 typedef list<LXRendererUpdate*> ListRendererUpdates;
+typedef pair<LXActor*, LXFlagsRenderClusterRole> ActorUpdate;
+typedef set<ActorUpdate> SetActorToUpdate;
 
 class LXCORE_API LXController : public LXObject
 {
@@ -52,17 +54,12 @@ public:
 	void SetRenderer(LXRenderer* Renderer);
 	void Purge();
 
-	//
-	// Material
-	//
-
-	void AddMaterialToUpdateRenderStateSet(LXMaterial* Material);
 	
 	//
 	// Actor
 	//
 
-	void AddActorToUpdateRenderStateSet(LXActor* Actor);
+	void AddActorToUpdateRenderStateSet(LXActor* Actor, LXFlagsRenderClusterRole renderStates);
 	void AddActorToDeleteSet(LXActor* Actor);
 	void ActorWorldMatrixChanged(LXActor* Actor);
 
@@ -71,13 +68,15 @@ public:
 	//
 		
 	SetActors& GetActorsToDeleteRT() { return _SetActorToDelete_RT; }
-	SetActors& GetActorToUpdateRenderStateSetRT() { return _SetActorToUpdateRenderState_RT; }
+	SetActorToUpdate& GetActorToUpdateRenderStateSetRT() { return _SetActorToUpdateRenderState_RT; }
 	
 	
 	ListRendererUpdates& GetRendererUpdate() { return _RendererUpdates; }
 	
 	// Prepare the Data for RenderThread
 	void Run();
+
+private:
 	
 	void AddRendererUpdateMatrix(LXActor* Actor);
 	
@@ -86,12 +85,12 @@ private:
 	LXRenderer*		_Renderer = nullptr;
 
 	// Fed by MainTread or LoadingThread
-	SetActors		_SetActorToUpdateRenderState;
-	SetActors		_SetActorToDelete;
-	SetActors		_SetActorToMove;
+	SetActorToUpdate _SetActorToUpdateRenderState;
+	SetActors		 _SetActorToDelete;
+	SetActors		 _SetActorToMove;
 		
 	// Consumed by RenderThread
-	SetActors		_SetActorToUpdateRenderState_RT;
+	SetActorToUpdate _SetActorToUpdateRenderState_RT;
 	SetActors		_SetActorToDelete_RT;
 		
 	// Shared
@@ -101,3 +100,4 @@ private:
 	LXMutex* _mutex; // _SetActorToUpdateRenderState
 };
 
+ 

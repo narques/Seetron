@@ -10,6 +10,7 @@
 
 #include "LXSmartObject.h"
 #include "LXBBox.h"
+#include "LXRenderClusterType.h"
 #include "LXTransformation.h"
 
 class LXProject;
@@ -55,7 +56,7 @@ public:
 	virtual bool		IsPickable( ) const { return _bPickable; }
 		
 	// Rendering
-	void				InvalidateRenderState();
+	void				InvalidateRenderState(LXFlagsRenderClusterRole renderStates = ERenderClusterRole::All);
 	void				ValidateRensterState();
 	bool				IsRenderStateValid() { return _RenderStateValid; }
 	
@@ -125,6 +126,12 @@ public:
 	virtual bool		IsVisible() const { return _bVisible; }
 	void				SetVisible(bool bVisible);
 	
+	bool				IsBBoxVisible() const { return _bBBoxVisible; };
+	void				SetBBoxVisible(bool visible);
+
+	bool				IsPrimitiveBBoxVisible() const { return _bPrimitiveBBoxVisible; };
+	void				SetPrimitiveBBoxVisible(bool visible);
+	
 	// Play
 	virtual void		Run(double frameTime);
 	virtual void		RunRT(double frameTime);
@@ -163,6 +170,8 @@ protected:
 	
 	// Rendering
 	bool				_bVisible = true;
+	bool				_bBBoxVisible = false;
+	bool				_bPrimitiveBBoxVisible = false;
 
 	// Misc
 	LXProject*			_Project = nullptr;

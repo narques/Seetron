@@ -62,10 +62,6 @@ public:
 	LXSyncEvent* GetBeginEvent() const;
 	LXSyncEvent* GetEndEvent() const;
 
-	// Show 
-	void ShowBounds(bool Show);
-	bool ShowBounds() const;
-
 	// Resources
 	LXShaderManager* GetShaderManager() const { return ShaderManager; }
 	LXTextureManager* GetTextureManager() const { return TextureManager; }
@@ -103,8 +99,6 @@ private:
 	void Empty();
 
 	void UpdateStates();
-	void AddActor(LXActor* Actor);
-	void RemoveActor(LXActor* Actor);
 
 	// RenderCluster management
 	bool SetShaders(LXRenderClusterJobTexture* RenderCluster);
@@ -161,12 +155,6 @@ private:
 	// Console
 	list<LXString> ConsoleBuffer;
 
-	// Show
-	bool bShowBounds = false;
-
-	// Actions
-	bool DoShowBounds = false;
-	bool DoHideBounds = false;
 
 	// Managers
 	LXShaderManager* ShaderManager = nullptr;

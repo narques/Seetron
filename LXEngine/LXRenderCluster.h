@@ -12,6 +12,7 @@
 #include "LXMatrix.h"
 #include "LXConstantBufferD3D11.h"
 #include "LXShaderProgramD3D11.h"
+#include "LXRenderClusterType.h"
 #include "LXRenderPassType.h"
 #include "LXFlags.h"
 
@@ -93,6 +94,7 @@ public:
 	bool CastShadow = false;
 
 	LXFlagsRenderCluster Flags = ERenderClusterType::Surface;
+	LXFlagsRenderClusterRole Role = ERenderClusterRole::Default;
 
 private:
 

@@ -46,12 +46,12 @@ void LXController::Purge()
 	_RendererUpdates.clear();
 }
 
-void LXController::AddActorToUpdateRenderStateSet(LXActor* Actor)
+void LXController::AddActorToUpdateRenderStateSet(LXActor* Actor, LXFlagsRenderClusterRole renderStates)
 {
 	CHK(IsMainThread() || IsLoadingThread());
-	_mutex->Lock();
 	LogD(LXController, L"AddActorToUpdateRenderStateSet %s", Actor->GetName().GetBuffer());
-	_SetActorToUpdateRenderState.insert(Actor);
+	_mutex->Lock();
+	_SetActorToUpdateRenderState.insert(pair<LXActor*, LXFlagsRenderClusterRole>(Actor, renderStates));
 	_mutex->Unlock();
 }
 
@@ -138,19 +138,19 @@ void LXController::Run()
 	{
 		// Lock, _SetActorToUpdateRenderState can be modified by the LoadingThread.
 		_mutex->Lock();
-		SetActors& Actors = _SetActorToUpdateRenderState;
+		SetActorToUpdate& Actors = _SetActorToUpdateRenderState;
 		// Previous actors should be consumed
 		CHK(_SetActorToUpdateRenderState_RT.size() == 0);
 		_SetActorToUpdateRenderState_RT.insert(Actors.begin(), Actors.end());
 
-		for (const LXActor* Actor : _SetActorToUpdateRenderState_RT)
+		for (const ActorUpdate& actorUpdate : _SetActorToUpdateRenderState_RT)
 		{
-			if (LXActorMesh* actorMesh = dynamic_cast<LXActorMesh*>(const_cast<LXActor*>(Actor)))
+			if (LXActorMesh* actorMesh = dynamic_cast<LXActorMesh*>(const_cast<LXActor*>(actorUpdate.first)))
 			{
 				actorMesh->GetAllPrimitives();
 			}
 
-			LogD(LXController, L"Synchronized: %s", Actor->GetName().GetBuffer());
+			LogD(LXController, L"Synchronized: %s", actorUpdate.first->GetName().GetBuffer());
 		}
 		
 		Actors.clear();

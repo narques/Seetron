@@ -185,8 +185,6 @@ bool LXShaderManager::GetShaderSimple(LXShaderD3D11 * OutVS, LXShaderD3D11 * Out
 
 bool LXShaderManager::GetShaders(ERenderPass RenderPass, const LXPrimitiveD3D11* InPrimitive, const LXMaterialD3D11* InMaterial, LXShaderProgramD3D11* OutShaderProgram)
 {
-	bool bResult = true;
-
 	//
 	// Vertex Shader
 	//
@@ -201,7 +199,7 @@ bool LXShaderManager::GetShaders(ERenderPass RenderPass, const LXPrimitiveD3D11*
 		VSSignature.RenderPass = RenderPass;
 		OutShaderProgram->VertexShader = FindOrCreate(VSSignature, VertexShaders);
 		if (!OutShaderProgram->VertexShader || OutShaderProgram->VertexShader->GetState() != EShaderD3D11State::Ok)
-			bResult = false;
+			return false;
 	}
 	
 	//
@@ -213,7 +211,7 @@ bool LXShaderManager::GetShaders(ERenderPass RenderPass, const LXPrimitiveD3D11*
 		LXHSSignature HSSignature = { 0 };
 		OutShaderProgram->HullShader = FindOrCreate(HSSignature, HullShaders);
 		if (!OutShaderProgram->HullShader || OutShaderProgram->HullShader->GetState() != EShaderD3D11State::Ok)
-			bResult = false;
+			return false;
 	}
 	
 	//
@@ -226,7 +224,7 @@ bool LXShaderManager::GetShaders(ERenderPass RenderPass, const LXPrimitiveD3D11*
 		LXDSSignature DSSignature = { 0 };
 		OutShaderProgram->DomainShader = FindOrCreate(DSSignature, DomainShaders);
 		if (!OutShaderProgram->DomainShader || OutShaderProgram->DomainShader->GetState() != EShaderD3D11State::Ok)
-			bResult = false;
+			return false;
 	}
 
 	//
@@ -245,11 +243,10 @@ bool LXShaderManager::GetShaders(ERenderPass RenderPass, const LXPrimitiveD3D11*
 		PSSignature.RenderPass = RenderPass;
 		OutShaderProgram->PixelShader = FindOrCreate(PSSignature, PixelShaders);
 		if (!OutShaderProgram->PixelShader || OutShaderProgram->PixelShader->GetState() != EShaderD3D11State::Ok)
-			bResult = false;
+			return false;
 	}
 	
-	//CHK(bResult);
-	return bResult;
+	return true;
 }
 
 LXShaderD3D11* LXShaderManager::GetTextureShader(const LXString& ShaderFilename)

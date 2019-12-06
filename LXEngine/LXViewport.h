@@ -92,6 +92,11 @@ public:
 	
 	// Pick a point
 	bool					PickPoint(float x, float y, vec3f& vPoint);
+
+	// Rendering
+	bool ShowBBoxes() const { return _showBBoxes; }
+	void ToggleShowBBoxes();
+	void ToggleShowPrimitiveBBoxes();
 			
 private:
 
@@ -180,6 +185,9 @@ private:
 	LXPrimitive* PrimitivePicked = nullptr;
 	vec3f PointPicked;
 
+	// Rendering
+	bool _showBBoxes = false;
+	bool _showPrimitiveBBoxes = false;
 };
 
 typedef list<LXViewport*> ListViewports;
