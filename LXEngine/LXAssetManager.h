@@ -37,6 +37,7 @@ public:
 
 	LXAssetManager(LXProject* pDocument);
 	virtual ~LXAssetManager();
+	void Init();
 
 	// Asset
 	LXAsset*			GetAsset(const LXString& Name) const;

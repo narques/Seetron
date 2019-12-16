@@ -143,6 +143,13 @@ LXAssetManager::LXAssetManager(LXProject* Project) :_pDocument(Project)
 	}
 }
 
+void LXAssetManager::Init()
+{
+	// Load default material
+	CHK(GetDefaultMaterial());
+}
+
+
 LXAssetManager::~LXAssetManager()
 {
 	for (auto It : _MapAssets)
@@ -165,8 +172,8 @@ LXAsset* LXAssetManager::GetAsset(const LXString& Name) const
 	if (It != _MapAssets.end())
 	{
 		LXAsset* Resource = It->second;
-		if (Resource->State == LXAsset::EResourceState::LXResourceState_Unloaded)
-		{
+		if (Resource->State == LXAsset::EResourceState::LXResourceState_Unloaded && !IsRenderThread())
+		{ 
 			Resource->Load();
 			LogI(AssetManager, L"Loaded %s", Resource->GetFilepath().GetBuffer());
 		}
@@ -331,7 +338,7 @@ LXTexture* LXAssetManager::CreateNewTexture(const LXString& MaterialName, const 
 		if (TextureFilepath.IsFileExist())
 		{
 			LogW(ResourceManager, L"Texture %s already exist (%S).", MaterialName.GetBuffer(), TextureFilepath.GetBuffer());
-			return false;
+			return nullptr;
 		}
 	}
 
