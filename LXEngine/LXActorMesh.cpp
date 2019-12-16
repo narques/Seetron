@@ -138,7 +138,7 @@ void LXActorMesh::UpdateAssetMeshCallbacks()
 
 		_AssetMesh->RegisterCB(this, L"VisibiltyChanged", [this](LXSmartObject* SmartObject)
 		{
-			_bValidWorldPrimitives = false;
+			_bValidWorldPrimitiveMatrices = false;
 			InvalidateRenderState();
 		});
 	}
@@ -219,7 +219,7 @@ void LXActorMesh::ReleaseAllPrimitives()
 
 void LXActorMesh::InvalidateWorldPrimitives()
 {
-	_bValidWorldPrimitives = false;
+	_worldPrimitives.clear();
 }
 
 void LXActorMesh::OnLoaded()
@@ -227,12 +227,13 @@ void LXActorMesh::OnLoaded()
 	GatherPrimitives();
 }
 
-const TWorldPrimitives& LXActorMesh::GetAllPrimitives(bool bIgnoreValidity)
+const TWorldPrimitives& LXActorMesh::GetAllPrimitives()
 {
-	if (!_bValidWorldPrimitives)
+	if (!_bValidWorldPrimitiveMatrices)
 	{
+		CHK(::GetCurrentThreadId() != RenderThread)
 		ComputePrimitiveWorldMatrices();
-		_bValidWorldPrimitives = true;
+		_bValidWorldPrimitiveMatrices = true;
 	}
 
 	return _worldPrimitives;
@@ -280,5 +281,5 @@ void LXActorMesh::ComputePrimitiveWorldMatrices()
 
 void LXActorMesh::OnInvalidateMatrixWCS()
 {
-	_bValidWorldPrimitives = false;
+	_bValidWorldPrimitiveMatrices = false;
 }

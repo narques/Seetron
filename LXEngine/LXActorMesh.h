@@ -65,7 +65,7 @@ public:
 	//
 
 	// Retrieve all the primitives with their corresponding world matrix
-	const TWorldPrimitives&			GetAllPrimitives(bool bIgnoreValidity = false);
+	const TWorldPrimitives&			GetAllPrimitives();
 
 	// Add a primitive to the root mesh
 	void							AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, LXMatrix* Matrix = nullptr, LXMaterial* Material = nullptr);
@@ -104,7 +104,6 @@ protected:
 
 private:
 
-	bool _bValidWorldPrimitives = false;
 	bool _bValidWorldPrimitiveMatrices = false;
 	TWorldPrimitives _worldPrimitives;
 
