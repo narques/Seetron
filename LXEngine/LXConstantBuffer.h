@@ -51,7 +51,7 @@ public:
 	const void* GetData() const { return &*Buffer.begin(); }
 	bool HasData() const;
 
-	uint GetSize();
+	uint GetSize() const;
 
 	uint GetPadSize() const 
 	{

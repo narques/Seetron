@@ -165,7 +165,7 @@ bool LXConstantBuffer::HasData() const
 	return Buffer.size() != 0;
 }
 
-uint LXConstantBuffer::GetSize()
+uint LXConstantBuffer::GetSize() const
 {
 	return (uint)Buffer.size();
 }
