@@ -86,10 +86,15 @@ void LXWindowViewport::OnRButtonUp(uint64 nFlags, LXPoint pntWnd)
 		_viewport->OnRButtonUp(nFlags, pntWnd);
 }
 
-void LXWindowViewport::OnMouseWheel(uint16 nFlags, short zDelta, LXPoint pntWnd)
+void LXWindowViewport::OnMouseWheel(uint16 nFlags, short zDelta, LXPoint)
 {
 	if (_viewport)
-		_viewport->OnMouseWheel(nFlags, zDelta, pntWnd);
+	{
+		POINT point;
+		::GetCursorPos(&point);
+		::ScreenToClient(_hWND, &point);
+		_viewport->OnMouseWheel(nFlags, zDelta, LXPoint(point.x, point.y));
+	}
 }
 
 void LXWindowViewport::OnMouseMove(uint64 nFlags, LXPoint pntWnd)
