@@ -8,33 +8,15 @@
 
 #include "stdafx.h"
 #include "LXMaterialD3D11.h"
-#include "LXRenderCommandList.h"
-#include "LXMaterial.h"
-#include "LXShader.h"
-#include "LXCore.h"
-#include "LXTextureD3D11.h"
-#include "LXBitmap.h"
-#include "LXRenderer.h"
+#include "LXConstantBufferD3D11.h"
 #include "LXGraphMaterialToHLSLConverter.h"
-#include "LXCore.h"
-#include "LXShaderManager.h"
-#include "LXRenderPassDynamicTexture.h"
+#include "LXMaterial.h"
+#include "LXRenderCommandList.h"
 #include "LXRenderPassLighting.h"
 #include "LXRenderPassTransparency.h"
 #include "LXRenderPipelineDeferred.h"
-#include "LXRenderCluster.h"
-#include "LXRenderTargetViewD3D11.h"
+#include "LXRenderer.h"
 #include "LXTexture.h"
-#include "LXTextureD3D11.h"
-#include "LXGraph.h"
-#include <dxgiformat.h>
-#include "LXDirectX11.h"
-#include "LXLogger.h"
-#include "LXConstantBufferD3D11.h"
-#include "LXConstantBuffer.h"
-#include "LXFile.h"
-#include "LXStatistic.h"
-#include "LXShaderFactory.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXMaterialD3D11::LXMaterialD3D11()
@@ -219,7 +201,6 @@ bool LXMaterialD3D11::Create(const LXMaterial* InMaterial)
 	//
 
 	VRF(graphMaterialToHLSLConverter.GenerateConstanBuffer((const LXGraph*)Material->GetGraph(), EShader::VertexShader, ConstantBufferVS));
-	VRF(graphMaterialToHLSLConverter.GatherTextures((const LXGraph*)Material->GetGraph(), EShader::VertexShader, ListVSTextures));
 
 	if (ConstantBufferVS.HasData())
 	{
@@ -234,7 +215,6 @@ bool LXMaterialD3D11::Create(const LXMaterial* InMaterial)
 	//
 
 	VRF(graphMaterialToHLSLConverter.GenerateConstanBuffer((const LXGraph*)Material->GetGraph(), EShader::PixelShader, ConstantBufferPS));
-	VRF(graphMaterialToHLSLConverter.GatherTextures((const LXGraph*)Material->GetGraph(), EShader::PixelShader, ListPSTextures));
 
 	if (ConstantBufferPS.HasData())
 	{
