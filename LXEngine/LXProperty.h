@@ -51,6 +51,7 @@ public:
 	// Misc
 	bool					_bReadOnly = false;
 	bool					_bPersistent = true;
+	bool					_clampToMinMax = false;
 	void*					_MinValue = nullptr;
 	void*					_MaxValue = nullptr;
 	static LXString			_CurrentGroup;
@@ -185,11 +186,12 @@ public:
 	bool				HasMin			( ) const									{ return _PropInfo->_MinValue != nullptr; }
 	T*					GetMax			( ) const									{ return (T*)_PropInfo->_MaxValue; }
 	T*					GetMin			( ) const									{ return (T*)_PropInfo->_MinValue; }
-	void				SetMinMax		( const T& valueMin, const T& valueMax );
+	void				SetMinMax		( const T& valueMin, const T& valueMax, bool clamp = false );
 	void				SetMin			( const T& valueMin );
 	void				SetMax			( const T& valueMax );
-	bool				CheckRange		( const T& value );
-	
+	T					CheckRange		( const T& value );
+	bool				ClampToMinMax	( ) const { return _PropInfo->_clampToMinMax; }
+		
 	virtual	LXVariant*	CreateVariant()
 	{
 		LXVariant* pVariant = new LXVariantT<T>(GetValue());

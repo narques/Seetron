@@ -154,10 +154,11 @@ LXPropertyT<T>::~LXPropertyT( )
 }
 
 template <class T>
-void LXPropertyT<T>::SetMinMax( const T& valueMin, const T& valueMax )
+void LXPropertyT<T>::SetMinMax( const T& valueMin, const T& valueMax, bool clamp)
 { 
 	LX_SAFE_DELETE(_PropInfo->_MinValue);
 	LX_SAFE_DELETE(_PropInfo->_MaxValue);
+	_PropInfo->_clampToMinMax = clamp;
 	_PropInfo->_MinValue = new T(valueMin); 
 	_PropInfo->_MaxValue = new T(valueMax); 
 }
@@ -252,59 +253,71 @@ const T& LXPropertyT<T>::GetValue( ) const
 }
 
 template <class T>
-bool LXPropertyT<T>::CheckRange(const T& value)
+T LXPropertyT<T>::CheckRange(const T& value)
 {
-	return true;
+	return value;
 }
 
-template<>
-bool LXPropertyT<float>::CheckRange(const float& value)
+template<typename T>
+T CheckRange(const LXPropertyT<T>* property, const T& value)
 {
-	if (GetMin())
+	if (property->GetMin())
 	{
-		if (value < *GetMin())
+		if (value < *property->GetMin())
 		{
-			LogW(LXProperty, L"'%s' property value was out of range: %f min: %f", GetName().GetBuffer(), value, *GetMin());
+			if (property->ClampToMinMax())
+			{
+				LogI(LXProperty, L"'%s' property value %s clamped to min: %s", property->GetName().GetBuffer(), Number(value).GetBuffer(), Number(*property->GetMin()).GetBuffer());
+				return *property->GetMin();
+			}
+			else
+			{
+				LogW(LXProperty, L"'%s' property value was out of range: %s min: %s", property->GetName().GetBuffer(), Number(value).GetBuffer(), Number(*property->GetMin()).GetBuffer());
+				CHK(0);
+			}
 		}
 	}
-	if (GetMax())
+	if (property->GetMax())
 	{
-		if (value > *GetMax())
+		if (value > *property->GetMax())
 		{
-			LogW(LXProperty, L"'%s' property value was out of range: %f max: %f", GetName().GetBuffer(), value, *GetMax());
+			if (property->ClampToMinMax())
+			{
+				LogI(LXProperty, L"'%s' property value %s clamped to max: %s", property->GetName().GetBuffer(), Number(value).GetBuffer(), Number(*property->GetMax()).GetBuffer());
+				return *property->GetMax();
+			}
+			else
+			{
+				LogW(LXProperty, L"'%s' property value was out of range: %s max: %s", property->GetName().GetBuffer(), Number(value).GetBuffer(), Number(*property->GetMax()).GetBuffer());
+				CHK(0);
+			}
 		}
 	}
-	return true;
- }
-
-template<>
-bool LXPropertyT<double>::CheckRange(const double& value)
-{
-	if (GetMin())
-		CHK(value >= (*GetMin()));
-	if (GetMax())
-		CHK(value <= (*GetMax()));
-	return true;
+	return value;
 }
 
 template<>
-bool LXPropertyT<int>::CheckRange(const int& value)
+float LXPropertyT<float>::CheckRange(const float& value)
 {
-	if (GetMin())
-		CHK(value >= (*GetMin()));
-	if (GetMax())
-		CHK(value <= (*GetMax()));
-	return true;
+	return ::CheckRange(this, value);
 }
 
 template<>
-bool LXPropertyT<uint>::CheckRange(const uint& value)
+double LXPropertyT<double>::CheckRange(const double& value)
 {
-	if (GetMin())
-		CHK(value >= (*GetMin()));
-	if (GetMax())
-		CHK(value <= (*GetMax()));
-	return true;
+	return ::CheckRange(this, value);
+}
+
+template<>
+int LXPropertyT<int>::CheckRange(const int& value)
+{
+	return ::CheckRange(this, value);
+}
+
+template<>
+uint LXPropertyT<uint>::CheckRange(const uint& value)
+{
+	return ::CheckRange(this, value);
 }
 
 template <class T>
@@ -314,15 +327,15 @@ void LXPropertyT<T>::SetValue( const T& value, bool InvokeOnProperyChanged )
 	{
 		return;
 	}
+	 
+	T clampedValue = CheckRange(value);
 
-	CHK(CheckRange(value));
-
-	LoadValue(value);
+	LoadValue(clampedValue);
 
 	if (_Var)
-		*_Var = value;
+		*_Var = clampedValue;
 	else if (_funcOnSet)
-		_funcOnSet(value);
+		_funcOnSet(clampedValue);
 	else
 	{
 		// No way to set the Value to the property
