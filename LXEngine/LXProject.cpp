@@ -61,6 +61,7 @@ LXProject::LXProject(const LXFilepath& filepath)
 	m_pAnimationManager = new LXAnimationManager(this);
 	m_pSnapshotManager = new LXSnapshotManager(this);
 	m_pResourceManager = new LXAssetManager(this);
+	m_pResourceManager->Init();
 	m_pPrimitiveFactory = new LXPrimitiveFactory();
 					
 	// SmartObject settings
