@@ -71,7 +71,7 @@ LXProject* LXTrackBallCameraManipulator::GetDocument()
 		return NULL;
 
 	return _Viewport->GetDocument();
-}
+} 
 
 void LXTrackBallCameraManipulator::OnButtonDown( LXMouseButton eButton, int x, int y, bool Picked, const vec3f& POI )
 {
@@ -93,22 +93,12 @@ void LXTrackBallCameraManipulator::OnButtonDown( LXMouseButton eButton, int x, i
 	}
 	else
 	{
-// 		m_fPickedZ = 0.99999f;
-// 		double dx, dy, dz;
-// 		float xScale = _wtPicked.Width() / pViewport->GetWidth();
-// 		float yScale = _wtPicked.Height() / pViewport->GetHeight();
-// 		_wtPicked.UnProject(x * xScale, (pViewport->GetHeight() - y) * yScale, m_fPickedZ, dx, dy, dz);
-// 		_vPickedPoint.Set((float)dx, (float)dy, (float)dz);
-
-//			else if (m_pDocument->GetSelectionManager().HasMeshs())
-//				pCenter = &m_pDocument->GetSelectionManager().GetBBox().GetCenter();
-	//else
-		//pCenter = (const vec3f*)(&pScene->GetBBoxWorld().GetCenter());
-
-
-//		LXProject* Project = _Viewport->GetDocument();
-		//_vPickedPoint = vec3f(-300.f, 40.f, 60.f);// Project->GetScene()->GetBBoxWorld().GetCenter();
-		_vPickedPoint = vec3f(0.f, 0.f, 0.f);
+		double dx, dy, dz;
+		float xScale = _wtPicked.Width() / _Viewport->GetWidth();
+		float yScale = _wtPicked.Height() / _Viewport->GetHeight();
+		_wtPicked.UnProject((double)x * xScale, (_Viewport->GetHeight() - (double)y) * yScale, 0.999f, dx, dy, dz);
+		_vPickedPoint.Set((float)dx, (float)dy, (float)dz);
+		
 		vec3f p = _vPickedPoint;
 		_wtPicked.Project(p);
 		_fPickedZ = p.z;
@@ -261,14 +251,14 @@ void LXTrackBallCameraManipulator::OnMouseWheel(uint16 nFlags, short zDelta, LXP
 
 bool LXTrackBallCameraManipulator::Update( double dFrameTime )
 {
-	bool bSomethingAsChanged = false;
+	bool somethingHasChanged = false;
 	if (GetCamera())
 	{
-		bSomethingAsChanged |= RotateCamera(dFrameTime);
-		bSomethingAsChanged |= DollyCamera(dFrameTime);
-		bSomethingAsChanged |= PanCamera(dFrameTime);
+		somethingHasChanged |= RotateCamera(dFrameTime);
+		somethingHasChanged |= DollyCamera(dFrameTime);
+		somethingHasChanged |= PanCamera(dFrameTime);
 	}
-	return bSomethingAsChanged;
+	return somethingHasChanged;
 }
 
 bool LXTrackBallCameraManipulator::DollyCamera( double dFrameTime )
