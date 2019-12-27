@@ -115,61 +115,23 @@ void LXShaderManager::RebuildShaders()
 	}
 }
 
-void LXShaderManager::DeleteUnusedShaders()
+void LXShaderManager::DeleteUnusedShaders(bool keepErroneous)
 {
-	for (auto It = VertexShaders.begin(); It != VertexShaders.end();)
-	{
-		if (It->second.use_count() == 1)
-		{
-			It = VertexShaders.erase(It);
-		}
-		else
-		{
-			It++;
-		}
-	}
+	DeleteUnusedShaders(VertexShaders, keepErroneous);
+	DeleteUnusedShaders(HullShaders, keepErroneous);
+	DeleteUnusedShaders(DomainShaders, keepErroneous);
+	DeleteUnusedShaders(GeometryShaders, keepErroneous);
+	DeleteUnusedShaders(PixelShaders, keepErroneous);
+}
 
-	for (auto It = HullShaders.begin(); It != HullShaders.end();)
+template<typename M>
+void LXShaderManager::DeleteUnusedShaders(M& mapShaders, bool keepErroneous)
+{
+	for (auto It = mapShaders.begin(); It != mapShaders.end();)
 	{
-		if (It->second.use_count() == 1)
+		if (It->second.use_count() == 1 && !keepErroneous)
 		{
-			It = HullShaders.erase(It);
-		}
-		else
-		{
-			It++;
-		}
-	}
-
-	for (auto It = DomainShaders.begin(); It != DomainShaders.end();)
-	{
-		if (It->second.use_count() == 1)
-		{
-			It = DomainShaders.erase(It);
-		}
-		else
-		{
-			It++;
-		}
-	}
-
-	for (auto It = GeometryShaders.begin(); It != GeometryShaders.end();)
-	{
-		if (It->second.use_count() == 1)
-		{
-			It = GeometryShaders.erase(It);
-		}
-		else
-		{
-			It++;
-		}
-	}
-
-	for (auto It = PixelShaders.begin(); It != PixelShaders.end();)
-	{
-		if (It->second.use_count() == 1)
-		{
-			It = PixelShaders.erase(It);
+			It = mapShaders.erase(It);
 		}
 		else
 		{
@@ -265,7 +227,9 @@ void LXShaderManager::Run()
 {
 	CHK(IsRenderThread());
 	
-	DeleteUnusedShaders();
+	// Deletes unused shaders but keeps the erroneous,  
+	// to avoid infinite 'rebuild' tentative without 'fix'.
+	DeleteUnusedShaders(true);
 
 	for (LXShaderD3D11* shader : _shaderToRebuild)
 	{

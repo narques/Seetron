@@ -123,7 +123,7 @@ public:
 	void CreateDefaultShaders();
 
 	void RebuildShaders();
-	void DeleteUnusedShaders();
+	void DeleteUnusedShaders(bool keepErroneous = false);
 
 	bool GetShaderSimple(LXShaderD3D11* OutVS, LXShaderD3D11* OutPS);
 
@@ -143,6 +143,10 @@ private:
 
 	template<typename T, typename M>
 	shared_ptr<LXShaderD3D11> FindOrCreate(T& Signature, M& Shaders);
+
+	template<typename M>
+	void DeleteUnusedShaders(M& mapShaders, bool keepErroneous);
+	
 
 	bool CreateShader(const LXVSSignature& VSSignature, LXShaderD3D11* Shader);
 	bool CreateShader(const LXHSSignature& HSSignature, LXShaderD3D11* Shader);
