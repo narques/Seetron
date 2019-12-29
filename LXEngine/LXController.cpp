@@ -49,7 +49,6 @@ void LXController::Purge()
 void LXController::AddActorToUpdateRenderStateSet(LXActor* Actor, LXFlagsRenderClusterRole renderStates)
 {
 	CHK(IsMainThread() || IsLoadingThread());
-	LogD(LXController, L"AddActorToUpdateRenderStateSet %s", Actor->GetName().GetBuffer());
 	_mutex->Lock();
 	_SetActorToUpdateRenderState.insert(pair<LXActor*, LXFlagsRenderClusterRole>(Actor, renderStates));
 	_mutex->Unlock();
