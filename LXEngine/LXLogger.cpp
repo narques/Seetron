@@ -21,6 +21,7 @@
 namespace
 {
 	LXConsoleCommandT<bool> CSet_UseLogFile(L"Engine.ini", L"Log", L"UseLogFile", L"false");
+	const LXString kLogFilename = L"seetron.log";
 }
 
 LXLogger& GetLogger()
@@ -37,9 +38,12 @@ void LXLogger::PrintToConsoles(ELogType LogType, const LXString& msg)
 	::GetLocalTime(&st);
 	LXString logEntry = L"[";
 	logEntry += LXString::Format(L"%02d", st.wHour);
-	logEntry += L":" + LXString::Format(L"%02d", st.wMinute);;
+	logEntry += L":" + LXString::Format(L"%02d", st.wMinute);
 	logEntry += L":" + LXString::Format(L"%02d", st.wSecond);
-	logEntry += L"." + LXString::Format(L"%03d", st.wMilliseconds) + L"]" + msg;
+	logEntry += L"." + LXString::Format(L"%03d", st.wMilliseconds) + L"]";
+	logEntry += L"[" + LXString::Number(GetCore().Frame) + L"] ";
+	logEntry += msg;
+	
 	_logs.push_back(logEntry);
 
 	if ((LogModes & ELogMode::LogMode_DebuggerConsole) && IsDebuggerPresent())
@@ -55,29 +59,49 @@ void LXLogger::Tick()
 {
 	Mutex->Lock();
 
-	for (const LXString& logEntry : _logs)
+	if (_logs.size() > 0)
 	{
+		LXPerformance perf;
+		const double logBudget = 2.;
+		double time = 0.;
 
-		//if (LogModes & ELogMode::LogMode_OSConsole)
-		wcout << logEntry.GetBuffer() << endl;
+		bool logToFile = _file && _file->Open(LXCore::GetAppPath() + L"/" + kLogFilename, L"a");
 
-		if (LogModes & ELogMode::LogMode_CoreConsole)
+		while (_logs.size() && time < logBudget)
 		{
-			for (auto It : MapCallbacks)
-				It.second(/*LogType*/ELogType::LogType_Info, logEntry);
+#if LX_LOG_OUTPUT_FRAME
+			LXString logEntry = L"[" + LXString::Number(GetCore().Frame) + L"]";
+			logEntry += _logs.front();
+#else
+			const LXString& logEntry = _logs.front();
+#endif
+
+			//if (LogModes & ELogMode::LogMode_OSConsole)
+			wcout << logEntry.GetBuffer() << endl;
+
+			if (LogModes & ELogMode::LogMode_CoreConsole)
+			{
+				for (auto It : MapCallbacks)
+					It.second(/*LogType*/ELogType::LogType_Info, logEntry);
+			}
+
+			// File
+			if (logToFile)
+			{
+				LXStringA msgA = logEntry.ToStringA();
+				msgA += "\n";
+				_file->Write(msgA.GetBuffer(), msgA.size(), true);
+			
+			}
+
+			_logs.pop_front();
+			time = perf.GetTime();
 		}
 
-		// File
-		if (_file && _file->Open(LXCore::GetAppPath() + "/log.txt", L"a"))
-		{
-			LXStringA msgA = logEntry.ToStringA();
-			msgA += "\n";
-			_file->Write(msgA.GetBuffer(), msgA.size(), true);
+		if (logToFile)
 			_file->Close();
-		}
-	}
 
-	_logs.clear();
+	}
 
 	Mutex->Unlock();
 }
@@ -198,7 +222,7 @@ LXLogger::LXLogger()
 	{
 		_file = new LXFile();
 		// Clear the existing file.
-		_file->Open(LXCore::GetAppPath() + "/log.txt", L"wt");
+		_file->Open(LXCore::GetAppPath() + L"/" + kLogFilename, L"wt");
 		_file->Close();
 	}
 

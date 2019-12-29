@@ -69,6 +69,11 @@ LXString LXString::Number(int i)
 	return LXString(sz);
 }
 
+LXString LXString::Number(__int64 i)
+{
+	return LXString(std::to_wstring(i));
+}
+
 LXString LXString::Number(unsigned __int64 u)
 {
 	return LXString(std::to_wstring(u));

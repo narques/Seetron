@@ -85,7 +85,7 @@ bool LXRenderCluster::UpdateDeviceMaterialAndShaders(ERenderPass renderPass)
 	if (!materialD3D11)
 		return false;
 	   	   
-#if BUILD_SHADERS_FOR_ALL_PASSES 
+#if LX_BUILD_SHADERS_FOR_ALL_PASSES 
 	for (auto i = 0; i < (int)ERenderPass::Last; i++)
 	{
 		renderPass = (ERenderPass)i;
@@ -104,7 +104,7 @@ bool LXRenderCluster::UpdateDeviceMaterialAndShaders(ERenderPass renderPass)
 		{
 			return false;
 		}
-#if BUILD_SHADERS_FOR_ALL_PASSES 
+#if LX_BUILD_SHADERS_FOR_ALL_PASSES 
 	}
 #endif
 

@@ -77,7 +77,11 @@
 // --- Debug & Dev ---
 // --------------------------------------------------------------------------------
 
-#define BUILD_SHADERS_FOR_ALL_PASSES 0
+#define LX_BUILD_SHADERS_FOR_ALL_PASSES 0
+
+// Add the frame # to log entries when 'outputted'
+// useful to set the log TimeSlicing budget.
+#define LX_LOG_OUTPUT_FRAME 0
 
 #ifdef _DEBUG
 #define LX_DEBUGFLAG     

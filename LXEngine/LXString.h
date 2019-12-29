@@ -129,6 +129,7 @@ public:
 	}
 
 	static LXString Number(int i);
+	static LXString Number(__int64 i);
 	static LXString Number(unsigned __int64 ul);
 	static LXString Number(double d);
 	static LXString NumberToHexa(unsigned __int64 ul);
