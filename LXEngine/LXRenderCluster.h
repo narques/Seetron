@@ -67,7 +67,7 @@ public:
 
 private:
 
-	bool UpdateDeviceMaterialAndShaders();
+	bool UpdateDeviceMaterialAndShaders(ERenderPass renderPass);
 
 public:
 

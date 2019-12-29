@@ -75,7 +75,7 @@ void LXRenderCluster::SetMaterial(LXMaterial* material)
 	}
 }
 
-bool LXRenderCluster::UpdateDeviceMaterialAndShaders()
+bool LXRenderCluster::UpdateDeviceMaterialAndShaders(ERenderPass renderPass)
 {
 	CHK(IsRenderThread());
 	
@@ -85,13 +85,15 @@ bool LXRenderCluster::UpdateDeviceMaterialAndShaders()
 	if (!materialD3D11)
 		return false;
 	   	   
+#if BUILD_SHADERS_FOR_ALL_PASSES 
 	for (auto i = 0; i < (int)ERenderPass::Last; i++)
 	{
-		ERenderPass RenderPass = (ERenderPass)i;
+		renderPass = (ERenderPass)i;
+#endif
 		LXShaderProgramD3D11 shaderProgram;
-		if (renderer->GetShaderManager()->GetShaders(RenderPass, Primitive.get(), materialD3D11, &shaderProgram))
+		if (renderer->GetShaderManager()->GetShaders(renderPass, Primitive.get(), materialD3D11, &shaderProgram))
 		{
-			LXShaderProgramD3D11* RenderClusterShaderProgram = &ShaderPrograms[(int)RenderPass];
+			LXShaderProgramD3D11* RenderClusterShaderProgram = &ShaderPrograms[(int)renderPass];
 			RenderClusterShaderProgram->VertexShader = shaderProgram.VertexShader;
 			RenderClusterShaderProgram->HullShader = shaderProgram.HullShader;
 			RenderClusterShaderProgram->DomainShader = shaderProgram.DomainShader;
@@ -102,7 +104,9 @@ bool LXRenderCluster::UpdateDeviceMaterialAndShaders()
 		{
 			return false;
 		}
+#if BUILD_SHADERS_FOR_ALL_PASSES 
 	}
+#endif
 
 	return true;
 }
@@ -131,7 +135,7 @@ bool LXRenderCluster::IsTransparent() const
 
 void LXRenderCluster::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 {
-	bool result = UpdateDeviceMaterialAndShaders();
+	bool result = UpdateDeviceMaterialAndShaders(RenderPass);
 		
 	if (!result)
 	{

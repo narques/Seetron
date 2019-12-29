@@ -77,6 +77,8 @@
 // --- Debug & Dev ---
 // --------------------------------------------------------------------------------
 
+#define BUILD_SHADERS_FOR_ALL_PASSES 0
+
 #ifdef _DEBUG
 #define LX_DEBUGFLAG     
 //#define LX_VLD
