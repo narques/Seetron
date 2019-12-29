@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -25,30 +25,22 @@ LXObjectFactory::~LXObjectFactory()
 #define CREATE_OBJECT(name) \
 if (objectClassName == L#name) return new name();
 
+#define CREATE_OWNED_OBJECT(name, OwnerClass)						\
+if (objectClassName == L#name)								\
+{															\
+	OwnerClass* dcOwner = dynamic_cast<OwnerClass*>(owner); \
+	CHK(dcOwner);											\
+	return new name(dcOwner);								\
+}															\
+
 LXSmartObject* LXObjectFactory::CreateObject(const LXString& objectClassName, LXSmartObject* owner )
 {
-	CREATE_OBJECT(LXNodeTemplate);
-	//CREATE_OBJECT(LXNode);
-
-	if (objectClassName == L"LXNode")
-	{
-		LXGraph* graph = dynamic_cast<LXGraph*>(owner);
-		CHK(graph);
-		return new LXNode(graph);
-	}
-
-
-
-	//CREATE_OBJECT(LXConnector);
 	CREATE_OBJECT(LXConnection);
-
-	if (objectClassName == L"LXConnector")
-	{
-		LXNode* node = dynamic_cast<LXNode*>(owner);
-		CHK(node);
-		return new LXConnector(node);
-	}
-	
+	CREATE_OBJECT(LXNodeTemplate);
+		
+	CREATE_OWNED_OBJECT(LXConnector, LXNode)
+	CREATE_OWNED_OBJECT(LXNode, LXGraph)
+			
 	LogW(LXObjectFactory, L"Unable to create object of class %s owned by %s (%s).", objectClassName.GetBuffer(), owner->GetName().GetBuffer(), owner->GetObjectName().GetBuffer());
 	
 	return nullptr;
