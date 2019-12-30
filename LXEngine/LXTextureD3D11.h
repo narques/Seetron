@@ -27,7 +27,7 @@ public:
 	void Create(DXGI_FORMAT Format, uint Width, uint Height, bool bSupportAutoMipmap);
 	
 	// Textures
-	LXTextureD3D11(uint Width, uint Height, DXGI_FORMAT Format, void* Buffer, uint PixelSize, uint MipLevels, D3D11_FILTER Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR);
+	LXTextureD3D11(uint Width, uint Height, DXGI_FORMAT Format, void* Buffer, uint PixelSize, uint MipLevels, D3D11_FILTER Filter = D3D11_FILTER_ANISOTROPIC);
 	
 	virtual ~LXTextureD3D11();
 
