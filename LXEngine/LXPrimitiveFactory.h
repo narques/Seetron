@@ -24,6 +24,8 @@ public:
 
 	void DeleteAllPrimitives();
 
+	void Tick();
+
 	// Create cone 
 	const shared_ptr<LXPrimitive>& CreateCone(float radius, float height);
 
@@ -63,7 +65,6 @@ public:
 
 private:
 
-	void Release(LXPrimitive* Primitive);
 	const shared_ptr<LXPrimitive>& CreatePrimitive();
 
 private:

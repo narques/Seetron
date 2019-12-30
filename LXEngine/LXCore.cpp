@@ -23,6 +23,7 @@
 #include "LXMessageManager.h"
 #include "LXPerformance.h"
 #include "LXPlatform.h"
+#include "LXPrimitiveFactory.h"
 #include "LXProject.h"
 #include "LXPropertyManager.h"
 #include "LXRenderer.h"
@@ -549,6 +550,12 @@ void LXCore::Run()
 	if (GetScene())
 	{
 		GetScene()->Run(Time.DeltaTime());
+	}
+
+	// PrimitiveFactory
+	if (GetPrimitiveFactory())
+	{
+		GetPrimitiveFactory()->Tick();
 	}
 	
 	// If RenderThread is not used, call the Renderer

@@ -1005,16 +1005,17 @@ const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateSphere(float radius)
 	return p;
 }
 
-void LXPrimitiveFactory::Release(LXPrimitive* Primitive)
+void LXPrimitiveFactory::Tick()
 {
-	LogD(LXPrimitiveFactory, L"Release: TODO: ....");
-	/*
-	Primitive->Deref();
-	if (Primitive->GetRefCount() == 0)
+	for (auto it = ListPrimitives.begin(); it != ListPrimitives.end();)
 	{
-		ListPrimitives.remove(Primitive);
-		delete Primitive;
+		if (it->use_count() <= 1)
+		{
+			it = ListPrimitives.erase(it);
+		}
+		else
+		{
+			it++;
+		}
 	}
-	*/
 }
-

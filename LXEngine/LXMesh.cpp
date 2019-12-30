@@ -206,10 +206,6 @@ void LXMesh::RemovePrimitive(LXPrimitive* Primitive)
 
 void LXMesh::RemoveAllPrimitives()
 {
-	for (const auto& PrimitiveInstance : _vectorPrimitives)
-	{
-		PrimitiveInstance->Primitive->Release();
-	}
 	_vectorPrimitives.clear();
 }
 

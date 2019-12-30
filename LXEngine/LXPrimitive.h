@@ -98,7 +98,6 @@ public:
 
 	// Destructor
 	virtual ~LXPrimitive(void);
-	void Release();
 
 	LXPrimitive*		Copy				( ) { return new LXPrimitive(*this); }
 	LXBBox&				GetBBoxLocal() 

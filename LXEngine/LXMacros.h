@@ -37,6 +37,5 @@
 #define LX_SAFE_DELETE(p)       { if(p) { delete    (p);  p=nullptr; } }
 #define LX_SAFE_RELEASE(p)      { if(p) { p->Release();	  p=nullptr; } }
 #define LX_SAFE_DELETE_ARRAY(p) { if(p) { delete [] (p);  p=nullptr; } }
-#define LX_UNREF(p)				{ p->Deref(); if (p->GetRefCount() == 0) delete p; }
 
 #define LX_BIT(x) (1<<(x))

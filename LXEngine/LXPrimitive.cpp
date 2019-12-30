@@ -17,7 +17,6 @@
 #include "LXAssetManager.h"
 #include "LXAssetMesh.h"
 #include "LXMaterial.h"
-#include "LXPrimitiveFactory.h"
 #include "LXStatistic.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
@@ -59,11 +58,6 @@ LXPrimitive::LXPrimitive(const LXPrimitive& primitive) :
 LXPrimitive::~LXPrimitive(void)
 {
 	LX_COUNTSCOPEDEC(LXPrimitive)
-}
-
-void LXPrimitive::Release()
-{
-	GetPrimitiveFactory()->Release(this);
 }
 
 void LXPrimitive::Empty()
