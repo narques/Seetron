@@ -143,7 +143,7 @@ private:
 public:
 
 	LXTime				Time;
-	__int64				Frame = -1;
+	static __int64		FrameNumber;
 
 private:
 

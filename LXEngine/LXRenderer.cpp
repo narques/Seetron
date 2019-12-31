@@ -213,7 +213,7 @@ void LXRenderer::Run()
 
 		if (!init)
 		{
-			CHK(GetCore().Frame == 0);
+			CHK(LXCore::FrameNumber == 0);
 			LXPerformance perf;
 			Init();
 			init = true;
@@ -422,7 +422,7 @@ void LXRenderer::Render()
 	LX_COUNT(L"PixelShaders : %f", (int)ShaderManager->PixelShaders.size());
 
 	// Frame
-	LX_COUNT(L"Frame : %f", (double)GetCore().Frame);
+	LX_COUNT(L"Frame : %f", (double)LXCore::FrameNumber);
 	
 	_RenderPipeline->PostRender();
 

@@ -99,6 +99,8 @@ namespace
 	LXCore* gCore = nullptr;
 }
 
+__int64 LXCore::FrameNumber = -1;
+
 LXCore::LXCore()
 {
 }
@@ -487,7 +489,7 @@ void LXCore::SetDocument(LXProject* Document)
 
 void LXCore::Run()
 {
-	if (_Renderer && RenderThread && Frame > -1)
+	if (_Renderer && RenderThread && FrameNumber > -1)
 	{
 		// Wait for the RenderThread frame end.
 		// Do not remove the brackets, needed to measure the wait time.
@@ -512,7 +514,7 @@ void LXCore::Run()
 	// Synchronization
 	//
 
-	Frame++;
+	FrameNumber++;
 	Time.Update();
 	LX_CYCLEPERFOSCOPE(MainThread_Run);
 

@@ -41,7 +41,7 @@ void LXLogger::PrintToConsoles(ELogType LogType, const LXString& msg)
 	logEntry += L":" + LXString::Format(L"%02d", st.wMinute);
 	logEntry += L":" + LXString::Format(L"%02d", st.wSecond);
 	logEntry += L"." + LXString::Format(L"%03d", st.wMilliseconds) + L"]";
-	logEntry += L"[" + LXString::Number(GetCore().Frame) + L"] ";
+	logEntry += L"[" + LXString::Number(LXCore::FrameNumber) + L"] ";
 	logEntry += msg;
 	
 	_logs.push_back(logEntry);
