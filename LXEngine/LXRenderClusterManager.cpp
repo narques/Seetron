@@ -125,23 +125,24 @@ void LXRenderClusterManager::AddActor(LXActor* Actor, LXFlagsRenderClusterRole r
 					Actor->IsPrimitiveBBoxVisible() &&
 					!(Actor->GetCID() & LX_NODETYPE_CS))
 				{
+#if 1
 					LXMatrix MatrixScale, MatrixTranslation;
 					// Max/1.f to avoid a 0 scale value ( possible with the "flat" geometries )
 					MatrixScale.SetScale(max(BBoxWorld.GetSizeX(), 1.f), max(BBoxWorld.GetSizeY(), 1.f), max(BBoxWorld.GetSizeZ(), 1.f));
 					MatrixTranslation.SetTranslation(BBoxWorld.GetCenter());
 					const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->GetWireframeCube();
 					LXRenderCluster* renderClusterBBox = CreateRenderCluster(ActorMesh, worldPrimitive, /*MatrixWCS*/MatrixTranslation * MatrixScale, BBoxWorld, Primitive.get(), Primitive->GetMaterial());
+#else				
+					// For debug purpose. Creates a WireFrameCube primitive matching the BBoxWord. So no transformation is used.
+					// Useful to verify the real BBoxWorld data
+					const shared_ptr <LXPrimitive> Primitive = GetPrimitiveFactory()->CreateWireframeCube(BBoxWorld.GetMin().x, BBoxWorld.GetMin().y, BBoxWorld.GetMin().z,
+						BBoxWorld.GetMax().x, BBoxWorld.GetMax().y, BBoxWorld.GetMax().z);
+					LXMatrix MatrixIdentiy;
+					LXRenderCluster* renderClusterBBox = CreateRenderCluster(ActorMesh, worldPrimitive, MatrixIdentiy, BBoxWorld, Primitive.get(), Primitive->GetMaterial());
+#endif
 					renderClusterBBox->Flags = ERenderClusterType::Auxiliary;
 					renderClusterBBox->Role = ERenderClusterRole::PrimitiveBBox;
 					
-					// For debug purpose. Creates a WireFrameCube primitive matching the BBoxWord. So no transformation is used.
-					// Useful to verify the real BBoxWorld data
-					/*
-					LXPrimitive* Primitive = GetPrimitiveFactory()->CreateWireframeCube(BBoxWorld.GetMin().x, BBoxWorld.GetMin().y, BBoxWorld.GetMin().z,
-					BBoxWorld.GetMax().x, BBoxWorld.GetMax().y, BBoxWorld.GetMax().z);
-					LXMatrix MatrixIdentiy;
-					CreateRenderCluster(ActorMesh, MatrixIdentiy, BBoxWorld, Primitive, Primitive->GetMaterial());
-					*/
 				}
 			}
 		}

@@ -22,6 +22,12 @@
 #include "LXThread.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
+LXWorldPrimitive::LXWorldPrimitive(LXPrimitiveInstance* InPrimitiveInstance):
+	PrimitiveInstance(InPrimitiveInstance)
+{
+	PrimitiveInstance->Owners.push_back(this);
+}
+
 LXWorldPrimitive::LXWorldPrimitive(LXPrimitiveInstance* InPrimitiveInstance, const LXMatrix& Matrix, LXBBox& BBox) :
 	PrimitiveInstance(InPrimitiveInstance),
 	MatrixWorld(Matrix),
@@ -176,7 +182,7 @@ void LXActorMesh::SetAssetMesh(LXAssetMesh* AssetMesh)
 	UpdateMesh();
 }
 
-void LXActorMesh::ComputeBBox()
+void LXActorMesh::ComputeBBoxLocal()
 {
 	if (_BBoxLocal.IsValid())
 		return;
@@ -190,8 +196,6 @@ void LXActorMesh::ComputeBBox()
 
 		if (BBoxMesh.IsValid())
 			_BBoxLocal.Add(BBoxMesh);
-
-		_BBoxLocal.ExtendZ(_ExtendZ);
 	}
 
 	if (!_BBoxLocal.IsValid())
@@ -239,8 +243,23 @@ const TWorldPrimitives& LXActorMesh::GetAllPrimitives()
 	return _worldPrimitives;
 }
 
+void LXActorMesh::ComputeBBoxWorld()
+{
+	if (_BBoxWorld.IsValid())
+		return;
 
-void LXActorMesh::GatherPrimitives() // AKA BuildPrimitiveProxy And Compute Martix
+	__super::ComputeBBoxWorld();
+	 
+	LXBBox box;
+	for (const LXWorldPrimitive* worldPrimitive : _worldPrimitives)
+	{
+		CHK(worldPrimitive->BBoxWorld.IsValid());
+		box.Add(worldPrimitive->BBoxWorld);
+	}
+	_BBoxWorld.Add(box);
+}
+
+void LXActorMesh::GatherPrimitives()
 {
 	CHK(_worldPrimitives.size() == 0);
 
@@ -251,16 +270,7 @@ void LXActorMesh::GatherPrimitives() // AKA BuildPrimitiveProxy And Compute Mart
 
 		for (LXPrimitiveInstance* primitiveInstance : primitives)
 		{
-			const LXMatrix* matrix = primitiveInstance->MatrixRCS;
-
-			LXMatrix matrixMeshWCS = matrix ? GetMatrixWCS() * *matrix : GetMatrixWCS();
-
-			// Compute the primitive world BBox.
-			LXBBox BBoxWorld = primitiveInstance->Primitive->GetBBoxLocal();
-			BBoxWorld.ExtendZ(_ExtendZ);
-			matrixMeshWCS.LocalToParent(BBoxWorld);
-
-			_worldPrimitives.push_back(new LXWorldPrimitive(primitiveInstance, matrixMeshWCS, BBoxWorld));
+			_worldPrimitives.push_back(new LXWorldPrimitive(primitiveInstance));
 		}
 	}
 }
@@ -272,7 +282,6 @@ void LXActorMesh::ComputePrimitiveWorldMatrices()
 		const LXMatrix* matrix = worldPrimitive->PrimitiveInstance->MatrixRCS;
 		LXMatrix matrixMeshWCS = matrix ? GetMatrixWCS() * *matrix : GetMatrixWCS();
 		LXBBox BBoxWorld = worldPrimitive->PrimitiveInstance->Primitive->GetBBoxLocal();
-		BBoxWorld.ExtendZ(_ExtendZ);
 		matrixMeshWCS.LocalToParent(BBoxWorld);
 		worldPrimitive->MatrixWorld = matrixMeshWCS;
 		worldPrimitive->BBoxWorld = BBoxWorld;

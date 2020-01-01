@@ -227,7 +227,7 @@ void LXActor::SetScale(const vec3f& Scale)
 LXBBox& LXActor::GetBBoxLocal()
 {
 	if (!_BBoxLocal.IsValid())
-		ComputeBBox();
+		ComputeBBoxLocal();
 
 	if (!_BBoxLocal.IsValid())
 	{
@@ -242,19 +242,7 @@ LXBBox& LXActor::GetBBoxLocal()
 LXBBox& LXActor::GetBBoxWorld()
 {
 	if (!_BBoxWorld.IsValid())
-	{
-		_BBoxWorld = GetBBoxLocal();
-
-		for (LXActor* Child : _Children)
-		{
-			if (Child->ParticipateToSceneBBox())
-			{
-				_BBoxWorld.Add(Child->GetBBoxWorld());
-			}
-		}
-
-		GetMatrixWCS().LocalToParent(_BBoxWorld);
-	}
+		ComputeBBoxWorld();
 
 	return _BBoxWorld;
 }
@@ -272,7 +260,7 @@ void LXActor::InvalidateWorldBounds(bool bPropagateToParent)
 		_Parent->InvalidateWorldBounds(true);
 }
 
-void LXActor::ComputeBBox()
+void LXActor::ComputeBBoxLocal()
 {
 	if (_BBoxLocal.IsValid())
 		return;
@@ -285,6 +273,24 @@ void LXActor::ComputeBBox()
 		_BBoxLocal.Add(LX_VEC3F_XYZ_50);
 		_BBoxLocal.Add(LX_VEC3F_NXYZ_50);
 	}
+}
+
+void LXActor::ComputeBBoxWorld()
+{
+	if (_BBoxWorld.IsValid())
+		return;
+	
+	_BBoxWorld = GetBBoxLocal();
+
+	for (LXActor* Child : _Children)
+	{
+		if (Child->ParticipateToSceneBBox())
+		{
+			_BBoxWorld.Add(Child->GetBBoxWorld());
+		}
+	}
+	
+	GetMatrixWCS().LocalToParent(_BBoxWorld);
 }
 
 void LXActor::AddChild(LXActor* Actor)

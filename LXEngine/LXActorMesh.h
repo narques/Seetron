@@ -20,6 +20,7 @@ class LXWorldPrimitive
 
 public:
 
+	LXWorldPrimitive(LXPrimitiveInstance* InPrimitiveInstance);
 	LXWorldPrimitive(LXPrimitiveInstance* InPrimitiveInstance, const LXMatrix& Matrix, LXBBox& BBox);
 	~LXWorldPrimitive();
 	void SetMaterial(LXMaterial* material);
@@ -55,7 +56,7 @@ public:
 	virtual void					MarkForDelete() override;
 	static int						GetCIDBit() { return LX_NODETYPE_MESH; }
 
-	virtual void					ComputeBBox() override;
+	virtual void					ComputeBBoxLocal() override;
 		
 	// Overridden from LXSmartObject
 	void							OnPropertyChanged( LXProperty* Property) override;
@@ -79,7 +80,11 @@ public:
 
 protected:
 
+	// Bounds
+	virtual	void					ComputeBBoxWorld() override;
+
 	void							GatherPrimitives();
+	virtual void					ComputePrimitiveWorldMatrices();
 
 private:
 
@@ -87,16 +92,13 @@ private:
 	void							UpdateAssetMeshCallbacks();
 	void							UpdateMesh();
 	void							OnInvalidateMatrixWCS() override;
-	void							ComputePrimitiveWorldMatrices();
 		
 protected:
 
 	shared_ptr<LXMesh> Mesh;
 	LXAssetMesh* _AssetMesh = nullptr;
-
-	// Additional size applied to the primitive BBoxWorlds ( in the LXWorldPrimitive structure )
-	// Useful when displacement is applied to the primitive vertex, like a terrain patch.
-	float _ExtendZ = 0.f;
+	
+	TWorldPrimitives _worldPrimitives;
 
 	GetSetDef(int, _nLayer, Layer, 0);
 	GetSetDef(bool, _showOutlines, ShowOutlines, false);
@@ -105,7 +107,7 @@ protected:
 private:
 
 	bool _bValidWorldPrimitiveMatrices = false;
-	TWorldPrimitives _worldPrimitives;
+	
 
 	// Instances
 	uint _InstanceCount = 0;

@@ -98,7 +98,6 @@ public:
 
 	void				InvalidateBounds(bool bPropagateToParent = false);
 	void				InvalidateWorldBounds(bool bPropagateToParent);
-	virtual void		ComputeBBox();
 	virtual bool		ParticipateToSceneBBox() const { return true; };
 	
 	// World hierarchy
@@ -146,6 +145,11 @@ public:
 	virtual void        OnPositionChanged() {}
 	virtual void		OnRotationChanged() {}
 	virtual void		OnScaleChanged(){}
+
+protected:
+
+	virtual void		ComputeBBoxLocal();
+	virtual void		ComputeBBoxWorld();
 	
 private:
 
