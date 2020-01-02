@@ -189,17 +189,17 @@ void LXRenderer::Init()
 	SSTriangle->CreateSSTriangle();
 	
 	_RenderPipeline = new LXRenderPipelineDeferred(this);
-
-	// Tasks
-	_mainTasks = std::make_unique<LXTaskManager>();
 }
 
 void LXRenderer::Run()
 {
 	bool init = false;
+
+	// Tasks
+	_mainTasks = std::make_unique<LXTaskManager>();
 			
 	// Render !
-	while (!ExitRenderThread)
+	while (!ExitRenderThread || _mainTasks->HasTasks())
 	{
 		LX_PERFOSCOPE(RenderThread);
 

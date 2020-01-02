@@ -23,6 +23,8 @@ public:
 	void Run(float deltaTime);
  
 	void EnqueueTask(LXTask* task);
+
+	bool HasTasks() const { return _tasks.size() > 0; }
 		
 private:
 

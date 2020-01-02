@@ -112,7 +112,12 @@ LXDirectX11::~LXDirectX11()
 	if (_D3D11Device)
 	{
 		ULONG count = _D3D11Device->Release();
-		CHK(count == 0);
+		if (count)
+		{
+			LogW(LXDirectX11, L"Found %i living objects releasing the D3D11Device", count);
+			LXObject::TraceAll();
+			CHK(count == 0);
+		} 
 	}
 		
 	g_d3d11Device = nullptr;
