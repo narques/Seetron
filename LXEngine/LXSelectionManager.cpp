@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -63,19 +63,19 @@ void LXSelectionManager::GetObjects( ListObjects& listObject )
 void LXSelectionManager::ClearSelection( )
 {
 	_setPropServers.clear();
-	GetEventManager()->BroadCastEvent(EEventType::SelectionChanged);
+	InvokeEvents();
 }
 
 void LXSelectionManager::AddToSelection( LXSmartObject* pSmartObject )
 {
 	_setPropServers.insert( pSmartObject );
-	GetEventManager()->BroadCastEvent(EEventType::SelectionChanged);
+	InvokeEvents();
 }
 
 void LXSelectionManager::RemoveToSelection(LXSmartObject* pSmartObject)
 {
 	_setPropServers.erase(pSmartObject);
-	GetEventManager()->BroadCastEvent(EEventType::SelectionChanged);
+	InvokeEvents();
 }
 
 void LXSelectionManager::Submit( LXSmartObject* pActor, uint64 nFlags)
@@ -85,7 +85,6 @@ void LXSelectionManager::Submit( LXSmartObject* pActor, uint64 nFlags)
 		if (pActor)
 		{
 			_setPropServers.insert(pActor);  
-			GetEventManager()->BroadCastEvent(EEventType::SelectionChanged);
 		}
 	}
 	else if (nFlags == MK_SHIFT)
@@ -93,7 +92,6 @@ void LXSelectionManager::Submit( LXSmartObject* pActor, uint64 nFlags)
 		if (pActor)
 		{
 			_setPropServers.erase(pActor); 
-			GetEventManager()->BroadCastEvent(EEventType::SelectionChanged);
 		}
 	}
 	else
@@ -103,8 +101,9 @@ void LXSelectionManager::Submit( LXSmartObject* pActor, uint64 nFlags)
 		{
 			_setPropServers.insert(pActor);
 		}
-		GetEventManager()->BroadCastEvent(EEventType::SelectionChanged);
 	}
+
+	InvokeEvents();
 
 }
 
@@ -113,19 +112,24 @@ void LXSelectionManager::Submit(const SetSmartObjects& setPropServers, uint64 nF
 	if (nFlags & MK_CONTROL)
 	{
 		_setPropServers.insert(setPropServers.begin(), setPropServers.end());
-		GetEventManager()->BroadCastEvent(EEventType::SelectionChanged);
 	}
 	else if (nFlags & MK_SHIFT)
 	{
 		_setPropServers.erase(setPropServers.begin(), setPropServers.end());
-		GetEventManager()->BroadCastEvent(EEventType::SelectionChanged);
 	}
 	else
 	{
 		_setPropServers.clear();
 		_setPropServers = setPropServers;
-		GetEventManager()->BroadCastEvent(EEventType::SelectionChanged);
 	}
+
+	InvokeEvents();
+}
+
+void LXSelectionManager::InvokeEvents()
+{
+	GetEventManager()->BroadCastEvent(EEventType::SelectionChanged);
+	OnSelectionChanged.Invoke();
 }
 
 void LXSelectionManager::GetProperties( ListProperties& listProperties) const

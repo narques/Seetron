@@ -52,6 +52,9 @@ public:
 	
 	// Returns the selection world bounds;
 	LXBBox						GetBBoxWorld		( );
+
+	// Delegates & Events
+	LXDelegate<>				OnSelectionChanged;
 			
 private:
 	
@@ -61,6 +64,8 @@ private:
 	void						Submit				( LXSmartObject* pActor, uint64 nFlags );
 	void						Submit				( const SetSmartObjects& setActors, uint64 nFlags );
 	void						SaveSelection		( const LXString& name );
+
+	void						InvokeEvents		();
 	
 private:
 

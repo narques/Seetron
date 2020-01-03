@@ -36,7 +36,6 @@ public:
 
 	virtual void OnFileSaved		( const LXSmartObject* pSmartObject ){};
 	virtual void OnChangeProperty	( const LXProperty* pProperty ){};
-	virtual void OnChangeSelection	( const SetSmartObjects& setSmartObjects ){};
 	virtual void OnChangeHighlight	( LXActor* pActor ){};
 	virtual void OnAddKeys			( const SetKeys& setKeys){};
 	virtual void OnDeleteKeys		( const SetKeys& setKeys){};

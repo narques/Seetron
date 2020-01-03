@@ -83,34 +83,14 @@ void LXCommandManager::RemoveToSelection( LXSmartObject* pSmartObject)
 
 void LXCommandManager::AddToSelection2( LXSmartObject* pActor, uint64 nFlags)
 {
-	if (!GetCore().GetProject())
-		return;
-
-	GetCore().GetProject()->GetSelectionManager().Submit(pActor, nFlags);
-	
-	const SetSmartObjects& setSmartObjects = GetCore().GetProject()->GetSelectionManager().GetSelection();
-
-	if (m_bNotifyListerners)
-	{
-		for (ListObservers::iterator It = m_listObservers.begin(); It!=m_listObservers.end(); It++)
-			static_cast<LXObserverCommandManager*>(*It)->OnChangeSelection(setSmartObjects);
-	}
+	if (GetCore().GetProject())
+		GetCore().GetProject()->GetSelectionManager().Submit(pActor, nFlags);
 }
 
 void LXCommandManager::AddToSelection2( const SetSmartObjects& setPropServers, uint64 nFlags)
 {
-	if(!GetCore().GetProject())
-		return;
-
-	GetCore().GetProject()->GetSelectionManager().Submit(setPropServers, nFlags);
-	
-	const SetSmartObjects& setSmartObjects = GetCore().GetProject()->GetSelectionManager().GetSelection();
-	
-	if (m_bNotifyListerners)
-	{
-		for (ListObservers::iterator It = m_listObservers.begin(); It!=m_listObservers.end(); It++)
-			static_cast<LXObserverCommandManager*>(*It)->OnChangeSelection(setSmartObjects);
-	}
+	if(GetCore().GetProject())
+		GetCore().GetProject()->GetSelectionManager().Submit(setPropServers, nFlags);
 }
 
 void LXCommandManager::SelectAll()
