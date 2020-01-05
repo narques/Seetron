@@ -82,13 +82,12 @@ protected:
 
 	// Bounds
 	virtual	void					ComputeBBoxWorld() override;
-
-	void							GatherPrimitives();
 	virtual void					ComputePrimitiveWorldMatrices();
 
 private:
 
-	virtual void					OnLoaded() override;
+	//virtual void					OnLoaded() override;
+	void							GatherPrimitives();
 	void							UpdateAssetMeshCallbacks();
 	void							UpdateMesh();
 	void							OnInvalidateMatrixWCS() override;

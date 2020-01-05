@@ -131,8 +131,6 @@ LXActorMeshGizmo::LXActorMeshGizmo()
 		_primitiveConstraints[Primitive.get()] = EConstraint::Local_Rotate_Y;
 		AddPrimitive(Primitive);
 	}
-
-	GatherPrimitives();
 }
 
 LXActorMeshGizmo::~LXActorMeshGizmo()

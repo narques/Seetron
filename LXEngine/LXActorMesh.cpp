@@ -226,13 +226,11 @@ void LXActorMesh::InvalidateWorldPrimitives()
 	_worldPrimitives.clear();
 }
 
-void LXActorMesh::OnLoaded()
-{
-	GatherPrimitives();
-}
-
 const TWorldPrimitives& LXActorMesh::GetAllPrimitives()
 {
+	if (_worldPrimitives.size() == 0)
+		GatherPrimitives();
+
 	if (!_bValidWorldPrimitiveMatrices)
 	{
 		CHK(::GetCurrentThreadId() != RenderThread)
