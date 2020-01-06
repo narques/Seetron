@@ -19,6 +19,7 @@ class LXPrimitiveD3D11;
 class LXRenderCluster;
 class LXRendererUpdateMatrix;
 class LXPrimitiveD3D11;
+class LXWorldPrimitive;
 
 class LXRenderClusterManager
 {

@@ -1166,8 +1166,14 @@ void* LXPrimitive::CreateInterleavedVertexArray(const int Mask, const int Vertex
 
 		case LX_PRIMITIVE_POSITIONS | LX_PRIMITIVE_TEXCOORDS: 
 		{
-			VertexStruct = new Vertex_PT[VertexCount]; VertexStructSize = sizeof(Vertex_PT);
-			CHK(0);
+			Vertex_PT* Vertices = new Vertex_PT[VertexCount];
+			VertexStructSize = sizeof(Vertex_PT);
+			for (int i = 0; i < VertexCount; i++)
+			{
+				Vertices[i].position = m_arrayPositions[i];
+				Vertices[i].texCoord = m_arrayTexCoords[i];
+			}
+			VertexStruct = Vertices;
 		}
 		break;
 		

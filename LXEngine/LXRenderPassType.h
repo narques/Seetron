@@ -14,5 +14,6 @@ enum class ERenderPass
 	Shadow,
 	GBuffer,
 	Transparency,
+	RenderToTexture,
 	Last // To count and iterate
 };

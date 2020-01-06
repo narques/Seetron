@@ -25,9 +25,8 @@ enum class ETextureTarget
 	LXTextureCubeMap
 };
 
-enum class ETextureSource
+enum class ETextureSource // !DataModel
 {
-	TextureSouceUndefined,
 	TextureSourceBitmap, 
 	TextureSourceMaterial
 };
@@ -46,7 +45,7 @@ public:
 	bool			LoadSource			( );
 	void			SetSource			( const LXFilepath& Filepath );
 		
-	ETextureFormat	GetInsternalFormat	( ) const { return _eInternalFormat; }
+	ETextureFormat	GetInternalFormat	( ) const { return _eInternalFormat; }
 	void			SetInternalFormat	( ETextureFormat eInternalFormat) { _eInternalFormat = eInternalFormat; }
 	
 	void			SetTarget			( ETextureTarget eTarget) { _eTarget = eTarget; }
@@ -58,7 +57,6 @@ public:
 	LXBitmap*		GetBitmap			( int index ) const;
 	void			SetBitmap			( LXBitmap* Bitmap );
 	LXMaterial*		GetMaterial			( ) const { return _material; }
-	void			SetMaterial			(LXMaterial* InGraph );
 
 	//
 	// Overridden From LXResource
@@ -87,9 +85,9 @@ public:
 protected:
 
 	ETextureTarget			_eTarget = ETextureTarget::LXUndefined;
-	ETextureFormat			_eInternalFormat = ETextureFormat::LXUndefined;
-	uint					_nWidth = 0;					
-	uint					_nHeight = 0;	
+	ETextureFormat			_eInternalFormat = ETextureFormat::LX_RGBA8 ;
+	uint					_nWidth = 512;					
+	uint					_nHeight = 512;	
 	uint					_nDepth = 0;
 		
 private:

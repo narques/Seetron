@@ -140,6 +140,13 @@ EXECUTE(ClearRenderTargetView2)
 	D3D11DeviceContext->ClearRenderTargetView(RenderTargetView->D3D11RenderTargetView, Color);
 }
 
+EXECUTE(ClearRenderTargetView3)
+{
+	ID3D11DeviceContext* D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();
+	float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	D3D11DeviceContext->ClearRenderTargetView(RenderTargetView, ClearColor);
+}
+
 EXECUTE(IASetInputLayout)
 {
 	ID3D11DeviceContext* D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();

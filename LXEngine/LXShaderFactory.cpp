@@ -167,6 +167,7 @@ LXString LXShaderFactory::GetRenderPassName(ERenderPass RenderPass)
 	case ERenderPass::Shadow: return L"_Shadow"; break;
 	case ERenderPass::GBuffer: return L"_GBuffer"; break;
 	case ERenderPass::Transparency: return L"_Transparency"; break;
+	case ERenderPass::RenderToTexture : return L"_RenderToTexture"; break;
 	default: CHK(0); return L""; break;
 	}
 }

@@ -121,6 +121,7 @@ void LXRenderPipelineDeferred::BuildRenderClusterLists()
 	_ListRenderClusterTransparents.clear();
 	_ListRenderClusterLights.clear();
 	_ListRenderClusterAuxiliary.clear();
+	_listRenderClusterRenderToTextures.clear();
 
 	const LXProject* Project = _Renderer->GetProject();
 	if (!Project)
@@ -173,6 +174,10 @@ void LXRenderPipelineDeferred::BuildRenderClusterLists()
 			else if (RenderCluster->IsTransparent())
 			{
 				_ListRenderClusterTransparents.push_back(RenderCluster);
+			}
+			else if (RenderCluster->Flags & ERenderClusterType::RenderToTexture)
+			{
+				_listRenderClusterRenderToTextures.push_back(RenderCluster);
 			}
 			else
 			{

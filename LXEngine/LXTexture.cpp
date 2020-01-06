@@ -26,11 +26,6 @@ LXTexture::LXTexture()
 LXTexture::~LXTexture(void)
 {
 	LX_SAFE_DELETE_ARRAY(_Bitmap);
-	if (_material)
-	{
-		delete _material;
-	}
-
 	ReleaseDeviceTexture();
 }
 
@@ -158,12 +153,6 @@ void LXTexture::SetBitmap(LXBitmap* Bitmap)
 	_Bitmap = Bitmap;
 }
 
-void LXTexture::SetMaterial(LXMaterial* material) 
-{ 
-	CHK(!_material);
-	_material = material; 
-}
-
 void LXTexture::DefineProperties()
 {
 	//--------------------------------------------------------------------------------------------------------------------------------
@@ -180,7 +169,6 @@ void LXTexture::DefineProperties()
 	LXPropertyEnum* pPropSource = DefinePropertyEnum(L"TextureSource", GetAutomaticPropertyID(), (uint*)&TextureSource);
 	pPropSource->AddChoice(L"Bitmap", (uint)ETextureSource::TextureSourceBitmap);
 	pPropSource->AddChoice(L"Material", (uint)ETextureSource::TextureSourceMaterial);
-	pPropSource->SetPersistent(false);
 	pPropSource->SetReadOnly(true);
 
 	LXPropertyEnum* pPropFormat = DefinePropertyEnum(L"Format", GetAutomaticPropertyID(), (uint*)&_eInternalFormat);
@@ -197,16 +185,20 @@ void LXTexture::DefineProperties()
 	pPropFormat->SetPersistent(false);
 	pPropFormat->SetReadOnly(true);
 
-	LXProperty* PropWidth = DefineProperty("Width", &_nWidth);
+	LXPropertyUint* PropWidth = DefineProperty("Width", &_nWidth);
 	PropWidth->SetPersistent(false);
 	PropWidth->SetReadOnly(true);
 
-	LXProperty* PropHeight = DefineProperty("Height", &_nHeight);
+	LXPropertyUint* PropHeight = DefineProperty("Height", &_nHeight);
 	PropHeight->SetPersistent(false);
 	PropHeight->SetReadOnly(true);
 
 	LXPropertyFilepath* PropFilePath = DefinePropertyFilepath("SourceFile", GetAutomaticPropertyID(), &_SourceFilepath);
 	PropHeight->SetReadOnly(true);
+
+	LXProperty::SetCurrentGroup(L"Procedural Texture");
+
+	LXPropertyAssetPtr* propertyAsset = DefineProperty("Material", (LXAsset**)&_material);
 }
 
 void LXTexture::CreateDeviceTexture()

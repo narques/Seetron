@@ -113,6 +113,10 @@ void LXRenderClusterManager::AddActor(LXActor* Actor, LXFlagsRenderClusterRole r
 					{
 						renderCluster->Flags = ERenderClusterType::Auxiliary;
 					}
+					else if (Actor->GetCID() & LX_NODETYPE_RENDERTOTTEXTURE)
+					{
+						renderCluster->Flags = ERenderClusterType::RenderToTexture;
+					}
 					else
 					{
 						// Surface

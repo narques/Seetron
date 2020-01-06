@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -101,13 +101,9 @@ LXTextureD3D11* LXTextureD3D11::CreateFromTexture(LXTexture* InTexture)
 
 	if (InTexture->TextureSource == ETextureSource::TextureSourceBitmap)
 	{
-		CHK(InTexture->GetMaterial() == nullptr);
 		if (LXBitmap* Bitmap = InTexture->GetBitmap(0))
 		{
-			DXGI_FORMAT Format = DXGI_FORMAT_UNKNOWN;
-
-			Format = GetDXGIFormat(Bitmap->GetInternalFormat());
-
+			DXGI_FORMAT Format = GetDXGIFormat(Bitmap->GetInternalFormat());
 			uint MipLevels = LXBitmap::GetNumMipLevels(Bitmap->GetWidth(), Bitmap->GetHeight());
 			TextureD3D11 = new LXTextureD3D11(Bitmap->GetWidth(), Bitmap->GetHeight(), Format, Bitmap->GetPixels(), Bitmap->GetPixelSize(), MipLevels);
 		}
@@ -115,6 +111,11 @@ LXTextureD3D11* LXTextureD3D11::CreateFromTexture(LXTexture* InTexture)
 		{
 			LogD(LXTextureD3D11, L"Texture does not contain a valid bitmap.");
 		}
+	}
+	else if (InTexture->TextureSource == ETextureSource::TextureSourceMaterial)
+	{
+		DXGI_FORMAT Format = GetDXGIFormat(InTexture->GetInternalFormat());
+		TextureD3D11 = new LXTextureD3D11(InTexture->GetWidth(), InTexture->GetHeight(), Format, false/*true*/);
 	}
 	else
 	{
@@ -133,7 +134,33 @@ LXTextureD3D11::~LXTextureD3D11()
 	LX_SAFE_RELEASE(D3D11Texture2D)
 	LX_SAFE_RELEASE(D3D11ShaderResouceView)
 	LX_SAFE_RELEASE(D3D11SamplerState);
+	LX_SAFE_RELEASE(D3D11RenderTargetView);
 }
+
+ID3D11RenderTargetView* LXTextureD3D11::GetRenderTargetView() const
+{
+	if (D3D11RenderTargetView)
+		return D3D11RenderTargetView;
+
+	// Create RenderTargetView
+	DXGI_FORMAT FormatRTV;
+	DXGI_FORMAT FormatSRV;
+	LXTextureD3D11::GetFormats(_Format, FormatRTV, FormatSRV);
+
+	D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
+	renderTargetViewDesc.Format = FormatRTV;
+	renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	renderTargetViewDesc.Texture2D.MipSlice = 0;
+
+	LXDirectX11* DirectX11 = LXDirectX11::GetCurrentDirectX11();
+	HRESULT hr = DirectX11->_D3D11Device->CreateRenderTargetView(D3D11Texture2D, &renderTargetViewDesc, &D3D11RenderTargetView);
+	if (FAILED(hr))
+		CHK(0);
+
+	return D3D11RenderTargetView;
+}
+
+
 
 void LXTextureD3D11::Create(DXGI_FORMAT Format, uint Width, uint Height, bool bSupportAutoMipmap)
 {
@@ -317,6 +344,7 @@ void LXTextureD3D11::GetFormats(DXGI_FORMAT TextureFormatDXGI, DXGI_FORMAT& OutF
 
 	// Color
 
+	case DXGI_FORMAT_B8G8R8A8_UNORM:
 	case DXGI_FORMAT_B8G8R8A8_TYPELESS: // Ok
 	{
 		OutFormatRTV = DXGI_FORMAT_B8G8R8A8_UNORM; // DXGI_FORMAT_B8G8R8A8_UNORM_SRGB (For Albedo)

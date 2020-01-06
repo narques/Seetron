@@ -13,6 +13,7 @@
 #include "LXActorMeshPlane.h"
 #include "LXActorCamera.h"
 #include "LXActorLight.h"
+#include "LXActorRenderToTexture.h"
 #include "LXScene.h"
 #include "LXTerrain.h"
 #include "LXProject.h"
@@ -109,6 +110,18 @@ LXConsoleCommandNoArg CCCreateSceneCapture(L"Create.SceneCapture", []()
 	return GetCore().GetProject() != nullptr;
 });
 
+LXConsoleCommandNoArg CCCreateRenderToTexture(L"Create.RenderToTexture", []()
+{
+	if (LXProject* Project = GetProject())
+	{
+		LXActor* Actor = new LXActorRenderToTexture(Project);
+		Project->GetScene()->AddChild(Actor);
+	}
+}, []()
+{
+	return GetCore().GetProject() != nullptr;
+});
+
 LXConsoleCommandNoArg CCCreateTerrain(L"Create.Terrain", []()
 {
 	if (LXProject* Project = GetProject())
@@ -141,61 +154,65 @@ LXActorFactory::~LXActorFactory()
 {
 }
 
-LXActor* LXActorFactory::CreateActor(const LXString& ClassName)
+LXActor* LXActorFactory::CreateActor(const LXString& className)
 {
-	LXActor* Actor = nullptr;
-	LXProject* Project = GetProject();
+	LXActor* actor = nullptr;
+	LXProject* project = GetProject();
 
-	if (ClassName == L"LXActor")
+	if (className == L"LXActor")
 	{
-		Actor = new LXActor(Project);
+		actor = new LXActor(project);
 	}
-	else if (ClassName == L"LXActorMesh")
+	else if (className == L"LXActorMesh")
 	{
-		Actor = new LXActorMesh();
+		actor = new LXActorMesh();
 	}
-	else if (ClassName == L"LXActorMeshSphere")
+	else if (className == L"LXActorMeshSphere")
 	{
-		Actor = new LXActorMeshSphere(Project);
+		actor = new LXActorMeshSphere(project);
 	}
-	else if (ClassName == L"LXActorMeshCube")
+	else if (className == L"LXActorMeshCube")
 	{
-		Actor = new LXActorMeshCube(Project);
+		actor = new LXActorMeshCube(project);
 	}
-	else if (ClassName == L"LXActorMeshCylinder")
+	else if (className == L"LXActorMeshCylinder")
 	{
-		Actor = new LXActorMeshCylinder(Project);
+		actor = new LXActorMeshCylinder(project);
 	}
-	else if (ClassName == L"LXActorMeshPlane")
+	else if (className == L"LXActorMeshPlane")
 	{
-		Actor = new LXActorMeshPlane(Project);
+		actor = new LXActorMeshPlane(project);
 	}
-	else if (ClassName == L"LXActorCamera")
+	else if (className == L"LXActorCamera")
 	{
-		Actor = new LXActorCamera(Project);
+		actor = new LXActorCamera(project);
 	}
-	else if (ClassName == L"LXActorLight")
+	else if (className == L"LXActorLight")
 	{
-		Actor = new LXActorLight(Project);
+		actor = new LXActorLight(project);
 	}
-	else if (ClassName == L"LXTerrain")
+	else if (className == L"LXTerrain")
 	{
-		Actor = new LXTerrain(Project);
+		actor = new LXTerrain(project);
 	}
-	else if (ClassName == L"LXActorForest")
+	else if (className == L"LXActorForest")
 	{
-		Actor = new LXActorForest();
+		actor = new LXActorForest();
 	}
-	else if (ClassName == L"LXActorSceneCapture")
+	else if (className == L"LXActorSceneCapture")
 	{
-		Actor = new LXActorSceneCapture();
-		Project->SetSceneCapture((LXActorSceneCapture*)Actor);
+		actor = new LXActorSceneCapture();
+		project->SetSceneCapture((LXActorSceneCapture*)actor);
+	}
+	else if (className == L"LXActorRenderToTexture")
+	{
+		actor = new LXActorRenderToTexture(project);
 	}
 	else
 	{
-		LogE(LXActorFactory, L"Unable to create object of class %s", ClassName.GetBuffer());
+		LogE(LXActorFactory, L"Unable to create object of class %s", className.GetBuffer());
 		CHK(0);
 	}
 	
-	return Actor;
+	return actor;
 }

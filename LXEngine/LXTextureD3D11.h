@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -31,13 +31,15 @@ public:
 	
 	virtual ~LXTextureD3D11();
 
+	ID3D11RenderTargetView* GetRenderTargetView() const;
+
 	// Helpers
 	static LXTextureD3D11* CreateFromTexture(LXTexture* InTexture);
 		
 	void CreateForCapture2(ID3D11Texture2D*SrcResource);
 	void ReadToBitmap(LXRenderCommandList* RCL, LXBitmap* Bitmap);
 	
-	static DXGI_FORMAT GetDXGIFormat(ETextureFormat TextureFormat); 
+	static DXGI_FORMAT GetDXGIFormat(ETextureFormat TextureFormat);
 	static DXGI_FORMAT GetFormatSRV(DXGI_FORMAT TextureFormatDXGI);
 	static void GetFormats(DXGI_FORMAT FormatTexture, DXGI_FORMAT& OutFormatRTV, DXGI_FORMAT& OutFormatSRV);
 	
@@ -48,5 +50,11 @@ public:
 	ID3D11SamplerState* D3D11SamplerState = nullptr;
 
 	DXGI_FORMAT _Format;
+
+private:
+
+	// Created on demand if the texture is used as a RenderTarget.
+	mutable ID3D11RenderTargetView* D3D11RenderTargetView = nullptr;
 };
+
 

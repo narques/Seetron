@@ -114,7 +114,7 @@ void LXMaterialD3D11::Render(ERenderPass RenderPass, LXRenderCommandList* RCL) c
 		}
 	}
 		
-	if (RenderPass == ERenderPass::GBuffer)
+	if (RenderPass == ERenderPass::GBuffer || RenderPass == ERenderPass::RenderToTexture)
 	{
 		// User Textures
 		for (LXTexture* texture : ListPSTextures)

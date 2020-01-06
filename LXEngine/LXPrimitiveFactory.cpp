@@ -46,6 +46,23 @@ void LXPrimitiveFactory::DeleteAllPrimitives()
 	ListPrimitives.clear();
 }
 
+const std::shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateSSTriangle()
+{
+	const shared_ptr<LXPrimitive>& p = CreatePrimitive();
+	
+	p->SetTopology(LX_TRIANGLES);
+	
+	p->GetArrayPositions().push_back(vec3f(-1.0f, 3.0f, 0.5f));
+	p->GetArrayPositions().push_back(vec3f(-1.0f, -1.0f, 0.5f));
+	p->GetArrayPositions().push_back(vec3f(3.0f, -1.0f, 0.5f));
+	
+	p->GetArrayTexCoords().push_back(vec2f(0.f, -1.f));
+	p->GetArrayTexCoords().push_back(vec2f(0.f, 1.f));
+	p->GetArrayTexCoords().push_back(vec2f(2.f, 1.f));
+	
+	return p;
+}
+
 const std::shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateCone(float radius, float height)
 {
 	int slices = 8; // Min : 3

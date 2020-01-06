@@ -32,7 +32,8 @@ enum class ERenderClusterType
 {
 	Surface = LX_BIT(0),
 	Light = LX_BIT(1),
-	Auxiliary = LX_BIT(2)
+	Auxiliary = LX_BIT(2),
+	RenderToTexture = LX_BIT(3)
 };
 
 typedef LXFlags<ERenderClusterType> LXFlagsRenderCluster;

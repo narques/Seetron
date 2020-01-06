@@ -27,6 +27,7 @@ typedef vector<LXAnchor*> ArrayAnchors;
 #define LX_NODETYPE_LIGHT	LX_BIT(4)
 #define LX_NODETYPE_ANCHOR	LX_BIT(5)
 #define LX_NODETYPE_CS		LX_BIT(6)
+#define LX_NODETYPE_RENDERTOTTEXTURE LX_BIT(7)
 #define LX_NODES_UI ( LX_NODETYPE_LIGHT | LX_NODETYPE_ANCHOR | LX_NODETYPE_CS )
 
 enum class EConstraint

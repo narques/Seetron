@@ -286,8 +286,9 @@ bool LXShaderManager::CreateShader(const LXGSSignature& GSSignature, LXShaderD3D
 
 bool LXShaderManager::CreateShader(const LXPSSignature& PSSignature, LXShaderD3D11* Shader)
 {
-	// Material 2.0 only the GBuffer shaders can be generated
-	if (PSSignature.Material && (PSSignature.RenderPass == ERenderPass::GBuffer || PSSignature.RenderPass == ERenderPass::Transparency))
+	if (PSSignature.Material && (PSSignature.RenderPass == ERenderPass::GBuffer || 
+		PSSignature.RenderPass == ERenderPass::Transparency ||
+		PSSignature.RenderPass == ERenderPass::RenderToTexture))
 	{
 		// Retrieve the shader filename
 		LXFilepath ShaderFilePath = PSSignature.Material->GetMaterial()->GetFilepath();
@@ -309,6 +310,7 @@ bool LXShaderManager::CreateShader(const LXPSSignature& PSSignature, LXShaderD3D
 		break;
 	case ERenderPass::GBuffer:
 	case ERenderPass::Transparency:
+	case ERenderPass::RenderToTexture:
 		return Shader->CreatePixelShader(GetSettings().GetShadersFolder() + DEFAULT_SHADER);
 		break;
 	default: CHK(0); return false; break;

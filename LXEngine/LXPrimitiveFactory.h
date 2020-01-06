@@ -26,6 +26,9 @@ public:
 
 	void Tick();
 
+	// Create a "ScreenSpace" Triangle
+	const shared_ptr<LXPrimitive>& CreateSSTriangle();
+
 	// Create cone 
 	const shared_ptr<LXPrimitive>& CreateCone(float radius, float height);
 

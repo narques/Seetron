@@ -81,6 +81,7 @@ public:
 	void GetTextureCoordinatesInAtlas(LXRenderCluster* RenderCluster, vec4f& outTextureCoordinates);
 	const LXTextureD3D11* GetTextureNoise4x4() const { return _TextureNoise4x4; }
 	const list<LXRenderCluster*>& GetRenderClusterAuxiliary() const { return _ListRenderClusterAuxiliary; }
+	const list<LXRenderCluster*>& GetRenderClusterRenderToTextures() const { return _listRenderClusterRenderToTextures; }
 
 private:
 
@@ -113,6 +114,7 @@ private:
 	list<LXRenderCluster*> _ListRenderClusterTransparents;
 	list<LXRenderCluster*> _ListRenderClusterAuxiliary;
 	list<LXRenderCluster*> _ListRenderClusterLights;
+	list<LXRenderCluster*> _listRenderClusterRenderToTextures;
 	
 	// Global textures
 	LXTextureD3D11* _TextureD3D11IBL = nullptr;

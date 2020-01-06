@@ -68,20 +68,10 @@ LXStringA LXGraphMaterialToHLSLConverter::GenerateCode(const LXMaterialD3D11* ma
 	// Prepare the "sections"
 
 	LXStringA defaultInlclude;
-
-	defaultInlclude = "common.hlsl";
-	if ((renderPass == ERenderPass::GBuffer) || (renderPass == ERenderPass::Shadow) || (renderPass == ERenderPass::Depth))
-	{
-		defaultInlclude = "common.hlsl";
-	}
-	else if (renderPass == ERenderPass::Transparency)
-	{
+	if (renderPass == ERenderPass::Transparency)
 		defaultInlclude = "Forward.hlsl";
-	}
 	else
-	{
-		CHK(0);
-	}
+		defaultInlclude = "common.hlsl";
 	
 	ShaderBuffer += "//INCLUDES\n\n";
 	ShaderBuffer += "//CONSTANT_BUFFER\n\n";
@@ -678,6 +668,33 @@ LXStringA LXGraphMaterialToHLSLConverter::CreateVertexShaderEntryPoint(int Layou
 {
 	LXStringA code;
 
+	if (_renderPass == ERenderPass::RenderToTexture)
+	{
+		if (LayoutMask == (int)EPrimitiveLayout::PT)
+		{
+			code =
+				"//--------------------------------------------------------------------------------------\n"
+				"// Vertex Shader - RenderToTexture - 'PT' layout \n"
+				"//--------------------------------------------------------------------------------------\n"
+				"VS_OUTPUT_PT VS(VS_INPUT_PT input)\n"
+				"{\n"
+				"	//VARIABLES\n"
+				"	VS_OUTPUT_PT vertex = (VS_OUTPUT_PT)0;\n"
+				"	vertex.Pos = input.Pos;\n"
+				"	vertex.TexCoord = input.TexCoord;\n"
+				"	return vertex;\n"
+				"}\n";
+
+			return code;
+		}
+		else
+		{
+
+		}
+	
+	}
+
+
 	if (LayoutMask == (int)EPrimitiveLayout::P)
 	{
 		code = 
@@ -700,7 +717,23 @@ LXStringA LXGraphMaterialToHLSLConverter::CreateVertexShaderEntryPoint(int Layou
 	}
 	else if (LayoutMask == (int)EPrimitiveLayout::PT)
 	{
-		CHK(0);
+		code =
+			"//--------------------------------------------------------------------------------------\n"
+			"// Vertex Shader - GBuffer - 'PT' layout \n"
+			"//--------------------------------------------------------------------------------------\n"
+			"VS_OUTPUT VS(VS_INPUT_PT input)\n"
+			"{\n"
+			"	//VARIABLES\n"
+			"	VS_VERTEX Vertex = (VS_VERTEX)0;\n"
+			"	Vertex.Pos = input.Pos;\n"
+			"	Vertex.Normal = float3(0.0, 0.0, 1.0);\n"
+			"	Vertex.Tangent = float3(1.0, 0.0, 0.0);\n"
+			"	Vertex.Binormal = float3(0.0, 1.0, 0.0);\n"
+			"	Vertex.TexCoord = input.TexCoord;\n"
+			"	Vertex.InstanceID = 0;\n"
+			"	Vertex.InstancePos = float3(0.0, 0.0, 0.0);\n"
+			"	return ComputeVertex(Vertex, $Displacement);\n"
+			"}\n";
 	}
 	else if (LayoutMask == (int)EPrimitiveLayout::PN)
 	{
@@ -871,6 +904,18 @@ LXStringA LXGraphMaterialToHLSLConverter::CreatePixelShaderEntryPoint()
 				"	return ComputeColor(float4($Albedo, $Opacity), float4($Metal, $Rough, 0.0, 0.0), EyeDir, input);\n"
 				"}\n";
 		}
+	}
+	else if (_renderPass == ERenderPass::RenderToTexture)
+	{
+		code =
+			"//--------------------------------------------------------------------------------------\n"
+			"// Pixel Shader - RenderToTexture \n"
+			"//--------------------------------------------------------------------------------------\n"
+			"float4 PS(VS_OUTPUT_PT input) : SV_Target\n"
+			"{\n"
+			"	//VARIABLES\n"
+			"	return float4($Albedo, $Opacity);\n"
+			"}\n";
 	}
 	else
 	{
