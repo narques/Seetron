@@ -41,9 +41,19 @@ void LXLogger::PrintToConsoles(ELogType LogType, const LXString& msg)
 	logEntry += L":" + LXString::Format(L"%02d", st.wMinute);
 	logEntry += L":" + LXString::Format(L"%02d", st.wSecond);
 	logEntry += L"." + LXString::Format(L"%03d", st.wMilliseconds) + L"]";
-	logEntry += L"[" + LXString::Number(LXCore::FrameNumber) + L"] ";
-	logEntry += msg;
+	logEntry += L"[" + LXString::Number(LXCore::FrameNumber) + L"]";
 	
+	switch (LogType)
+	{
+	case ELogType::LogType_Info: logEntry += L"[Info]";  break;
+	case ELogType::LogType_Warning: logEntry += L"[Warning]";  break;
+	case ELogType::LogType_Error: logEntry += L"[Error]";  break;
+	case ELogType::LogType_Debug: logEntry += L"[Debug]";  break;
+	default: CHK(0); break;
+	}
+
+	logEntry += L" " + msg;
+
 	_logs.push_back(logEntry);
 
 	if ((LogModes & ELogMode::LogMode_DebuggerConsole) && IsDebuggerPresent())
