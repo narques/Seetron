@@ -35,11 +35,16 @@ void LXGraph::Clear()
 
 void LXGraph::AddNode(LXNode* node)
 {
+	if (node->Main && _main)
+	{
+		LogW(LXGraph, L"Graph already has a main function");
+		return;
+	}
+
 	Nodes.push_back(node);
 	node->Graph = this;
 	if (node->Main)
 	{
-		CHK(_main == nullptr);
 		_main = node;
 	}
 }
