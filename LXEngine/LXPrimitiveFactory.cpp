@@ -50,6 +50,7 @@ const std::shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateSSTriangle()
 {
 	const shared_ptr<LXPrimitive>& p = CreatePrimitive();
 	
+	p->SetName(L"SSTriangle");
 	p->SetTopology(LX_TRIANGLES);
 	
 	p->GetArrayPositions().push_back(vec3f(-1.0f, 3.0f, 0.5f));
@@ -69,7 +70,7 @@ const std::shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateCone(float radius,
 	int stacks = 2; // Min : 2 
 
 	const shared_ptr<LXPrimitive>& p = CreatePrimitive();
-
+	p->SetName(L"Cone");
 	p->SetTopology(LX_TRIANGLES);
 
 	for (int i = 0; i < stacks; i++)
@@ -130,8 +131,8 @@ const std::shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateCone(float radius,
 const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateCube(float x, float y, float z, bool bCentered)
 {
 	const shared_ptr<LXPrimitive>& p = CreatePrimitive();
-
 	p->SetTopology(LX_TRIANGLES);
+	p->SetName(L"Cube");
 
 	float nx, ny, nz, px, py, pz; // n means negative, not normal
 
@@ -273,6 +274,7 @@ const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateTube(float innerRadius,
 
 	const shared_ptr<LXPrimitive>& p = CreatePrimitive();
 	p->SetTopology(LX_TRIANGLES);
+	p->SetName(L"Tube");
 
 	vec3f PreviousInner;
 	vec3f Previous;
@@ -392,9 +394,7 @@ const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateTerrainPatch(int QuadCo
 	const shared_ptr<LXPrimitive>& Primitive = CreatePrimitive();
 
 	Primitive->SetPersistent(false);
-
 	Primitive->SetName(L"TerrainPatch");
-	
 	Primitive->GetArrayPositions().reserve(VertexCount);
 	Primitive->GetArrayNormals().reserve(VertexCount);
 	Primitive->GetArrayTexCoords().reserve(VertexCount);
@@ -447,7 +447,7 @@ const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateCylinder(float radius, 
 	int stacks = 3; // Min : 2 
 
 	const shared_ptr<LXPrimitive>& p = CreatePrimitive();
-
+	p->SetName(L"Cylinder");
 	p->SetTopology(LX_TRIANGLES);
 
 	for (int i = 0; i < stacks; i++)
@@ -505,7 +505,7 @@ const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateCylinder(float radius, 
 const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateGrassPatch()
 {
 	const shared_ptr<LXPrimitive>& p = CreatePrimitive();
-
+	p->SetName(L"GrassPatch");
 	float m_fGrassHeight = 20.f;
 	float m_fGrassWidth = 1.f;
 	int m_nBladeSteps = 4;
@@ -716,10 +716,6 @@ const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateGrassPatch()
 
 const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateWireframeCube(float SizeX, float SizeY, float SizeZ, bool bCentered /*= true*/)
 {
-	const shared_ptr<LXPrimitive>& p = CreatePrimitive();
-
-	p->SetTopology(LX_LINES);
-
 	float nx, ny, nz, px, py, pz; // n means negative, not normal
 
 	if (bCentered)
@@ -747,7 +743,7 @@ const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateWireframeCube(float Siz
 const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateWireframeCube(float nx, float ny, float nz, float px, float py, float pz)
 {
 	const shared_ptr<LXPrimitive>& p = CreatePrimitive();
-
+	p->SetName(L"WireFrameCube");
 	p->SetTopology(LX_LINES);
 
 	const vec3f v0(nx, ny, nz);
@@ -810,7 +806,7 @@ const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateWireframeCube(float nx,
 const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateQuadXY(float SizeX, float SizeY, bool Centered)
 {
 	const shared_ptr<LXPrimitive>& p = CreatePrimitive();
-
+	p->SetName(L"QuadXY");
 	p->SetTopology(LX_TRIANGLE_STRIP);
 
 
@@ -868,7 +864,7 @@ const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateQuadXY(float SizeX, flo
 const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateQuadXZ(float SizeX, float SizeZ, bool Centered)
 {
 	const shared_ptr<LXPrimitive>& p = CreatePrimitive();
-
+	p->SetName(L"QuadXZ");
 	p->SetTopology(LX_TRIANGLE_STRIP);
 	
 	float nx, ny, nz, px, py, pz; // n means negative, not normal
@@ -928,6 +924,7 @@ const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateSphere(float radius)
 	int stacks = 32; // Min 2
 
 	const shared_ptr<LXPrimitive>& p = CreatePrimitive();
+	p->SetName(L"Sphere");
 	p->SetTopology(LX_TRIANGLES);
 
 	// Top
