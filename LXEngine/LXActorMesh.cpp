@@ -211,6 +211,7 @@ void LXActorMesh::AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, LXMatri
 	Mesh->AddPrimitive(Primitive, InMatrix, InMaterial);
 	InvalidateBounds(true);
 	InvalidateRenderState();
+	_bValidWorldPrimitiveMatrices = false;
 }
 
 void LXActorMesh::ReleaseAllPrimitives()
@@ -219,6 +220,7 @@ void LXActorMesh::ReleaseAllPrimitives()
 	InvalidateWorldPrimitives();
 	InvalidateBounds(true);
 	InvalidateRenderState();
+	_bValidWorldPrimitiveMatrices = false;
 }
 
 void LXActorMesh::InvalidateWorldPrimitives()
