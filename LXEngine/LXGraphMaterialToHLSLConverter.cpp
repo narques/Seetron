@@ -911,7 +911,7 @@ LXStringA LXGraphMaterialToHLSLConverter::CreatePixelShaderEntryPoint()
 			"//--------------------------------------------------------------------------------------\n"
 			"// Pixel Shader - RenderToTexture \n"
 			"//--------------------------------------------------------------------------------------\n"
-			"float4 PS(VS_OUTPUT_PT input) : SV_Target\n"
+			"float4 PS(VS_OUTPUT_PT input, uint IsFrontFace : SV_IsFrontFace) : SV_Target\n"
 			"{\n"
 			"	//VARIABLES\n"
 			"	return float4($Albedo, $Opacity);\n"
