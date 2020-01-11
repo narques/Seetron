@@ -2,13 +2,13 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #pragma once
 
-#include "LXAsset.h"
+#include "LXSmartObject.h"
 #include "LXMatrix.h"
 #include "LXTransformation.h"
 #include "LXBBox.h"

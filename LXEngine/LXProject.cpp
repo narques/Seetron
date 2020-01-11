@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -19,6 +19,7 @@
 #include "LXActorMeshGizmo.h"
 #include "LXActorLight.h"
 #include "LXMesh.h"
+#include "LXMeshFactory.h"
 #include "LXMSXMLNode.h"
 #include "LXPerformance.h"
 #include "LXPrimitive.h"
@@ -63,6 +64,7 @@ LXProject::LXProject(const LXFilepath& filepath)
 	m_pResourceManager = new LXAssetManager(this);
 	m_pResourceManager->Init();
 	m_pPrimitiveFactory = new LXPrimitiveFactory();
+	_meshFactory = new LXMeshFactory();
 					
 	// SmartObject settings
 	SetName(L"Project");
@@ -109,6 +111,7 @@ LXProject::~LXProject(void)
 	LX_SAFE_DELETE(m_pSnapshotManager);
 	LX_SAFE_DELETE(m_pResourceManager);
 	LX_SAFE_DELETE(m_pPrimitiveFactory);
+	LX_SAFE_DELETE(_meshFactory);
 	
 	LogI(Project, L"Project deleted");
 

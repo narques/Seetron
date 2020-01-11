@@ -2,23 +2,23 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
 #include "LXActorMeshSphere.h"
-#include "LXPrimitive.h"
-#include "LXMesh.h"
+#include "LXAsset.h"
 #include "LXCore.h"
-#include "LXPrimitiveFactory.h"
+#include "LXMesh.h"
+#include "LXMeshFactory.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXActorMeshSphere::LXActorMeshSphere(LXProject* pDocument) :LXActorMesh(pDocument)
 {
 	SetName(L"Sphere");
 
-	Mesh = make_shared<LXMesh>(nullptr);
+	Mesh = GetMeshFactory()->CreateSphere(50.f);
 
 	LXProperty::SetCurrentGroup(L"Sphere");
 	
@@ -35,11 +35,6 @@ LXActorMeshSphere::LXActorMeshSphere(LXProject* pDocument) :LXActorMesh(pDocumen
 			Mesh->SetMaterial(Key);
 		}
 	});
-	
-	const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateSphere(50.0f);
-	Primitive->SetPersistent(false);
-	Primitive->ComputeTangents();
-	AddPrimitive(Primitive);
 }
 
 LXActorMeshSphere::~LXActorMeshSphere()
@@ -64,7 +59,7 @@ LXActorMeshCylinder::LXActorMeshCylinder(LXProject* pDocument) :LXActorMesh(pDoc
 {
 	SetName(L"Cylinder");
 
-	Mesh = make_shared<LXMesh>(nullptr);
+	Mesh = GetMeshFactory()->CreateCylinder(50.f, 100.f);
 
 	LXProperty::SetCurrentGroup(L"Cylinder");
 
@@ -81,11 +76,6 @@ LXActorMeshCylinder::LXActorMeshCylinder(LXProject* pDocument) :LXActorMesh(pDoc
 			Mesh->SetMaterial(Key);
 		}
 	});
-
-	const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCylinder(50.0f, 100.0f);
-	Primitive->SetPersistent(false);
-	Primitive->ComputeTangents();
-	AddPrimitive(Primitive);
 }
 
 LXActorMeshCylinder::~LXActorMeshCylinder()
@@ -110,8 +100,8 @@ LXActorMeshCone::LXActorMeshCone():LXActorMesh(GetCore().GetProject())
 {
 	SetName(L"Cone");
 
-	Mesh = make_shared<LXMesh>(nullptr);
-
+	Mesh = GetMeshFactory()->CreateCone(50.f, 100.f);
+	
 	LXProperty::SetCurrentGroup(L"Cone");
 
 	DefineProperty("Slices", &Slices, 1, 64);
@@ -127,11 +117,6 @@ LXActorMeshCone::LXActorMeshCone():LXActorMesh(GetCore().GetProject())
 			Mesh->SetMaterial(Key);
 		}
 	});
-
-	const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCone(50.0f, 100.0f);
-	Primitive->SetPersistent(false);
-	Primitive->ComputeTangents();
-	AddPrimitive(Primitive);
 }
 
 LXActorMeshCone::~LXActorMeshCone()

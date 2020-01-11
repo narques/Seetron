@@ -2,30 +2,22 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "StdAfx.h"
 #include "LXActorLight.h"
-#include "LXActorCamera.h"
-#include "LXAnchor.h"
-#include "LXAssetManager.h"
 #include "LXProject.h"
-#include "LXSettings.h"
-#include "LXCommandManager.h"
-#include "LXLogger.h"
-#include "LXPrimitive.h"
-#include "LXMesh.h"
-#include "LXCore.h"
-#include "LXPrimitiveFactory.h"
+#include "LXMath.h"
+#include "LXMeshFactory.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXActorLight::LXActorLight(LXProject* pDocument):
 LXActorMesh(pDocument)
 {
 	_nCID |= LX_NODETYPE_LIGHT;
-	Mesh = make_shared<LXMesh>(nullptr);
+	Mesh = GetMeshFactory()->CreateCone(50.f, 100.f);
 
 	SetName("Light");
 
@@ -35,12 +27,6 @@ LXActorMesh(pDocument)
 	_bLight = true;
 	_eLightType = ELightType::Spot;
 		
-	const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCone(50.0f, 100.0f);
-	Primitive->SetPersistent(false);
-	Primitive->ComputeTangents();
-	AddPrimitive(Primitive);
-
-
 	/*
 	LXPrimitive* Primitive = GetPrimitiveFactory()->CreateQuadXY(100.f, 100.f, true);
 	Primitive->SetMaterial(L"Materials/M_UILight.smat");

@@ -2,24 +2,23 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
 #include "LXActorMeshPlane.h"
-#include "LXPrimitive.h"
-#include "LXPrimitiveInstance.h"
-#include "LXMesh.h"
+#include "LXAsset.h"
 #include "LXCore.h"
-#include "LXPrimitiveFactory.h"
+#include "LXMesh.h"
+#include "LXMeshFactory.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXActorMeshPlane::LXActorMeshPlane(LXProject* pDocument):
 LXActorMesh(pDocument)
 {
 	SetName(L"Plane");
-	Mesh = make_shared<LXMesh>(nullptr);
+	Mesh = GetMeshFactory()->CreateQuadXY(1000.f, 1000.f);
 
 	LXProperty::SetCurrentGroup(L"Plane");
 
@@ -33,11 +32,6 @@ LXActorMesh(pDocument)
 			Mesh->SetMaterial(Key);
 		}
 	});
-	
-	const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateQuadXY(1000.f, 1000.f, true);
-	Primitive->SetPersistent(false);
-	Primitive->ComputeTangents();
-	AddPrimitive(Primitive);
 }
 
 LXActorMeshPlane::~LXActorMeshPlane()

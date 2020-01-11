@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -19,6 +19,7 @@ class LXActorSceneCapture;
 class LXAnimationManager;
 class LXAssetManager;
 class LXGraphTemplate;
+class LXMeshFactory;
 class LXPrimitive;
 class LXQueryManager;
 class LXScene;
@@ -90,6 +91,7 @@ public:
 	LXSnapshotManager&			GetSnapshotManager		( )  { CHK(m_pSnapshotManager); return *m_pSnapshotManager; }
 	LXAssetManager&				GetAssetManager			( )  { CHK(m_pResourceManager); return *m_pResourceManager; }
 	LXPrimitiveFactory&			GetPrimitiveFactory		( )  { CHK(m_pPrimitiveFactory); return *m_pPrimitiveFactory; }
+	LXMeshFactory&				GetMeshFactory			( )  { CHK(_meshFactory); return *_meshFactory; }
 	
 	//
 	// Properties
@@ -177,6 +179,7 @@ private:
 	LXShaderManager*				m_pShaderManager;
 	LXAnimationManager*				m_pAnimationManager;
 	LXPrimitiveFactory*				m_pPrimitiveFactory;
+	LXMeshFactory*					_meshFactory;
 		
 	//
 	// SceneGraph & states

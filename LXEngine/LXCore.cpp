@@ -20,6 +20,7 @@
 #include "LXImporter.h"
 #include "LXLibrary.h"
 #include "LXLogger.h"
+#include "LXMeshFactory.h"
 #include "LXMessageManager.h"
 #include "LXPerformance.h"
 #include "LXPlatform.h"
@@ -643,4 +644,9 @@ LXController* GetController()
 LXRenderer* GetRenderer()
 {
 	return GetCore().GetRenderer();
+}
+
+LXMeshFactory* GetMeshFactory()
+{
+	return GetProject() ? &GetProject()->GetMeshFactory() : nullptr;
 }

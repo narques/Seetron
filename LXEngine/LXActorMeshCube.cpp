@@ -2,23 +2,23 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
-#include "LXCore.h"
 #include "LXActorMeshCube.h"
-#include "LXPrimitive.h"
+#include "LXAsset.h"
+#include "LXCore.h"
 #include "LXMesh.h"
-#include "LXPrimitiveFactory.h"
+#include "LXMeshFactory.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXActorMeshCube::LXActorMeshCube(LXProject* pDocument):LXActorMesh(pDocument)
 {
 	SetName(L"Cube");
 
-	Mesh = make_shared<LXMesh>(nullptr);
+	Mesh = GetMeshFactory()->CreateCube(100.f, 100.f, 100.f);
 
 	LXProperty::SetCurrentGroup(L"Cube");
 	
@@ -32,12 +32,6 @@ LXActorMeshCube::LXActorMeshCube(LXProject* pDocument):LXActorMesh(pDocument)
 			Mesh->SetMaterial(Key);
 		}
 	});
-		
-	const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCube(100.f, 100.f, 100.f);
-	Primitive->SetPersistent(false);
-	Primitive->ComputeNormals();
-	Primitive->ComputeTangents();
-	AddPrimitive(Primitive);
 }
 
 LXActorMeshCube::~LXActorMeshCube()
