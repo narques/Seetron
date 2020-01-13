@@ -65,21 +65,6 @@ LXTextureD3D11::LXTextureD3D11(uint Width, uint Height, DXGI_FORMAT Format, void
 
 	D3D11DeviceContext->UpdateSubresource(D3D11Texture2D, 0, NULL, Buffer, Width * PixelSize, 0);
 	
-	// Create the sampler state
-	D3D11_SAMPLER_DESC sampDesc;
-	ZeroMemory(&sampDesc, sizeof(D3D11_SAMPLER_DESC));
-	sampDesc.Filter = Filter;
-	sampDesc.AddressU =  D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	sampDesc.MaxAnisotropy = 16;
-	sampDesc.MinLOD = 0;
-	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	hr = D3D11Device->CreateSamplerState(&sampDesc, &D3D11SamplerState);
-	if (FAILED(hr))
-		CHK(0);
-
 	D3D11_SHADER_RESOURCE_VIEW_DESC ShaderResourceViewDesc;
 	ZeroMemory(&ShaderResourceViewDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
 	ShaderResourceViewDesc.Format = GetFormatSRV(desc.Format);
@@ -104,7 +89,9 @@ LXTextureD3D11* LXTextureD3D11::CreateFromTexture(LXTexture* InTexture)
 		if (LXBitmap* Bitmap = InTexture->GetBitmap(0))
 		{
 			DXGI_FORMAT Format = GetDXGIFormat(Bitmap->GetInternalFormat());
-			uint MipLevels = LXBitmap::GetNumMipLevels(Bitmap->GetWidth(), Bitmap->GetHeight());
+			uint MipLevels = 0;
+			if (InTexture->GenerateMipMap())
+				MipLevels = LXBitmap::GetNumMipLevels(Bitmap->GetWidth(), Bitmap->GetHeight());
 			TextureD3D11 = new LXTextureD3D11(Bitmap->GetWidth(), Bitmap->GetHeight(), Format, Bitmap->GetPixels(), Bitmap->GetPixelSize(), MipLevels);
 		}
 		else
@@ -133,7 +120,6 @@ LXTextureD3D11::~LXTextureD3D11()
 
 	LX_SAFE_RELEASE(D3D11Texture2D)
 	LX_SAFE_RELEASE(D3D11ShaderResouceView)
-	LX_SAFE_RELEASE(D3D11SamplerState);
 	LX_SAFE_RELEASE(D3D11RenderTargetView);
 }
 
@@ -232,26 +218,6 @@ void LXTextureD3D11::Create(DXGI_FORMAT Format, uint Width, uint Height, bool bS
 		ShaderResourceViewDesc.Texture2D.MostDetailedMip = 0;// TextureDesc.MipLevels - 1;
 
 		hr = D3D11Device->CreateShaderResourceView(D3D11Texture2D, &ShaderResourceViewDesc, &D3D11ShaderResouceView);
-		if (FAILED(hr))
-			CHK(0);
-	}
-
-	//
-	// Create the sampler state
-	//
-
-	{
-		D3D11_SAMPLER_DESC sampDesc;
-		ZeroMemory(&sampDesc, sizeof(D3D11_SAMPLER_DESC));
-		sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-		sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-		sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-		sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
-		sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-		sampDesc.MaxAnisotropy = 0;
-		sampDesc.MinLOD = 0;
-		sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-		hr = D3D11Device->CreateSamplerState(&sampDesc, &D3D11SamplerState);
 		if (FAILED(hr))
 			CHK(0);
 	}

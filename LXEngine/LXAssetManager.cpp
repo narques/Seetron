@@ -26,7 +26,8 @@
 #include "LXTexture.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
-#define LX_DEFAULT_MATERIAL L"Materials/M_Default.smat"
+const wchar_t kDefaultMaterial[] = L"Materials/DefaultGrid.smat";
+const wchar_t kTextureNoise4x4[] = L"Textures/Noise4x4.stex";
 
 //------------------------------------------------------------------------------------------------------
 // Console commands
@@ -145,8 +146,9 @@ LXAssetManager::LXAssetManager(LXProject* Project) :_pDocument(Project)
 
 void LXAssetManager::Init()
 {
-	// Load default material
+	// Immediately load engine assets
 	CHK(GetDefaultMaterial());
+	CHK(GetNoiseTexture4x4());
 }
 
 
@@ -158,7 +160,7 @@ LXAssetManager::~LXAssetManager()
 
 LXMaterial*	LXAssetManager::GetDefaultMaterial()
 {
-	LXMaterial* Material = GetMaterial(LX_DEFAULT_MATERIAL);
+	LXMaterial* Material = GetMaterial(kDefaultMaterial);
 	CHK(Material);
 	return Material;
 }
@@ -208,6 +210,13 @@ LXMaterial* LXAssetManager::GetMaterial(const LXString& strFilename) const
 LXShader* LXAssetManager::GetShader(const LXString& strFilename) const
 {
 	return GetResourceT<LXShader*>(strFilename);
+}
+
+LXTexture* LXAssetManager::GetNoiseTexture4x4()
+{
+	LXTexture* texture = GetTexture(kTextureNoise4x4);
+	CHK(texture);
+	return texture;
 }
 
 LXTexture* LXAssetManager::GetTexture(const LXString& strFilename) const

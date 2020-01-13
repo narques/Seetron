@@ -54,6 +54,9 @@ public:
 	void			SetSize				( uint nWidth, uint nHeight ) { _nWidth = nWidth; _nHeight = nHeight; }
 	void			SetDepth			( uint nDepth ){ _nDepth = nDepth; }
 
+	bool			GenerateMipMap() const { return _generateMipMap; }
+
+
 	LXBitmap*		GetBitmap			( int index ) const;
 	void			SetBitmap			( LXBitmap* Bitmap );
 	LXMaterial*		GetMaterial			( ) const { return _material; }
@@ -89,6 +92,7 @@ protected:
 	uint					_nWidth = 512;					
 	uint					_nHeight = 512;	
 	uint					_nDepth = 0;
+	bool                    _generateMipMap = true;
 		
 private:
 	

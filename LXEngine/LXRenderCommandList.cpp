@@ -312,13 +312,13 @@ EXECUTE(PSSetShaderResources2)
 EXECUTE(VSSetSamplers)
 {
 	ID3D11DeviceContext* D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();
-	D3D11DeviceContext->VSSetSamplers(StartSlot, NumSamplers, &Texture->D3D11SamplerState);
+	D3D11DeviceContext->VSSetSamplers(StartSlot, NumSamplers, &Sampler);
 }
 
 EXECUTE(PSSetSamplers)
 {
 	ID3D11DeviceContext* D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();
-	D3D11DeviceContext->PSSetSamplers(StartSlot, NumSamplers, &Texture->D3D11SamplerState);
+	D3D11DeviceContext->PSSetSamplers(StartSlot, NumSamplers, &Sampler);
 }
 
 EXECUTE(IASetVertexBuffer)

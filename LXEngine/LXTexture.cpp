@@ -55,7 +55,8 @@ bool LXTexture::Load()
 
 	if (Result)
 	{
-		LoadSource();
+		if (TextureSource == ETextureSource::TextureSourceBitmap)
+			LoadSource();
 		State = EResourceState::LXResourceState_Loaded;
 		CreateDeviceTexture();
 	}
@@ -162,7 +163,7 @@ void LXTexture::DefineProperties()
 	LXPropertyEnum* PropType = DefinePropertyEnum(L"TextureType", GetAutomaticPropertyID(), (uint*)&_eTarget);
 	PropType->AddChoice(L"Texture 1D", (uint)ETextureTarget::LXTexture1D);
 	PropType->AddChoice(L"Texture 2D", (uint)ETextureTarget::LXTexture2D);
-	PropType->AddChoice(L"Texture 2D", (uint)ETextureTarget::LXTexture3D);
+	PropType->AddChoice(L"Texture 3D", (uint)ETextureTarget::LXTexture3D);
 	PropType->AddChoice(L"Texture CubeMap", (uint)ETextureTarget::LXTextureCubeMap);
 	PropType->SetReadOnly(true);
 
@@ -192,6 +193,8 @@ void LXTexture::DefineProperties()
 	LXPropertyUint* PropHeight = DefineProperty("Height", &_nHeight);
 	PropHeight->SetPersistent(false);
 	PropHeight->SetReadOnly(true);
+
+	LXProperty* propGenerateMipMap = DefineProperty("GenerateMipMap", &_generateMipMap);
 
 	LXPropertyFilepath* PropFilePath = DefinePropertyFilepath("SourceFile", GetAutomaticPropertyID(), &_SourceFilepath);
 	PropHeight->SetReadOnly(true);

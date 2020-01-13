@@ -28,14 +28,15 @@ class LXConstantBufferData;
 class LXConstantBufferD3D11;
 class LXBitmap;
 
+struct D3D11_MAPPED_SUBRESOURCE;
+struct ID3D11BlendState;
 struct ID3D11Buffer;
 struct ID3D11DepthStencilView;
 struct ID3D11RasterizerState;
 struct ID3D11RenderTargetView;
-struct ID3D11ShaderResourceView;
 struct ID3D11Resource;
-struct D3D11_MAPPED_SUBRESOURCE;
-struct ID3D11BlendState;
+struct ID3D11SamplerState;
+struct ID3D11ShaderResourceView;
 
 #define CLASSRENDERCOMMAND0(name) class LXRenderCommand_##name : public LXRenderCommandDX11 { public : LXRenderCommand_##name(){} void Execute(LXRenderCommandList*) override; };
 #define CLASSRENDERCOMMAND1(name, type0, var0) class LXRenderCommand_##name : public LXRenderCommandDX11 { public : LXRenderCommand_##name(type0 In0):var0(In0){} void Execute(LXRenderCommandList*) override; type0 var0; };
@@ -103,8 +104,8 @@ public:
 	CMD3_CLASS(VSSetShaderResources, UINT, StartSlot, UINT, NumViews, const LXTextureD3D11*, Texture)
 	CMD3_CLASS(PSSetShaderResources, UINT, StartSlot, UINT, NumViews, const LXTextureD3D11*, Texture)
 	CMD3_CLASS(PSSetShaderResources2, UINT, StartSlot, UINT, NumViews, ID3D11ShaderResourceView*, Texture)
-	CMD3_CLASS(PSSetSamplers, UINT, StartSlot, UINT, NumSamplers, const LXTextureD3D11*, Texture)
-	CMD3_CLASS(VSSetSamplers, UINT, StartSlot, UINT, NumSamplers, const LXTextureD3D11*, Texture)
+	CMD3_CLASS(PSSetSamplers, UINT, StartSlot, UINT, NumSamplers, ID3D11SamplerState*, Sampler)
+	CMD3_CLASS(VSSetSamplers, UINT, StartSlot, UINT, NumSamplers, ID3D11SamplerState*, Sampler)
 	CMD1_CLASS(IASetPrimitiveTopology, UINT, PrimitiveTopology)
 	CMD1_CLASS(IASetVertexBuffer, LXPrimitiveD3D11*, Primitive)
 	CMD1_CLASS(IASetIndexBuffer, LXPrimitiveD3D11*, Primitive)

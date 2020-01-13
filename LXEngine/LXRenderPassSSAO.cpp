@@ -115,10 +115,9 @@ void LXRenderPassSSAO::Render(LXRenderCommandList* RCL)
 	RCL->PSSetShaderResources(0, 1, (LXTextureD3D11*)Depth);
 	RCL->PSSetShaderResources(2, 1, (LXTextureD3D11*)Normal);
 	RCL->PSSetShaderResources(11, 1, (LXTextureD3D11*)Noise4x4);
-	RCL->PSSetSamplers(0, 1, (LXTextureD3D11*)Depth);
-	RCL->PSSetSamplers(2, 1, (LXTextureD3D11*)Normal);
-	if (Noise4x4)
-		RCL->PSSetSamplers(11, 1, (LXTextureD3D11*)Noise4x4);
+	RCL->PSSetSamplers(0, 1, Renderer->GetSamplerStateRenderTarget());
+	RCL->PSSetSamplers(2, 1, Renderer->GetSamplerStateRenderTarget());
+	RCL->PSSetSamplers(11, 1, Renderer->GetSamplerStateTexturing());
 	Renderer->DrawScreenSpacePrimitive(RCL);
 	RCL->PSSetShaderResources(0, 1, nullptr);
 	RCL->PSSetShaderResources(2, 1, nullptr);
@@ -140,8 +139,8 @@ void LXRenderPassSSAO::Render(LXRenderCommandList* RCL)
 	RCL->PSSetShader(_PixelShaderBlurX);
 	RCL->PSSetShaderResources(0, 1, (LXTextureD3D11*)Depth);
 	RCL->PSSetShaderResources(1, 1, (LXTextureD3D11*)_TextureAO);
-	RCL->PSSetSamplers(0, 1, (LXTextureD3D11*)Depth);
-	RCL->PSSetSamplers(1, 1, (LXTextureD3D11*)_TextureAO);
+	RCL->PSSetSamplers(0, 1, Renderer->GetSamplerStateRenderTarget());
+	RCL->PSSetSamplers(1, 1, Renderer->GetSamplerStateRenderTarget());
 	Renderer->DrawScreenSpacePrimitive(RCL);
 	RCL->PSSetShaderResources(0, 1, nullptr);
 	RCL->PSSetShaderResources(1, 1, nullptr);
@@ -153,8 +152,8 @@ void LXRenderPassSSAO::Render(LXRenderCommandList* RCL)
 	RCL->PSSetShader(_PixelShaderBlurY);
 	RCL->PSSetShaderResources(0, 1, (LXTextureD3D11*)Depth);
 	RCL->PSSetShaderResources(1, 1, (LXTextureD3D11*)_TextureBlur);
-	RCL->PSSetSamplers(0, 1, (LXTextureD3D11*)Depth);
-	RCL->PSSetSamplers(1, 1, (LXTextureD3D11*)_TextureBlur);
+	RCL->PSSetSamplers(0, 1, Renderer->GetSamplerStateRenderTarget());
+	RCL->PSSetSamplers(1, 1, Renderer->GetSamplerStateRenderTarget());
 	Renderer->DrawScreenSpacePrimitive(RCL);
 	RCL->PSSetShaderResources(0, 1, nullptr);
 	RCL->PSSetShaderResources(1, 1, nullptr);

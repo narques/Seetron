@@ -34,8 +34,9 @@ class LXTextureD3D11;
 class LXThread;
 class LXViewport;
 class LXWorldTransformation;
-struct ID3D11RasterizerState;
 struct ID3D11BlendState;
+struct ID3D11RasterizerState;
+struct ID3D11SamplerState;
 
 #define CONSOLE_MAX_LINE 20
 
@@ -79,6 +80,9 @@ public:
 	ID3D11BlendState* GetBlendStateOpaque() const { return D3D11BlendStateNoBlend; }
 	ID3D11BlendState* GetBlendStateTransparent() const { return D3D11BlendStateBlend; }
 	ID3D11BlendState* GetBlendStateAdd() const { return D3D11BlendStateAdd; }
+	ID3D11SamplerState* GetSamplerStateTexturing() const { return D3D11SamplerStateTexturing; }
+	ID3D11SamplerState* GetSamplerStateRenderTarget() const { return D3D11SamplerStateRenderTarget; }
+
 	LXPrimitiveD3D11* GetSSTriangle() const { return SSTriangle; }
 	const LXDirectX11* GetDirectX11() const { return DirectX11; }
 	
@@ -94,6 +98,7 @@ private:
 	static int RenderFunc(void* pData);
 	void Run();
 	void Init();
+	void CreateCommonResources();
 	void Render();
 	void DeleteObjects();
 	void Empty();
@@ -146,6 +151,8 @@ private:
 	ID3D11BlendState* D3D11BlendStateNoBlend = nullptr;
 	ID3D11BlendState* D3D11BlendStateBlend = nullptr;
 	ID3D11BlendState* D3D11BlendStateAdd = nullptr;
+	ID3D11SamplerState* D3D11SamplerStateTexturing = nullptr;
+	ID3D11SamplerState* D3D11SamplerStateRenderTarget = nullptr;
 
 	// Scene & Document
 	LXProject* _Project = nullptr;

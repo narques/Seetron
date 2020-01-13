@@ -176,13 +176,13 @@ void LXRenderPassLighting::Render(LXRenderCommandList* r)
 		if (SSAO)
 			r->PSSetShaderResources(7, 1, (LXTextureD3D11*)TextureSSAO);
 
-		r->PSSetSamplers(1, 1, (LXTextureD3D11*)Color);
-		r->PSSetSamplers(3, 1, (LXTextureD3D11*)MRUL);
-		r->PSSetSamplers(4, 1, (LXTextureD3D11*)Emissive);
-		r->PSSetSamplers(5, 1, (LXTextureD3D11*)Diffuse);
-		r->PSSetSamplers(6, 1, (LXTextureD3D11*)Specular);
+		r->PSSetSamplers(1, 1, Renderer->GetSamplerStateRenderTarget());
+		r->PSSetSamplers(3, 1, Renderer->GetSamplerStateRenderTarget());
+		r->PSSetSamplers(4, 1, Renderer->GetSamplerStateRenderTarget());
+		r->PSSetSamplers(5, 1, Renderer->GetSamplerStateRenderTarget());
+		r->PSSetSamplers(6, 1, Renderer->GetSamplerStateRenderTarget());
 		if (SSAO)
-			r->PSSetSamplers(7, 1, (LXTextureD3D11*)TextureSSAO);
+			r->PSSetSamplers(7, 1, Renderer->GetSamplerStateRenderTarget());
 
 		Renderer->GetSSTriangle()->Render(r);
 
@@ -230,10 +230,10 @@ void LXRenderPassLighting::RenderIBL(LXRenderCommandList* r, const LXRenderPipel
 	r->PSSetShaderResources(3, 1, (LXTextureD3D11*)Specular);
 	r->PSSetShaderResources(5, 1, (LXTextureD3D11*)TextureIBL);
 	
-	r->PSSetSamplers(0, 1, (LXTextureD3D11*)Depth);
-	r->PSSetSamplers(2, 1, (LXTextureD3D11*)Normal);
-	r->PSSetSamplers(3, 1, (LXTextureD3D11*)Specular);
-	if (TextureIBL) r->PSSetSamplers(5, 1, (LXTextureD3D11*)TextureIBL);
+	r->PSSetSamplers(0, 1, Renderer->GetSamplerStateRenderTarget());
+	r->PSSetSamplers(2, 1, Renderer->GetSamplerStateRenderTarget());
+	r->PSSetSamplers(3, 1, Renderer->GetSamplerStateRenderTarget());
+	if (TextureIBL) r->PSSetSamplers(5, 1, Renderer->GetSamplerStateRenderTarget());
 	
 	r->UpdateSubresource4(ConstantBufferIBL->D3D11Buffer, ConstantBufferDataIBL);
 	Renderer->GetSSTriangle()->Render(r);
@@ -264,10 +264,10 @@ void LXRenderPassLighting::RenderSpotLight(LXRenderCommandList* r, const LXRende
 	r->PSSetShaderResources(3, 1, (LXTextureD3D11*)Specular);
 	r->PSSetShaderResources(6, 1, (LXTextureD3D11*)TextureShadow);
 
-	r->PSSetSamplers(0, 1, (LXTextureD3D11*)Depth);
-	r->PSSetSamplers(2, 1, (LXTextureD3D11*)Normal);
-	r->PSSetSamplers(3, 1, (LXTextureD3D11*)Specular);
-	if (TextureShadow) r->PSSetSamplers(6, 1, (LXTextureD3D11*)TextureShadow);
+	r->PSSetSamplers(0, 1, Renderer->GetSamplerStateRenderTarget());
+	r->PSSetSamplers(2, 1, Renderer->GetSamplerStateRenderTarget());
+	r->PSSetSamplers(3, 1, Renderer->GetSamplerStateRenderTarget());
+	if (TextureShadow) r->PSSetSamplers(6, 1, Renderer->GetSamplerStateRenderTarget());
 	
 	for (LXRenderCluster* SpotLight : *_ListRenderClusterLights)
 	{
@@ -305,10 +305,10 @@ void LXRenderPassLighting::RenderDirectionalLight(LXRenderCommandList* r, const 
 	r->PSSetShaderResources(3, 1, (LXTextureD3D11*)Specular);
 	r->PSSetShaderResources(6, 1, (LXTextureD3D11*)TextureShadow);
 
-	r->PSSetSamplers(0, 1, (LXTextureD3D11*)Depth);
-	r->PSSetSamplers(2, 1, (LXTextureD3D11*)Normal);
-	r->PSSetSamplers(3, 1, (LXTextureD3D11*)Specular);
-	if (TextureShadow) r->PSSetSamplers(6, 1, (LXTextureD3D11*)TextureShadow);
+	r->PSSetSamplers(0, 1, Renderer->GetSamplerStateRenderTarget());
+	r->PSSetSamplers(2, 1, Renderer->GetSamplerStateRenderTarget());
+	r->PSSetSamplers(3, 1, Renderer->GetSamplerStateRenderTarget());
+	if (TextureShadow) r->PSSetSamplers(6, 1, Renderer->GetSamplerStateRenderTarget());
 
 	for (LXRenderCluster* SpotLight : *_ListRenderClusterLights)
 	{
@@ -345,10 +345,10 @@ void LXRenderPassLighting::RenderPointLight(LXRenderCommandList* r, const LXRend
 	r->PSSetShaderResources(3, 1, (LXTextureD3D11*)Specular);
 	r->PSSetShaderResources(6, 1, (LXTextureD3D11*)TextureShadow);
 
-	r->PSSetSamplers(0, 1, (LXTextureD3D11*)Depth);
-	r->PSSetSamplers(2, 1, (LXTextureD3D11*)Normal);
-	r->PSSetSamplers(3, 1, (LXTextureD3D11*)Specular);
-	if (TextureShadow) r->PSSetSamplers(6, 1, (LXTextureD3D11*)TextureShadow);
+	r->PSSetSamplers(0, 1, Renderer->GetSamplerStateRenderTarget());
+	r->PSSetSamplers(2, 1, Renderer->GetSamplerStateRenderTarget());
+	r->PSSetSamplers(3, 1, Renderer->GetSamplerStateRenderTarget());
+	if (TextureShadow) r->PSSetSamplers(6, 1, Renderer->GetSamplerStateRenderTarget());
 
 	for (LXRenderCluster* SpotLight : *_ListRenderClusterLights)
 	{

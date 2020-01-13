@@ -27,7 +27,7 @@
 #include "LXRenderPassToneMapping.h"
 #include "LXRenderPassTransparency.h"
 #include "LXRenderPassUI.h"
-#include "LXTextureManager.h"
+#include "LXTexture.h"
 #include "LXViewport.h"
 #include "LXMemory.h" // --- Must be the last included ---
 #include "LXRenderCommandList.h"
@@ -212,11 +212,11 @@ void LXRenderPipelineDeferred::Render(LXRenderCommandList* RenderCommandList)
 
 	if (GetProject() && GetProject()->IsInitialized())
 	{
-		if (LXTexture* Texture = GetAssetManager()->GetTexture(L"Textures/jittering4x4.stex"))
+		if (LXTexture* Texture = GetAssetManager()->GetNoiseTexture4x4())
 		{
 			if (!_TextureNoise4x4)
 			{
-				_TextureNoise4x4 = RenderCommandList->Renderer->GetTextureManager()->GetTexture(Texture).get();
+				_TextureNoise4x4 = const_cast<LXTextureD3D11*>(Texture->GetDeviceTexture());
 			}
 		}
 	}

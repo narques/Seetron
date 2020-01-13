@@ -47,7 +47,6 @@ public:
 
 	ID3D11Texture2D* D3D11Texture2D = nullptr;
 	ID3D11ShaderResourceView* D3D11ShaderResouceView = nullptr;
-	ID3D11SamplerState* D3D11SamplerState = nullptr;
 
 	DXGI_FORMAT _Format;
 

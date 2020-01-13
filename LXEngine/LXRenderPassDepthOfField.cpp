@@ -70,9 +70,9 @@ void LXRenderPassDepthOfField::Render(LXRenderCommandList* r)
 	r->OMSetRenderTargets2(_renderTarget->RenderTargetViewD3D11, nullptr);
 	_shaderDOFX->Render(r);
 	r->PSSetShaderResources(0, 1, lightedScene);
-	r->PSSetSamplers(0, 1, lightedScene);
+	r->PSSetSamplers(0, 1, Renderer->GetSamplerStateRenderTarget());
 	r->PSSetShaderResources(1, 1, depthBuffer);
-	r->PSSetSamplers(1, 1, depthBuffer);
+	r->PSSetSamplers(1, 1, Renderer->GetSamplerStateRenderTarget());
 	Renderer->DrawScreenSpacePrimitive(r);
 	r->PSSetShaderResources(0, 1, nullptr);
 
@@ -80,9 +80,9 @@ void LXRenderPassDepthOfField::Render(LXRenderCommandList* r)
 	r->OMSetRenderTargets2(renderTargetCompose->RenderTargetViewD3D11, nullptr);
 	_shaderDOFY->Render(r);
 	r->PSSetShaderResources(0, 1, _renderTarget->TextureD3D11);
-	r->PSSetSamplers(0, 1, _renderTarget->TextureD3D11);
+	r->PSSetSamplers(0, 1, Renderer->GetSamplerStateRenderTarget());
 	r->PSSetShaderResources(1, 1, depthBuffer);
-	r->PSSetSamplers(1, 1, depthBuffer);
+	r->PSSetSamplers(1, 1, Renderer->GetSamplerStateRenderTarget());
 	Renderer->DrawScreenSpacePrimitive(r);
 	
 	r->PSSetShaderResources(0, 1, nullptr);

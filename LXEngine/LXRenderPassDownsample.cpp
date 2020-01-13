@@ -139,7 +139,7 @@ void LXRenderPassDownsample::Render(LXRenderCommandList* r)
 		r->VSSetShader(_VertexShader);
 		r->PSSetShader(_PixelShader);
 		r->PSSetShaderResources(0, 1, Texture);
-		r->PSSetSamplers(0, 1, Texture);
+		r->PSSetSamplers(0, 1, Renderer->GetSamplerStateRenderTarget());
 		Renderer->DrawScreenSpacePrimitive(r);
 		r->PSSetShaderResources(0, 1, nullptr);
 		r->VSSetShader(nullptr);

@@ -50,6 +50,7 @@ public:
 	LXShader*			GetShader(const LXString& filename) const;
 
 	// Texture
+	LXTexture*			GetNoiseTexture4x4();
 	LXTexture*			GetTexture(const LXString& filename) const;
 
 	// AssetMesh	

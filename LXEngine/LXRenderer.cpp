@@ -121,9 +121,34 @@ void LXRenderer::Init()
 	//
 
 	DirectX11 = new LXDirectX11(_hWND);
-
 	RenderCommandList = new LXRenderCommandList();
-		
+
+	//
+	// Create common Rasterizers, Sample
+	//
+
+	CreateCommonResources();
+
+	//
+	// Misc
+	//
+
+	ShaderManager = new LXShaderManager();
+	ShaderManager->CreateDefaultShaders();
+	TextureManager = new LXTextureManager();
+	RenderClusterManager = new LXRenderClusterManager();
+	RenderCommandList->Renderer = this;
+	RenderCommandList->ShaderManager = ShaderManager;
+	
+	// ScreenSpace Triangle
+	SSTriangle = new LXPrimitiveD3D11();
+	SSTriangle->CreateSSTriangle();
+	
+	_RenderPipeline = new LXRenderPipelineDeferred(this);
+}
+
+void LXRenderer::CreateCommonResources()
+{
 	//
 	// Rasterizers
 	//
@@ -160,7 +185,7 @@ void LXRenderer::Init()
 	// No Blend
 	D3D11_BLEND_DESC BlendState = CD3D11_BLEND_DESC(CD3D11_DEFAULT());
 	hr = DirectX11->GetCurrentDevice()->CreateBlendState(&BlendState, &D3D11BlendStateNoBlend);
-	
+
 	// Alpha blending
 	BlendState.RenderTarget[0].BlendEnable = TRUE;
 	BlendState.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
@@ -176,19 +201,39 @@ void LXRenderer::Init()
 	BlendStateAdd.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 	hr = DirectX11->GetCurrentDevice()->CreateBlendState(&BlendStateAdd, &D3D11BlendStateAdd);
 
-	// Misc
-	ShaderManager = new LXShaderManager();
-	ShaderManager->CreateDefaultShaders();
-	TextureManager = new LXTextureManager();
-	RenderClusterManager = new LXRenderClusterManager();
-	RenderCommandList->Renderer = this;
-	RenderCommandList->ShaderManager = ShaderManager;
-	
-	// ScreenSpace Triangle
-	SSTriangle = new LXPrimitiveD3D11();
-	SSTriangle->CreateSSTriangle();
-	
-	_RenderPipeline = new LXRenderPipelineDeferred(this);
+	//
+	//  SamplerStates
+	//
+
+	// Default textures
+	{
+		D3D11_SAMPLER_DESC sampDesc;
+		ZeroMemory(&sampDesc, sizeof(D3D11_SAMPLER_DESC));
+		sampDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+		sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+		sampDesc.MaxAnisotropy = 16;
+		sampDesc.MinLOD = 0;
+		sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+		hr = DirectX11->GetCurrentDevice()->CreateSamplerState(&sampDesc, &D3D11SamplerStateTexturing);
+	}
+
+	// RenderBuffer
+	{
+		D3D11_SAMPLER_DESC sampDesc;
+		ZeroMemory(&sampDesc, sizeof(D3D11_SAMPLER_DESC));
+		sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+		sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+		sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+		sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+		sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+		sampDesc.MaxAnisotropy = 0;
+		sampDesc.MinLOD = 0;
+		sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+		hr = DirectX11->GetCurrentDevice()->CreateSamplerState(&sampDesc, &D3D11SamplerStateRenderTarget);
+	}
 }
 
 void LXRenderer::Run()
@@ -244,6 +289,8 @@ void LXRenderer::DeleteObjects()
 	LX_SAFE_RELEASE(D3D11BlendStateNoBlend);
 	LX_SAFE_RELEASE(D3D11BlendStateBlend);
 	LX_SAFE_RELEASE(D3D11BlendStateAdd);
+	LX_SAFE_RELEASE(D3D11SamplerStateTexturing);
+	LX_SAFE_RELEASE(D3D11SamplerStateRenderTarget);
 	LX_SAFE_DELETE(DirectX11);
 }
 
@@ -384,7 +431,7 @@ void LXRenderer::Render()
 		RenderCommandList->PSSetShader(ShaderManager->PSDrawToBackBuffer);
 		
 		RenderCommandList->PSSetShaderResources(0, 1, (LXTextureD3D11*)Color);
-		RenderCommandList->PSSetSamplers(0, 1, (LXTextureD3D11*)Color);
+		RenderCommandList->PSSetSamplers(0, 1, D3D11SamplerStateRenderTarget);
 		SSTriangle->Render(RenderCommandList);
 		RenderCommandList->PSSetShaderResources(0, 1, nullptr);
 

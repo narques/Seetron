@@ -108,7 +108,7 @@ void LXMaterialD3D11::Render(ERenderPass RenderPass, LXRenderCommandList* RCL) c
 	{
 		if (const LXTextureD3D11* textureD3D11 = texture->GetDeviceTexture())
 		{
-			RCL->VSSetSamplers(vertexSlot, 1, textureD3D11);
+			RCL->VSSetSamplers(vertexSlot, 1, Renderer->GetSamplerStateTexturing());
 			RCL->VSSetShaderResources(vertexSlot, 1, textureD3D11);
 			vertexSlot++;
 		}
@@ -121,7 +121,7 @@ void LXMaterialD3D11::Render(ERenderPass RenderPass, LXRenderCommandList* RCL) c
 		{
 			if (const LXTextureD3D11* textureD3D11 = texture->GetDeviceTexture())
 			{
-				RCL->PSSetSamplers(pixelSlot, 1, textureD3D11);
+				RCL->PSSetSamplers(pixelSlot, 1, Renderer->GetSamplerStateTexturing());
 				RCL->PSSetShaderResources(pixelSlot, 1, textureD3D11);
 				pixelSlot++;
 			}
@@ -137,7 +137,7 @@ void LXMaterialD3D11::Render(ERenderPass RenderPass, LXRenderCommandList* RCL) c
 			if (const LXTextureD3D11* Texture = RenderPipelineDeferred->GetRenderPassLighting()->GetTextureIBL())
 			{
 				uint Slot = (uint)LXTextureSlot::Material_IBL;
-				RCL->PSSetSamplers(Slot, 1, Texture);
+				RCL->PSSetSamplers(Slot, 1, Renderer->GetSamplerStateTexturing());
 				RCL->PSSetShaderResources(Slot, 1, Texture);
 			}
 
