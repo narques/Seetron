@@ -79,7 +79,6 @@ bool LXAxis::IntersectPlane( const LXAxis& plane, vec3f* outIntersection) const
 	
 	if (IsNearlyZero(b)) 
 	{
-		CHK(0);
 		return false;    
 	}
 
@@ -87,7 +86,6 @@ bool LXAxis::IntersectPlane( const LXAxis& plane, vec3f* outIntersection) const
 	
 	if (r < 0.0)                  
 	{
-		CHK(0);
 		return false;                
 	}
 	
