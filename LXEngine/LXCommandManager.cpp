@@ -69,6 +69,12 @@ void LXCommandManager::ClearSelection( )
 		GetCore().GetProject()->GetSelectionManager().ClearSelection();
 }
 
+void LXCommandManager::SetSelection(LXSmartObject* pSmartObject)
+{
+	if (GetCore().GetProject())
+		GetCore().GetProject()->GetSelectionManager().SetSelection(pSmartObject);
+}
+
 void LXCommandManager::AddToSelection( LXSmartObject* pSmartObject )
 {
 	if (GetCore().GetProject())

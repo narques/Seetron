@@ -68,6 +68,7 @@ public:
 	void	ChangeHighlight		( LXActor* pActor );
 		
 	void	ClearSelection		( );
+	void	SetSelection		( LXSmartObject* pSmartObject );
 	void	AddToSelection		( LXSmartObject* pSmartObject );
 	void	AddToSelection2		( LXSmartObject* pActor, uint64 nFlags = 0);
 	void	AddToSelection2		( const SetSmartObjects& setPropServers, uint64 nFlags = 0);

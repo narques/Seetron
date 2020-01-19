@@ -66,6 +66,13 @@ void LXSelectionManager::ClearSelection( )
 	InvokeEvents();
 }
 
+void LXSelectionManager::SetSelection(LXSmartObject* pSmartObject)
+{
+	_setPropServers.clear();
+	_setPropServers.insert(pSmartObject);
+	InvokeEvents();
+}
+
 void LXSelectionManager::AddToSelection( LXSmartObject* pSmartObject )
 {
 	_setPropServers.insert( pSmartObject );

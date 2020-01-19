@@ -59,6 +59,7 @@ public:
 private:
 	
 	void						ClearSelection		( );
+	void						SetSelection		( LXSmartObject* pSmartObject );
 	void						AddToSelection		( LXSmartObject* pSmartObject );
 	void						RemoveToSelection	( LXSmartObject* pSmartObject );
 	void						Submit				( LXSmartObject* pActor, uint64 nFlags );
