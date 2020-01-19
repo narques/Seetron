@@ -12,6 +12,8 @@
 #include <assert.h>
 #include <vector>
 
+typedef unsigned long long DelegateHandle;
+
 template <typename R, typename...Params>
 class LXDelegateBase
 {
@@ -24,8 +26,7 @@ public:
 
 	~LXDelegateBase()
 	{
-		for (auto it = _callbacks.begin(); it != _callbacks.end(); it++)
-			delete it->second;
+		CHK(_callbacks.size() == 0);
 	}
 
 	bool FunctionExist(size_t hash)
@@ -54,9 +55,7 @@ public:
 	{
 		void* funcPtr = (void*&)func;
 		size_t hash = GetHash(obj, funcPtr);
-		auto it = _callbacks.find(hash);
-		delete it->second;
-		_callbacks.erase(hash);
+		Detach(hash);
 	}
 
 	//
@@ -65,7 +64,7 @@ public:
 
 
 	template<typename F>
-	void AttachMemberLambda(const F& func)
+	DelegateHandle AttachMemberLambda(const F& func)
 	{
 		FunctionLambda<R, Params...>* lf = new FunctionLambda<R, Params...>();
 		lf->Func = func;
@@ -73,6 +72,7 @@ public:
 		size_t hash = GetHash(nullptr, funcPtr);
 		assert(!FunctionExist(hash));
 		_callbacks[hash] = lf;
+		return hash;
 	}
 
 	void AttachMemberLambda2(std::function<R(Params...)> func)
@@ -107,9 +107,18 @@ public:
 	void DetachLambda(R(*func)(Params...))
 	{
 		size_t hash = GetHash(nullptr, func);
-		auto it = _callbacks.find(hash);
+		Detach(hash);
+	}
+
+	//
+	// Common
+	//
+
+	void Detach(DelegateHandle handle)
+	{
+		auto it = _callbacks.find((size_t)handle);
 		delete it->second;
-		_callbacks.erase(hash);
+		_callbacks.erase((size_t)handle);
 	}
 
 	//
