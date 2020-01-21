@@ -9,6 +9,7 @@
 #include "stdafx.h"
 #include "LXActorCamera.h"
 #include "LXActorMeshGizmo.h"
+#include "LXCommandManager.h"
 #include "LXCore.h"
 #include "LXEventManager.h"
 #include "LXMesh.h"
@@ -216,11 +217,18 @@ void LXActorMeshGizmo::OnPositionChanged()
 
 	if (Actors.size() == 1)
 	{
-		LXActor* Actor = *Actors.begin();
-		if (Actor != GetProject()->GetCamera())
+		LXActor* actor = *Actors.begin();
+		if (actor != GetProject()->GetCamera())
 		{
-			Actor->SetPosition(GetPosition());
-			Actor->SetRotation(GetRotation());
+			if (LXProperty* property = actor->GetProperty(LXPropertyID::POSITION))
+			{
+				GetCore().GetCommandManager().PreviewChangeProperty(property, GetPosition());
+			}
+
+			if (LXProperty* property = actor->GetProperty(LXPropertyID::ROTATION))
+			{
+				GetCore().GetCommandManager().PreviewChangeProperty(property, GetRotation());
+			}
 		}
 	}
 }
