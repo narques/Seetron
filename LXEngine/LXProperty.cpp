@@ -128,6 +128,7 @@ LXPropertyT<T>::LXPropertyT(const LXPropertyT& prop):LXProperty(prop._Type)
 	_Owner = prop._Owner;
 
 	_funcOnChange = prop._funcOnChange;
+	ValueChanged = prop.ValueChanged;
 	_funcOnGet = prop._funcOnGet;
 
 	if (prop._PropInfo->_MinValue)
@@ -346,6 +347,8 @@ void LXPropertyT<T>::SetValue( const T& value, bool InvokeOnProperyChanged )
 	if(_funcOnChange)
 		_funcOnChange(this);
 
+	ValueChanged.Invoke(this);
+	
 	// Event (By Object & By App)
 	if (InvokeOnProperyChanged)
 		_Owner->OnPropertyChanged(this);

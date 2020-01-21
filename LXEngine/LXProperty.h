@@ -137,6 +137,10 @@ public:
 
 	EPropertyType			GetType() const { return _Type; }
 
+public:
+
+	LXDelegate<LXProperty*>	ValueChanged;
+
 protected:
 
 	EPropertyType			_Type;
