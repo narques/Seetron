@@ -17,6 +17,7 @@
 #include "LXRenderer.h"
 //#include "LXRenderPassAA.h"
 #include "LXRenderPassAux.h"
+#include "LXRenderPassDepth.h"
 #include "LXRenderPassDepthOfField.h"
 #include "LXRenderPassDownsample.h"
 #include "LXRenderPassDynamicTexture.h"
@@ -47,6 +48,7 @@ LXRenderPipelineDeferred::LXRenderPipelineDeferred(LXRenderer* Renderer):_Render
 	//RenderPassAA = new LXRenderPassAA(Renderer);
 	RenderPassShadow = new LXRenderPassShadow(Renderer);
 	RenderPassDynamicTexture = new LXRenderPassDynamicTexture(Renderer);
+	RenderPassDepth = new LXRenderPassDepth(Renderer);
 	RenderPassGBuffer = new LXRenderPassGBuffer(Renderer);
 	RenderPassAux = new LXRenderPassAux(Renderer);
 	RenderPassTransparent = new LXRenderPassTransparency(Renderer);
@@ -59,6 +61,7 @@ LXRenderPipelineDeferred::LXRenderPipelineDeferred(LXRenderer* Renderer):_Render
 	   
 	_RenderPasses.push_back(RenderPassDynamicTexture);
 	_RenderPasses.push_back(RenderPassShadow);
+	_RenderPasses.push_back(RenderPassDepth);
 	_RenderPasses.push_back(RenderPassGBuffer);
 	_RenderPasses.push_back(RenderPassAux);
 	_RenderPasses.push_back(RenderPassSSAO);
@@ -73,6 +76,7 @@ LXRenderPipelineDeferred::LXRenderPipelineDeferred(LXRenderer* Renderer):_Render
 	RenderPassGBuffer->Viewport = Renderer->Viewport;
 	RenderPassGBuffer->RenderPassShadow = RenderPassShadow;
 	RenderPassGBuffer->_ListRenderClusterOpaques = &_ListRenderClusterOpaques;
+	RenderPassDepth->RenderClusters = &_ListRenderClusterOpaques;
 	RenderPassAux->Viewport = Renderer->Viewport;
 	RenderPassLighting->RenderPassGBuffer = RenderPassGBuffer;
 	RenderPassLighting->RenderPassShadow = RenderPassShadow;
@@ -88,6 +92,7 @@ LXRenderPipelineDeferred::~LXRenderPipelineDeferred()
 	LX_SAFE_DELETE(RenderPassShadow);
 	LX_SAFE_DELETE(RenderPassDynamicTexture);
 	LX_SAFE_DELETE(RenderPassGBuffer);
+	LX_SAFE_DELETE(RenderPassDepth);
 	LX_SAFE_DELETE(RenderPassAux);
 	LX_SAFE_DELETE(RenderPassTransparent);
 	LX_SAFE_DELETE(RenderPassLighting);
@@ -235,6 +240,11 @@ void LXRenderPipelineDeferred::PostRender()
 const LXTextureD3D11* LXRenderPipelineDeferred::GetDepthBuffer() const
 {
 	return RenderPassGBuffer->TextureDepth;
+}
+
+const LXDepthStencilViewD3D11* LXRenderPipelineDeferred::GetDepthStencilView() const
+{
+	return RenderPassGBuffer->DepthStencilView;
 }
 
 const LXTextureD3D11* LXRenderPipelineDeferred::GetColorBuffer() const

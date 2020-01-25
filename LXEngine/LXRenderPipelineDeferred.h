@@ -11,12 +11,14 @@
 #include "LXRenderPipeline.h"
 #include "LXConstantBufferD3D11.h"
 
+class LXDepthStencilViewD3D11;
 class LXRenderCluster;
 class LXRenderCommandList;
 class LXRenderer;
 class LXRenderPass;
 class LXRenderPassAA;
 class LXRenderPassAux;
+class LXRenderPassDepth;
 class LXRenderPassDownsample;
 class LXRenderPassDynamicTexture;
 class LXRenderPassGBuffer;
@@ -70,6 +72,7 @@ public:
 	
 	// G-Buffer
 	const LXTextureD3D11* GetDepthBuffer() const;
+	const LXDepthStencilViewD3D11* GetDepthStencilView() const;
 	const LXTextureD3D11* GetColorBuffer() const;
 	const LXTextureD3D11* GetNormalBuffer() const;
 	const LXTextureD3D11* GetMRULBuffer() const;
@@ -77,6 +80,8 @@ public:
 	
 	// Misc
 	const LXConstantBufferD3D11* GetCBViewProjection() const { return _CBViewProjection; }
+	const LXConstantBufferData0& GetCBViewProjectionData() const { return _CBViewProjectionData; }
+
 	const LXTextureD3D11* GetOutput() const override;
 	void GetTextureCoordinatesInAtlas(LXRenderCluster* RenderCluster, vec4f& outTextureCoordinates);
 	const LXTextureD3D11* GetTextureNoise4x4() const { return _TextureNoise4x4; }
@@ -93,6 +98,7 @@ private:
 
 	// Render passes 
 	LXRenderPassDynamicTexture* RenderPassDynamicTexture = nullptr;
+	LXRenderPassDepth* RenderPassDepth = nullptr;
 	LXRenderPassGBuffer* RenderPassGBuffer = nullptr;
 	LXRenderPassAux* RenderPassAux = nullptr;
 	LXRenderPassShadow* RenderPassShadow = nullptr;

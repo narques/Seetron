@@ -113,15 +113,15 @@ public:
 	CMD2_CLASS(UpdateSubresource2, ID3D11Buffer*, D3D11Buffer, LXConstantBufferData*, ConstantBufferData)
 	CMD2_CLASS(UpdateSubresource3, LXConstantBufferD3D11*, ConstantBuffer, LXConstantBufferData*, ConstantBufferData)
 	CMD2_CLASS(UpdateSubresource4, ID3D11Buffer*, D3D11Buffer, const void*, ConstantBufferData)
-	CMD3_CLASS(VSSetConstantBuffers, UINT, StartSlot, UINT, NumBuffers, LXConstantBufferD3D11*, ConstantBuffer)
+	CMD3_CLASS(VSSetConstantBuffers, UINT, StartSlot, UINT, NumBuffers, const LXConstantBufferD3D11*, ConstantBuffer)
 	CMD3_CLASS(PSSetConstantBuffers, UINT, StartSlot, UINT, NumBuffers, const LXConstantBufferD3D11*, ConstantBuffer)
-	CMD1_CLASS(ClearDepthStencilView, LXDepthStencilViewD3D11*, DepthStencilView)
+	CMD1_CLASS(ClearDepthStencilView, const LXDepthStencilViewD3D11*, DepthStencilView)
 	CMD1_CLASS(ClearRenderTargetView, LXRenderTargetViewD3D11*, RenderTargetView)
 	CMD2_CLASS(ClearRenderTargetView2, LXRenderTargetViewD3D11*, RenderTargetView, vec4f, Color)
 	CMD1_CLASS(ClearRenderTargetView3, ID3D11RenderTargetView*, RenderTargetView)
 	CMD1_CLASS(IASetInputLayout, LXShaderD3D11*, VertexShader)
 	CMD1_CLASS(OMSetRenderTargets, ID3D11RenderTargetView*, RenderTarget)
-	CMD2_CLASS(OMSetRenderTargets2, LXRenderTargetViewD3D11*, RenderTargetView, LXDepthStencilViewD3D11*, DepthStencilView)
+	CMD2_CLASS(OMSetRenderTargets2, LXRenderTargetViewD3D11*, RenderTargetView, const LXDepthStencilViewD3D11*, DepthStencilView)
 	CMD3_CLASS(OMSetRenderTargets3, UINT, NumViews, ID3D11RenderTargetView**, RenderTargetViews, ID3D11DepthStencilView*, DepthStencilView)
 	CMD1_CLASS(OMSetBlendState, ID3D11BlendState*, D3D11BlendState);
 	CMD1_CLASS(RSSetState, ID3D11RasterizerState*, RasterizerState)
@@ -149,7 +149,7 @@ public:
 	LXShaderD3D11* CurrentVertexShader = nullptr;
 
 	// Frame ConstantBuffers
-	LXConstantBufferD3D11* CBViewProjection = nullptr;
+	const LXConstantBufferD3D11* CBViewProjection = nullptr;
 	std::vector<LXRenderCommand*> Commands;
 
 	//Stats

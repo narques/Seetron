@@ -32,7 +32,7 @@ public:
 	virtual void Render(LXRenderCommandList* RenderCommandList) = 0;
 	virtual bool IsValid() const { return true; }
 	virtual void RebuildShaders() { };
-	virtual void Resize(uint Width, uint Height)=0;
+	virtual void Resize(uint Width, uint Height) { };
 	virtual const LXTextureD3D11* GetOutputTexture() const { CHK(0); return nullptr; }
 	virtual const bool GetOutputTextures(vector<const LXTextureD3D11*>& outTextures) { CHK(0); return false; }
 		
