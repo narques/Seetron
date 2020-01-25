@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -11,10 +11,11 @@
 #include "LXObject.h"
 #include "LXMatrix.h"
 
-class LXBBox;
 class LXActorCamera;
 class LXAxis;
-
+class LXBBox;
+class LXCamera;
+	
 class LXCORE_API LXWorldTransformation : public LXObject
 {
 
@@ -40,6 +41,7 @@ public:
 	void			CreateOrtho			( int nWidth, int nHeight ); 
 	void			CreateOrtho			( int nWidth, int nHeight, float l, float r, float b, float t, float n, float f );
 	void			FromCamera			( LXActorCamera* pCamera,  int nWidth, int nHeight );
+	void			FromCamera			( LXCamera* camera, int nWidth, int nHeight);
 	void			MirrorFromCamera	( LXActorCamera* pCamera,  int nWidth, int nHeight, const vec3f& vOrigin, const vec3f& vUp );
 
 	const LXMatrix&	GetMatrixProjection	( ) const { return m_matProjection; }

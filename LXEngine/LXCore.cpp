@@ -31,6 +31,7 @@
 #include "LXScene.h"
 #include "LXSettings.h"
 #include "LXSettings.h"
+#include "LXTrackBallCameraManipulator.h"
 #include "LXStatManager.h"
 #include "LXStatistic.h"
 #include "LXSyncEvent.h"
@@ -526,6 +527,8 @@ void LXCore::Run()
 		// Synchronize the data between MainThread and RenderThread
 		GetController()->Run();
 	}
+
+	GetViewport()->GetCameraManipulator()->Update(Time.DeltaTime());
 
 	//
 	// --- Begin Frame ---

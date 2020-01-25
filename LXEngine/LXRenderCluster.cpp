@@ -8,9 +8,9 @@
 
 #include "stdafx.h"
 #include "LXRenderCluster.h"
-#include "LXActorCamera.h"
 #include "LXActorLight.h"
 #include "LXActorMesh.h"
+#include "LXCamera.h"
 #include "LXConstantBufferD3D11.h"
 #include "LXCore.h"
 #include "LXDirectX11.h"
@@ -235,11 +235,11 @@ void LXRenderCluster::UpdateLightParameters(LXActor* Actor)
 	vec3f LightDirection = ActorLight->GetMatrixWCS().GetVz() * -1.f;
 
 	#pragma message("move actor volatile: move depuis le thread RT")
-	LXActorCamera Camera(nullptr);
+	LXCamera Camera;
 	Camera.SetPosition(LightPosition);
 	Camera.SetDirection(LightDirection);
 	Camera.SetFov(ActorLight->GetSpotAngle());
-	Camera.LookAt(1.0);
+	Camera.SetAspectRatio(1.0);
 
 	// Camera to WorlTransformation
 	LXWorldTransformation WorldTransformation;

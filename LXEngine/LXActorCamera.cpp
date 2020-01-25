@@ -70,13 +70,7 @@ void LXActorCamera::LookAt(void)
 
 	LXMatrix matCamera;
 
-	vec3f vz = GetDirection();
-	
-	CHK(IsValid(vz));
-		
-	vz.Normalize();
-	if (vz.IsNull())
-		vz.z = 1.f;
+	vec3f vz = GetViewVector();
 
 	// No _Project when used in RenderPassShadow
 	vec3f vy = _Project?_Project->GetUpAxis():vec3f(0.f,0.f,1.0f);
@@ -121,52 +115,6 @@ void  LXActorCamera::Set( const vec3f& vPosition, const vec3f& vTarget)
 	_vTarget = vTarget;
 }
 
-//-----------------------------------------------------------------------------------
-//	Rotate camera position and camera target around given point
-//-----------------------------------------------------------------------------------
-void LXActorCamera::OrbitAround( const vec3f* v, float angle, const vec3f& vAxis )
-{
-	OrbitAround(v, angle, vAxis.x, vAxis.y, vAxis.z);
-}
-
-void LXActorCamera::OrbitAround(const vec3f* v, float angle, float x, float y, float z)
-{
-	vec3f vPosition = GetPosition();
-	vPosition.RotateAround((vec3f*)v, angle, x, y, z);
-	SetPosition(vPosition);
-	_vTarget.RotateAround((vec3f*)v, angle, x, y, z);
-}
-
-//-----------------------------------------------------------------------------------
-//  Rotate camera target around camera position
-//-----------------------------------------------------------------------------------
-void LXActorCamera::Rotate(float angle, float x, float y, float z)
-{
-	vec3f vPosition = GetPosition();
-	_vTarget.RotateAround(&vPosition, angle, x, y, z);
-	SetPosition(vPosition);
-}
-
-void LXActorCamera::Move(float fSpeed)
-{
-	// Get the current view vector (the direction we are looking)
-	vec3f vVector;
-	GetViewVector(&vVector);
-	vVector.Normalize();
-
-	vec3f vPosition = GetPosition();
-
-	vPosition.x += vVector.x * fSpeed;		 
-	vPosition.y += vVector.y * fSpeed;		 
-	vPosition.z += vVector.z * fSpeed;		 
-	
-	SetPosition(vPosition);
-
-	_vTarget.x += vVector.x * fSpeed;		  
-	_vTarget.y += vVector.y * fSpeed;		  
-	_vTarget.z += vVector.z * fSpeed;		  
-}
-
 void LXActorCamera::MoveTo(float fDistance, vec3f& v)
 {
 	vec3f vPosition = GetPosition();
@@ -184,61 +132,11 @@ void LXActorCamera::MoveTo(float fDistance, vec3f& v)
 	_vTarget.z += vVector.z * fDistance;	
 }
 
-//-----------------------------------------------------------------------------------
-//	Retrieve up vector
-//-----------------------------------------------------------------------------------
-void LXActorCamera::GetUpVector(vec3f* pVecUp)
-{
-	vec3f vPosition = GetPosition();
-	vec3f vNegView  =  vPosition - _vTarget;
-	pVecUp->CrossProduct(vNegView, _Project->GetUpAxis());
-	pVecUp->Normalize();
-}
-
-vec3f LXActorCamera::GetUpVector() const
-{
-	vec3f vUp;
-	vec3f vPosition = GetPosition();
-	vec3f vNegView  =  vPosition - _vTarget;
-	vUp.CrossProduct(vNegView, _Project->GetUpAxis());
-	vUp.Normalize();
-	return vUp;
-}
-
-void LXActorCamera::GetViewVector(vec3f* pVecView)
-{
-	vec3f vPosition = GetPosition();
-	*pVecView = _vTarget - vPosition;
-}
-
 vec3f LXActorCamera::GetViewVector()
 {
-	vec3f vPosition = GetPosition();
-	vec3f v = _vTarget - vPosition;
+	vec3f v = GetMatrix().GetVx();
 	v.Normalize();
 	return v;
-}
-
-vec3f LXActorCamera::GetDirection( ) const
-{
-	vec3f vPosition = GetPosition();
-	return _vTarget - vPosition;
-}
-
-void LXActorCamera::SetDirection(const vec3f& vDirection)
-{
-	vec3f vPosition = GetPosition();
-	float fDistance = vPosition.Distance(_vTarget);
-	_vTarget = vPosition + vDirection * fDistance;
-	CHK(IsValid(_vTarget));
-	_bValidModelView = false;
-}
-
-void LXActorCamera::SetDirectionKeepTarget(const vec3f& vDirection, float fDistance)
-{
-	vec3f vPosition = _vTarget - vDirection * fDistance;
-	SetPosition(vPosition);
-	_bValidModelView = false;
 }
 
 LXPrimitive* LXActorCamera::GetDrawable( ) const

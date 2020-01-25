@@ -29,7 +29,6 @@
 #include "LXTextureManager.h"
 #include "LXThread.h"
 #include "LXTimeD3D11.h"
-#include "LXTrackBallCameraManipulator.h"
 #include "LXViewport.h"
 #include "LXStatManager.h"
 #include "LXTaskManager.h"
@@ -396,8 +395,6 @@ void LXRenderer::Render()
 	{
 		_Project->GetAnimationManager().Update(time.DeltaTime());
 	}
-
-	Viewport->GetCameraManipulator()->Update(time.DeltaTime());
 
 	if (GetScene())
 	{

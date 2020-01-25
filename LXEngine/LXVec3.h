@@ -89,34 +89,7 @@ public:
 	__forceinline vec3		yzx() const { return vec3(y, z, x); }
 
 	__forceinline bool		IsNull( )										{ return (x == 0.f && y == 0.f && z == 0.f); }
-		
-	void					RotateAround( vec3<T>* v, float angle, float x, float y, float z)
-	{
-		if (angle == 0.0f)
-			return;
 
-		vec3<T> vNewView;
-		vec3<T> vView = *this - *v;		
-
-		// Calculate the sine and cosine of the angle once
-		float cosTheta = cosf(angle);
-		float sinTheta = sinf(angle);
-
-		vNewView.x  = (cosTheta + (1 - cosTheta) * x * x)		* vView.x;
-		vNewView.x += ((1 - cosTheta) * x * y - z * sinTheta)	* vView.y;
-		vNewView.x += ((1 - cosTheta) * x * z + y * sinTheta)	* vView.z;
-
-		vNewView.y  = ((1 - cosTheta) * x * y + z * sinTheta)	* vView.x;
-		vNewView.y += (cosTheta + (1 - cosTheta) * y * y)		* vView.y;
-		vNewView.y += ((1 - cosTheta) * y * z - x * sinTheta)	* vView.z;
-
-		vNewView.z  = ((1 - cosTheta) * x * z - y * sinTheta)	* vView.x;
-		vNewView.z += ((1 - cosTheta) * y * z + x * sinTheta)	* vView.y;
-		vNewView.z += (cosTheta + (1 - cosTheta) * z * z)		* vView.z;
-
-		*this = *v + vNewView;
-	}
-		
 public:
 
 	T x, y, z;

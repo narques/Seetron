@@ -2,13 +2,14 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "StdAfx.h"
 #include "LXWorldTransformation.h"
 #include "LXBBox.h"
+#include "LXCamera.h"
 #include "LXActorCamera.h"
 #include "LXVec4.h"
 #include "LXAxis.h"
@@ -208,6 +209,38 @@ void LXWorldTransformation::FromCamera(LXActorCamera* pCamera, int nWidth, int n
 
 	m_bValid = true;
 } 
+
+void LXWorldTransformation::FromCamera(LXCamera* camera, int nWidth, int nHeight)
+{
+	m_vp[0] = 0;
+	m_vp[1] = 0;
+	m_vp[2] = (float)nWidth;
+	m_vp[3] = (float)nHeight;
+
+	if (camera->IsOrtho())
+	{
+		float fHeight = camera->GetHeight();
+		float fWidth = fHeight * nWidth / nHeight;
+		m_matProjection.SetOrtho(-fWidth, fWidth, -fHeight, fHeight, camera->GetNear(), camera->GetFar());
+	}
+	else
+		m_matProjection.SetPerspectiveLH(camera->GetFov(), camera->GetAspectRatio(), camera->GetNear(), camera->GetFar());
+	
+	m_matProjectionInv = m_matProjection;
+	m_matProjectionInv.Inverse2();
+
+	// Redundancy LXWordTransformation vs LXCamera 
+	m_matView = camera->GetMatrixView();
+
+	m_matVP = m_matProjection * m_matView;
+	m_matVPInv = m_matVP;
+	m_matVPInv.Inverse2();
+
+	m_matViewInv = m_matView;
+	m_matViewInv.Inverse2();
+
+	m_bValid = true;
+}
 
 void LXWorldTransformation::MirrorFromCamera(LXActorCamera* pCamera, int nWidth, int nHeight, const vec3f& vOrigin, const vec3f& vUp)
 {

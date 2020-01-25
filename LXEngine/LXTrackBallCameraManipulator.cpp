@@ -8,14 +8,14 @@
 
 #include "StdAfx.h"
 #include "LXTrackBallCameraManipulator.h"
+#include "LXActorCamera.h"
+#include "LXAnimation.h"
+#include "LXAnimationManager.h"
+#include "LXCommandManager.h"
+#include "LXCore.h"
+#include "LXMath.h"
 #include "LXProject.h"
 #include "LXViewport.h"
-#include "LXWorldTransformation.h"
-#include "LXActorCamera.h"
-#include "LXScene.h"
-#include "LXPropertyManager.h"
-#include "LXProject.h"
-#include "LXAnimationManager.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 #define MK_LBUTTON          0x0001
@@ -364,10 +364,6 @@ bool LXTrackBallCameraManipulator::RotateCamera( double dFrameTime )
 	float lenght = mouseChange.Length();
 	if ( mouseChange.Length() > 1.f )
 	{
-		
-		//TRACE(L"Rotate %f\n", mouseChange.Length());
-
-
 		double t = dFrameTime /  125.0;
 		if (t > 1.0)
 			_rotateStart = _rotateEnd;
@@ -378,75 +374,44 @@ bool LXTrackBallCameraManipulator::RotateCamera( double dFrameTime )
 		LXScene* pScene = GetScene();
 		LXProject* pDocument = GetDocument();
 
-		float rx = ((float)(_rotateStart.x - _pntWndRotate.x)) / 150.0f;
-		float ry = ((float)(_rotateStart.y - _pntWndRotate.y)) / 150.0f;
+		float rx = _rotateStart.x - _pntWndRotate.x;
+		float ry = _rotateStart.y - _pntWndRotate.y;
 		_pntWndRotate.x = _rotateStart.x;
 		_pntWndRotate.y = _rotateStart.y;
-		vec3f vAxis;
-		pCamera->GetUpVector(&vAxis);
 
-		if (0/*m_bRotate*/)
+		const float rotationSpeed = 2.5f;
+
+		rx /= rotationSpeed;
+		ry /= rotationSpeed;
+
+		vec3f rotation = pCamera->GetRotation() + vec3f(0.f, ry, -rx);
+		LXProperty* propertyRotation = pCamera->GetProperty(LXPropertyID::ROTATION);
+		GetCore().GetCommandManager().PreviewChangeProperty(propertyRotation, rotation);
+		
+		if (GetAsyncKeyState(VK_CONTROL) & 0x8000)
 		{
-			//pCamera->Rotate(ry, vAxis.x, vAxis.y, vAxis.z);
-			//pCamera->Rotate(-rx, 0, 1, 0);
+			return true;
 		}
-		else
-		{
-			const vec3f* pCenter;
-			pCenter = &_vPickedPoint;
+		
+		// Position to 'picked' CS
+		vec3f localPosiion = pCamera->GetPosition() - _vPickedPoint;
+
+		// Rotate around world z axis
+		LXMatrix matrixRotation;
+		matrixRotation.SetRotation(LX_DEGTORAD(rx), 0.f, 0.f, 1.f);
 			
+		// Rotate around Camera y axis
+		LXMatrix matrixRotation2;
+		vec3f right = pCamera->GetMatrix().GetVy();
+		matrixRotation2.SetRotation(LX_DEGTORAD(ry), right.x, right.y, right.z);
+		vec3f newPosition = matrixRotation2 * matrixRotation * localPosiion;
+				
+		// Back to world CS
+		newPosition += _vPickedPoint;
 
-			vec3f view;
-			pCamera->GetViewVector(&view);
-			float angle = CosAngle(view, pDocument->GetUpAxis());
-			if (abs(angle - sinf(ry)) > 0.999f)
-			{
-				float ry2 = asinf(0.999f - abs(angle));
-				ry2 *= ry<0.0?-1.0f:1.0f;
-				pCamera->OrbitAround(pCenter, ry2, vAxis.x, vAxis.y, vAxis.z);
-			}
-			else
-				pCamera->OrbitAround(pCenter, ry, vAxis.x, vAxis.y, vAxis.z);
-
-			pCamera->OrbitAround(pCenter, -rx, pDocument->GetUpAxis());
-
-					
-// 			Phi += ry;
-// 			Theta += rx;
-// 			
-// 			// Clamp Phi within -LX_2PI to LX_2PI
-// 			if (Phi > LX_2PI)
-// 				Phi -= LX_2PI;
-// 			else if (Phi < -LX_2PI)
-// 				Phi += LX_2PI;
-// 			
-// 
-// 			// Rotate Position
-// 			// To Cartesian
-// 			float Radius = pCenter->Distance(pCamera->GetPosition());
-// 			float x = Radius * sinf(Phi) * sinf(Theta);
-// 			float y = Radius * cosf(Phi);
-// 			float z = Radius * sinf(Phi) * cosf(Theta);
-// 			float w = 1.f;
-// 
-// 			vec3f NewPosition = vec3f(x, y, z) + *pCenter;
-// 			pCamera->SetPosition(NewPosition);
-// 
-// 
-// 			//Rotate Target
-// 			Radius = pCenter->Distance(*pCamera->GetTarget());
-// 			x = Radius * sinf(Phi) * sinf(Theta);
-// 			y = Radius * cosf(Phi);
-// 			z = Radius * sinf(Phi) * cosf(Theta);
-// 			w = 1.f;
-// 
-// 			vec3f NewTarget = vec3f(x, y, z) + *pCenter;
-// 			pCamera->SetTarget(NewTarget);
-
-
-
-		}
-
+		LXProperty* propertyPosition = pCamera->GetProperty(LXPropertyID::POSITION);
+		GetCore().GetCommandManager().PreviewChangeProperty(propertyPosition, newPosition);
+		
 		return true;
 	}
 	else
@@ -490,7 +455,9 @@ bool LXTrackBallCameraManipulator::PanCamera( double dFrameTime )
 		CHK(IsValid(*pTar));
 		CHK(IsValid(Pos));
 
-		pCamera->SetPosition(Pos);
+		LXProperty* propertyPosition = pCamera->GetProperty(LXPropertyID::POSITION);
+		GetCore().GetCommandManager().PreviewChangeProperty(propertyPosition, Pos);
+
 		_vPickedPointPan = vPickedPoint;
 		
 		_bAnimatedPan = true;

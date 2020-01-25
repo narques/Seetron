@@ -34,22 +34,12 @@ public:
 	void			SetNearFar		( double dNear, double dFar ) { _fNear = (float)dNear; _fFar= (float)dFar; }
 	
 	void			LookAt			( double dAspect );
-	void			Move			( float fSpeed );
 	void			MoveTo			( float fSpeed, vec3f& v);
-	void			OrbitAround		( const vec3f* v, float angle, float x, float y, float z );
-	void			OrbitAround		( const vec3f* v, float angle, const vec3f& vAxis );
-	void			Rotate			( float angle, float x, float y, float z );
 	
-	void			GetUpVector		( vec3f* pVecUp );
-	vec3f			GetUpVector		( ) const;
 
 	void			SetPosition		( const vec3f& vPosition ) { _bValidModelView = false; LXActor::SetPosition(vPosition);}
 	
-	vec3f			GetDirection	( ) const;
-	void			SetDirection	( const vec3f& vDirection );
-	void			SetDirectionKeepTarget( const vec3f& vDirection, float fDistance );
 	
-	void			GetViewVector	( vec3f* pVecView );
 	vec3f			GetViewVector	( );
 	vec3f*			GetTarget		( ) { return &_vTarget; }
 	void			SetTarget		( const vec3f& vTarget );

@@ -282,9 +282,8 @@ void LXViewState::ZoomOnBBoxAnimated(const LXBBox& box, bool bAnimated)
 
 	LXActorCamera* ActorCamera = GetProject()->GetCamera();
 	
-	vec3f vDir = ActorCamera->GetDirection();
-	vDir.Normalize();
-
+	vec3f vDir = ActorCamera->GetViewVector();
+	
 	vec3f vNewTarget;
 	vNewTarget.Set(box.GetCenter().x, box.GetCenter().y, box.GetCenter().z);
 	vec3f vNewPosition = vNewTarget - vDir * box.GetDiag() * (90.0f / ActorCamera->GetFov()) * 0.5f;

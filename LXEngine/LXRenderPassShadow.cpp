@@ -8,9 +8,8 @@
 
 #include "stdafx.h"
 #include "LXActor.h"
-#include "LXActorCamera.h"
 #include "LXBBox.h"
-#include "LXCore.h"
+#include "LXCamera.h"
 #include "LXCore.h"
 #include "LXFrustum.h"
 #include "LXActorLight.h"
@@ -88,11 +87,11 @@ void LXRenderPassShadow::Render(LXRenderCommandList* RCL)
 		vec3f LightDirection = Light->GetMatrixWCS().GetVz() * -1.f;
 
 		#pragma message("move actor volatile: move depuis le thread RT")
-		LXActorCamera Camera(nullptr);
+		LXCamera Camera;
 		Camera.SetPosition(LightPosition);
 		Camera.SetDirection(LightDirection);
 		Camera.SetFov(Light->GetSpotAngle());
-		Camera.LookAt(1.0);
+		Camera.SetAspectRatio(1.0);
 
 		// Camera to WorlTransformation
 		LXWorldTransformation WorldTransformation;
