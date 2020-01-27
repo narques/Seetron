@@ -26,7 +26,7 @@ LXConstantBufferD3D11::LXConstantBufferD3D11(const void* buffer, int bufferSize)
 LXConstantBufferD3D11::~LXConstantBufferD3D11()
 {
 	LX_COUNTSCOPEDEC(LXConstantBufferD3D11)
-	CHK(IsRenderThread())
+	CHK(IsRenderThread());
 	LX_SAFE_RELEASE(D3D11Buffer);
 }
 

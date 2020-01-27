@@ -275,7 +275,7 @@ void LXRenderer::Run()
 
 void LXRenderer::DeleteObjects()
 {
-	CHK(IsRenderThread())
+	CHK(IsRenderThread());
 	LX_SAFE_DELETE(ShaderManager);
 	LX_SAFE_DELETE(TextureManager);
 	LX_SAFE_DELETE(RenderClusterManager);

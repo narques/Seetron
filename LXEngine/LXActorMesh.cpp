@@ -235,7 +235,7 @@ const TWorldPrimitives& LXActorMesh::GetAllPrimitives()
 
 	if (!_bValidWorldPrimitiveMatrices)
 	{
-		CHK(::GetCurrentThreadId() != RenderThread)
+		CHK(::GetCurrentThreadId() != RenderThread);
 		ComputePrimitiveWorldMatrices();
 		_bValidWorldPrimitiveMatrices = true;
 	}

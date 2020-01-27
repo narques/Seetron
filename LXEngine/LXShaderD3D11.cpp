@@ -58,7 +58,7 @@ bool LXShaderD3D11::Create()
 	{
 	case EShaderType::VertexShader:
 	{
-		CHK(_layout != nullptr)
+		CHK(_layout != nullptr);
 		return CreateVertexShader(_filename.c_str(), _layout, _numElements);
 	}
 	break;
@@ -84,7 +84,7 @@ bool LXShaderD3D11::Create()
 	}
 		break;
 	default:
-		CHK(0) return false;
+		CHK(0); return false;
 		break;
 	}
 }

@@ -23,7 +23,7 @@ LXPrimitiveD3D11::LXPrimitiveD3D11()
 LXPrimitiveD3D11::~LXPrimitiveD3D11()
 {
 	LX_COUNTSCOPEDEC(LXPrimitiveD3D11)
-	CHK(IsRenderThread())
+	CHK(IsRenderThread());
 	LX_SAFE_RELEASE(VertexBuffer);
 	LX_SAFE_RELEASE(IndexBuffer);
 	LX_SAFE_RELEASE(InstanceBuffer);

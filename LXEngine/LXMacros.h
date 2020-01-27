@@ -18,8 +18,27 @@
 
 // Assertion Macros
 
-#define CHK(__expr) { if (!(__expr)) { LXDebug::Assert(#__expr, __FILE__, __LINE__); }} // CHECK
-#define VRF(__expr) { if (!(__expr)) { LXDebug::Assert(#__expr, __FILE__, __LINE__); }} // VERIFY
+#define CHK(__expr) { \
+	if (!(__expr)) \
+	{ \
+		if (IsDebuggerPresent()) \
+			DebugBreak(); \
+		else \
+			LXDebug::LogFailure(#__expr, __FILE__, __LINE__); \
+	} \
+} \
+
+#define CHK_ONCE(__expr) { \
+	if (!(__expr)) \
+	{ \
+		if (IsDebuggerPresent()) \
+			DebugBreak(); \
+		else \
+			LXDebug::LogFailure(#__expr, __FILE__, __LINE__); \
+	} \
+} \
+
+#define VRF(__expr) CHK(__expr)
 
 #define LX_CHK_RET(p)			{ CHK(p); if (!p) return; }
 #define LX_CHK_RETF(p)			{ CHK(p); if (!p) return false; }

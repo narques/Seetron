@@ -179,7 +179,7 @@ public:
 	void				SetLambdaOnSet	(std::function<void(const T&)> eval)		{ CHK(!_Var); _funcOnSet = eval; }
 	void				SetLambdaOnChange(std::function<void(LXPropertyT*)> eval)   { _funcOnChange = eval; }
 
-	void				SetVarPtr		( T* pVar )									{ CHK(!_funcOnSet) _Var = pVar; }
+	void				SetVarPtr		( T* pVar )									{ CHK(!_funcOnSet); _Var = pVar; }
 	void*				GetVarPtr		( ) override								{ return _Var; }
 	
 	const T&			GetValue		( ) const;

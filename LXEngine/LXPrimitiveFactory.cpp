@@ -1021,6 +1021,11 @@ const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateSphere(float radius)
 
 void LXPrimitiveFactory::Tick()
 {
+
+	// Si la primi est crée dans le LoadThread ... elle peut être imédiatement detruire par le Tick (MainTread)
+
+	return;
+
 	for (auto it = ListPrimitives.begin(); it != ListPrimitives.end();)
 	{
 		if (it->use_count() <= 1)

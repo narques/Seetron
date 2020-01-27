@@ -36,7 +36,7 @@ LXRenderTargetViewD3D11::LXRenderTargetViewD3D11(LXTextureD3D11* Texture)
 LXRenderTargetViewD3D11::~LXRenderTargetViewD3D11()
 {
 	LX_COUNTSCOPEDEC(LXRenderTargetViewD3D11)
-	CHK(IsRenderThread())
+	CHK(IsRenderThread());
 	LX_SAFE_RELEASE(D3D11RenderTargetView);
 }
 

@@ -210,7 +210,7 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNode(const LXMaterialD3D11* mater
 		//case EShader::DomainShader: break;
 		//case EShader::GeometryShader: 	break;
 		case EShader::PixelShader: code = CreatePixelShaderEntryPoint(); break;
-		default: CHK(0)	break;
+		default: CHK(0); break;
 		}
 	}
 	else

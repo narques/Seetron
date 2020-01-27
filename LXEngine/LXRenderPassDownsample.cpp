@@ -93,7 +93,7 @@ void LXRenderPassDownsample::CreateBuffers(uint Width, uint Height)
 		RenderPipeline->AddToViewDebugger(bufferName, commandName, _RenderTargerts[i]?_RenderTargerts[i]->TextureD3D11:nullptr, ETextureChannel::ChannelRGB);
 	}
 
-	CHK(smallestRenderTarget->Width == 1 && smallestRenderTarget->Height == 1)
+	CHK(smallestRenderTarget->Width == 1 && smallestRenderTarget->Height == 1);
 }
 
 void LXRenderPassDownsample::DeleteBuffers()

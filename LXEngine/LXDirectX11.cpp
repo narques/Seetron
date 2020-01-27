@@ -73,7 +73,7 @@ LXDirectX11::LXDirectX11(HWND hWND)
 
 LXDirectX11::~LXDirectX11()
 {
-	CHK(IsRenderThread())
+	CHK(IsRenderThread());
 
 	LX_SAFE_RELEASE(_D3DUserDefinedAnnotation)
 	LX_SAFE_RELEASE(_D3D11RenderTargetView)
@@ -738,7 +738,7 @@ bool LXDirectX11::Init(HWND hWND)
 
 void LXDirectX11::Resize(UINT Width, UINT Height)
 {
-	CHK(IsRenderThread())
+	CHK(IsRenderThread());
 
 	_Width = Width;
 	_Height = Height;
