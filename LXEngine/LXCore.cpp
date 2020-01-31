@@ -158,6 +158,8 @@ void LXCore::Init()
 	m_propertyManager = new LXPropertyManager;
 	_ActorFactory = std::make_unique<LXActorFactory>();
 	_Controller = std::make_unique<LXController>();
+	_mainTasks = std::make_unique<LXTaskManager>();
+	_syncTasks = std::make_unique<LXTaskManager>();
 
 	// Observer
 	m_commandManager->AddObserver(m_viewportManager);
@@ -462,6 +464,15 @@ LXRenderer* LXCore::GetRenderer() const
 	return _Renderer;
 }
 
+void LXCore::AddObjectForDestruction(LXObject* object)
+{
+	LXTask* task = new LXTaskCallBack([object]()
+	{
+		delete object;
+	});
+	_syncTasks->EnqueueTask(task);
+}
+
 void LXCore::SetDocument(LXProject* Document)
 {
 	CHK(!LoadingThread);
@@ -526,6 +537,7 @@ void LXCore::Run()
 		LX_PERFOSCOPE(Thread_Synchronisation);
 		// Synchronize the data between MainThread and RenderThread
 		GetController()->Run();
+		_syncTasks->Run((float)Time.DeltaTime());
 	}
 
 	GetViewport()->GetCameraManipulator()->Update(Time.DeltaTime());
@@ -551,6 +563,10 @@ void LXCore::Run()
 
 	// Broadcast events posted outside the MainThread
 	GetEventManager()->BroadCastEvents();
+
+	// Tasks
+	_mainTasks->Run((float)Time.DeltaTime());
+	   
 
 	// MainThread Actors Update
 	if (GetScene())

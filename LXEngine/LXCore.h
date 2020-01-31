@@ -9,6 +9,9 @@
 #pragma once
 
 #include "LXDocumentBase.h"
+#include "LXDelegate.h"
+#include "LXTask.h"
+#include "LXTaskManager.h"
 #include "LXTime.h"
 
 class LXActorFactory;
@@ -30,6 +33,7 @@ class LXScriptEngine;
 class LXSelectionManager;
 class LXSettings;
 class LXStatManager;
+class LXTaskManager;
 class LXThread;
 class LXViewport;
 class LXViewportManager;
@@ -101,14 +105,24 @@ public:
 	void				SetPlayMode(bool bPlay);
 	bool				GetPlayMode() const { return m_bPlay; }
 
-		
-
-
 	// Rendering
 	void				SetRenderer(LXRenderer* Renderer);
 	LXRenderer*			GetRenderer() const;
 
-	
+	// Task Helper
+	void EnqueueInvokeDelegate(LXDelegate<>* delegate)
+	{
+		CHK(!IsMainThread());
+		
+		LXTask* task = new LXTaskCallBack([delegate]()
+		{
+			delegate->Invoke();
+		});
+		_mainTasks->EnqueueTask(task);
+	}
+
+	void AddObjectForDestruction(LXObject* object);
+		
 	// Misc
 	#ifdef LX_COUNTERS
 	ArrayCounters&      GetCounters()  { return m_arrayCounters; }
@@ -160,6 +174,8 @@ private:
 	std::unique_ptr<LXSettings> _settings;
 	std::unique_ptr<LXActorFactory> _ActorFactory;
 	std::unique_ptr<LXController> _Controller;
+	std::unique_ptr<LXTaskManager> _mainTasks;
+	std::unique_ptr<LXTaskManager> _syncTasks;
 
 	LXRenderer*		 _Renderer = nullptr;
 

@@ -23,15 +23,16 @@ typedef unsigned short      uint16;
 
 // 32-Bits
 typedef int					int32;
-typedef unsigned int		uint;
+typedef unsigned int		uint32;
+typedef unsigned int		uint; 
 
 // 64-Bits
 typedef __int64				int64;
 typedef unsigned __int64	uint64;
 
 // Misc
-typedef vector<int>				ArrayInt;
-typedef vector<uint>			ArrayUint;
+typedef vector<int32>			ArrayInt;
+typedef vector<uint32>			ArrayUint;
 
 class LXSmartObject;
 typedef list<LXSmartObject*>	ListSmartObjects;
