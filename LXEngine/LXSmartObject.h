@@ -171,6 +171,8 @@ public:
 	
 protected:
 
+	virtual void					OnLoaded() {};
+
 	template<class T>
 	LXPropertyT<T>*					DefinePropertyEval(const LXString& name, const LXPropertyID& PID, std::function<int()> eval, T def);
 	template<class T>
@@ -198,8 +200,7 @@ private:
 
 	virtual bool					OnSaveChild(const TSaveContext& saveContext) const { return true; }
 	virtual bool					OnLoadChild(const TLoadContext& loadContext) { return true; }
-	virtual void					OnLoaded() {};
-
+	
 	void							DefineProperties();
 	bool							AddProperty(LXProperty* pProperty);
 	void							DeleteProperty(LXProperty* pProperty);
@@ -216,6 +217,8 @@ protected:
 	bool							_bSystem = false;
 	bool							_bNeedSave = false;
 	uint64							_nUserData = 0;
+
+	std::atomic<bool>				_isLoading = false;
 	
 private:
 

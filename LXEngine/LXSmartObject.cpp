@@ -244,6 +244,8 @@ bool LXSmartObject::LoadWithMSXML(const LXFilepath& strFilename, bool bLoadChild
 
 bool LXSmartObject::Load(const TLoadContext& loadContext, LXString* pName)
 {
+	_isLoading = true;
+
 	// Create the map XMLName to Property
 	TMapStringProperty mapProperties;
 	
@@ -356,9 +358,11 @@ bool LXSmartObject::Load(const TLoadContext& loadContext, LXString* pName)
 	else
 	{
 		CHK(0);
+		_isLoading = false;
 		return false;
 	}
 
+	_isLoading = false;
 	OnLoaded();
 	return true;
 }

@@ -96,7 +96,7 @@ void LXActor::DefineProperties()
 
 void LXActor::InvalidateRenderState(LXFlagsRenderClusterRole renderStates)
 {
-	if (GetParent() == nullptr)
+	if (_isLoading || GetParent() == nullptr)
 		return;
 
 	_RenderStateValid = false;
@@ -174,6 +174,9 @@ void LXActor::SetMatrixWCS(const LXMatrix& matrix, bool ComputeLocalMatrix /*= f
 
 void LXActor::InvalidateMatrixWCS()
 {
+	if (_isLoading)
+		return;
+
 	// Invalidates the World Matrix recursively (this + children)
 	for (LXActor* Actor : _Children)
 		Actor->InvalidateMatrixWCS();
@@ -249,12 +252,18 @@ LXBBox& LXActor::GetBBoxWorld()
 
 void LXActor::InvalidateBounds(bool bPropagateToParent)
 {
+	if (_isLoading)
+		return;
+
 	_BBoxLocal.Invalidate();
 	InvalidateWorldBounds(true);
 }
 
 void LXActor::InvalidateWorldBounds(bool bPropagateToParent)
 {
+	if (_isLoading)
+		return;
+
 	_BBoxWorld.Invalidate();
 	if (bPropagateToParent && _Parent)
 		_Parent->InvalidateWorldBounds(true);
