@@ -15,6 +15,7 @@
 #include "LXMSXMLNode.h"
 #include "LXMath.h"
 #include "LXProject.h"
+#include "LXRenderer.h"
 #include "LXScene.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
@@ -42,7 +43,7 @@ void LXActor::MarkForDelete()
 {
 	CHK(GetParent() == nullptr);
 	CHK(_Children.size() == 0);
-	GetController()->AddActorToDeleteSet(this);
+	GetCore().AddObjectForDestruction(this);
 }
 
 void LXActor::DefineProperties() 
@@ -100,7 +101,7 @@ void LXActor::InvalidateRenderState(LXFlagsRenderClusterRole renderStates)
 		return;
 
 	_RenderStateValid = false;
-	GetController()->AddActorToUpdateRenderStateSet(this, renderStates);
+	GetRenderer()->UpdateActor(this, renderStates);
 }
 
 void LXActor::ValidateRensterState()

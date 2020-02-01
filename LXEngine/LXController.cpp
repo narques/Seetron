@@ -9,19 +9,16 @@
 #include "stdafx.h"
 #include "LXController.h"
 #include "LXActorMesh.h"
-#include "LXMutex.h"
 #include "LXRenderer.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXController::LXController()
 {
-	_mutex = new LXMutex();
 }
 
 LXController::~LXController()
 {
 	Purge();
-	delete _mutex;;
 }
 
 void LXController::SetRenderer(LXRenderer* Renderer)
@@ -31,33 +28,12 @@ void LXController::SetRenderer(LXRenderer* Renderer)
 
 void LXController::Purge()
 {
-	_SetActorToUpdateRenderState.clear();
-	_SetActorToDelete.clear();
 	_SetActorToMove.clear();
-	
-	_SetActorToUpdateRenderState_RT.clear();
-	_SetActorToDelete_RT.clear();
-		
 	for (LXRendererUpdate* RendererUpdate : _RendererUpdates)
 	{
 		delete RendererUpdate;
 	}
-
 	_RendererUpdates.clear();
-}
-
-void LXController::AddActorToUpdateRenderStateSet(LXActor* Actor, LXFlagsRenderClusterRole renderStates)
-{
-	CHK(IsMainThread() || IsLoadingThread());
-	_mutex->Lock();
-	_SetActorToUpdateRenderState.insert(pair<LXActor*, LXFlagsRenderClusterRole>(Actor, renderStates));
-	_mutex->Unlock();
-}
-
-void LXController::AddActorToDeleteSet(LXActor* Actor)
-{
-	CHK(IsMainThread());
-	_SetActorToDelete.insert(Actor);
 }
 
 void LXController::ActorWorldMatrixChanged(LXActor* Actor)
@@ -128,49 +104,5 @@ void LXController::Run()
 			AddRendererUpdateMatrix(Actor);
 		}
 		_SetActorToMove.clear();
-	}
-
-	//
-	// Actors
-	//
-
-	{
-		// Lock, _SetActorToUpdateRenderState can be modified by the LoadingThread.
-		_mutex->Lock();
-		SetActorToUpdate& Actors = _SetActorToUpdateRenderState;
-		// Previous actors should be consumed
-		CHK(_SetActorToUpdateRenderState_RT.size() == 0);
-		_SetActorToUpdateRenderState_RT.insert(Actors.begin(), Actors.end());
-
-		for (const ActorUpdate& actorUpdate : _SetActorToUpdateRenderState_RT)
-		{
-			if (LXActorMesh* actorMesh = dynamic_cast<LXActorMesh*>(const_cast<LXActor*>(actorUpdate.first)))
-			{
-				actorMesh->GetAllPrimitives();
-			}
-
-			LogD(LXController, L"Synchronized: %s", actorUpdate.first->GetName().GetBuffer());
-		}
-		
-		Actors.clear();
-		_mutex->Unlock();
-	}
-
-	//
-	// Destroy Actors marked for delete
-	//
-	
-	{
-		SetActors& Actors = _SetActorToDelete;
-		for (SetActors::iterator It = Actors.begin(); It != Actors.end();)
-		{
-			if ((*It)->IsRenderStateValid())
-			{
-				delete *It;
-				It = Actors.erase(It);
-			}
-			else
-				It++;
-		}
 	}
 }

@@ -55,7 +55,7 @@ public:
 
 	virtual void		MarkForDelete();
 	virtual bool		IsPickable( ) const { return _bPickable; }
-		
+
 	// Rendering
 	void				InvalidateRenderState(LXFlagsRenderClusterRole renderStates = ERenderClusterRole::All);
 	void				ValidateRensterState();
@@ -157,6 +157,11 @@ private:
 	void				DefineProperties();
 	virtual	void		OnInvalidateMatrixWCS() { };
 
+public:
+
+	// Rendering
+	atomic<bool>		EuqueuedInRenderTask = false;
+	
 protected:
 
 	// Hierarchy
@@ -177,7 +182,7 @@ protected:
 	bool				_bVisible = true;
 	bool				_bBBoxVisible = false;
 	bool				_bPrimitiveBBoxVisible = false;
-
+	
 	// Misc
 	LXProject*			_Project = nullptr;
 	bool				_bHighlightable = true;	// Avoid DrawHighlight OnMouseMove

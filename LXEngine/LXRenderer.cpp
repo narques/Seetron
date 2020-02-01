@@ -2,12 +2,13 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
 #include "LXAnimationManager.h"
+#include "LXActorMesh.h"
 #include "LXConsoleManager.h"
 #include "LXConstantBufferD3D11.h"
 #include "LXController.h"
@@ -243,7 +244,7 @@ void LXRenderer::Run()
 	_mainTasks = std::make_unique<LXTaskManager>();
 			
 	// Render !
-	while (!ExitRenderThread || _mainTasks->HasTasks())
+	while (!ExitRenderThread || HasPendingTasks())
 	{
 		LX_PERFOSCOPE(RenderThread);
 
@@ -345,13 +346,6 @@ void LXRenderer::Render()
 	LX_PERFOSCOPE(RenderThread_Render);
 
 	const LXTime& time = GetCore().Time;
-			
-	//
-	// Commands & Tasks
-	//
-
-   _mainTasks->Run((float)time.DeltaTime());
-
 
 	// If project changed
 	if (_Project != _NewProject)
@@ -359,6 +353,13 @@ void LXRenderer::Render()
 		_Project = _NewProject;
 		Empty();
 	}
+			
+	//
+	// Commands & Tasks
+	//
+
+	_mainTasks->Run((float)time.DeltaTime());
+
 
 	// "Tick" the ShaderManager
 	// Maybe it has things to delete/release
@@ -475,21 +476,6 @@ void LXRenderer::Render()
 
 void LXRenderer::UpdateStates()
 {
-	for (const ActorUpdate& actorUpdate : GetController()->GetActorToUpdateRenderStateSetRT())
-	{
-		LogI(Renderer, L"Updated actor %s", actorUpdate.first->GetName().GetBuffer());
-		RenderClusterManager->UpdateActor(actorUpdate.first, actorUpdate.second);
-		actorUpdate.first->ValidateRensterState();
-	}
-	GetController()->GetActorToUpdateRenderStateSetRT().clear();
-
-	// Actor Matrix
-// 	for (LXActor* Actor : GetController()->GetActorToMoveRT())
-// 	{
-// 		RenderClusterManager->MoveActor(Actor);
-// 	}
-// 	GetController()->GetActorToMoveRT().clear();
-
 	ListRendererUpdates& RendererUpdates = GetController()->GetRendererUpdate();
 	for (LXRendererUpdate* RendererUpdate : RendererUpdates)
 	{
@@ -538,6 +524,40 @@ void LXRenderer::Empty()
 		RenderClusterManager->Empty();
 }
 
+void LXRenderer::EnqueueTask(LXTask* task)
+{
+	CHK(!ExitRenderThread);
+	_mainTasks->EnqueueTask(task);
+}
+
+bool LXRenderer::HasPendingTasks() const
+{
+	return _mainTasks->HasTasks();
+}
+
+void LXRenderer::UpdateActor(LXActor* actor, LXFlagsRenderClusterRole renderStates)
+{
+	if (actor->EuqueuedInRenderTask)
+		return;
+
+	LXTask* task = new LXTaskCallBack([this, actor, renderStates]()
+	{
+		LogI(Renderer, L"Updated actor %s", actor->GetName().GetBuffer());
+		RenderClusterManager->UpdateActor(actor, renderStates);
+		actor->ValidateRensterState();
+		actor->EuqueuedInRenderTask = false;
+	});
+
+	// HACK: Compute the Primitive World Matrices.
+	if (LXActorMesh* actorMesh = LXCast<LXActorMesh>(actor))
+	{
+		actorMesh->GetAllPrimitives();
+	}
+
+	actor->EuqueuedInRenderTask = true;
+	EnqueueTask(task);
+}
+
 void LXRenderer::CreateDeviceTexture(LXTexture* texture)
 {
 	if (IsRenderThread())
@@ -554,7 +574,7 @@ void LXRenderer::CreateDeviceTexture(LXTexture* texture)
 			texture->SetDeviceTexture(texture3D11);
 		});
 
-		_mainTasks->EnqueueTask(task);
+		EnqueueTask(task);
 	}
 }
 
@@ -575,7 +595,7 @@ void LXRenderer::ReleaseDeviceTexture(LXTexture* texture)
 			delete textureD3D11;
 		});
 
-		_mainTasks->EnqueueTask(task);
+		EnqueueTask(task);
 	}
 }
 
@@ -606,7 +626,7 @@ void LXRenderer::CreateDeviceMaterial(LXMaterial* material)
 			material->SetDeviceMaterial(texture3D11);
 		});
 
-		_mainTasks->EnqueueTask(task);
+		EnqueueTask(task);
 	}
 }
 
@@ -628,7 +648,7 @@ void LXRenderer::ReleaseDeviceMaterial(LXMaterial* material)
 			delete materialD3D11;
 		});
 
-		_mainTasks->EnqueueTask(task);
+		EnqueueTask(task);
 	}
 }
 
@@ -648,6 +668,6 @@ void LXRenderer::UpdateDeviceMaterial(LXMaterial* material)
 			materialD3D11->Update(material);
 		});
 
-		_mainTasks->EnqueueTask(task);
+		EnqueueTask(task);
 	}
 }

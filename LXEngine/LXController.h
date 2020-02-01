@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -54,23 +54,7 @@ public:
 	void SetRenderer(LXRenderer* Renderer);
 	void Purge();
 
-	
-	//
-	// Actor
-	//
-
-	void AddActorToUpdateRenderStateSet(LXActor* Actor, LXFlagsRenderClusterRole renderStates);
-	void AddActorToDeleteSet(LXActor* Actor);
 	void ActorWorldMatrixChanged(LXActor* Actor);
-
-	//
-	// PrimitiveInstance
-	//
-		
-	SetActors& GetActorsToDeleteRT() { return _SetActorToDelete_RT; }
-	SetActorToUpdate& GetActorToUpdateRenderStateSetRT() { return _SetActorToUpdateRenderState_RT; }
-	
-	
 	ListRendererUpdates& GetRendererUpdate() { return _RendererUpdates; }
 	
 	// Prepare the Data for RenderThread
@@ -85,19 +69,10 @@ private:
 	LXRenderer*		_Renderer = nullptr;
 
 	// Fed by MainTread or LoadingThread
-	SetActorToUpdate _SetActorToUpdateRenderState;
-	SetActors		 _SetActorToDelete;
 	SetActors		 _SetActorToMove;
-		
-	// Consumed by RenderThread
-	SetActorToUpdate _SetActorToUpdateRenderState_RT;
-	SetActors		_SetActorToDelete_RT;
-		
+	
 	// Shared
 	ListRendererUpdates	_RendererUpdates;
-
-	// Threads
-	LXMutex* _mutex; // _SetActorToUpdateRenderState
 };
 
  

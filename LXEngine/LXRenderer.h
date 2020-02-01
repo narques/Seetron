@@ -2,16 +2,16 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #pragma once
 
 #include "LXObject.h"
+#include "LXRenderClusterType.h"
 #include "LXTime.h"
 
-class LXActor;
 class LXConstantBufferD3D11;
 class LXDirectX11;
 class LXMaterialD3D11;
@@ -28,6 +28,7 @@ class LXTextureManager;
 class LXRenderPipeline;
 class LXString;
 class LXSyncEvent;
+class LXTask;
 class LXTaskManager;
 class LXTexture;
 class LXTextureD3D11;
@@ -67,6 +68,8 @@ public:
 	LXShaderManager* GetShaderManager() const { return ShaderManager; }
 	LXTextureManager* GetTextureManager() const { return TextureManager; }
 	LXRenderPipeline* GetRenderPipeline() const { return _RenderPipeline; }
+
+	void UpdateActor(LXActor* actor, LXFlagsRenderClusterRole renderStates);
 
 	void CreateDeviceTexture(LXTexture* texture);
 	void ReleaseDeviceTexture(LXTexture* texture);
@@ -113,6 +116,9 @@ private:
 	const LXMatrix& GetMatrixView() const;
 	const LXMatrix& GetMatrixProjection() const;
 
+	// Task
+	bool HasPendingTasks() const;
+	void EnqueueTask(LXTask* task);
 public:
 
 	LXRenderClusterManager * RenderClusterManager = nullptr;
