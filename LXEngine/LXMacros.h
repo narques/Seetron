@@ -31,10 +31,15 @@
 #define CHK_ONCE(__expr) { \
 	if (!(__expr)) \
 	{ \
-		if (IsDebuggerPresent()) \
-			DebugBreak(); \
-		else \
-			LXDebug::LogFailure(#__expr, __FILE__, __LINE__); \
+		static bool once = false; \
+		if (!once) \
+		{ \
+			if (IsDebuggerPresent()) \
+				DebugBreak(); \
+			else \
+				LXDebug::LogFailure(#__expr, __FILE__, __LINE__); \
+		} \
+		once = true;\
 	} \
 } \
 
