@@ -219,10 +219,7 @@ void LXRenderPipelineDeferred::Render(LXRenderCommandList* RenderCommandList)
 	{
 		if (LXTexture* Texture = GetAssetManager()->GetNoiseTexture4x4())
 		{
-			if (!_TextureNoise4x4)
-			{
-				_TextureNoise4x4 = const_cast<LXTextureD3D11*>(Texture->GetDeviceTexture());
-			}
+			_TextureNoise4x4 = const_cast<LXTextureD3D11*>(Texture->GetDeviceTexture());
 		}
 	}
 
