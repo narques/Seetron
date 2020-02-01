@@ -18,7 +18,6 @@ class LXTextureD3D11;
 
 enum class ETextureTarget
 {
-	LXUndefined = -1,
 	LXTexture1D,
 	LXTexture2D,
 	LXTexture3D,
@@ -87,7 +86,7 @@ public:
 	
 protected:
 
-	ETextureTarget			_eTarget = ETextureTarget::LXUndefined;
+	ETextureTarget			_eTarget = ETextureTarget::LXTexture2D;
 	ETextureFormat			_eInternalFormat = ETextureFormat::LX_RGBA8 ;
 	uint					_nWidth = 512;					
 	uint					_nHeight = 512;	
