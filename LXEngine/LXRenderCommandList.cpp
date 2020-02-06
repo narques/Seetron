@@ -8,7 +8,6 @@
 
 #include "stdafx.h"
 #include "LXRenderCommandList.h"
-#include "LXBitmap.h"
 #include "LXConsoleManager.h"
 #include "LXConstantBufferD3D11.h"
 #include "LXDirectX11.h"
@@ -18,7 +17,6 @@
 #include "LXShaderD3D11.h"
 #include "LXStatistic.h"
 #include "LXTextureD3D11.h"
-//#include <pix.h>
 #include "LXMemory.h" // --- Must be the last included ---
 
 namespace
@@ -59,28 +57,6 @@ void LXRenderCommandList::Execute()
 	for (LXRenderCommand* Command : Commands)
 	{
 		Command->Execute(this);
-	}
-}
-
-void DispatchError(HRESULT Result)
-{
-	if (Result == S_OK)
-		return;
-	
-	switch (Result)
-	{
-		case D3D11_ERROR_FILE_NOT_FOUND: LogE(RenderCommandList, L"The file was not found.");  break;
-		case D3D11_ERROR_TOO_MANY_UNIQUE_STATE_OBJECTS: LogE(RenderCommandList, L"There are too many unique instances of a particular type of state object."); break;
-		case D3D11_ERROR_TOO_MANY_UNIQUE_VIEW_OBJECTS: LogE(RenderCommandList, L"There are too many unique instances of a particular type of view object."); break;
-		case D3D11_ERROR_DEFERRED_CONTEXT_MAP_WITHOUT_INITIAL_DISCARD: LogE(RenderCommandList, L"The first call to ID3D11DeviceContext::Map after either ID3D11Device::CreateDeferredContext or ID3D11DeviceContext::FinishCommandList per Resource was not D3D11_MAP_WRITE_DISCARD."); break;
-		case DXGI_ERROR_INVALID_CALL: LogE(RenderCommandList, L"The method call is invalid.For example, a method's parameter may not be a valid pointer."); break;
-		case DXGI_ERROR_WAS_STILL_DRAWING: LogE(RenderCommandList, L"The previous blit operation that is transferring information to or from this surface is incomplete."); break;
-		case E_FAIL: LogE(RenderCommandList, L"Attempted to create a device with the debug layer enabled and the layer is not installed."); break;
-		case E_INVALIDARG: LogE(RenderCommandList, L"An invalid parameter was passed to the returning function."); break;
-		case E_OUTOFMEMORY: LogE(RenderCommandList, L"Direct3D could not allocate sufficient memory to complete the call."); break;
-		case E_NOTIMPL: LogE(RenderCommandList, L"The method call isn't implemented with the passed parameter combination."); break;
-		case S_FALSE: LogE(RenderCommandList, L"Alternate success value, indicating a successful but nonstandard completion(the precise meaning depends on context)."); break;
-		default: CHK(0);
 	}
 }
 
@@ -550,7 +526,7 @@ EXECUTE(Map)
 	ID3D11DeviceContext* D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();
 	auto Subresource = D3D11CalcSubresource(0, 0, 1);
 	HRESULT Result = D3D11DeviceContext->Map(Resource, Subresource, D3D11_MAP_READ, 0, MappedResource);
-	DispatchError(Result);
+	LXDirectX11::LogError(Result);
 }
 
 EXECUTE(Unmap)
@@ -572,26 +548,3 @@ EXECUTE(GenerateMips)
 	D3D11DeviceContext->GenerateMips(pShaderResourceView);
 }
 
-//
-// Advanced commands (multiple Direct3D commands)
-//
-
-EXECUTE(CopyResourceToBitmap)
-{
-	ID3D11DeviceContext* D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();
-	auto Subresource = D3D11CalcSubresource(0, 0, 1);
-
-	D3D11_MAPPED_SUBRESOURCE MappedResource;
-
-	HRESULT Result = D3D11DeviceContext->Map(SrcResource, Subresource, D3D11_MAP_READ, 0, &MappedResource);
-	DispatchError(Result);
-
-	const unsigned short* Source = static_cast<const unsigned short*>(MappedResource.pData);
-	void *Dest = DstBitmap->GetPixels();
-	int	size = 4096 * 4096 * 2;
-	memcpy(Dest, Source, size);
-
-	DstBitmap->InvokeOnBitmapChanged();
-
-	D3D11DeviceContext->Unmap(SrcResource, Subresource);
-}

@@ -26,7 +26,6 @@ class LXRenderTargetViewD3D11;
 class LXPrimitiveD3D11;
 class LXConstantBufferData;
 class LXConstantBufferD3D11;
-class LXBitmap;
 
 struct D3D11_MAPPED_SUBRESOURCE;
 struct ID3D11BlendState;
@@ -135,13 +134,6 @@ public:
 	//
 
 	CMD0_CLASS(Present)
-		
-	//
-	// Advanced commands (multiple commands)
-	//
-
-	CMD2_CLASS(CopyResourceToBitmap, LXBitmap*, DstBitmap, ID3D11Resource*, SrcResource)
-
 
 public:
 
