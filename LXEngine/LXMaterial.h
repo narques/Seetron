@@ -72,7 +72,7 @@ public:
 	//
 
 	const LXMaterialD3D11* GetDeviceMaterial() const { return _materialD3D11; }
-	void SetDeviceMaterial(LXMaterialD3D11* materialD3D11) { CHK(IsRenderThread());  _materialD3D11 = materialD3D11; }
+	void SetDeviceMaterial(LXMaterialD3D11* materialD3D11) { _materialD3D11 = materialD3D11; }
 
 	void DefineProperties();
 	void CreateDeviceMaterial();

@@ -633,10 +633,10 @@ void LXRenderer::CreateDeviceMaterial(LXMaterial* material)
 void LXRenderer::ReleaseDeviceMaterial(LXMaterial* material)
 {
 	const LXMaterialD3D11* materialD3D11 = material->GetDeviceMaterial();
+	material->SetDeviceMaterial(nullptr);
 	
 	if (IsRenderThread())
 	{
-		material->SetDeviceMaterial(nullptr);
 		delete materialD3D11;
 	}
 	else
