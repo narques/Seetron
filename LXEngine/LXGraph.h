@@ -40,9 +40,7 @@ private:
 
 public:
 
-	LXDelegate<> OnConnectionDeleted;
-	LXDelegate<> OnConnectorDeleted;
-		
+	LXDelegate<> OnGraphChanged;
 	list<LXNode*> Nodes;
 	list<LXConnection*> Connections;
 

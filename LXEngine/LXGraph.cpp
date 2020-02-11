@@ -31,6 +31,7 @@ void LXGraph::Clear()
 	Nodes.clear();
 	Connections.clear();
 	_main = nullptr;
+	OnGraphChanged.Invoke();
 }
 
 void LXGraph::AddNode(LXNode* node)
@@ -47,6 +48,7 @@ void LXGraph::AddNode(LXNode* node)
 	{
 		_main = node;
 	}
+	OnGraphChanged.Invoke();
 }
 
 void LXGraph::DeleteNode(LXNode* node)
@@ -77,6 +79,7 @@ void LXGraph::DeleteNode(LXNode* node)
 	// Delete the node
 	Nodes.remove(node);
 	delete node;
+	OnGraphChanged.Invoke();
 }
 
 LXConnection* LXGraph::CreateConnection(LXConnector* source, LXConnector* destination)
@@ -93,7 +96,7 @@ LXConnection* LXGraph::CreateConnection(LXConnector* source, LXConnector* destin
 	
 	LXConnection* connection = new LXConnection(source, destination);
 	Connections.push_back(connection);
-
+	OnGraphChanged.Invoke();
 	return connection;
 }
 
@@ -103,7 +106,7 @@ void LXGraph::DeleteConnection(LXConnection* connection)
 	Connections.remove(connection);
 	connection->Detach(nullptr);
 	delete connection;
-	OnConnectionDeleted.Invoke();
+	OnGraphChanged.Invoke();
 }
 
 void LXGraph::DeleteConnector(LXConnector* connector)
@@ -116,7 +119,7 @@ void LXGraph::DeleteConnector(LXConnector* connector)
 	}
 
 	delete connector;
-	OnConnectorDeleted.Invoke();
+	OnGraphChanged.Invoke();
 }
 
 const LXNode* LXGraph::GetMain() const
@@ -154,5 +157,6 @@ void LXGraph::OnLoaded()
 			_main = node;
 		}
 	}
+	OnGraphChanged.Invoke();
 }
 
