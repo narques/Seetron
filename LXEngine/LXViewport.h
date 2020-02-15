@@ -84,8 +84,7 @@ public:
 	LXActorMesh*					GetPointedMesh ( ) const { return m_pPointedMesh; }
 	LXTrackBallCameraManipulator*	GetCameraManipulator( ) const { return m_pCamManip; }
 	bool					GetPointOnBufferColor( int x, int y, vec3f& v );
-	void					InvalidateTerrainTextures( );
-
+	
 	//
 	// Pick point on a specified object
 	//
@@ -125,13 +124,6 @@ private:
 	//
 
 	void					Animate			( double dFrameTime );
-
-	//
-	// ViewportManager
-	//
-
-	void					OnChangeHighlight ( LXActor* pActor );
-	void ClearRenderList();
 
 private:
 

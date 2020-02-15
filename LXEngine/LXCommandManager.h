@@ -11,27 +11,18 @@
 #include "LXManager.h"
 #include "LXCommandModifyProperty.h"
 #include "LXCommandDeleteActor.h"
-#include "LXObserver.h"
-#include "LXObservable.h"
 
 class LXQuery;
 class LXViewState;
 class LXMesh;
 
-class LXCORE_API LXCommandManager : public LXObservable
+class LXCORE_API LXCommandManager : public LXObject
 {
 
 public:
 
 	LXCommandManager();
 	virtual ~LXCommandManager(void);
-
-	//
-	// Overridden from LXObservable
-	//
-
-	void	AddObserver			( LXObserverCommandManager* pObserver ) { LXObservable::AddObserver(pObserver); }
-	void	RemoveObserver		( LXObserverCommandManager* pObserver ) { LXObservable::RemoveObserver(pObserver); }
 
 	//
 	// Callbacks
@@ -65,8 +56,7 @@ public:
 
 	bool    SaveFile			( LXSmartObject* pServer );
 	void	SaveSelection		( const LXString& name );
-	void	ChangeHighlight		( LXActor* pActor );
-		
+			
 	void	ClearSelection		( );
 	void	SetSelection		( LXSmartObject* pSmartObject );
 	void	AddToSelection		( LXSmartObject* pSmartObject );
@@ -103,12 +93,6 @@ public:
 	void	DeleteKeys			( const SetKeys& setKeys );
 	bool	SetParent			( LXActor* Parent, LXActor* Child);
 	bool	SetParent			( LXMesh* Parent, LXMesh* Child );
-	
-	// 
-	//	invoke the listeners when the Scene changes (Actor added or deleted)
-	//
-
-	void	SceneChanged		();
 	
 	//
 	// Misc Command Methods

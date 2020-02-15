@@ -110,9 +110,6 @@ LXCore::LXCore()
 /*virtual*/
 LXCore::~LXCore()
 {
-	// Observer
-	m_commandManager->RemoveObserver(m_viewportManager);
-
 	delete m_commandManager;  
 	delete m_documentManager;
 	delete m_viewportManager;
@@ -160,9 +157,6 @@ void LXCore::Init()
 	_Controller = std::make_unique<LXController>();
 	_mainTasks = std::make_unique<LXTaskManager>();
 	_syncTasks = std::make_unique<LXTaskManager>();
-
-	// Observer
-	m_commandManager->AddObserver(m_viewportManager);
 
 	// Plugins
 #ifdef LX_EDITOR

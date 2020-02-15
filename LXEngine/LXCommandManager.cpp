@@ -54,12 +54,6 @@ bool LXCommandManager::SaveFile( LXSmartObject* pSmartObject )
 	if (pSB)
 		 bRet = pSB->SaveFile();
 	
-	for (ListObservers::iterator It = m_listObservers.begin(); It!=m_listObservers.end(); It++)
-	{
-		LXObserverCommandManager* pObserver = static_cast<LXObserverCommandManager*>(*It);
-		pObserver->OnFileSaved(pSmartObject);
-	}
-
 	return bRet;
 }
 
@@ -158,19 +152,11 @@ void LXCommandManager::UndoLastCommand()
 
 	if (LXCommandProperty* pCmdProp = dynamic_cast<LXCommandProperty*>(pCmd))
 	{
-		const LXProperty* pProperty = pCmdProp->GetPropertyOriginal();
-		{
-			for (ListObservers::iterator It = m_listObservers.begin(); It!=m_listObservers.end(); It++)
-				static_cast<LXObserverCommandManager*>(*It)->OnChangeProperty(pProperty);
-		}
+
 	}
 	else if (LXCommandProperties* pCmdProp = dynamic_cast<LXCommandProperties*>(pCmd))
 	{
-		for(auto ItProp = pCmdProp->GetProperties().begin(); ItProp != pCmdProp->GetProperties().end(); ItProp++)
-		{
-			for (ListObservers::iterator It = m_listObservers.begin(); It!=m_listObservers.end(); It++)
-				static_cast<LXObserverCommandManager*>(*It)->OnChangeProperty(*ItProp);
-		}
+
 	}
 	else if (LXCommandDeleteActor* pCmdDeleteActors = dynamic_cast<LXCommandDeleteActor*>(pCmd))
 	{
@@ -178,12 +164,6 @@ void LXCommandManager::UndoLastCommand()
 	}
 	else if (LXCommandDeleteKey* pCmdDeleteKeys = dynamic_cast<LXCommandDeleteKey*>(pCmd))
 	{
-		if (m_bNotifyListerners)
-		{
-			const SetKeys& setKeys = pCmdDeleteKeys->GetKeys();
-			for (ListObservers::iterator It = m_listObservers.begin(); It != m_listObservers.end(); It++)
-				static_cast<LXObserverCommandManager*>(*It)->OnAddKeys(setKeys);
-		}
 		pCmdDeleteKeys->ClearKeys();
 	}
 	else
@@ -268,12 +248,6 @@ void LXCommandManager::DeleteKeys(const SetKeys& setKeys)
 	for (LXSmartObject* pObject : setKeys)
 		GetCore().GetProject()->GetSelectionManager().RemoveToSelection(pObject);
 	
-	if (m_bNotifyListerners)
-	{
-		for (ListObservers::iterator It = m_listObservers.begin(); It != m_listObservers.end(); It++)
-			static_cast<LXObserverCommandManager*>(*It)->OnDeleteKeys(pCmd->GetKeys());
-	}
-
 	PushCommand(pCmd);
 }
 
@@ -297,24 +271,6 @@ bool LXCommandManager::SetParent(LXMesh* Parent, LXMesh* Child)
 	else
 		delete Cmd;
 	return ret;
-}
-
-void LXCommandManager::SceneChanged()
-{
-	if (m_bNotifyListerners)
-	{
-		for (ListObservers::iterator It = m_listObservers.begin(); It != m_listObservers.end(); It++)
-			static_cast<LXObserverCommandManager*>(*It)->OnSceneChanged();
-	}
-}
-
-void LXCommandManager::ChangeHighlight(LXActor* pActor)
-{
-	if (m_bNotifyListerners)
-	{
-		for (ListObservers::iterator It = m_listObservers.begin(); It!=m_listObservers.end(); It++)
-			static_cast<LXObserverCommandManager*>(*It)->OnChangeHighlight(pActor);
-	}
 }
 
 // Explicit method Instantiation
@@ -427,17 +383,6 @@ void	LXCommandManager::ChangeProperties( const ListProperties& listProperties, c
 				pAnimation->AddKey(property, newValue, (DWORD)time);
 		}
 	}
-	
-	// Callback
-	for (ListObservers::iterator It = m_listObservers.begin(); It!=m_listObservers.end(); It++)
-	{
-		for (auto ItProp = listProperties.begin(); ItProp != listProperties.end(); ItProp++)
-		{
-			static_cast<LXObserverCommandManager*>(*It)->OnChangeProperty(*ItProp);
-			if (GetCore().GetAutoKey())
-				static_cast<LXObserverCommandManager*>(*It)->OnAddKeys(setKeys);
-		}
-	}
 }
 
 template <class T>
@@ -464,12 +409,6 @@ void LXCommandManager::PreviewChangeProperties( const ListProperties& listProper
 	}
 
 	_pPreviewCmd->Do();
-	
-	for (ListObservers::iterator It = m_listObservers.begin(); It!=m_listObservers.end(); It++)
-	{
-		for(auto ItProp = listProperties.begin(); ItProp != listProperties.end(); ItProp++)
-			static_cast<LXObserverCommandManager*>(*It)->OnChangeProperty(*ItProp);
-	}
 }
 
 template <class T>
@@ -501,11 +440,6 @@ void	LXCommandManager::ChangeProperty( LXPropertyT<T>* pProp, const T& newValue 
 	pCmd->Do();
 	pCmd->SetDescription(L"Property changed: " +  pProp->GetLXObject()->GetName() + "." + pProp->GetLabel());
 	PushCommand(pCmd);
-
-	for (ListObservers::iterator It = m_listObservers.begin(); It!=m_listObservers.end(); It++)
-	{
-		static_cast<LXObserverCommandManager*>(*It)->OnChangeProperty(pProp);
-	}
 }
 
 template <class T>
@@ -545,11 +479,6 @@ void LXCommandManager::PreviewChangeProperty( LXPropertyT<T>* pProp, const T& ne
 
 	_pPreviewCmd->Do();
 				
-	for (ListObservers::iterator It = m_listObservers.begin(); It!=m_listObservers.end(); It++)
-	{
-		static_cast<LXObserverCommandManager*>(*It)->OnChangeProperty(pProp);
-	}
-
 #if LX_ANCHOR
 
 	// Anchor location propagation

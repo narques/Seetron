@@ -834,15 +834,6 @@ LXActor* LXViewport::PickActor( int x, int y, vec3f* intersection, LXPrimitive**
 
 void LXViewport::SetDocument( LXProject* pDocument )
 {
-// 	if (!pDocument && m_pRenderer)
-// 		m_pRenderer->ReleaseDeviceDocObjects();
-// 
-// 	if (m_pRenderer)
-// 	{
-// 		m_pRenderer->Clear();
-// 		m_pRenderer->Invalidate(LX_INVALIDATE_RENDERLIST);
-// 	}
-
 	LXDocumentOwner::SetDocument(pDocument);
 }
 
@@ -851,66 +842,3 @@ bool LXViewport::IsMouseMoved( )
 	return m_pCamManip ? m_pCamManip->MouseHasMoved() : false;
 }
 
-void LXViewport::OnChangeHighlight( LXActor* pActor )
-{
-	/*
-	LXActorMesh* pMesh = dynamic_cast<LXActorMesh*>(pActor);
-
-	LXPrimitive* pPrimitive = NULL;
-	if (pMesh)
-	pPrimitive = dynamic_cast<LXPrimitive*>(*pMesh->GetDrawables().begin());
-
-	const MapColorObject& mapColorObject = ((LXRendererAdvanced*)m_pRenderer)->GetMapColorObject();
-	for (MapColorObject::const_iterator It = mapColorObject.begin(); It != mapColorObject.end(); It++)
-	{
-	if (It->second == pPrimitive)
-	{
-	COLORREF color = It->first;
-	break;
-	}
-	}
-
-	m_pPointedPrimitive = pPrimitive;
-	((LXRendererAdvanced*)m_pRenderer)->InvalidateHighlight();
-	*/
-}
-
-// void LXViewport::SetOverrideShader( LXShaderProgram* pShader ) 
-// { 
-// // 	if (m_pRenderer)
-// // 		m_pRenderer->SetOverrideShader(pShader); 
-// }
-// 
-// void LXViewport::SetOverrideMaterial( LXMaterial* pMaterial ) 
-// {
-// // 	if (m_pRenderer)
-// // 		m_pRenderer->SetOverrideMaterial(pMaterial); 
-// }
-// 
-// LXShaderProgram* LXViewport::GetOverrideShader( ) const 
-// { 
-// 	return nullptr;
-// // 	if (m_pRenderer)
-// // 		return m_pRenderer->GetOverrideShader(); 
-// // 	else return	nullptr;
-// }
-// 
-// LXMaterial*	 LXViewport::GetOverrideMaterial( ) const 
-// { 
-// 	return nullptr;
-// // 	if (m_pRenderer)
-// // 		return m_pRenderer->GetOverrideMaterial(); 
-// // 	else return	nullptr;
-// }
-
-void LXViewport::InvalidateTerrainTextures()
-{
-// 	if (m_pRenderer)
-// 		dynamic_cast<LXRendererAdvanced*>(m_pRenderer)->InvalidateTerrainTextures();
-}
-
-void LXViewport::ClearRenderList()
-{
-// 	if (m_pRenderer)
-// 		dynamic_cast<LXRendererAdvanced*>(m_pRenderer)->GetRenderTraverser().Clear();
-}

@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -10,9 +10,8 @@
 
 #include "LXObject.h"
 #include "LXViewport.h"
-#include "LXObserver.h"
 
-class LXCORE_API LXViewportManager : public LXObserverCommandManager
+class LXCORE_API LXViewportManager : public LXObject
 {
 
 	friend class LXViewport;
@@ -24,13 +23,6 @@ public:
 
 	const ListViewports&	GetListViewport(	) const { return _listViewports; }
 	LXViewport*				GetViewport(	) const;
-	
-	// Overridden from LXObserverCommandManager
-	virtual void			OnChangeProperty( const LXProperty* pProperty );
-	virtual void			OnChangeHighlight( LXActor* pActor );
-	
-	// Misc
-	void					ClearRenderList( );
 	
 private:
 

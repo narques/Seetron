@@ -10,7 +10,6 @@
 
 #include "LXManager.h"
 #include "LXViewState.h"
-#include "LXObserver.h"
 
 class LXCORE_API LXViewStateManager : public LXManager2
 {
