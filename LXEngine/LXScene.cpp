@@ -61,6 +61,12 @@ void LXScene::UnregisterCB_OnActorRemoved(void* listener)
 	GetEventManager()->UnregisterEventFunc(EEventType::ActorRemoved, listener);
 }
 
+void LXScene::OnLoaded()
+{
+	for (LXActor* actor : _actors)
+		actor->SceneLoaded();
+}
+
 void LXScene::OnActorAdded(LXActor* actor)
 {
 	if (LXActorCamera* ActorCamera = dynamic_cast<LXActorCamera*>(actor))
@@ -68,6 +74,7 @@ void LXScene::OnActorAdded(LXActor* actor)
 		_actorCamera = ActorCamera;
 	}
 
+	_actors.push_back(actor);
 	GetEventManager()->PostEvent(new LXEventObjectCreated(EEventType::ActorAdded, actor));
 }
 
@@ -78,5 +85,6 @@ void LXScene::OnActorRemoved(LXActor* actor)
 		_actorCamera = nullptr;
 	}
 
+	_actors.remove(actor);
 	GetEventManager()->PostEvent(new LXEventObjectDeleted(EEventType::ActorRemoved, actor));
 }

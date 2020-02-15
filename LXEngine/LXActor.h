@@ -132,6 +132,8 @@ public:
 	bool				IsPrimitiveBBoxVisible() const { return _bPrimitiveBBoxVisible; };
 	void				SetPrimitiveBBoxVisible(bool visible);
 	
+	// Scene construction 
+	virtual void		SceneLoaded() {};
 	// Play
 	virtual void		Run(double frameTime);
 	virtual void		RunRT(double frameTime);

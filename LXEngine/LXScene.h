@@ -39,10 +39,14 @@ public:
 
 private:
 
+	void OnLoaded() override;
 	void OnActorAdded(LXActor* actor);
 	void OnActorRemoved(LXActor* actor);
 
 private:
 
 	LXActorCamera* _actorCamera = nullptr;
+
+	// 'Flat' access to all actors.
+	list<LXActor*> _actors;
 };
