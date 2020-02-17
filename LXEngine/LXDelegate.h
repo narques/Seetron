@@ -12,7 +12,7 @@
 #include <assert.h>
 #include <vector>
 
-typedef unsigned long long DelegateHandle;
+typedef unsigned long long LXDelegateHandle;
 
 template <typename R, typename...Params>
 class LXDelegateBase
@@ -51,11 +51,11 @@ public:
 	}
 
 	template <typename T>
-	void Detach(T* obj, R(T::* func)(Params...))
+	bool Detach(T* obj, R(T::* func)(Params...))
 	{
 		void* funcPtr = (void*&)func;
 		size_t hash = GetHash(obj, funcPtr);
-		Detach(hash);
+		return Detach(hash);
 	}
 
 	//
@@ -64,7 +64,7 @@ public:
 
 
 	template<typename F>
-	DelegateHandle AttachMemberLambda(const F& func)
+	LXDelegateHandle AttachMemberLambda(const F& func)
 	{
 		FunctionLambda<R, Params...>* lf = new FunctionLambda<R, Params...>();
 		lf->Func = func;
@@ -104,21 +104,29 @@ public:
 		return *this;
 	}
 
-	void DetachLambda(R(*func)(Params...))
+	bool DetachLambda(R(*func)(Params...))
 	{
 		size_t hash = GetHash(nullptr, func);
-		Detach(hash);
+		return Detach(hash);
 	}
 
 	//
 	// Common
 	//
 
-	void Detach(DelegateHandle handle)
+	bool Detach(LXDelegateHandle handle)
 	{
 		auto it = _callbacks.find((size_t)handle);
-		delete it->second;
-		_callbacks.erase((size_t)handle);
+		if (it != _callbacks.end())
+		{
+			delete it->second;
+			_callbacks.erase((size_t)handle);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	//
