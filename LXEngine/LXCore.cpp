@@ -458,6 +458,21 @@ LXRenderer* LXCore::GetRenderer() const
 	return _Renderer;
 }
 
+void LXCore::EnqueueTask(LXTask* task)
+{
+	CHK(!IsMainThread());
+	_mainTasks->EnqueueTask(task);
+}
+
+void LXCore::EnqueueInvokeDelegate(LXDelegate<>* delegate)
+{
+	LXTask* task = new LXTaskCallBack([delegate]()
+	{
+		delegate->Invoke();
+	});
+	_mainTasks->EnqueueTask(task);
+}
+
 void LXCore::AddObjectForDestruction(LXObject* object)
 {
 	LXTask* task = new LXTaskCallBack([object]()

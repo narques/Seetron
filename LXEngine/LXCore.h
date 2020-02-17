@@ -110,17 +110,9 @@ public:
 	LXRenderer*			GetRenderer() const;
 
 	// Task Helper
-	void EnqueueInvokeDelegate(LXDelegate<>* delegate)
-	{
-		CHK(!IsMainThread());
-		
-		LXTask* task = new LXTaskCallBack([delegate]()
-		{
-			delegate->Invoke();
-		});
-		_mainTasks->EnqueueTask(task);
-	}
 
+	void EnqueueTask(LXTask* task);
+	void EnqueueInvokeDelegate(LXDelegate<>* delegate);
 	void AddObjectForDestruction(LXObject* object);
 		
 	// Misc
