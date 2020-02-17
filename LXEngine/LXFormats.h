@@ -37,6 +37,13 @@ enum class ETextureFormat
 	LX_RGBA32F,					// 128 Bits
 };
 
+enum class ETextureType
+{
+	LX_Uint8,
+	LX_Uint16,
+	LX_Float,
+};
+
 //------------------------------------------------------------------------------------------------------
 //
 // Texture sampler Parameters
