@@ -2,15 +2,15 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #pragma once
 
 #include "LXObject.h"
-#include "LXTexture.h"
 #include "LXFilepath.h"
+#include "LXFormats.h"
 
 class LXCORE_API LXBitmap : public LXObject
 {
@@ -21,66 +21,92 @@ public:
 	LXBitmap(uint Width, uint Height, ETextureFormat Format);
 	virtual ~LXBitmap(void);
 
-	bool					Load(const LXFilepath& strFilename);
-	LXFilepath				GetFilename() { return m_strFilename; }
-	uint					GetWidth() const { CHK(m_nWidth); return m_nWidth; }
-	uint					GetHeight() const { CHK(m_nHeight); return m_nHeight; }
-	int						GetPixelSize();
-	template<typename T>
-	T*						GetPixel(int x, int y) { return &((T*)m_pBytes)[(x + y * m_nHeight) * m_nComponents]; }
-	void*					GetPixels() const { CHK(m_pBytes); return m_pBytes; }
-	template<typename T>
-	T*						GetPixels() const { CHK(m_pBytes); return (T*)m_pBytes; }
+	bool Load(const LXFilepath& strFilename);
+	LXFilepath GetFilename() { return _filename; }
+
+	uint GetWidth() const { CHK(_width); return _width; }
+	uint GetHeight() const { CHK(_height); return _height; }
+	ETextureFormat	GetInternalFormat() const { return _format; }
 	
-	ETextureFormat	GetInternalFormat() const { return m_eInternalFormat; }
+	// Accessors
+	template<typename T>
+	T* GetPixel(int x, int y) { return &((T*)_bytes)[(x + y * _width) * _components]; }
+	void* GetPixels() const { CHK(_bytes); return _bytes; }
 
-	void OnBitmapChanged(std::function<void()> Func) { _func = Func; }
-	std::function<void()> _func;
-	void InvokeOnBitmapChanged() { if (_func) _func(); }
-	
-
-	// Misc
-
-	void ToBlack();
-
-	static int GetComponentCount(ETextureFormat Format);
-
-	static bool  IsPowerOfTwo(uint v)
+	// Return the Pixel (first Component) normalized between [0.f, 1.f]
+	float GetNormalized(int x, int y)
 	{
-		return !((v - 1) & v);
-	}
-
-	static uint GetUpperPowerOfTwo(uint v)
-	{
-		v--;
-		v |= v >> 1;
-		v |= v >> 2;
-		v |= v >> 4;
-		v |= v >> 8;
-		v |= v >> 16;
-		v++;
-		return v;
-	}
-
-	static uint GetNumMipLevels(uint width, uint height)
-	{
-		UINT numLevels = 1;
-		while (width > 1 && height > 1)
+		switch (GetComponentType(_format))
 		{
-			width = max<unsigned int>(width / 2, 1);
-			height = max<unsigned int>(height / 2, 1);
-			++numLevels;
+		case ETextureType::LX_Uint8:
+		{
+			uint8 p = GetPixel<uint8>(x, y)[0];
+			return (float)(p) / UCHAR_MAX;
+		}
+		break;
+		case ETextureType::LX_Uint16:
+		{
+			uint16 p = GetPixel<uint16>(x, y)[0];
+			return (float)(p) / USHRT_MAX;
+		}
+		break;
+		case ETextureType::LX_Float:
+		{
+			return GetPixel<float>(x, y)[0];
+		}
+		break;
+
+		default:
+		{
+			CHK(0);
+			return 0.f;
+		}
+		break;
 		}
 
-		return numLevels;
 	}
+
+	// Returns the Bitmap size in Bytes
+	int GetBitmapSize();
+	
+	// Returns the Width in Bytes
+	int GetLineSize();
+
+	// Returns the Pixel size in Bytes
+	int GetPixelSize();
+
+	// Returns the Component count
+	int GetComponentCount();
+		
+	// Returns the Component size in Bytes
+	static int GetComponentSize(ETextureFormat Format);
+
+	// Returns the Component Type (uint8, uint16,...)
+	static ETextureType GetComponentType(ETextureFormat Format);
+
+	// Returns the Pixel size in Bytes
+	static int GetPixelSize(ETextureFormat Format);
+
+	// Fills bitmap with 0
+	void ToBlack();
+
+	// Misc
+	bool IsPowerOfTwo() { return IsPowerOfTwo(_width) && IsPowerOfTwo(_height); }
+	static bool  IsPowerOfTwo(uint v) { return !((v - 1) & v); }
+	static uint GetUpperPowerOfTwo(uint v);
+	static uint GetNumMipLevels(uint width, uint height);
 
 public:
 
-	void*					m_pBytes = nullptr;
-	uint					m_nWidth = 0;
-	uint					m_nHeight = 0;
-	ETextureFormat			m_eInternalFormat = ETextureFormat::LXUndefined;
-	uint					m_nComponents = 0;
-	LXFilepath				m_strFilename;
+	atomic<bool>			Busy = false;
+
+private:
+		
+	void*					_bytes = nullptr;
+	uint					_width = 0;
+	uint					_height = 0;
+	ETextureFormat			_format = ETextureFormat::LXUndefined;
+	uint					_components = 0;
+	LXFilepath				_filename;
+
 };

@@ -2,56 +2,36 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "StdAfx.h"
 #include "LXBitmap.h"
-#include "LXCore.h"
-#include "LXLogger.h"
 #include "FreeImage3170/FreeImage.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 #pragma comment(lib, "freeimage.lib")
 
-// Returns the format type size in byte.
-int TextureFormatSize(ETextureFormat Format)
-{
-	switch (Format)
-	{
-	case ETextureFormat::LX_R16_USHORT: return 2;
-	case ETextureFormat::LX_R16G16_USHORT: return 4;
-	case ETextureFormat::LX_R16G16_FLOAT: return 4;
-	case ETextureFormat::LX_R32G32_FLOAT: return 8;
-	case ETextureFormat::LX_RGB8: return 3;
-	case ETextureFormat::LX_RGBA8: return 4;
-	case ETextureFormat::LX_R32_FLOAT: return 4;
-	case ETextureFormat::LX_RGB32F: return 12;
-	case ETextureFormat::LX_RGBA32F: return 16;
-	default: CHK(0); return -1;
-	}
-}
-
 LXBitmap::LXBitmap(void)
 {
 }
 
-LXBitmap::LXBitmap(uint Width, uint Height, ETextureFormat Format) :
-	m_nWidth(Width),
-	m_nHeight(Height),
-	m_eInternalFormat(Format)
+LXBitmap::LXBitmap(uint width, uint height, ETextureFormat format) :
+	_width(width),
+	_height(height),
+	_format(format)
 {
-	m_nComponents = GetComponentCount(Format);
-	uint BytePerPixel = TextureFormatSize(Format);
-	int size = Width * Height * BytePerPixel;
-	m_pBytes = new BYTE[size];
-	ZeroMemory(m_pBytes, size);
+	_components = GetComponentCount();
+	uint bytePerPixel = GetPixelSize(format);
+	int size = width * height * bytePerPixel;
+	_bytes = new BYTE[size];
+	ZeroMemory(_bytes, size);
 }
 
 LXBitmap::~LXBitmap(void)
 {
-	LX_SAFE_DELETE(m_pBytes);
+	LX_SAFE_DELETE(_bytes);
 }
 
 bool LXBitmap::Load( const LXFilepath& strFilename )
@@ -62,7 +42,7 @@ bool LXBitmap::Load( const LXFilepath& strFilename )
 		return false;
 	}
 
-	m_strFilename = strFilename;
+	_filename = strFilename;
 	LXString strExtension = strFilename.GetExtension();
 
 	//
@@ -76,7 +56,7 @@ bool LXBitmap::Load( const LXFilepath& strFilename )
 	//if still unknown, try to guess the file format from the file extension
 	if (fif == FIF_UNKNOWN)
 		fif = FreeImage_GetFIFFromFilenameU(strFilename);
-	//if still unkown, return failure
+	//if still unknown, return failure
 	if (fif == FIF_UNKNOWN)
 		return false;
 	
@@ -124,7 +104,10 @@ bool LXBitmap::Load( const LXFilepath& strFilename )
 
 	if (!LXBitmap::IsPowerOfTwo(width) || !LXBitmap::IsPowerOfTwo(height))
 	{
-		if (FIBITMAP* newdib = FreeImage_Rescale(dib, 2048, 2048))
+		uint newWidth = GetUpperPowerOfTwo(width);
+		uint newHeight = GetUpperPowerOfTwo(height);
+
+		if (FIBITMAP* newdib = FreeImage_Rescale(dib, newWidth, newHeight))
 		{
 			FreeImage_Unload(dib);
 			dib = newdib;
@@ -138,8 +121,8 @@ bool LXBitmap::Load( const LXFilepath& strFilename )
 	{
 	case FIC_MINISBLACK: // Standard Greyscale Image
 		{
-			m_nComponents = 1;
-			m_eInternalFormat = ETextureFormat::LX_R16_USHORT;
+			_components = 1;
+			_format = ETextureFormat::LX_R16_USHORT;
 		}
 	break;
 
@@ -149,29 +132,29 @@ bool LXBitmap::Load( const LXFilepath& strFilename )
 		{
 		case 24:
 		{
-			m_nComponents = 3;
-			m_eInternalFormat = ETextureFormat::LX_RGB8;
+			_components = 3;
+			_format = ETextureFormat::LX_RGB8;
 		}
 		break;
 
 		case 32:
 		{
-			m_nComponents = 4;
-			m_eInternalFormat = ETextureFormat::LX_RGBA8;
+			_components = 4;
+			_format = ETextureFormat::LX_RGBA8;
 		}
 		break;
 
 		case 96:
 		{
-			m_nComponents = 3;
-			m_eInternalFormat = ETextureFormat::LX_RGB32F;
+			_components = 3;
+			_format = ETextureFormat::LX_RGB32F;
 		}
 		break;
 
 		case 128:
 		{
-			m_nComponents = 4;
-			m_eInternalFormat = ETextureFormat::LX_RGBA32F;
+			_components = 4;
+			_format = ETextureFormat::LX_RGBA32F;
 		}
 		break;
 
@@ -186,13 +169,13 @@ bool LXBitmap::Load( const LXFilepath& strFilename )
 	{
 		if (BPP == 32)
 		{
-			m_nComponents = 4;
-			m_eInternalFormat = ETextureFormat::LX_RGBA8;
+			_components = 4;
+			_format = ETextureFormat::LX_RGBA8;
 		}
 		else if (BPP == 128)
 		{
-			m_nComponents = 4;
-			m_eInternalFormat = ETextureFormat::LX_RGBA32F;
+			_components = 4;
+			_format = ETextureFormat::LX_RGBA32F;
 		}
 		else
 		{
@@ -210,41 +193,129 @@ bool LXBitmap::Load( const LXFilepath& strFilename )
 		}
 	}
 
-	uint BytePerPixel = BPP / m_nComponents / 8;
-	int count = width * height * m_nComponents * BytePerPixel;
+	uint BytePerPixel = BPP / _components / 8;
+	int count = width * height * _components * BytePerPixel;
 
-	m_pBytes = new BYTE[count];
-	m_nWidth = width;
-	m_nHeight = height;
+	_bytes = new BYTE[count];
+	_width = width;
+	_height = height;
 
-	::memcpy(m_pBytes, bits, count);
+	::memcpy(_bytes, bits, count);
 	
 	FreeImage_Unload(dib);
 		
 	return true;
 }
 
+int LXBitmap::GetBitmapSize()
+{
+	return GetPixelSize(_format) * _width * _height;
+}
+
+int LXBitmap::GetLineSize()
+{
+	return GetPixelSize(_format) * _width;
+}
+
 int LXBitmap::GetPixelSize()
 {
-	return TextureFormatSize(m_eInternalFormat);
+	return GetPixelSize(_format);
 }
 
 void LXBitmap::ToBlack()
 {
-	int size = TextureFormatSize(m_eInternalFormat) * m_nWidth * m_nHeight;
-	ZeroMemory(m_pBytes, size);
+	int size = GetPixelSize(_format) * _width * _height;
+	ZeroMemory(_bytes, size);
 }
 
-int LXBitmap::GetComponentCount(ETextureFormat Format)
+int LXBitmap::GetPixelSize(ETextureFormat Format)
 {
 	switch (Format)
+	{
+	case ETextureFormat::LX_R16_USHORT: return 2;
+	case ETextureFormat::LX_R16G16_USHORT: return 4;
+	case ETextureFormat::LX_R16G16_FLOAT: return 4;
+	case ETextureFormat::LX_R32G32_FLOAT: return 8;
+	case ETextureFormat::LX_RGB8: return 3;
+	case ETextureFormat::LX_RGBA8: return 4;
+	case ETextureFormat::LX_R32_FLOAT: return 4;
+	case ETextureFormat::LX_RGB32F: return 12;
+	case ETextureFormat::LX_RGBA32F: return 16;
+	default: CHK(0); return -1;
+	}
+}
+
+uint LXBitmap::GetUpperPowerOfTwo(uint v)
+{
+	v--;
+	v |= v >> 1;
+	v |= v >> 2;
+	v |= v >> 4;
+	v |= v >> 8;
+	v |= v >> 16;
+	v++;
+	return v;
+}
+
+uint LXBitmap::GetNumMipLevels(uint width, uint height)
+{
+	UINT numLevels = 1;
+	while (width > 1 && height > 1)
+	{
+		width = max<unsigned int>(width / 2, 1);
+		height = max<unsigned int>(height / 2, 1);
+		++numLevels;
+	}
+	return numLevels;
+}
+
+int LXBitmap::GetComponentCount()
+{
+	switch (_format)
 	{
 	case ETextureFormat::LX_R16_USHORT: return 1;
 	case ETextureFormat::LX_R16G16_USHORT: return 2;
 	case ETextureFormat::LX_R16G16_FLOAT: return 2;
 	case ETextureFormat::LX_R32G32_FLOAT: return 2;
+	case ETextureFormat::LX_RGB8: return 3;
 	case ETextureFormat::LX_RGBA8:return 4;
 	case ETextureFormat::LX_R32_FLOAT:return 1;
+	case ETextureFormat::LX_RGB32F: return 3;
+	case ETextureFormat::LX_RGBA32F: return 4;
 	default: CHK(0);  return -1;
+	}
+}
+
+int LXBitmap::GetComponentSize(ETextureFormat Format)
+{
+	switch (Format)
+	{
+	case ETextureFormat::LX_R16_USHORT: return 2;
+	case ETextureFormat::LX_R16G16_USHORT: return 2;
+	case ETextureFormat::LX_R16G16_FLOAT: return 2;
+	case ETextureFormat::LX_R32G32_FLOAT: return 4;
+	case ETextureFormat::LX_RGB8: return 1;
+	case ETextureFormat::LX_RGBA8: return 1;
+	case ETextureFormat::LX_R32_FLOAT: return 4;
+	case ETextureFormat::LX_RGB32F: return 4;
+	case ETextureFormat::LX_RGBA32F: return 4;
+	default: CHK(0); return -1;
+	}
+}
+
+ETextureType LXBitmap::GetComponentType(ETextureFormat Format)
+{
+	switch (Format)
+	{
+	case ETextureFormat::LX_R16_USHORT: return ETextureType::LX_Uint16;
+	case ETextureFormat::LX_R16G16_USHORT: return ETextureType::LX_Uint16;
+	case ETextureFormat::LX_R16G16_FLOAT: return ETextureType::LX_Float;
+	case ETextureFormat::LX_R32G32_FLOAT: return ETextureType::LX_Float;
+	case ETextureFormat::LX_RGB8: return ETextureType::LX_Uint8;
+	case ETextureFormat::LX_RGBA8: return ETextureType::LX_Uint8;
+	case ETextureFormat::LX_R32_FLOAT: return ETextureType::LX_Float;
+	case ETextureFormat::LX_RGB32F: return ETextureType::LX_Float;
+	case ETextureFormat::LX_RGBA32F: return ETextureType::LX_Float;
+	default: CHK(0); return ETextureType::LX_Uint8;
 	}
 }
