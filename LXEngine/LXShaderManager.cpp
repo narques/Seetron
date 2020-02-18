@@ -140,6 +140,22 @@ void LXShaderManager::DeleteUnusedShaders(M& mapShaders, bool keepErroneous)
 	}
 }
 
+template<typename M>
+void LXShaderManager::ReleaseShaders(const LXMaterialD3D11* material, M& mapShaders)
+{
+	for (auto It = mapShaders.begin(); It != mapShaders.end();)
+	{
+		if (It->first.Material == material)
+		{
+			It = mapShaders.erase(It);
+		}
+		else
+		{
+			It++;
+		}
+	}
+}
+
 bool LXShaderManager::GetShaderSimple(LXShaderD3D11 * OutVS, LXShaderD3D11 * OutPS)
 {
 	return false;
@@ -209,6 +225,15 @@ bool LXShaderManager::GetShaders(ERenderPass RenderPass, const LXPrimitiveD3D11*
 	}
 	
 	return true;
+}
+
+void LXShaderManager::ReleaseShaders(const LXMaterialD3D11* material)
+{
+	ReleaseShaders(material, VertexShaders);
+	ReleaseShaders(material, HullShaders);
+	ReleaseShaders(material, DomainShaders);
+	ReleaseShaders(material, GeometryShaders);
+	ReleaseShaders(material, PixelShaders);
 }
 
 LXShaderD3D11* LXShaderManager::GetTextureShader(const LXString& ShaderFilename)

@@ -32,17 +32,17 @@ struct LXVSSignature
 
 struct LXHSSignature
 {
-	uint foo : 1;
+	const LXMaterialD3D11* Material = nullptr;
 };
 
 struct LXDSSignature
 {
-	uint foo : 1;
+	const LXMaterialD3D11* Material = nullptr;
 };
 
 struct LXGSSignature
 {
-	uint foo : 1;
+	const LXMaterialD3D11* Material = nullptr;
 };
 
 struct LXPSSignature
@@ -77,21 +77,21 @@ struct CmpLXVSSignature{
 struct CmpLXHSSignature {
 	bool operator()(const LXHSSignature& a, const LXHSSignature& b) const
 	{
-		return a.foo < b.foo;
+		return a.Material > b.Material;
 	}
 };
 
 struct CmpLXDSSignature {
 	bool operator()(const LXDSSignature& a, const LXDSSignature& b) const
 	{
-		return a.foo < b.foo;
+		return a.Material > b.Material;
 	}
 };
 
 struct CmpLXGSSignature {
 	bool operator()(const LXGSSignature& a, const LXGSSignature& b) const
 	{
-		return a.foo < b.foo;
+		return a.Material > b.Material;
 	}
 };
 
@@ -130,6 +130,9 @@ public:
 	// Retrieve shaders according the giving Material
 	bool GetShaders(ERenderPass RenderPass, const LXPrimitiveD3D11* InPrimitive, const LXMaterialD3D11* InMaterial, LXShaderProgramD3D11* OutShaderProgram);
 
+	// Release shaders for the given Material
+	void ReleaseShaders(const LXMaterialD3D11* material);
+	   
 	// Retrieve Shader according the giving Material
 	LXShaderD3D11* GetTextureShader(const LXString& ShaderFilename);
 
@@ -146,8 +149,10 @@ private:
 
 	template<typename M>
 	void DeleteUnusedShaders(M& mapShaders, bool keepErroneous);
-	
 
+	template<typename M>
+	void ReleaseShaders(const LXMaterialD3D11* material, M& mapShaders);
+	
 	bool CreateShader(const LXVSSignature& VSSignature, LXShaderD3D11* Shader);
 	bool CreateShader(const LXHSSignature& HSSignature, LXShaderD3D11* Shader);
 	bool CreateShader(const LXDSSignature& DSSignature, LXShaderD3D11* Shader);
