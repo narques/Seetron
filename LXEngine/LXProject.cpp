@@ -206,9 +206,6 @@ bool LXProject::LoadFile( const LXFilepath& strFilepath )
 				Size = 500.f / Size;
 				ActorMesh->SetScale(vec3f(Size));
 			}
-
-			GetCore().GetCommandManager().SceneChanged();
-
 			bRet = true;
 		}
 	}

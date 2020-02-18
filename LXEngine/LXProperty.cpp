@@ -128,6 +128,7 @@ LXPropertyT<T>::LXPropertyT(const LXPropertyT& prop):LXProperty(prop._Type)
 	_Owner = prop._Owner;
 
 	_funcOnChange = prop._funcOnChange;
+	ValueChanging = prop.ValueChanging;
 	ValueChanged = prop.ValueChanged;
 	_funcOnGet = prop._funcOnGet;
 
@@ -329,6 +330,8 @@ void LXPropertyT<T>::SetValue( const T& value, bool InvokeOnProperyChanged )
 		return;
 	}
 	 
+	ValueChanging.Invoke(this);
+
 	T clampedValue = CheckRange(value);
 
 	LoadValue(clampedValue);

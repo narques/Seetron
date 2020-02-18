@@ -73,6 +73,7 @@ int OpenFunc(void* pData)
 	Project->OnFilesLoaded(bRet);
 	
 	GetEventManager()->PostEvent(new LXEventResult(EEventType::ProjectLoaded, bRet));
+	GetCore().EnqueueInvokeDelegate(&Project->ProjectLoaded);
 					
 	LoadingThread = 0;
 

@@ -127,7 +127,8 @@ public:
 	bool							Save(const TSaveContext& saveContext, LXString* pName = nullptr, LXString* pAttribute = nullptr, bool saveAsProperty = false) const;
 	bool         					Load(const TLoadContext& loadContext, LXString* pName = nullptr);
 	bool							LoadWithMSXML(const LXFilepath& strFilename, bool bLoadChilds = true, bool bLoadViewStates = true);
-
+	bool							IsLoading() const { return _isLoading; }
+	
 	void							SetName(const LXString& strName) { _Name = strName; }
 	const LXString&					GetName() const { return _Name; }
 
@@ -207,6 +208,7 @@ private:
 
 public:
 
+	LXDelegate<LXProperty*>			PropertyChanged;
 	bool							EditableUserProperties = false;
 
 

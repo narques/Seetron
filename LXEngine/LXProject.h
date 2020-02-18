@@ -159,6 +159,9 @@ public:
 
 public:
 
+	// Delegates & Events
+	LXDelegate<> ProjectLoaded;
+
 	bool DepthOfField = false;
 	bool SSAO = true;
 

@@ -659,7 +659,6 @@ bool LXViewport::DropAssetMesh(LXAssetMesh* AssetMesh, LXPoint pntWnd)
 	ActorMesh->SetAssetMesh(AssetMesh);
 	GetProject()->GetScene()->AddChild(ActorMesh);
 	LogD(Viewport, L"Use the CommandAddActor");
-	GetCore().GetCommandManager().SceneChanged();
 	return true;
 }
 

@@ -139,6 +139,7 @@ public:
 
 public:
 
+	LXDelegate<LXProperty*>	ValueChanging;
 	LXDelegate<LXProperty*>	ValueChanged;
 
 protected:

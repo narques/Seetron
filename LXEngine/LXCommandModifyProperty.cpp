@@ -61,14 +61,8 @@ bool LXCommandPropertyT<T>::Do( )
 template<class T>
 bool LXCommandPropertyT<T>::Undo( )
 {
-	m_pPropertyOriginal->SetValue(m_oldValue); 
+	m_pProperty->SetValue(m_oldValue);
 	return true;
-}
-
-template<class T>
-const LXProperty* LXCommandPropertyT<T>::GetPropertyOriginal( ) const 
-{ 
-	return m_pPropertyOriginal; 
 }
 
 template<class T>

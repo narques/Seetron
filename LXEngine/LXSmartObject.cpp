@@ -448,6 +448,8 @@ void LXSmartObject::OnPropertyChanged(LXProperty* Property)
 	{
 		It.second(this, Property);
 	}
+
+	PropertyChanged.Invoke(Property);
 }
 
 void LXSmartObject::RegisterCB_OnPropertyChanged(void* Listener, std::function<void(LXSmartObject*, LXProperty*)> func)

@@ -22,7 +22,6 @@ public:
 	LXCommandProperty(void);
 	virtual ~LXCommandProperty(void);
 
-	virtual const LXProperty*	GetPropertyOriginal( ) const = 0;
 	virtual const LXProperty*	GetProperty( ) const = 0;
 };
 
@@ -41,12 +40,10 @@ public:
 			m_newValue = newValue;
 			m_oldValue = pProperty->GetValue();
 			m_pProperty = pProperty;
-			m_pPropertyOriginal = new LXPropertyT<T>(*m_pProperty);
 	}
 	
 	virtual ~LXCommandPropertyT(void)
 	{
-		delete m_pPropertyOriginal;
 	}
 	
 	// Overridden from LXCommand
@@ -54,14 +51,12 @@ public:
 	virtual bool Undo( )override;
 		
 	// Overridden from LXCommandProperty
-	virtual const LXProperty*	GetPropertyOriginal( ) const;
 	virtual const LXProperty*	GetProperty( ) const;
 
 	void SetNewValue(const T& newValue) { m_newValue = newValue; }
 
 protected:
 
-	LXPropertyT<T>*		m_pPropertyOriginal;	 // Original property (copy)
 	LXPropertyT<T>*		m_pProperty;			 // Targeted property
 	T					m_newValue;				 // New value
 	T                   m_oldValue;				 // Old value
