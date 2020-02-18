@@ -73,6 +73,7 @@ public:
 
 	void CreateDeviceTexture(LXTexture* texture);
 	void ReleaseDeviceTexture(LXTexture* texture);
+	void CopyDeviceTexture(LXTexture* texture);
 	
 	void CreateDeviceMaterial(LXMaterial* material);
 	void ReleaseDeviceMaterial(LXMaterial* material);
@@ -119,6 +120,12 @@ private:
 	// Task
 	bool HasPendingTasks() const;
 	void EnqueueTask(LXTask* task);
+	
+	// Misc
+	void CreateDeviceTexture_RT(LXTexture* texture);
+	void CopyDeviceTexture_RT(LXTexture* texture);
+	void CreateDeviceMaterial_RT(LXMaterial* material);
+
 public:
 
 	LXRenderClusterManager * RenderClusterManager = nullptr;

@@ -9,6 +9,7 @@
 #include "stdafx.h"
 #include "LXAnimationManager.h"
 #include "LXActorMesh.h"
+#include "LXBitmap.h"
 #include "LXConsoleManager.h"
 #include "LXConstantBufferD3D11.h"
 #include "LXController.h"
@@ -562,20 +563,30 @@ void LXRenderer::CreateDeviceTexture(LXTexture* texture)
 {
 	if (IsRenderThread())
 	{
-		LXTextureD3D11* texture3D11 = LXTextureD3D11::CreateFromTexture(texture);
-		texture->SetDeviceTexture(texture3D11);
+		CreateDeviceTexture_RT(texture);
 	}
 	else
 	{
-		LXTask* task = new LXTaskCallBack([texture]()
+		LXTask* task = new LXTaskCallBack([this, texture]()
 		{
-			CHK(IsRenderThread());
-			LXTextureD3D11* texture3D11 = LXTextureD3D11::CreateFromTexture(texture);
-			texture->SetDeviceTexture(texture3D11);
+			CreateDeviceTexture_RT(texture);
 		});
 
 		EnqueueTask(task);
 	}
+}
+
+void LXRenderer::CreateDeviceTexture_RT(LXTexture* texture)
+{
+	if (texture->GetDeviceTexture())
+	{
+		delete texture->GetDeviceTexture();
+	}
+
+	LXTextureD3D11* texture3D11 = LXTextureD3D11::CreateFromTexture(texture);
+	texture->SetDeviceTexture(texture3D11);
+	texture->DeviceCreationEnqueued = false;
+	GetCore().EnqueueInvokeDelegate(&texture->DeviceCreated);
 }
 
 void LXRenderer::ReleaseDeviceTexture(LXTexture* texture)
@@ -599,35 +610,119 @@ void LXRenderer::ReleaseDeviceTexture(LXTexture* texture)
 	}
 }
 
+void LXRenderer::CopyDeviceTexture(LXTexture* texture)
+{
+	if (IsRenderThread())
+	{
+		CopyDeviceTexture_RT(texture);
+	}
+	else
+	{
+		LXTask* task = new LXTaskCallBack([this, texture]()
+		{
+			CopyDeviceTexture_RT(texture);
+		});
+	
+		EnqueueTask(task);
+	}
+}
+
+void LXRenderer::CopyDeviceTexture_RT(LXTexture* texture)
+{
+	CHK(IsRenderThread());
+
+	ID3D11Device* D3D11Device = LXDirectX11::GetCurrentDevice();
+	ID3D11DeviceContext* D3D11DeviceContext = LXDirectX11::GetCurrentDeviceContext();
+	ID3D11Texture2D* srcResource = texture->GetDeviceTexture()->D3D11Texture2D;
+	LXBitmap* bitmap = texture->GetBitmap(0);
+	
+	//
+	// Create a readable D3D11texture
+	//
+
+	ID3D11Texture2D* D3D11Texture2D;
+	D3D11_TEXTURE2D_DESC desc;
+	srcResource->GetDesc(&desc);
+	desc.Usage = D3D11_USAGE_STAGING;
+	desc.BindFlags = 0;
+	desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	HRESULT hr = D3D11Device->CreateTexture2D(&desc, NULL, &D3D11Texture2D);
+	if (FAILED(hr))
+		CHK(0);
+
+	//
+	// Copy Source to the readable texture.
+	//
+
+	D3D11DeviceContext->CopyResource(D3D11Texture2D, srcResource);
+
+	//
+	// Copy readable texture to bitmap.
+	//
+
+	uint32 subresource = D3D11CalcSubresource(0, 0, 1);
+	D3D11_MAPPED_SUBRESOURCE mappedSubresource = {};
+	HRESULT result = D3D11DeviceContext->Map(D3D11Texture2D, subresource, D3D11_MAP_READ, 0, &mappedSubresource);
+	if (result == S_OK)
+	{
+		const unsigned char* source = static_cast<const unsigned char*>(mappedSubresource.pData);
+		unsigned char* destination = (unsigned char*)bitmap->GetPixels();
+		int size = bitmap->GetBitmapSize();
+		if (bitmap->IsPowerOfTwo())
+			memcpy(destination, source, size);
+		else
+		{
+			// Textures are 128 Bytes aligned, Bitmap is not
+			int padding = (128 - (bitmap->GetLineSize() % 128)) % 128;
+			int sourcelineSize = bitmap->GetLineSize() + padding;
+			int destinationlineSize = bitmap->GetLineSize();
+			for (int i = 0; i < bitmap->GetHeight(); i++)
+			{
+				memcpy(destination, source, destinationlineSize);
+				destination += destinationlineSize;
+				source += sourcelineSize;
+			}
+		}
+		D3D11DeviceContext->Unmap(srcResource, subresource);
+	}
+	else
+	{
+		LXDirectX11::LogError(result);
+	}
+ 
+	D3D11Texture2D->Release();
+	texture->CopyDeviceToBitmapEnqueued = false;
+	GetCore().EnqueueInvokeDelegate(&texture->BitmapChanged);
+}
+
 void LXRenderer::CreateDeviceMaterial(LXMaterial* material)
 {
 	if (IsRenderThread())
 	{ 
-		if (material->GetDeviceMaterial())
-		{
-			delete material->GetDeviceMaterial();
-		}
-
-		LXMaterialD3D11* materialD3D11 = LXMaterialD3D11::CreateFromMaterial(material);
-		material->SetDeviceMaterial(materialD3D11);
+		CreateDeviceMaterial_RT(material);
 	}
 	else
 	{
-		LXTask* task = new LXTaskCallBack([material]()
+		LXTask* task = new LXTaskCallBack([this, material]()
 		{
-			CHK(IsRenderThread());
-
-			if (material->GetDeviceMaterial())
-			{
-				delete material->GetDeviceMaterial();
-			}
-			
-			LXMaterialD3D11* texture3D11 = LXMaterialD3D11::CreateFromMaterial(material);
-			material->SetDeviceMaterial(texture3D11);
+			CreateDeviceMaterial_RT(material);
 		});
 
 		EnqueueTask(task);
 	}
+}
+
+void LXRenderer::CreateDeviceMaterial_RT(LXMaterial* material)
+{
+	if (const LXMaterialD3D11* materialD3D11 = material->GetDeviceMaterial())
+	{
+		GetShaderManager()->ReleaseShaders(materialD3D11);
+		delete materialD3D11;
+	}
+
+	LXMaterialD3D11* texture3D11 = LXMaterialD3D11::CreateFromMaterial(material);
+	material->SetDeviceMaterial(texture3D11);
+	GetCore().EnqueueInvokeDelegate(&material->Compiled);
 }
 
 void LXRenderer::ReleaseDeviceMaterial(LXMaterial* material)
@@ -644,7 +739,6 @@ void LXRenderer::ReleaseDeviceMaterial(LXMaterial* material)
 		LXTask* task = new LXTaskCallBack([material, materialD3D11]()
 		{
 			CHK(IsRenderThread());
-			material->SetDeviceMaterial(nullptr);
 			delete materialD3D11;
 		});
 
