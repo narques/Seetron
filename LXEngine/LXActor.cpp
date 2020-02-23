@@ -2,25 +2,24 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "StdAfx.h"
 #include "LXActor.h"
 #include "LXActorFactory.h"
-#include "LXAnchor.h"
-#include "LXController.h"
 #include "LXCore.h"
 #include "LXMSXMLNode.h"
 #include "LXMath.h"
-#include "LXProject.h"
+#include "LXRenderData.h"
 #include "LXRenderer.h"
 #include "LXScene.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
 LXActor::LXActor()
 {
+	LX_COUNTSCOPEINC(LXActor);
 	_Project = GetCore().GetProject();
 	_nCID = LX_NODETYPE_ACTOR;
 	DefineProperties();
@@ -29,14 +28,19 @@ LXActor::LXActor()
 LXActor::LXActor(LXProject* pDocument):
 _Project(pDocument)
 {
+	LX_COUNTSCOPEINC(LXActor);
 	_nCID = LX_NODETYPE_ACTOR;
 	DefineProperties();
 }
 
 LXActor::~LXActor(void)
 {
+	LX_COUNTSCOPEDEC(LXActor);
+
 	for (auto It = _Children.begin(); It != _Children.end(); It++)
 		delete (*It);
+
+	ReleaseRenderData(ERenderClusterRole::All);
 }
 
 void LXActor::MarkForDelete()
@@ -100,13 +104,31 @@ void LXActor::InvalidateRenderState(LXFlagsRenderClusterRole renderStates)
 	if (_isLoading || GetParent() == nullptr)
 		return;
 
-	_RenderStateValid = false;
-	GetRenderer()->UpdateActor(this, renderStates);
+	CreateRenderData(renderStates);
 }
 
-void LXActor::ValidateRensterState()
+void LXActor::CreateRenderData(LXFlagsRenderClusterRole renderStates)
 {
-	_RenderStateValid = true;
+	ReleaseRenderData(renderStates);
+
+	if (GetRenderer())
+	{
+		_renderData = new LXRenderData(this);
+		ComputePrimitiveWorldMatrices();
+
+		if (_bVisible)
+		{
+			GetRenderer()->UpdateActor(_renderData, renderStates);
+		}
+	}
+}
+
+void LXActor::ReleaseRenderData(LXFlagsRenderClusterRole renderStates)
+{
+	if (_renderData && GetRenderer())
+	{
+		GetRenderer()->ReleaseRenderData(_renderData, renderStates);
+	}
 }
 
 #if LX_ANCHOR
@@ -194,7 +216,7 @@ void LXActor::InvalidateMatrixWCS()
 	// It cannot exist in the Renderer
 	if (GetParent())
 	{
-		GetController()->ActorWorldMatrixChanged(this);
+		ComputePrimitiveWorldMatrices();
 	}
 }
 
@@ -303,6 +325,15 @@ void LXActor::ComputeBBoxWorld()
 	GetMatrixWCS().LocalToParent(_BBoxWorld);
 }
 
+void LXActor::ComputePrimitiveWorldMatrices()
+{
+	if (_renderData && !_bValidWorldPrimitiveMatrices)
+	{
+		_renderData->ComputePrimitiveWorldMatrices();
+		_bValidWorldPrimitiveMatrices = true;
+	}
+}
+
 void LXActor::AddChild(LXActor* Actor)
 {
 	CHK(Actor);
@@ -382,7 +413,7 @@ void LXActor::SetBBoxVisible(bool visible)
 	if (_bBBoxVisible != visible)
 	{
 		_bBBoxVisible = visible;
-		InvalidateRenderState(ERenderClusterRole::ActorBBox);
+		InvalidateRenderState(LXFlagsRenderClusterRole(ERenderClusterRole::Default) | LXFlagsRenderClusterRole(ERenderClusterRole::ActorBBox));
 	}
 }
 
@@ -391,7 +422,7 @@ void LXActor::SetPrimitiveBBoxVisible(bool visible)
 	if (_bPrimitiveBBoxVisible != visible)
 	{
 		_bPrimitiveBBoxVisible = visible;
-		InvalidateRenderState(ERenderClusterRole::PrimitiveBBox);
+		InvalidateRenderState(LXFlagsRenderClusterRole(ERenderClusterRole::Default) | LXFlagsRenderClusterRole(ERenderClusterRole::PrimitiveBBox));
 	}
 }
 

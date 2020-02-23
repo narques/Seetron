@@ -547,6 +547,7 @@ void LXCore::Run()
 		// Synchronize the data between MainThread and RenderThread
 		GetController()->Run();
 		_syncTasks->Run((float)Time.DeltaTime());
+		_Renderer->Sync();
 	}
 
 	GetViewport()->GetCameraManipulator()->Update(Time.DeltaTime());

@@ -27,7 +27,7 @@ LXActorMeshGizmo::LXActorMeshGizmo()
 	SetPersistent(false);
 	SetName(L"Gizmo");
 	SetVisible(false);
-	SetCastShadows(false);
+	_bCastShadows = false;
 	_nCID |= LX_NODETYPE_CS;
 
 	// Register Events.

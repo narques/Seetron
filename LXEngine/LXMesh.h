@@ -20,7 +20,7 @@ class LXAssetMesh;
 typedef list<LXMesh*> ListMeshes;
 
 class LXPrimitiveInstance;
-typedef vector <unique_ptr<LXPrimitiveInstance>> VectorPrimitiveInstances;
+typedef vector <shared_ptr<LXPrimitiveInstance>> VectorPrimitiveInstances;
 
 class LXCORE_API LXMesh : public LXSmartObject
 {
@@ -51,7 +51,7 @@ public:
 	const VectorPrimitiveInstances& GetPrimitives() { return _vectorPrimitives; }
 
 	// Return the primitives, including child primitives
-	void GetAllPrimitives(vector<LXPrimitiveInstance*>& primitives);
+	void GetAllPrimitives(VectorPrimitiveInstances& primitives);
 
 	//Bounds
 	const LXBBox& GetBounds();

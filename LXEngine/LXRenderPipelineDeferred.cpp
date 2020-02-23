@@ -14,6 +14,7 @@
 #include "LXProject.h"
 #include "LXRenderCluster.h"
 #include "LXRenderClusterManager.h"
+#include "LXRenderData.h"
 #include "LXRenderer.h"
 //#include "LXRenderPassAA.h"
 #include "LXRenderPassAux.h"
@@ -157,8 +158,10 @@ void LXRenderPipelineDeferred::BuildRenderClusterLists()
 	for (LXRenderCluster* RenderCluster : _Renderer->RenderClusterManager->ListRenderClusters)
 	{
 		const bool IsLight = RenderCluster->Flags & ERenderClusterType::Light;
+		const bool IsRenderToTexture = RenderCluster->Flags & ERenderClusterType::RenderToTexture;
+		const bool ignoreFrustum = IsLight || IsRenderToTexture;
 
-		if (IsLight || Frustum.IsBoxIn(RenderCluster->BBoxWorld.GetMin(), RenderCluster->BBoxWorld.GetMax()))
+		if (ignoreFrustum || Frustum.IsBoxIn(RenderCluster->BBoxWorld.GetMin(), RenderCluster->BBoxWorld.GetMax()))
 		{
 			if (IsLight)
 			{
@@ -290,15 +293,17 @@ void LXRenderPipelineDeferred::GetTextureCoordinatesInAtlas(LXRenderCluster* Ren
 	int static indices = 0;
 	int index;
 
-	if (mapActors.find(RenderCluster->Actor) == mapActors.end())
+	LXActor* actor = const_cast<LXActor*>(RenderCluster->RenderData->GetActor());
+
+	if (mapActors.find(actor) == mapActors.end())
 	{
 		index = indices;
-		mapActors[RenderCluster->Actor] = index;
+		mapActors[actor] = index;
 		indices++;
 	}
 	else 
 	{
-		index = mapActors[RenderCluster->Actor];
+		index = mapActors[actor];
 	}
 		
 	const float kShadowMapWidth = 512.f;

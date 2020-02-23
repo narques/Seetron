@@ -8,50 +8,15 @@
 
 #include "StdAfx.h"
 #include "LXActorMesh.h"
-#include "LXAnchor.h"
 #include "LXAssetMesh.h"
-#include "LXLogger.h"
-#include "LXMSXMLNode.h"
-#include "LXMaterial.h"
+#include "LXCore.h"
 #include "LXMesh.h"
-#include "LXPrimitive.h"
-#include "LXPrimitiveInstance.h"
-#include "LXProject.h"
-#include "LXRenderCluster.h"
-#include "LXSettings.h"
-#include "LXThread.h"
 #include "LXMemory.h" // --- Must be the last included ---
-
-LXWorldPrimitive::LXWorldPrimitive(LXPrimitiveInstance* InPrimitiveInstance):
-	PrimitiveInstance(InPrimitiveInstance)
-{
-	PrimitiveInstance->Owners.push_back(this);
-}
-
-LXWorldPrimitive::LXWorldPrimitive(LXPrimitiveInstance* InPrimitiveInstance, const LXMatrix& Matrix, LXBBox& BBox) :
-	PrimitiveInstance(InPrimitiveInstance),
-	MatrixWorld(Matrix),
-	BBoxWorld(BBox)
-{
-	PrimitiveInstance->Owners.push_back(this);
-}
-
-LXWorldPrimitive::~LXWorldPrimitive()
-{
-	PrimitiveInstance->Owners.remove(this);
-}
-
-void LXWorldPrimitive::SetMaterial(LXMaterial* material)
-{
-	if (RenderCluster)
-	{
-		RenderCluster->SetMaterial(material);
-	}
-}
 
 LXActorMesh::LXActorMesh():
 LXActor(GetCore().GetProject())
 {
+	LX_COUNTSCOPEINC(LXActorMesh);
 	_nCID |= LX_NODETYPE_MESH;
 	SetName(L"ActorMesh");
 	DefineProperties();
@@ -60,6 +25,7 @@ LXActor(GetCore().GetProject())
 LXActorMesh::LXActorMesh(LXProject* pDocument):
 LXActor(pDocument)
 {
+	LX_COUNTSCOPEINC(LXActorMesh);
 	_nCID |= LX_NODETYPE_MESH;
 	SetName(L"Mesh");
 	DefineProperties();
@@ -67,10 +33,7 @@ LXActor(pDocument)
 
 LXActorMesh::~LXActorMesh(void)
 {
-	for (LXWorldPrimitive* worldPrimitive : _worldPrimitives)
-	{
-		delete worldPrimitive;
-	}
+	LX_COUNTSCOPEDEC(LXActorMesh);
 }
 
 void LXActorMesh::SetInstancePosition(uint i, const vec3f& Position)
@@ -90,12 +53,6 @@ void LXActorMesh::DefineProperties( )
 	// --------------------------------------------------------------------------------------------------------------
 	LXProperty::SetCurrentGroup(L"ActorMesh");
 	// --------------------------------------------------------------------------------------------------------------
-	
-	auto PropertyMeshLayer = DefinePropertyInt(L"Layer", LXPropertyID::MESH_LAYER, &_nLayer);
-	PropertyMeshLayer->SetMinMax(0, 1);
-	
-	//Outlines
-	DefinePropertyBool(L"Outlines", LXPropertyID::MESH_OUTLINES, &_showOutlines);
 	
 	//CastShadows
 	DefinePropertyBool(L"CastShadows", GetAutomaticPropertyID(), &_bCastShadows);
@@ -225,22 +182,17 @@ void LXActorMesh::ReleaseAllPrimitives()
 
 void LXActorMesh::InvalidateWorldPrimitives()
 {
-	_worldPrimitives.clear();
+	ReleaseRenderData(ERenderClusterRole::All);
 }
 
 const TWorldPrimitives& LXActorMesh::GetAllPrimitives()
 {
-	if (_worldPrimitives.size() == 0)
-		GatherPrimitives();
+	static TWorldPrimitives empty;
 
-	if (!_bValidWorldPrimitiveMatrices)
-	{
-		CHK(::GetCurrentThreadId() != RenderThread);
-		ComputePrimitiveWorldMatrices();
-		_bValidWorldPrimitiveMatrices = true;
-	}
-
-	return _worldPrimitives;
+	if (_renderData)
+		return _renderData->GetPrimitives();
+	else
+		return empty;
 }
 
 void LXActorMesh::ComputeBBoxWorld()
@@ -250,41 +202,15 @@ void LXActorMesh::ComputeBBoxWorld()
 
 	__super::ComputeBBoxWorld();
 	 
-	LXBBox box;
-	for (const LXWorldPrimitive* worldPrimitive : _worldPrimitives)
+	if (_renderData)
 	{
-		CHK(worldPrimitive->BBoxWorld.IsValid());
-		box.Add(worldPrimitive->BBoxWorld);
-	}
-	_BBoxWorld.Add(box);
-}
-
-void LXActorMesh::GatherPrimitives()
-{
-	CHK(_worldPrimitives.size() == 0);
-
-	if (Mesh)
-	{
-		vector<LXPrimitiveInstance*> primitives;
-		Mesh->GetAllPrimitives(primitives);
-
-		for (LXPrimitiveInstance* primitiveInstance : primitives)
+		LXBBox box;
+		for (const LXWorldPrimitive* worldPrimitive : _renderData->GetPrimitives())
 		{
-			_worldPrimitives.push_back(new LXWorldPrimitive(primitiveInstance));
+			CHK(worldPrimitive->BBoxWorld.IsValid());
+			box.Add(worldPrimitive->BBoxWorld);
 		}
-	}
-}
-
-void LXActorMesh::ComputePrimitiveWorldMatrices()
-{
-	for (LXWorldPrimitive* worldPrimitive : _worldPrimitives)
-	{
-		const LXMatrix* matrix = worldPrimitive->PrimitiveInstance->MatrixRCS;
-		LXMatrix matrixMeshWCS = matrix ? GetMatrixWCS() * *matrix : GetMatrixWCS();
-		LXBBox BBoxWorld = worldPrimitive->PrimitiveInstance->Primitive->GetBBoxLocal();
-		matrixMeshWCS.LocalToParent(BBoxWorld);
-		worldPrimitive->MatrixWorld = matrixMeshWCS;
-		worldPrimitive->BBoxWorld = BBoxWorld;
+		_BBoxWorld.Add(box);
 	}
 }
 

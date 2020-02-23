@@ -9,31 +9,11 @@
 #pragma once
 
 #include "LXActor.h"
+#include "LXRenderData.h"
 
 class LXAssetMesh;
 class LXMesh;
-class LXPrimitiveInstance;
 class LXRenderCluster;
-
-class LXWorldPrimitive
-{
-
-public:
-
-	LXWorldPrimitive(LXPrimitiveInstance* InPrimitiveInstance);
-	LXWorldPrimitive(LXPrimitiveInstance* InPrimitiveInstance, const LXMatrix& Matrix, LXBBox& BBox);
-	~LXWorldPrimitive();
-	void SetMaterial(LXMaterial* material);
-
-	LXPrimitiveInstance* PrimitiveInstance;
-	LXMatrix MatrixWorld;
-	LXBBox BBoxWorld;
-
-	// Rendering
-	LXRenderCluster* RenderCluster = nullptr;
-};
-
-typedef vector<LXWorldPrimitive*> TWorldPrimitives;
 
 class LXCORE_API LXActorMesh : public LXActor
 {
@@ -77,17 +57,16 @@ public:
 	shared_ptr<LXMesh>&				GetMesh() { return Mesh; }
 	void							SetAssetMesh(LXAssetMesh* AssetMesh);
 	void							InvalidateWorldPrimitives();
+	virtual bool					GetCastShadows() const override { return _bCastShadows; }
 
 protected:
 
 	// Bounds
 	virtual	void					ComputeBBoxWorld() override;
-	virtual void					ComputePrimitiveWorldMatrices();
-
+	
 private:
 
 	//virtual void					OnLoaded() override;
-	void							GatherPrimitives();
 	void							UpdateAssetMeshCallbacks();
 	void							UpdateMesh();
 	void							OnInvalidateMatrixWCS() override;
@@ -96,17 +75,10 @@ protected:
 
 	shared_ptr<LXMesh> Mesh;
 	LXAssetMesh* _AssetMesh = nullptr;
-	
-	TWorldPrimitives _worldPrimitives;
-
-	GetSetDef(int, _nLayer, Layer, 0);
-	GetSetDef(bool, _showOutlines, ShowOutlines, false);
-	GetSetDef(bool, _bCastShadows, CastShadows, true);
+	bool _bCastShadows = true;
 
 private:
-
-	bool _bValidWorldPrimitiveMatrices = false;
-	
+		
 
 	// Instances
 	uint _InstanceCount = 0;

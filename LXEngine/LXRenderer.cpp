@@ -8,7 +8,6 @@
 
 #include "stdafx.h"
 #include "LXAnimationManager.h"
-#include "LXActorMesh.h"
 #include "LXBitmap.h"
 #include "LXConsoleManager.h"
 #include "LXConstantBufferD3D11.h"
@@ -22,6 +21,7 @@
 #include "LXRenderCommandList.h"
 #include "LXRenderPipelineDeferred.h"
 #include "LXRenderer.h"
+#include "LXRenderData.h"
 #include "LXScene.h"
 #include "LXShaderManager.h"
 #include "LXSyncEvent.h"
@@ -342,6 +342,13 @@ void LXRenderer::ResetShaders()
 	gResetShaders = true;
 }
 
+void LXRenderer::Sync()
+{
+	CHK(IsMainThread());
+	_actorsToUpdate.Swap();
+	_toRelease.Swap();
+}
+
 void LXRenderer::Render()
 {
 	LX_PERFOSCOPE(RenderThread_Render);
@@ -354,6 +361,10 @@ void LXRenderer::Render()
 		_Project = _NewProject;
 		Empty();
 	}
+
+	// Objects set to Update/Release/Delete/...
+	UpdateActors_RT();
+	ReleaseRenderData_RT();
 			
 	//
 	// Commands & Tasks
@@ -536,27 +547,16 @@ bool LXRenderer::HasPendingTasks() const
 	return _mainTasks->HasTasks();
 }
 
-void LXRenderer::UpdateActor(LXActor* actor, LXFlagsRenderClusterRole renderStates)
+void LXRenderer::UpdateActor(LXRenderData* renderData, LXFlagsRenderClusterRole renderStates)
 {
-	if (actor->EuqueuedInRenderTask)
-		return;
+	CHK(IsMainThread());
+	_actorsToUpdate.In->insert(pair<LXRenderData*, LXFlagsRenderClusterRole>(renderData, renderStates));
+}
 
-	LXTask* task = new LXTaskCallBack([this, actor, renderStates]()
-	{
-		LogI(Renderer, L"Updated actor %s", actor->GetName().GetBuffer());
-		RenderClusterManager->UpdateActor(actor, renderStates);
-		actor->ValidateRensterState();
-		actor->EuqueuedInRenderTask = false;
-	});
-
-	// HACK: Compute the Primitive World Matrices.
-	if (LXActorMesh* actorMesh = LXCast<LXActorMesh>(actor))
-	{
-		actorMesh->GetAllPrimitives();
-	}
-
-	actor->EuqueuedInRenderTask = true;
-	EnqueueTask(task);
+void LXRenderer::ReleaseRenderData(LXRenderData* renderData, LXFlagsRenderClusterRole renderStates)
+{
+	CHK(IsMainThread());
+	_toRelease.In->insert(pair<LXRenderData*, LXFlagsRenderClusterRole>(renderData, renderStates));
 }
 
 void LXRenderer::CreateDeviceTexture(LXTexture* texture)
@@ -676,7 +676,7 @@ void LXRenderer::CopyDeviceTexture_RT(LXTexture* texture)
 			int padding = (128 - (bitmap->GetLineSize() % 128)) % 128;
 			int sourcelineSize = bitmap->GetLineSize() + padding;
 			int destinationlineSize = bitmap->GetLineSize();
-			for (int i = 0; i < bitmap->GetHeight(); i++)
+			for (uint i = 0; i < bitmap->GetHeight(); i++)
 			{
 				memcpy(destination, source, destinationlineSize);
 				destination += destinationlineSize;
@@ -764,4 +764,32 @@ void LXRenderer::UpdateDeviceMaterial(LXMaterial* material)
 
 		EnqueueTask(task);
 	}
+}
+
+void LXRenderer::UpdateActors_RT()
+{
+	for(pair<LXRenderData*, LXFlagsRenderClusterRole> it : *_actorsToUpdate.Out)
+	{
+		LXRenderData* renderData = it.first;
+		RenderClusterManager->UpdateActor(renderData, it.second);
+	}
+
+	_actorsToUpdate.Out->clear();
+}
+
+void LXRenderer::ReleaseRenderData_RT()
+{
+	for (pair<LXRenderData*, LXFlagsRenderClusterRole>it : *_toRelease.Out)
+	{
+		LXRenderData* renderData = it.first;
+
+		// Release All the associated RenderCluster
+		RenderClusterManager->RemoveActor(renderData, ERenderClusterRole::All);
+		
+		// Give object destruction to the MainThread
+		// TODO: could be done on the _mainTasks instead of the _syncTasks
+		GetCore().AddObjectForDestruction(renderData);
+	}
+
+	_toRelease.Out->clear();
 }

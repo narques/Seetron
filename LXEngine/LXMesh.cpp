@@ -77,12 +77,11 @@ LXMesh::~LXMesh()
 {
 	LX_COUNTSCOPEDEC(LXMesh)
 
-	for (VectorPrimitiveInstances::const_iterator It = _vectorPrimitives.begin(); It != _vectorPrimitives.end(); It++)
+	for (const shared_ptr<LXPrimitiveInstance>& PrimitiveInstance : _vectorPrimitives)
 	{
-		const unique_ptr<LXPrimitiveInstance>& primitiveInstance = *It;
-		CHK(primitiveInstance->Owners.size() == 0);
+		CHK(PrimitiveInstance->Owners.size() == 0);
 	}
-
+	
 	_vectorPrimitives.clear();
 
 	for (LXMesh* Mesh : _Children)
@@ -94,10 +93,8 @@ LXMesh::~LXMesh()
 bool LXMesh::OnSaveChild(const TSaveContext& saveContext) const
 {
 	// Save primitives
-	for (VectorPrimitiveInstances::const_iterator It = _vectorPrimitives.begin(); It != _vectorPrimitives.end(); It++)
+	for (const shared_ptr<LXPrimitiveInstance>& PrimitiveInstance : _vectorPrimitives)
 	{
-		const unique_ptr<LXPrimitiveInstance>& PrimitiveInstance = *It;
- 
 		if (PrimitiveInstance->Primitive->GetPersistent())
 		{
 			int nGeoId = PrimitiveInstance->Primitive->GetId();
@@ -209,12 +206,11 @@ void LXMesh::RemoveAllPrimitives()
 	_vectorPrimitives.clear();
 }
 
-void LXMesh::GetAllPrimitives(vector<LXPrimitiveInstance*>& primitives)
+void LXMesh::GetAllPrimitives(VectorPrimitiveInstances& primitives)
 {
-	for (const auto& it : _vectorPrimitives)
+	for (const shared_ptr<LXPrimitiveInstance>& it : _vectorPrimitives)
 	{
-		LXPrimitiveInstance* primitiveInstance = &*it;
-		primitives.push_back(primitiveInstance);
+		primitives.push_back(it);
 	}
 	
 	for (LXMesh* child : _Children)
@@ -273,8 +269,8 @@ void LXMesh::ComputeBounds()
 		_BBox.Add(MeshChild->GetBounds());
 	}
 
-		// Add with PrimitiveInstance
-	for (const unique_ptr<LXPrimitiveInstance>& PrimitiveInstance : _vectorPrimitives)
+	// Add with PrimitiveInstance
+	for (const shared_ptr<LXPrimitiveInstance>& PrimitiveInstance : _vectorPrimitives)
 	{
 		LXPrimitive* pPrimitive = PrimitiveInstance->Primitive.get();
 
@@ -323,7 +319,7 @@ void LXMesh::SetMaterial(const LXString& key)
 
 void LXMesh::SetMaterial(LXMaterial* material)
 {
-	for (const unique_ptr<LXPrimitiveInstance>& PrimitiveInstance : _vectorPrimitives)
+	for (const shared_ptr<LXPrimitiveInstance>& PrimitiveInstance : _vectorPrimitives)
 	{
 		PrimitiveInstance->SetMaterial(material);
 	}

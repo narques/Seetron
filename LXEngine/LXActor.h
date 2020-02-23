@@ -2,12 +2,13 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #pragma once
 
+#include "LXActorType.h"
 #include "LXSmartObject.h"
 #include "LXBBox.h"
 #include "LXRenderClusterType.h"
@@ -16,19 +17,9 @@
 class LXProject;
 class LXAnchor;
 class LXPrimitive;
-
+class LXRenderData;
 
 typedef vector<LXAnchor*> ArrayAnchors;
-
-#define LX_NODETYPE_GROUP	LX_BIT(0)
-#define LX_NODETYPE_ACTOR	LX_BIT(1)
-#define LX_NODETYPE_MESH	LX_BIT(2)
-#define LX_NODETYPE_CAMERA	LX_BIT(3)
-#define LX_NODETYPE_LIGHT	LX_BIT(4)
-#define LX_NODETYPE_ANCHOR	LX_BIT(5)
-#define LX_NODETYPE_CS		LX_BIT(6)
-#define LX_NODETYPE_RENDERTOTTEXTURE LX_BIT(7)
-#define LX_NODES_UI ( LX_NODETYPE_LIGHT | LX_NODETYPE_ANCHOR | LX_NODETYPE_CS )
 
 enum class EConstraint
 {
@@ -58,8 +49,10 @@ public:
 
 	// Rendering
 	void				InvalidateRenderState(LXFlagsRenderClusterRole renderStates = ERenderClusterRole::All);
-	void				ValidateRensterState();
-	bool				IsRenderStateValid() { return _RenderStateValid; }
+	void				CreateRenderData(LXFlagsRenderClusterRole renderStates);
+	void				ReleaseRenderData(LXFlagsRenderClusterRole renderStates);
+	virtual bool		GetCastShadows() const { return false; }
+
 	
 #if LX_ANCHOR
 
@@ -154,16 +147,14 @@ protected:
 	virtual void		ComputeBBoxLocal();
 	virtual void		ComputeBBoxWorld();
 	
+	void				InvalidateWorldPrimitivMartrices() { _bValidWorldPrimitiveMatrices = false; }
+	virtual void		ComputePrimitiveWorldMatrices();
+	
 private:
 
 	void				DefineProperties();
 	virtual	void		OnInvalidateMatrixWCS() { };
 
-public:
-
-	// Rendering
-	atomic<bool>		EuqueuedInRenderTask = false;
-	
 protected:
 
 	// Hierarchy
@@ -185,20 +176,20 @@ protected:
 	bool				_bBBoxVisible = false;
 	bool				_bPrimitiveBBoxVisible = false;
 	
+	LXRenderData*		_renderData = nullptr;
+	
 	// Misc
 	LXProject*			_Project = nullptr;
 	bool				_bHighlightable = true;	// Avoid DrawHighlight OnMouseMove
 	bool				_bPickable = true;		// Avoid Selection OnMouseClick or RectangularSelection
 	bool				_bDrawSelection = true;	// Avoid DrawSelection
 	int					_nCID;
+	bool				_bValidWorldPrimitiveMatrices = false;
 #if LX_ANCHOR
 	ArrayAnchors		_ArrayAnchors;
 #endif
 	
 private:
-
-	// Rendering
-	bool				_RenderStateValid = false;
 
 	// Misc
 	EConstraint			_eConstraint = EConstraint::None;

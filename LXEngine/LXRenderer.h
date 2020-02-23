@@ -10,6 +10,7 @@
 
 #include "LXObject.h"
 #include "LXRenderClusterType.h"
+#include "LXSynchronisable.h"
 #include "LXTime.h"
 
 class LXConstantBufferD3D11;
@@ -25,6 +26,7 @@ class LXRenderClusterManager;
 class LXRenderCommandList;
 class LXShaderManager;
 class LXTextureManager;
+class LXRenderData;
 class LXRenderPipeline;
 class LXString;
 class LXSyncEvent;
@@ -69,8 +71,9 @@ public:
 	LXTextureManager* GetTextureManager() const { return TextureManager; }
 	LXRenderPipeline* GetRenderPipeline() const { return _RenderPipeline; }
 
-	void UpdateActor(LXActor* actor, LXFlagsRenderClusterRole renderStates);
-
+	void UpdateActor(LXRenderData* renderData, LXFlagsRenderClusterRole renderStates);
+	void ReleaseRenderData(LXRenderData* actor, LXFlagsRenderClusterRole renderStates);
+		
 	void CreateDeviceTexture(LXTexture* texture);
 	void ReleaseDeviceTexture(LXTexture* texture);
 	void CopyDeviceTexture(LXTexture* texture);
@@ -96,6 +99,7 @@ public:
 	void DrawScreenSpacePrimitive(LXRenderCommandList* RCL);
 	const list<LXString>& GetConsoleBuffer() const { return ConsoleBuffer; }
 	const LXViewport* GetViewport() const {	return Viewport; }
+	void Sync();
 			
 private:
 
@@ -122,6 +126,8 @@ private:
 	void EnqueueTask(LXTask* task);
 	
 	// Misc
+	void UpdateActors_RT();
+	void ReleaseRenderData_RT();
 	void CreateDeviceTexture_RT(LXTexture* texture);
 	void CopyDeviceTexture_RT(LXTexture* texture);
 	void CreateDeviceMaterial_RT(LXMaterial* material);
@@ -181,6 +187,9 @@ private:
 	LXTextureManager* TextureManager = nullptr;
 	LXRenderPipeline* _RenderPipeline = nullptr;
 
+	LXSynchronisableSet<pair<LXRenderData*, LXFlagsRenderClusterRole>> _actorsToUpdate;
+	LXSynchronisableSet<pair<LXRenderData*, LXFlagsRenderClusterRole>> _toRelease;
+	
 	//
 	// Tasks
 	//

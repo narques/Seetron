@@ -17,13 +17,13 @@
 #include "LXFlags.h"
 
 class LXActor;
-class LXActorMesh;
 class LXConstantBufferD3D11;
 class LXMaterial;
 class LXMatrix;
 class LXPrimitiveD3D11;
 class LXRenderClusterManager;
 class LXRenderCommandList;
+class LXRenderData;
 class LXShaderD3D11;
 class LXWorldPrimitive;
 enum class ELightType;
@@ -45,7 +45,7 @@ class LXRenderCluster
 
 public:
 
-	LXRenderCluster(LXRenderClusterManager* RenderClusterManager, LXActor* InActor, const LXMatrix& MatrixWCS);
+	LXRenderCluster(LXRenderClusterManager* RenderClusterManager, LXRenderData* renderData, const LXMatrix& MatrixWCS);
 	~LXRenderCluster();
 
 	void ReleaseShaders();
@@ -61,8 +61,8 @@ public:
 	void Render(ERenderPass RenderPass, LXRenderCommandList* RCL);
 
 	// Cluster Specialization according the type
-	void SetLightParameters(LXActor* Actor);
-	void UpdateLightParameters(LXActor* Actor);
+	void SetLightParameters(LXActor* actor);
+	void UpdateLightParameters(LXActor* actor);
 	void UpdateLightParameters();
 	ELightType GetLightType() const;
 
@@ -72,7 +72,7 @@ private:
 
 public:
 
-	LXActor* Actor = nullptr;
+	LXRenderData* RenderData = nullptr;
 	LXWorldPrimitive* PrimitiveInstance = nullptr;
 
 	LXConstantBufferD3D11* CBWorld = nullptr;

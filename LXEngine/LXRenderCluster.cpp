@@ -9,7 +9,6 @@
 #include "stdafx.h"
 #include "LXRenderCluster.h"
 #include "LXActorLight.h"
-#include "LXActorMesh.h"
 #include "LXCamera.h"
 #include "LXConstantBufferD3D11.h"
 #include "LXCore.h"
@@ -29,7 +28,7 @@
 #include "LXWorldTransformation.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
-LXRenderCluster::LXRenderCluster(LXRenderClusterManager* renderClusterManager, LXActor* InActor, const LXMatrix& MatrixWCS):
+LXRenderCluster::LXRenderCluster(LXRenderClusterManager* renderClusterManager, LXRenderData* renderData, const LXMatrix& MatrixWCS):
 	_renderClusterManager(renderClusterManager)
 {
 	LX_COUNTSCOPEINC(LXRenderCluster)
@@ -38,7 +37,7 @@ LXRenderCluster::LXRenderCluster(LXRenderClusterManager* renderClusterManager, L
 	// Misc Ref.
 	// 
 
-	Actor = InActor;
+	RenderData = renderData;
 	Matrix = MatrixWCS;
 	MatrixWCS.LocalToParent(BBoxWorld);
 
@@ -155,7 +154,8 @@ void LXRenderCluster::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 
 	if (ConstantBufferDataSpotLight)
 	{
-		UpdateLightParameters(Actor);
+		LXActor* actor = const_cast<LXActor*>(RenderData->GetActor());
+		UpdateLightParameters(actor);
 	}
 
 	bool bHasShader = false;
@@ -259,7 +259,8 @@ void LXRenderCluster::UpdateLightParameters(LXActor* Actor)
 
 void LXRenderCluster::UpdateLightParameters()
 {
-	LXActorLight* ActorLight = dynamic_cast<LXActorLight*>(Actor);
+	LXActor* actor = const_cast<LXActor*>(RenderData->GetActor());
+	LXActorLight* ActorLight = dynamic_cast<LXActorLight*>(actor);
 	CHK(ActorLight);
 	CHK(ConstantBufferDataSpotLight);
 
@@ -295,7 +296,8 @@ void LXRenderCluster::UpdateLightParameters()
 
 ELightType LXRenderCluster::GetLightType() const
 {
-	LXActorLight* actorLight = dynamic_cast<LXActorLight*>(Actor);
+	LXActor* actor = const_cast<LXActor*>(RenderData->GetActor());
+	LXActorLight* actorLight = dynamic_cast<LXActorLight*>(actor);
 	CHK(actorLight);
 	return actorLight->GetType();
 }

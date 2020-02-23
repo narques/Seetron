@@ -81,7 +81,8 @@ void LXRenderPassShadow::Render(LXRenderCommandList* RCL)
 		float y = RenderClusterLight->ConstantBufferDataSpotLight->ShadowMapCoords.y;
 		
 		// Light to Camera
-		LXActorLight* Light = dynamic_cast<LXActorLight*>(RenderClusterLight->Actor);
+		LXActor* actor = const_cast<LXActor*>(RenderClusterLight->RenderData->GetActor());
+		LXActorLight* Light = dynamic_cast<LXActorLight*>(actor);
 		CHK(Light);
 		vec3f LightPosition = Light->GetMatrixWCS().GetOrigin();
 		vec3f LightDirection = Light->GetMatrixWCS().GetVz() * -1.f;
