@@ -95,6 +95,7 @@ LXProject* LXDocumentManager::LoadFile(const LXFilepath& strFilepath, bool bThre
 		
 	_FilesToLoad.push(strFilepath);
 	
+#if LX_LOADING_THREAD
 	if (bThreaded)
 	{
 		LX_SAFE_DELETE(_LoadingThread);
@@ -102,6 +103,7 @@ LXProject* LXDocumentManager::LoadFile(const LXFilepath& strFilepath, bool bThre
 		_LoadingThread->Run(&OpenFunc, this);
 	}
 	else
+#endif
 	{
 		OpenFunc(this);
 	}
