@@ -229,18 +229,8 @@ public:
 	void		SetString(const LXStringA& str) { m_str.assign(str); }
 	int			CompareNoCase(char* str) const { return compare(str) == 0; }
 
-	int Replace(const char* pszOld, const char* pszNew)
-	{
-		LXStringA strToReplace(pszOld);
-		int nSize = strToReplace.size();
-		int nPos = (int)m_str.find(strToReplace);
-		if (nPos == -1)
-			return 0;
-		LXStringA strReplacement(pszNew);
-		m_str.replace(nPos, nSize, strReplacement);
-		return 0;
-	}
-
+	int Replace(const char* pszOld, const char* pszNew);
+	
 	LXStringA& TrimLeft(char* pszTargets)
 	{
 		LXStringA strToReplace(pszTargets);

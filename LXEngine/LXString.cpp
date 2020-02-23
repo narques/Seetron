@@ -101,6 +101,22 @@ LXString LXString::Format(const wchar_t* Format, ...)
 	return LXString(out);
 }
 
+int LXStringA::Replace(const char* pszOld, const char* pszNew)
+{
+	LXStringA strToReplace(pszOld);
+	int nSize = strToReplace.size();
+	int nPos = (int)m_str.find(strToReplace);
+
+	while (nPos != -1)
+	{
+		LXStringA strReplacement(pszNew);
+		m_str.replace(nPos, nSize, strReplacement);
+		nPos = (int)m_str.find(strToReplace);
+	}
+
+	return 0;
+}
+
 LXStringA LXStringA::Format(const char* Format, ...)
 {
 	va_list arguments;
