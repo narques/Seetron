@@ -27,7 +27,9 @@
 #include "LXMemory.h" // --- Must be the last included ---
 
 const wchar_t kDefaultMaterial[] = L"Materials/DefaultGrid.smat";
+const wchar_t kDefaultTexture[] = L"Textures/grid.stex";
 const wchar_t kTextureNoise4x4[] = L"Textures/Noise4x4.stex";
+
 
 //------------------------------------------------------------------------------------------------------
 // Console commands
@@ -163,6 +165,13 @@ LXMaterial*	LXAssetManager::GetDefaultMaterial()
 	LXMaterial* Material = GetMaterial(kDefaultMaterial);
 	CHK(Material);
 	return Material;
+}
+
+LXTexture* LXAssetManager::GetDefaultTexture()
+{
+	LXTexture* texture = GetTexture(kDefaultTexture);
+	CHK(texture);
+	return texture;
 }
 
 LXAsset* LXAssetManager::GetAsset(const LXString& Name) const

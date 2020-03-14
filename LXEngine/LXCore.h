@@ -34,6 +34,7 @@ class LXSelectionManager;
 class LXSettings;
 class LXStatManager;
 class LXTaskManager;
+class LXTexture;
 class LXThread;
 class LXViewport;
 class LXViewportManager;
@@ -124,6 +125,7 @@ public:
 	void				Run();
 
 	LXMaterial*			GetDefaultMaterial() const ;
+	LXTexture*			GetDefaultTexture() const;
 	void				ResetShaders();
 	
 private:

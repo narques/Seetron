@@ -597,10 +597,18 @@ void LXCore::Run()
 	}
 }
 
-LXMaterial * LXCore::GetDefaultMaterial() const
+LXMaterial* LXCore::GetDefaultMaterial() const
 {
 	if (GetProject())
 		return GetProject()->GetAssetManager().GetDefaultMaterial();
+	else
+		return nullptr;
+}
+
+LXTexture* LXCore::GetDefaultTexture() const
+{ 
+	if (GetProject())
+		return GetProject()->GetAssetManager().GetDefaultTexture();
 	else
 		return nullptr;
 }
