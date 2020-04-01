@@ -42,6 +42,7 @@ public:
 	static DXGI_FORMAT GetDXGIFormat(ETextureFormat TextureFormat);
 	static DXGI_FORMAT GetFormatSRV(DXGI_FORMAT TextureFormatDXGI);
 	static void GetFormats(DXGI_FORMAT FormatTexture, DXGI_FORMAT& OutFormatRTV, DXGI_FORMAT& OutFormatSRV);
+	static void SwapDeviceObjects(LXTextureD3D11* a, LXTextureD3D11* b);
 	
 public:
 

@@ -403,3 +403,22 @@ void LXTextureD3D11::GetFormats(DXGI_FORMAT TextureFormatDXGI, DXGI_FORMAT& OutF
 	break;
 	}
 }
+
+void LXTextureD3D11::SwapDeviceObjects(LXTextureD3D11* a, LXTextureD3D11* b)
+{
+	CHK(IsRenderThread());
+
+	CHK(a->_Format == b->_Format);
+	
+	ID3D11Texture2D* D3D11Texture2D = a->D3D11Texture2D;
+	ID3D11ShaderResourceView* D3D11ShaderResouceView = a->D3D11ShaderResouceView;
+	ID3D11RenderTargetView* D3D11RenderTargetView = a->D3D11RenderTargetView;
+
+	a->D3D11Texture2D = b->D3D11Texture2D;
+	a->D3D11ShaderResouceView = b->D3D11ShaderResouceView;
+	a->D3D11RenderTargetView = b->D3D11RenderTargetView;
+
+	b->D3D11Texture2D = D3D11Texture2D;
+	b->D3D11ShaderResouceView = D3D11ShaderResouceView;
+	b->D3D11RenderTargetView = D3D11RenderTargetView;
+}
