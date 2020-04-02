@@ -26,15 +26,15 @@ public:
 	void Clear();
 
 	LXConnection* CreateConnection(LXConnector* source, LXConnector* destination);
-	void AddNode(LXNode* node);
-	void DeleteNode(LXNode* node);
+	virtual void AddNode(LXNode* node);
+	virtual void RemoveNode(LXNode* node);
 	void DeleteConnection(LXConnection* connection);
 	void DeleteConnector(LXConnector* connector);
 
 
 	const LXNode* GetMain() const;
 
-private:
+protected:
 
 	void OnLoaded() override;
 

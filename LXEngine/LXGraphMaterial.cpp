@@ -22,6 +22,38 @@ LXGraphMaterial::~LXGraphMaterial()
 {
 }
 
+void LXGraphMaterial::AddNode(LXNode* node)
+{
+	if (LXPropertyAssetPtr* property = dynamic_cast<LXPropertyAssetPtr*>(node->GetProperty(L"Value")))
+	{
+		_assetTextures.insert(pair<LXString, LXPropertyAssetPtr*>(node->GetName(), property));
+	}
+	
+	__super::AddNode(node);
+}
+
+void LXGraphMaterial::RemoveNode(LXNode* node)
+{
+	if (LXPropertyAssetPtr* property = dynamic_cast<LXPropertyAssetPtr*>(node->GetProperty(L"Value")))
+	{
+		auto it = _assetTextures.begin();
+		while (it != _assetTextures.end())
+		{
+			if (it->first == node->GetName() && it->second == property)
+			{
+				it = _assetTextures.erase(it);
+			}
+			else
+			{
+				it++;
+			}
+		}
+	}
+
+	__super::RemoveNode(node);
+}
+
+
 void LXGraphMaterial::GetChildProperties(ListProperties& listProperties) const
 {
 	for (const LXNode* node : Nodes)
@@ -54,6 +86,15 @@ LXTexture* LXGraphMaterial::GetTextureDisplacement(const LXString& textureName) 
 	return nullptr;
 }
 
+LXPropertyAssetPtr* LXGraphMaterial::GetPropertyTextureByName(const LXString& textureName) const
+{
+	auto it = _assetTextures.find(textureName);
+	if (it != _assetTextures.end())
+		return it->second;
+	else
+		return nullptr;
+}
+
 bool LXGraphMaterial::GetFloatParameter(const LXString& paramName, float& outValue) const
 {
 
@@ -81,6 +122,22 @@ bool LXGraphMaterial::GetFloatParameter(const LXString& paramName, float& outVal
 	}
 	
 	return false;
+}
+
+void LXGraphMaterial::OnLoaded()
+{
+	_assetTextures.clear();
+
+	for (LXNode* node : Nodes)
+	{
+		if (LXPropertyAssetPtr* property = dynamic_cast<LXPropertyAssetPtr*>(node->GetProperty(L"Value")))
+		{
+			_assetTextures.insert(pair<LXString, LXPropertyAssetPtr*>(node->GetName(), property));
+		}
+
+	}
+
+	__super::OnLoaded();
 }
 
 void LXGraphMaterial::OnPropertyChanged(LXProperty* property)

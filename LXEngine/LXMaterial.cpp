@@ -105,6 +105,12 @@ LXTexture* LXMaterial::GetTextureDisplacement(const LXString& textureName) const
 	}
 }
 
+LXPropertyAssetPtr* LXMaterial::GetPropertyTextureByName(const LXString& textureName) const
+{
+	LXGraphMaterial* graphMaterial = GetGraph();
+	return graphMaterial ? graphMaterial->GetPropertyTextureByName(textureName) : nullptr;
+}
+
 bool LXMaterial::GetFloatParameter(const LXString& textureName, float& outValue) const
 {
 	if (LXGraphMaterial* graphMaterial = GetGraph())

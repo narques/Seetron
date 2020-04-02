@@ -51,7 +51,7 @@ void LXGraph::AddNode(LXNode* node)
 	OnGraphChanged.Invoke();
 }
 
-void LXGraph::DeleteNode(LXNode* node)
+void LXGraph::RemoveNode(LXNode* node)
 {
 	// Delete the Connections.
 	for (LXConnector* connector : node->Inputs)
