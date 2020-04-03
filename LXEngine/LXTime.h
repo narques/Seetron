@@ -20,6 +20,7 @@ public:
 	virtual ~LXTime();
 
 	void	Update();
+	double	Time()		 const { return _previousTime; }
 	double	DeltaTime()  const { return _deltaTime; }
 	int		FrameCount() const { return _frameCount; }
 
