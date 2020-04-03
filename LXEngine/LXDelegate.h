@@ -26,7 +26,10 @@ public:
 
 	~LXDelegateBase()
 	{
-		CHK(_callbacks.size() == 0);
+		for (auto &it : _callbacks)
+		{
+			delete it.second;
+		}
 	}
 
 	bool FunctionExist(size_t hash)

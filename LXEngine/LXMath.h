@@ -51,6 +51,12 @@ __forceinline float M2CM(float M)
 // Misc
 //------------------------------------------------------------------------------------------------------
 
+// Check if the given integer number is even or odd
+__forceinline bool IsEven(int i)
+{
+	return (i % 2 == 0);
+}
+
 // Is power of two
 __forceinline bool IsPOT(uint i)
 {

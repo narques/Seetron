@@ -109,7 +109,7 @@ void LXRenderPassGBuffer::Render(LXRenderCommandList* RCL)
 	// Reset some shaders and resources 
 	//
 	
-	RCL->VSSetShaderResources(1, 1, nullptr);
+	RCL->VSSetShaderResources(0, 1, nullptr);
 	RCL->VSSetShader(nullptr);
 	RCL->HSSetShader(nullptr);
 	RCL->DSSetShader(nullptr);
