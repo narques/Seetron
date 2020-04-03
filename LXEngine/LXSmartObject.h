@@ -221,6 +221,7 @@ protected:
 	uint64							_nUserData = 0;
 
 	std::atomic<bool>				_isLoading = false;
+	bool							_isLoaded = false;
 	
 private:
 

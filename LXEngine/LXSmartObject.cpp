@@ -363,7 +363,21 @@ bool LXSmartObject::Load(const TLoadContext& loadContext, LXString* pName)
 	}
 
 	_isLoading = false;
-	OnLoaded();
+	_isLoaded = true;
+	
+	if (IsMainThread())
+	{
+		OnLoaded();
+	}
+	else
+	{
+		LXTask* task = new LXTaskCallBack([this]()
+		{
+			OnLoaded();
+		});
+		GetCore().EnqueueTask(task);
+	}
+
 	return true;
 }
 
