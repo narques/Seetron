@@ -46,17 +46,21 @@ private:
 	bool ParseNodeCB(const LXNode& node, LXConstantBuffer& outConstantBuffer);
 	LXStringA GenerateHeaderComment() const;
 
+public:
+
+	// When a texture node input is not linked.
+	bool FoundUnboundTexture = false;
+	
 private:
 
-	int _layoutMask;
-	const LXMaterial* _material;
+	int _layoutMask = 0;
+	const LXMaterial* _material = nullptr;
 	ERenderPass _renderPass;
 	EShader _shader;
 
 	set<LXStringA> _includes;
 	set<const LXNode*> _addedNode;
-	set<const LXTexture*> _addedTextures;
-	map<const LXNode*, int> _textureIndices;
+	
 	list<LXStringA> _variableDeclarations;
 };
 

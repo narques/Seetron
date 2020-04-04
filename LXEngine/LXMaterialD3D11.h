@@ -50,7 +50,8 @@ private:
 
 public:
 
-	mutable int HLSLTextureIndex = 0;
+	mutable int HLSLVSTextureIndex = 0;
+	mutable int HLSLPSTextureIndex = 0;
 	
 private:
 

@@ -139,8 +139,15 @@ void LXShaderFactory::GeneratePixelShader(const LXFilepath& Filename, const LXMa
 			ShaderBuffer.Insert(Start, texturesDecl.GetBuffer());
 		}
 	}
-	
 
+	// Add the Empty Texture
+	if (graphMaterialToHLSLConverer.FoundUnboundTexture)
+	{
+		int Start = ShaderBuffer.Find(kTexturesInsersionPos);
+		Start += (int)strlen(kTexturesInsersionPos) + 1;
+		ShaderBuffer.Insert(Start, "Texture2D emptyTexture;\nSamplerState sampler0;");
+	}
+	
 	//
 	// Write to disk.
 	//
@@ -251,12 +258,16 @@ LXStringA LXShaderFactory::ListTexturesToHLSL(const list<LXTexture*>& listTextur
 		if (shader == EShader::VertexShader)
 		{
 			LXStringA n = LXStringA::Number(vertexSlot++);
+			LXStringA debugComment = texture->GetFilepath().ToStringA();
+			HLSLDeclaration += "//" + debugComment + "\n";
 			HLSLDeclaration += "Texture2D texture" + n + " : register(vs, t" + n + ");\n";
 			HLSLDeclaration += "SamplerState sampler" + n + " : register(vs, s" + n + ");\n\n";
 		}
 		else if (shader == EShader::PixelShader)
 		{
 			LXStringA n = LXStringA::Number(pixelSlot++);
+			LXStringA debugComment = texture->GetFilepath().ToStringA();
+			HLSLDeclaration += "//" + debugComment + "\n";
 			HLSLDeclaration += "Texture2D texture" + n + " : register(ps, t" + n + ");\n";
 			HLSLDeclaration += "SamplerState sampler" + n + " : register(ps, s" + n + ");\n\n";
 		}

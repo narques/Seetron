@@ -78,7 +78,8 @@ LXStringA LXGraphMaterialToHLSLConverter::GenerateCode(const LXMaterialD3D11* ma
 	ShaderBuffer += "//TEXTURES\n\n";
 	
 	// Traverse the graph
-	materialD3D11->HLSLTextureIndex = 0;
+	materialD3D11->HLSLVSTextureIndex = 0;
+	materialD3D11->HLSLPSTextureIndex = 0;
 	ShaderBuffer += ParseNode(materialD3D11, -1,  nullptr, nodeRoot, renderPass);
 
 	// Insert the includes file
@@ -387,9 +388,20 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNode(const LXMaterialD3D11* mater
 			{
 				connectorValue = "float4(0.0, 0.0, 0.0, 0.0)";
 			}
+			else if (connector->Type == EConnectorType::Texture2D)
+			{
+				connectorValue = "emptyTexture";
+				FoundUnboundTexture = true;
+			}
 			else if (connector->Type == EConnectorType::SamplerState)
 			{
-				connectorValue = "sampler" + LXStringA::Number(materialD3D11->HLSLTextureIndex-1);
+				int foo = 0;
+				switch (_shader)
+				{
+				case EShader::VertexShader: connectorValue = "sampler" + LXStringA::Number(materialD3D11->HLSLVSTextureIndex); 	break;
+				case EShader::PixelShader: connectorValue = "sampler" + LXStringA::Number(materialD3D11->HLSLPSTextureIndex); break;
+				default: CHK(0); break;
+				}
 			}
 			else
 			{
@@ -555,36 +567,49 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNodeVariable(const LXMaterialD3D1
 	else if (property->GetType() == EPropertyType::AssetPtr)
 	{
 		LXPropertyAssetPtr* propertyAssetPtr = (LXPropertyAssetPtr*)property;
-		if (LXAsset* asset = propertyAssetPtr->GetValue())
+		
+		LXTexture* texture = dynamic_cast<LXTexture*>(propertyAssetPtr->GetValue());
+		if (!texture)
+			texture = GetAssetManager()->GetDefaultTexture();
+
+		if (texture)
 		{
-			LXTexture* texture = dynamic_cast<LXTexture*>(asset);
+			list<LXTexture*>* listTextures = nullptr;
+			switch (_shader)
 			{
-				list<LXTexture*>* listTextures = nullptr;
-				switch (_shader)
+			case EShader::VertexShader:
+				listTextures = const_cast<list<LXTexture*>*>(&_material->GetDeviceMaterial()->GetTexturesVS()); break;
+			case EShader::PixelShader:
+				listTextures = const_cast<list<LXTexture*>*>(&_material->GetDeviceMaterial()->GetTexturesPS()); break;
+			default: CHK(0);
+			}
+
+			if (listTextures)
+			{
+				int index = -1;
+				int i = 0;
+
+				for (const LXTexture* itTexture : *listTextures)
 				{
-				case EShader::VertexShader:
-					listTextures = const_cast<list<LXTexture*>*>(&_material->GetDeviceMaterial()->GetTexturesVS()); break;
-				case EShader::PixelShader:
-					listTextures = const_cast<list<LXTexture*>*>(&_material->GetDeviceMaterial()->GetTexturesPS()); break;
-				default: CHK(0);
+					if (itTexture == texture)
+					{
+						index = i;
+						break;
+					}
+					i++;
 				}
 
-				if (_addedTextures.find(texture) == _addedTextures.end())
+				if (index == -1)
 				{
 					listTextures->push_back(texture);
-					_addedTextures.insert(texture);
+					index = (int)listTextures->size() - 1;
 				}
-
-				// Texture name is automatically generated.
-				int index = 0;
-				if (_textureIndices.find(node) == _textureIndices.end())
+				
+				switch (_shader)
 				{
-					index = materialD3D11->HLSLTextureIndex++;
-					_textureIndices[node] = index;
-				}
-				else
-				{
-					index = _textureIndices[node];
+				case EShader::VertexShader: materialD3D11->HLSLVSTextureIndex = index; break;
+				case EShader::PixelShader: materialD3D11->HLSLPSTextureIndex = index; break;
+				default: CHK(0);
 				}
 
 				return "texture" + LXStringA::Number(index);

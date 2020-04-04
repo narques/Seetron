@@ -125,14 +125,11 @@ bool LXMaterial::GetFloatParameter(const LXString& textureName, float& outValue)
 
 LXGraphMaterial* LXMaterial::GetGraph() const
 {
-	// Create the "Main" function if needed
-	const LXNode* mainNode = GraphMaterial->GetMain();
-	if (mainNode == nullptr)
+	if (!_isLoaded)
 	{
-		const LXNodeTemplate* nodeTemplate = GetAssetManager()->GetGraphMaterialTemplate()->GetNodeTemplate(L"RenderTarget");
-		CHK(nodeTemplate && nodeTemplate->Main);
-		mainNode = new LXNode(GraphMaterial.get(), nodeTemplate);
-		GraphMaterial->AddNode(const_cast<LXNode*>(mainNode));
+		CHK_ONCE(0);
+		
+		return nullptr;
 	}
 	
 	return GraphMaterial.get();
