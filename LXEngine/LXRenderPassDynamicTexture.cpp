@@ -44,30 +44,37 @@ void LXRenderPassDynamicTexture::Render(LXRenderCommandList* RCL)
 
 			if (const LXTexture* textureOutput = actorRTT->GetTexture())
 			{
-				const LXTextureD3D11* textureD3D11 = textureOutput->GetDeviceTexture();
-				ID3D11RenderTargetView* renderTargetView = textureD3D11->GetRenderTargetView();
+				if (const LXTextureD3D11* textureD3D11 = textureOutput->GetDeviceTexture())
+				{
+					ID3D11RenderTargetView* renderTargetView = textureD3D11->GetRenderTargetView();
 
-				RCL->OMSetRenderTargets(renderTargetView);
-				RCL->RSSetViewports(textureOutput->GetWidth(), textureOutput->GetHeight());
-				RCL->ClearRenderTargetView3(renderTargetView);
+					RCL->OMSetRenderTargets(renderTargetView);
+					RCL->RSSetViewports(textureOutput->GetWidth(), textureOutput->GetHeight());
+					RCL->ClearRenderTargetView3(renderTargetView);
 
-				renderCluster->Render(ERenderPass::RenderToTexture, RCL);
+					renderCluster->Render(ERenderPass::RenderToTexture, RCL);
 
-				RCL->VSSetShader(nullptr);
-				RCL->HSSetShader(nullptr);
-				RCL->DSSetShader(nullptr);
-				RCL->GSSetShader(nullptr);
-				RCL->PSSetShader(nullptr);
+					RCL->VSSetShader(nullptr);
+					RCL->HSSetShader(nullptr);
+					RCL->DSSetShader(nullptr);
+					RCL->GSSetShader(nullptr);
+					RCL->PSSetShader(nullptr);
+				}
+				else
+				{
+					CHK_ONCE(0);
+					LogD(LXRenderPassDynamicTexture, L"LXActorRenderToTexture texture is not set.")
+				}
 			}
 			else
 			{
-				CHK(0);
+				CHK_ONCE(0);
 				LogD(LXRenderPassDynamicTexture, L"LXActorRenderToTexture texture is not set.")
 			}
 		}
 		else
 		{
-			CHK(0);
+			CHK_ONCE(0);
 			LogD(LXRenderPassDynamicTexture, L"Material is not a MaterialTypeTexture.")
 		}
 	}

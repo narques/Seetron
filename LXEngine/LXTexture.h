@@ -13,7 +13,6 @@
 
 class LXBitmap;
 class LXFilepath;
-class LXMaterial;
 class LXTextureD3D11;
 
 enum class ETextureTarget
@@ -55,11 +54,8 @@ public:
 
 	bool			GenerateMipMap() const { return _generateMipMap; }
 
-
 	LXBitmap*		GetBitmap			( int index ) const;
-	void			SetBitmap			( LXBitmap* Bitmap );
-	LXMaterial*		GetMaterial			( ) const { return _material; }
-
+	
 	//
 	// Overridden From LXResource
 	//
@@ -73,6 +69,7 @@ public:
 
 	const LXTextureD3D11* GetDeviceTexture() const { return _textureD3D11; }
 	void SetDeviceTexture(LXTextureD3D11* textureD3D11) { _textureD3D11 = textureD3D11; }
+	bool CopyDeviceToBitmap();
 
 private:
 
@@ -83,7 +80,15 @@ private:
 public:
 
 	ETextureSource			TextureSource = ETextureSource::TextureSourceBitmap;
-	
+
+	// For RenderTarget only
+	LXDelegate<>			DeviceCreated;
+	LXDelegate<>			BitmapChanged;
+
+	// Rendering Task Status
+	atomic<bool>			DeviceCreationEnqueued = false;
+	atomic<bool>			CopyDeviceToBitmapEnqueued = false;
+
 protected:
 
 	ETextureTarget			_eTarget = ETextureTarget::LXTexture2D;
@@ -98,10 +103,8 @@ private:
 	// Texture sources
 	LXFilepath				_SourceFilepath;
 	LXBitmap*				_Bitmap = nullptr;				
-	LXMaterial*				_material = nullptr;
-
+	
 	// Rendering
 	LXTextureD3D11*			_textureD3D11 = nullptr;
-
 };
 

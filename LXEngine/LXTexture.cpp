@@ -11,7 +11,6 @@
 #include "LXBitmap.h"
 #include "LXLogger.h"
 #include "LXMSXMLNode.h"
-#include "LXMaterial.h"
 #include "LXProject.h"
 #include "LXRenderer.h"
 #include "LXSettings.h"
@@ -148,12 +147,6 @@ LXBitmap* LXTexture::GetBitmap( int index ) const
 		return nullptr;
 }
 
-void LXTexture::SetBitmap(LXBitmap* Bitmap)
-{
-	CHK(!_Bitmap);
-	_Bitmap = Bitmap;
-}
-
 void LXTexture::DefineProperties()
 {
 	//--------------------------------------------------------------------------------------------------------------------------------
@@ -197,18 +190,22 @@ void LXTexture::DefineProperties()
 	LXProperty* propGenerateMipMap = DefineProperty("GenerateMipMap", &_generateMipMap);
 
 	LXPropertyFilepath* PropFilePath = DefinePropertyFilepath("SourceFile", GetAutomaticPropertyID(), &_SourceFilepath);
-	PropHeight->SetReadOnly(true);
-
-	LXProperty::SetCurrentGroup(L"Procedural Texture");
-
-	LXPropertyAssetPtr* propertyAsset = DefineProperty("Material", (LXAsset**)&_material);
+	PropFilePath->SetReadOnly(true);
 }
 
 void LXTexture::CreateDeviceTexture()
 {
-	CHK(_textureD3D11 == nullptr);
+	if (DeviceCreationEnqueued)
+	{
+		CHK(0);
+		return;
+	}
+
 	if (GetRenderer())
+	{
+		DeviceCreationEnqueued = true;
 		GetRenderer()->CreateDeviceTexture(this);
+	}
 }
 
 void LXTexture::ReleaseDeviceTexture()
@@ -218,3 +215,25 @@ void LXTexture::ReleaseDeviceTexture()
 		GetRenderer()->ReleaseDeviceTexture(this);
 	}
 }
+
+bool LXTexture::CopyDeviceToBitmap()
+{
+	CHK(TextureSource == ETextureSource::TextureSourceMaterial);
+
+		return false;
+
+	if (!_Bitmap)
+	{
+		_Bitmap = new LXBitmap[1];
+		new(_Bitmap)LXBitmap(_nWidth, _nHeight, _eInternalFormat);
+	}
+
+	if (GetRenderer())
+	{
+		CopyDeviceToBitmapEnqueued = true;
+		GetRenderer()->CopyDeviceTexture(this);
+	}
+	
+	return false;
+}
+

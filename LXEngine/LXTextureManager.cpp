@@ -53,7 +53,6 @@ shared_ptr<LXTextureD3D11> LXTextureManager::CreateTexture(const LXTexture* Text
 
 	if (Texture->TextureSource == ETextureSource::TextureSourceBitmap)
 	{
-		CHK(Texture->GetMaterial() == nullptr);
 		if (LXBitmap* Bitmap = Texture->GetBitmap(0))
 		{
 			DXGI_FORMAT Format = LXTextureD3D11::GetDXGIFormat(Bitmap->GetInternalFormat());
@@ -66,7 +65,6 @@ shared_ptr<LXTextureD3D11> LXTextureManager::CreateTexture(const LXTexture* Text
 	}
 	else if (Texture->TextureSource == ETextureSource::TextureSourceMaterial)
 	{
-		CHK(Texture->GetMaterial());
 		CHK(0); // Find a more generic way to access the rendered texture
 		//TextureD3D11 = GetCore().GetRenderer()->RenderPassDynamicTexture->AddGraph(Texture);
 	}
