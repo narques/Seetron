@@ -2,13 +2,14 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #pragma once
 
 #include "LXObject.h"
+#include "LXDelegate.h"
 #include "LXRenderCommandDX11.h"
 #include "LXMatrix.h"
 
@@ -134,6 +135,16 @@ public:
 	//
 
 	CMD0_CLASS(Present)
+
+	//
+	// Engine commands 
+	//
+
+	// Enqueue the delegate invocation on MainThread
+	CMD1_CLASS(EnqueueInvokeDelegate, LXDelegate<>*, delegate)
+
+	// Invoke the delegate 'immediately' on RenderThread
+	CMD1_CLASS(InvokeDelegate, LXDelegate<>*, delegate)
 
 public:
 

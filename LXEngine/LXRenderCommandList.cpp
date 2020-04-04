@@ -10,6 +10,7 @@
 #include "LXRenderCommandList.h"
 #include "LXConsoleManager.h"
 #include "LXConstantBufferD3D11.h"
+#include "LXCore.h"
 #include "LXDirectX11.h"
 #include "LXLogger.h"
 #include "LXPrimitiveD3D11.h"
@@ -548,3 +549,12 @@ EXECUTE(GenerateMips)
 	D3D11DeviceContext->GenerateMips(pShaderResourceView);
 }
 
+EXECUTE(EnqueueInvokeDelegate)
+{
+	GetCore().EnqueueInvokeDelegate(delegate);
+}
+
+EXECUTE(InvokeDelegate)
+{
+	delegate->Invoke();
+}
