@@ -92,6 +92,9 @@ public:
 
 	LXPrimitiveD3D11* GetSSTriangle() const { return SSTriangle; }
 	const LXDirectX11* GetDirectX11() const { return DirectX11; }
+
+	// Task
+	void EnqueueTask(LXTask* task);
 	
 	// Misc
 	void ResetShaders();
@@ -123,7 +126,6 @@ private:
 
 	// Task
 	bool HasPendingTasks() const;
-	void EnqueueTask(LXTask* task);
 	
 	// Misc
 	void UpdateActors_RT();

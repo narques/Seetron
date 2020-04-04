@@ -84,6 +84,11 @@ public:
 	// Misc
 	EMaterialType MaterialType;
 
+	// Delegates & Events
+	
+	// Fired when the material device is created (including the Graph to HLSL translation)
+	LXDelegate<> Compiled;
+
 private:
 
 	// Graph 
