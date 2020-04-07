@@ -262,6 +262,15 @@ LXNodeTemplate::LXNodeTemplate()
 
 LXNodeTemplate::~LXNodeTemplate()
 {
+	for (LXConnectorTemplate* connectorTemplate : Inputs)
+	{
+		delete connectorTemplate;
+	}
+
+	for (LXConnectorTemplate* connectorTemplate : Outputs)
+	{
+		delete connectorTemplate;
+	}
 }
 
 const LXConnectorTemplate* LXNodeTemplate::GetOutputConnectorTemplate(int index) const

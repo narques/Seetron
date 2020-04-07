@@ -178,11 +178,7 @@ void LXMesh::AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, LXMatrix* In
 {
 	LX_CHK_RET(Primitive);
 	
-	LXMatrix* Matrix = nullptr;
-	if (InMatrix)
-		Matrix = new LXMatrix(*InMatrix);
-
-	_vectorPrimitives.push_back(make_unique<LXPrimitiveInstance>(Primitive, Matrix, InMaterial));
+	_vectorPrimitives.push_back(make_unique<LXPrimitiveInstance>(Primitive, InMatrix, InMaterial));
 	
 	InvalidateBounds();
 	ComputeMatrixRCS();
@@ -238,6 +234,7 @@ void LXMesh::ComputeMatrixRCS(const LXMatrix* matrixParentRCS)
 			matrixMeshRCS = matrixParentRCS ? *matrixParentRCS * *primitiveInstance->Matrix : *primitiveInstance->Matrix; // * GetMatrix()
 		}
 		
+		LX_SAFE_DELETE(primitiveInstance->MatrixRCS);
 		primitiveInstance->MatrixRCS = matrixMeshRCS.IsIdentity() ? nullptr : new LXMatrix(matrixMeshRCS);
 	}
 

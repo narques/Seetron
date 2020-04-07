@@ -13,6 +13,17 @@ class LXSynchronisableSet
 {
 public:
 
+	~LXSynchronisableSet()
+	{
+		CHK(_set0.size() == 0);
+		CHK(_set1.size() == 0);
+	}
+
+	bool IsEmpty() const
+	{
+		return _set0.size() == 0 && _set1.size() == 0;
+	}
+	
 	void Swap()
 	{
 		set<T>* tmp = In;

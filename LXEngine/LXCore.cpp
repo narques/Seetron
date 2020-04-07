@@ -105,6 +105,9 @@ __int64 LXCore::FrameNumber = -1;
 
 LXCore::LXCore()
 {
+#ifdef LX_DEBUGFLAG
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
 }
 
 /*virtual*/
@@ -120,6 +123,7 @@ LXCore::~LXCore()
 		
 	LogI(Core,L"------ Core deleted ------");
 
+	LXObject::TraceAll();
 	LXLogger::DeleteSingleton();
 }
 

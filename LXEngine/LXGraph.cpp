@@ -24,6 +24,15 @@ LXGraph::LXGraph()
 
 LXGraph::~LXGraph()
 {
+	for (LXConnection* connection : Connections)
+	{
+		delete connection;
+	}
+		
+	for (LXNode* node : Nodes)
+	{
+		delete node;
+	}
 }
 
 void LXGraph::Clear()

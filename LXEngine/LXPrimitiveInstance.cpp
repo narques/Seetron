@@ -18,10 +18,9 @@ LXPrimitiveInstance::LXPrimitiveInstance(const shared_ptr<LXPrimitive>& InPrimit
 {
 	LX_COUNTSCOPEINC(LXPrimitiveInstance)
 	Primitive = InPrimitive;
-	Matrix = InMatrix;
-	if (Matrix)
+	if (InMatrix)
 	{
-		MatrixRCS = new LXMatrix();
+		Matrix = new LXMatrix(*InMatrix);
 	}
 	Material = InMaterial;
 }

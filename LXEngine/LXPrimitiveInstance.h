@@ -36,14 +36,14 @@ public:
 	// Owners
 	list<LXWorldPrimitive*> Owners;
 
-	// Local (Optional)
+	// Local matrix (Optional)
 	LXMatrix* Matrix = nullptr;
 
-	LXMatrix* MatrixRCS = nullptr;
+	// Root matrix (when Matrix is used)
+	const LXMatrix* MatrixRCS = nullptr;
 
 	// Material (Optional)
-	LXMaterial* Material = nullptr;
-
+	const LXMaterial* Material = nullptr;
 };
 
 

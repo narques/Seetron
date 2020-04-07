@@ -18,6 +18,10 @@ LXGraphTemplate::LXGraphTemplate()
 
 LXGraphTemplate::~LXGraphTemplate()
 {
+	for (LXNodeTemplate* nodeTemplate : NodeTemplates)
+	{
+		delete nodeTemplate;
+	}
 }
 
 const LXNodeTemplate* LXGraphTemplate::GetNodeTemplate(const LXString& templateID) const

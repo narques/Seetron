@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "LXMutex.h"
+
 struct LXStat
 {
 	wstring Name;
@@ -28,7 +30,7 @@ public:
 	
 	// Counters
 
-	void UpdateCounter(const wstring& Name, uint Value);
+	void UpdateCounter(const wstring& Name, int Value);
 
 	const map<wstring, int>& GetCounters() const
 	{
@@ -62,5 +64,7 @@ private:
 	map<DWORD, LXStat*> _StatRoots;
 	map<DWORD, LXStat*> _StatCurrents;
 
+	// Counters
+	LXMutex _mutex;
 	map<wstring, int> _Counters;
 };

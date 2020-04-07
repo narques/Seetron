@@ -35,9 +35,12 @@ void LXStatManager::Reset()
 	}
 }
 
-void LXStatManager::UpdateCounter(const wstring& Name, uint Value)
+void LXStatManager::UpdateCounter(const wstring& Name, int Value)
 {
+	_mutex.Lock();
 	_Counters[Name] += Value;
+	CHK(_Counters[Name] >= 0);
+	_mutex.Unlock();
 }
 
 void LXStatManager::OpenStat(const wstring& Name)
