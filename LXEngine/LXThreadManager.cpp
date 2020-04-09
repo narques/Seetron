@@ -12,6 +12,7 @@
 DWORD MainThread = 0;
 DWORD RenderThread = 0;
 DWORD LoadingThread = 0;
+bool IsSyncPoint = false;
 
 LXThreadManager::LXThreadManager()
 {

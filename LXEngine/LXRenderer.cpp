@@ -544,7 +544,8 @@ void LXRenderer::EnqueueTask(LXTask* task)
 
 bool LXRenderer::HasPendingTasks() const
 {
-	return _mainTasks->HasTasks();
+	CHK(IsRenderThread() || IsSyncPoint);
+	return _mainTasks->HasTasks() || !_actorsToUpdate.IsEmpty() || !_toRelease.IsEmpty();
 }
 
 void LXRenderer::UpdateActor(LXRenderData* renderData, LXFlagsRenderClusterRole renderStates)

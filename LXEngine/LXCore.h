@@ -69,8 +69,11 @@ public:
 	
 	static LXCore*		CreateCore();
 	static LXCore&		GetCore();
-	void Destroy();
 	
+	void BeginShutdown();
+	bool IsShutdown() const { return _shutdown; }
+	void Destroy();
+		
 	// Properties Get/Set
 	uint				GetUndoStackSize() const { return m_nUndo; }
 
@@ -130,6 +133,7 @@ public:
 	
 private:
 
+	void				EndShutdow();
 	void				SetDocument(LXProject* Document);
 	void				EnumPlugins();
 	void                RegisterPlugin(const LXFilepath& strFilepath);
@@ -150,6 +154,9 @@ private:
 	GetSetDef(bool, _bAutoKey, AutoKey, false);
 
 public:
+
+	// Delegates & Events
+	LXDelegate<>		EngineShutdown;
 
 	LXTime				Time;
 	static __int64		FrameNumber;
@@ -186,6 +193,10 @@ private:
 
 	// Animation
 	bool m_bPlay = false;
+
+	// Misc
+	bool _shutdowning = false;
+	bool _shutdown = false;
 };
 
 // Global functions

@@ -214,9 +214,23 @@ LXCore*	LXCore::CreateCore()
 	return gCore;
 }
 
+void LXCore::BeginShutdown()
+{
+	CHK(!_shutdowning);
+	CloseProject();
+	_shutdowning = true;
+}
+
+void LXCore::EndShutdow()
+{
+	_shutdowning = false;
+	_shutdown = true;
+	EngineShutdown.Invoke();
+}
+
 void LXCore::Destroy()
 {
-	CloseProject();
+	CHK(_shutdown && !_shutdowning);
 	gCore = nullptr;
 	delete this;
 }
@@ -539,7 +553,8 @@ void LXCore::Run()
 	//
 	// Synchronization
 	//
-
+	IsSyncPoint = true;
+	
 	FrameNumber++;
 	Time.Update();
 	LX_CYCLEPERFOSCOPE(MainThread_Run);
@@ -556,6 +571,17 @@ void LXCore::Run()
 
 	GetViewport()->GetCameraManipulator()->Update(Time.DeltaTime());
 
+	if (_shutdowning)
+	{
+		if (!_syncTasks->HasTasks() &&
+			!_mainTasks->HasTasks() &&
+			!_Renderer->HasPendingTasks())
+		{
+			EndShutdow();
+		}
+	}
+
+	IsSyncPoint = false;
 	//
 	// --- Begin Frame ---
 	//

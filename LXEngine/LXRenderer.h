@@ -95,6 +95,7 @@ public:
 
 	// Task
 	void EnqueueTask(LXTask* task);
+	bool HasPendingTasks() const;
 	
 	// Misc
 	void ResetShaders();
@@ -124,9 +125,6 @@ private:
 	const LXMatrix& GetMatrixView() const;
 	const LXMatrix& GetMatrixProjection() const;
 
-	// Task
-	bool HasPendingTasks() const;
-	
 	// Misc
 	void UpdateActors_RT();
 	void ReleaseRenderData_RT();
