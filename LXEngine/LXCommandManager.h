@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -24,23 +24,6 @@ public:
 	LXCommandManager();
 	virtual ~LXCommandManager(void);
 
-	//
-	// Callbacks
-	//
-
-	void OnCommand(std::function<void(LXObject*)> Func)
-	{
-		ListFuncOnCommand.push_back(Func);
-	}
-	void InvokeOnCommand(LXObject* var)
-	{
-		for (auto Func : ListFuncOnCommand)
-		{
-			Func(var);
-		}
-	}
-
-	list < std::function<void(LXObject*)>> ListFuncOnCommand;
 	
 	//
 	// Misc
@@ -54,69 +37,63 @@ public:
 	// Commands
 	//
 
-	bool    SaveFile			( LXSmartObject* pServer );
+	bool    SaveFile			( LXSmartObject* smartObject);
 	void	SaveSelection		( const LXString& name );
 			
 	void	ClearSelection		( );
-	void	SetSelection		( LXSmartObject* pSmartObject );
-	void	AddToSelection		( LXSmartObject* pSmartObject );
-	void	AddToSelection2		( LXSmartObject* pActor, uint64 nFlags = 0);
-	void	AddToSelection2		( const SetSmartObjects& setPropServers, uint64 nFlags = 0);
-	void	RemoveToSelection	( LXSmartObject* pSmartObject );
+	void	SetSelection		( LXSmartObject* smartObject );
+	void	AddToSelection		( LXSmartObject* smartObject);
+	void	AddToSelection2		( LXSmartObject* smartObject, uint64 flags = 0);
+	void	AddToSelection2		( const SetSmartObjects& setPropServers, uint64 flags = 0);
+	void	RemoveToSelection	( LXSmartObject* smartObject );
 	void	SelectAll			( );
 	void	Select				( );
-	void	ActivateView		( LXViewState* pView );
+	void	ActivateView		( LXViewState* viewState );
 	
 	//
 	// Query
 	//
 
-	void	PushQuery			( LXQuery* );
-		
+	void	PushQuery			( LXQuery* query);
+
 	//
-	// "Undoable" Commands
+	// Property Commands
 	//
 
 	template <class T>
-	void	ChangeProperties    ( const ListProperties& listProperties, const T& newValue );
+	void	ChangeProperties    ( const ListProperties& listProperties, const T& newValue , bool supportUndo = true);
 	template <class T>		
-	void	ChangeProperty		( LXProperty* pProp, const T& newValue)  {   ChangeProperty(dynamic_cast<LXPropertyT<T>*>(pProp), newValue);  }
+	void	ChangeProperty		( LXProperty* property, const T& newValue, bool supportUndo = true)  {   ChangeProperty(dynamic_cast<LXPropertyT<T>*>(property), newValue, supportUndo);  }
 	template <class T>
-	void	ChangeProperty		( LXPropertyT<T>* pProp, const T& newValue );
+	void	ChangeProperty		( LXPropertyT<T>* property, const T& newValue, bool supportUndo = true);
+
 	template <class T>
-	void	ChangeProperty		( LXPropertyT<T>* pProp ); // Current value is already good (Updated by PreviewChangeProperty for ex. )
+	void	PreviewChangeProperties(const ListProperties& listProperties, const T& newValue) { ChangeProperties(listProperties, newValue, false); }
+	template <class T>
+	void	PreviewChangeProperty(LXProperty* property, const T& newValue) { PreviewChangeProperty(dynamic_cast<LXPropertyT<T>*>(property), newValue); }
+	template <class T>
+	void	PreviewChangeProperty(LXPropertyT<T>* property, const T& newValue) { ChangeProperty(property, newValue, false); }
+
+	//
+	// "Undoable" Commands
+	//
 
 	void	HideActors			( const SetActors& setActors );
 	void	ShowActors			( const SetActors& setActors );
 	void	DeleteActors		( const SetActors& setActors );	
 	void	DeleteMaterials		( const SetMaterials& setMaterials );
 	void	DeleteKeys			( const SetKeys& setKeys );
-	bool	SetParent			( LXActor* Parent, LXActor* Child);
-	bool	SetParent			( LXMesh* Parent, LXMesh* Child );
-	
-	//
-	// Misc Command Methods
-	//
+	bool	SetParent			( LXActor* parent, LXActor* child);
+	bool	SetParent			( LXMesh* parent, LXMesh* child );
 
-	template <class T>
-	void	PreviewChangeProperties( const ListProperties& listProperties, const T& newValue );
-	template <class T>		
-	void	PreviewChangeProperty( LXProperty* pProp, const T& newValue)  {   PreviewChangeProperty(dynamic_cast<LXPropertyT<T>*>(pProp), newValue);  }
-	template <class T>
-	void	PreviewChangeProperty( LXPropertyT<T>* pProp, const T& newValue );
 
 private:
 	
-	void	PushCommand			( LXCommand* pCommand );
+	void	PushCommand			( LXCommand* command );
 
 private:
 
 	ListCommands				_listCommands;
 	SetActors					_setActorsToCopy;
-	LXProperty*					_pPreviewProperty = nullptr;
-	LXCommand*					_pPreviewCmd = nullptr;
 };
-
-
-
 

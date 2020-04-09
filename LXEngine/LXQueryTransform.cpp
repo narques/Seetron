@@ -250,7 +250,7 @@ void LXQueryTransform::OnLButtonUp(uint64 nFlags, LXPoint pntWnd)
 			{
 				LXPropertyVec3f* pProperty = dynamic_cast<LXPropertyVec3f*>(Actor->GetProperty(LXPropertyID::POSITION));
 				CHK(pProperty);
-				GetCore().GetCommandManager().ChangeProperty(pProperty);
+				GetCore().GetCommandManager().ChangeProperty(pProperty, Actor->GetPosition());
 			}
 		}
 	}

@@ -10,13 +10,8 @@
 #include "LXCommandManager.h"
 #include "LXCore.h"
 #include "LXProject.h"
-#include "LXPropertyManager.h"
 #include "LXSelectionManager.h"
 #include "LXQueryManager.h"
-#include "LXViewportManager.h"
-#include "LXAnchor.h"
-#include "LXSettings.h"
-#include "LXKey.h"
 #include "LXAnimationManager.h"
 #include "LXCommandModifyHierarchy.h"
 #include "LXMemory.h" // --- Must be the last included ---
@@ -27,32 +22,28 @@ LXCommandManager::LXCommandManager()
 
 LXCommandManager::~LXCommandManager(void)
 {
-	for (ListCommands::iterator It = _listCommands.begin(); It!=_listCommands.end(); It++)
+	for (LXCommand* command : _listCommands)
 	{
-		LXCommand* pCommand = *It;
-		delete pCommand;
+		delete command;
 	}
-	_listCommands.clear();
-
-	CHK(!_pPreviewCmd);
 }
 
 //
 // Commands
 //
 
-bool LXCommandManager::SaveFile( LXSmartObject* pSmartObject )
+bool LXCommandManager::SaveFile( LXSmartObject* smartObject )
 {
-	CHK(pSmartObject);
-	if (!pSmartObject)
+	CHK(smartObject);
+	if (!smartObject)
 		return false;
 
 	bool bRet = false;
 
-	LXDocumentBase* pSB = dynamic_cast<LXDocumentBase*>(pSmartObject);
-	CHK(pSB);
-	if (pSB)
-		 bRet = pSB->SaveFile();
+	LXDocumentBase* documentBase = dynamic_cast<LXDocumentBase*>(smartObject);
+	CHK(documentBase);
+	if (documentBase)
+		 bRet = documentBase->SaveFile();
 	
 	return bRet;
 }
@@ -63,22 +54,22 @@ void LXCommandManager::ClearSelection( )
 		GetCore().GetProject()->GetSelectionManager().ClearSelection();
 }
 
-void LXCommandManager::SetSelection(LXSmartObject* pSmartObject)
+void LXCommandManager::SetSelection(LXSmartObject* smartObject)
 {
 	if (GetCore().GetProject())
-		GetCore().GetProject()->GetSelectionManager().SetSelection(pSmartObject);
+		GetCore().GetProject()->GetSelectionManager().SetSelection(smartObject);
 }
 
-void LXCommandManager::AddToSelection( LXSmartObject* pSmartObject )
+void LXCommandManager::AddToSelection( LXSmartObject* smartObject )
 {
 	if (GetCore().GetProject())
-		GetCore().GetProject()->GetSelectionManager().AddToSelection(pSmartObject);
+		GetCore().GetProject()->GetSelectionManager().AddToSelection(smartObject);
 }
 
-void LXCommandManager::RemoveToSelection( LXSmartObject* pSmartObject)
+void LXCommandManager::RemoveToSelection( LXSmartObject* smartObject)
 {
 	if (GetCore().GetProject())
-		GetCore().GetProject()->GetSelectionManager().RemoveToSelection(pSmartObject);
+		GetCore().GetProject()->GetSelectionManager().RemoveToSelection(smartObject);
 }
 
 void LXCommandManager::AddToSelection2( LXSmartObject* pActor, uint64 nFlags)
@@ -124,21 +115,21 @@ void LXCommandManager::Select()
 // Do/Undo Commands
 //
 
-void LXCommandManager::PushCommand(LXCommand* pCommand)
+void LXCommandManager::PushCommand(LXCommand* command)
 {
-	CHK (pCommand);
-	if (!pCommand)
+	CHK (command);
+	if (!command)
 		return;
 
-	_listCommands.push_back(pCommand);
+	LogD(CommandManager, L"Command pushed : %s", command->GetDescription().GetBuffer());
+
+	_listCommands.push_back(command);
 	
 	if (_listCommands.size() > GetCore().GetUndoStackSize())
 	{
 		delete *_listCommands.begin();
 		_listCommands.pop_front();
 	}
-
-	InvokeOnCommand(pCommand);
 }
 
 void LXCommandManager::UndoLastCommand()
@@ -146,33 +137,30 @@ void LXCommandManager::UndoLastCommand()
 	if (!_listCommands.size())
 		return;
 
-	LXCommand* pCmd = _listCommands.back();
-	pCmd->Undo();
+	LXCommand* command = _listCommands.back();
+	command->Undo();
 	_listCommands.pop_back();
 
-	if (LXCommandProperty* pCmdProp = dynamic_cast<LXCommandProperty*>(pCmd))
+	if (LXCommandProperty* pCmdProp = dynamic_cast<LXCommandProperty*>(command))
 	{
 
 	}
-	else if (LXCommandProperties* pCmdProp = dynamic_cast<LXCommandProperties*>(pCmd))
+	else if (LXCommandProperties* pCmdProp = dynamic_cast<LXCommandProperties*>(command))
 	{
 
 	}
-	else if (LXCommandDeleteActor* pCmdDeleteActors = dynamic_cast<LXCommandDeleteActor*>(pCmd))
+	else if (LXCommandDeleteActor* pCmdDeleteActors = dynamic_cast<LXCommandDeleteActor*>(command))
 	{
 		pCmdDeleteActors->ClearActors();
 	}
-	else if (LXCommandDeleteKey* pCmdDeleteKeys = dynamic_cast<LXCommandDeleteKey*>(pCmd))
+	else if (LXCommandDeleteKey* pCmdDeleteKeys = dynamic_cast<LXCommandDeleteKey*>(command))
 	{
 		pCmdDeleteKeys->ClearKeys();
 	}
 	else
 		CHK(0); 
 	
-
-	InvokeOnCommand(pCmd);
-
-	delete pCmd;
+	delete command;
 }
 
 void LXCommandManager::HideActors(const SetActors& setActors)
@@ -208,15 +196,15 @@ void LXCommandManager::DeleteActors(const SetActors& setActors)
 	if (!setActors.size())
 		return;
 
-	LXCommandDeleteActor* pCmd = new LXCommandDeleteActor(setActors);
-	pCmd->Do();
-	pCmd->SetDescription(LXString::Number((int)setActors.size()) +  L" actor(s) deleted");
+	LXCommandDeleteActor* command = new LXCommandDeleteActor(setActors);
+	command->Do();
+	command->SetDescription(LXString::Number((int)setActors.size()) +  L" actor(s) deleted");
 
 	// Remove objects from selection
 	for(LXSmartObject* pObject:setActors)
 		GetCore().GetProject()->GetSelectionManager().RemoveToSelection(pObject);
 
-	PushCommand(pCmd);
+	PushCommand(command);
 }
 
 void LXCommandManager::DeleteMaterials( const SetMaterials& setMaterials )
@@ -224,15 +212,15 @@ void LXCommandManager::DeleteMaterials( const SetMaterials& setMaterials )
 	if (!setMaterials.size())
 		return;
 		
-	LXCommandDeleteMaterial* pCmd = new LXCommandDeleteMaterial(setMaterials);
-	pCmd->Do();
-	pCmd->SetDescription(LXString::Number((int)setMaterials.size()) +  L" material(s) deleted");
+	LXCommandDeleteMaterial* command = new LXCommandDeleteMaterial(setMaterials);
+	command->Do();
+	command->SetDescription(LXString::Number((int)setMaterials.size()) +  L" material(s) deleted");
 
 	// Remove objects from selection
-	for (LXSmartObject* pObject : setMaterials)
-		GetCore().GetProject()->GetSelectionManager().RemoveToSelection(pObject);
+	for (LXSmartObject* smartObject : setMaterials)
+		GetCore().GetProject()->GetSelectionManager().RemoveToSelection(smartObject);
 		
-	PushCommand(pCmd);
+	PushCommand(command);
 }
 
 void LXCommandManager::DeleteKeys(const SetKeys& setKeys)
@@ -240,15 +228,15 @@ void LXCommandManager::DeleteKeys(const SetKeys& setKeys)
 	if (!setKeys.size())
 		return;
 
-	LXCommandDeleteKey* pCmd = new LXCommandDeleteKey(setKeys);
-	pCmd->Do();
-	pCmd->SetDescription(LXString::Number((int)setKeys.size()) + L" key(s) deleted");
+	LXCommandDeleteKey* command = new LXCommandDeleteKey(setKeys);
+	command->Do();
+	command->SetDescription(LXString::Number((int)setKeys.size()) + L" key(s) deleted");
 
 	// Remove objects from selection
-	for (LXSmartObject* pObject : setKeys)
-		GetCore().GetProject()->GetSelectionManager().RemoveToSelection(pObject);
+	for (LXSmartObject* smartObject : setKeys)
+		GetCore().GetProject()->GetSelectionManager().RemoveToSelection(smartObject);
 	
-	PushCommand(pCmd);
+	PushCommand(command);
 }
 
 bool LXCommandManager::SetParent(LXActor* Parent, LXActor* Child)
@@ -262,114 +250,73 @@ bool LXCommandManager::SetParent(LXActor* Parent, LXActor* Child)
 	return ret;
 }
 
-bool LXCommandManager::SetParent(LXMesh* Parent, LXMesh* Child)
+bool LXCommandManager::SetParent(LXMesh* parent, LXMesh* child)
 {
-	LXCommandModifyMeshHierarchy* Cmd = new LXCommandModifyMeshHierarchy(Parent, Child);
-	auto ret = Cmd->Do();
+	LXCommandModifyMeshHierarchy* command = new LXCommandModifyMeshHierarchy(parent, child);
+	auto ret = command->Do();
 	if (ret)
-		PushCommand(Cmd);
+		PushCommand(command);
 	else
-		delete Cmd;
+		delete command;
 	return ret;
 }
 
 // Explicit method Instantiation
 
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const float&);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const double&);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const uint&);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const int&);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXString&);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXFilepath&);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const bool&);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const vec2f&);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const vec3f&);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const vec4f&);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXColor4f&);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXMatrix&);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXAssetPtr&);
+template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const float&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const double&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const uint&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const int&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXString&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXFilepath&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const bool&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const vec2f&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const vec3f&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const vec4f&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXColor4f&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXMatrix&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXAssetPtr&, bool supportUndo);
 
-template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const float&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const double&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const uint&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const int&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const LXString&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const LXFilepath&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const bool&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const vec2f&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const vec3f&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const vec4f&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const LXColor4f&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const LXMatrix&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperties(const ListProperties& listProperties, const LXAssetPtr&);
+template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<float>*, const float&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<double>*, const double&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<uint>*, const uint&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<int>*, const int&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXString>*, const LXString&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXFilepath>*, const LXFilepath&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<bool>*, const bool&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<vec2f>*, const vec2f&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<vec3f>*, const vec3f&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<vec4f>*, const vec4f&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXColor4f>*, const LXColor4f&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXMatrix>*, const LXMatrix&, bool supportUndo);
+template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXAssetPtr>*, const LXAssetPtr&, bool supportUndo);
 
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<float>*, const float&);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<double>*, const double&);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<uint>*, const uint&);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<int>*, const int&);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXString>*, const LXString&);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXFilepath>*, const LXFilepath&);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<bool>*, const bool&);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<vec2f>*, const vec2f&);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<vec3f>*, const vec3f&);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<vec4f>*, const vec4f&);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXColor4f>*, const LXColor4f&);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXMatrix>*, const LXMatrix&);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXAssetPtr>*, const LXAssetPtr&);
-
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXMatrix>*);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<vec3f>*);
-
-template LXCORE_API void LXCommandManager::PreviewChangeProperty(LXPropertyT<float>*, const float&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperty(LXPropertyT<double>*, const double&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperty(LXPropertyT<uint>*, const uint&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperty(LXPropertyT<int>*, const int&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperty(LXPropertyT<LXString>*, const LXString&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperty(LXPropertyT<LXFilepath>*, const LXFilepath&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperty(LXPropertyT<bool>*, const bool&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperty(LXPropertyT<LXColor4f>*, const LXColor4f&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperty(LXPropertyT<LXMatrix>*, const LXMatrix&);
-template LXCORE_API void LXCommandManager::PreviewChangeProperty(LXPropertyT<vec3f>*, const vec3f&);
 
 template <class T>
-void	LXCommandManager::ChangeProperties( const ListProperties& listProperties, const T& newValue )
+void	LXCommandManager::ChangeProperties( const ListProperties& listProperties, const T& newValue, bool supportUndo)
 {
 	CHK(listProperties.size() > 0);
 	if (listProperties.size()==0)
 		return;
 
-	LXCommand* pCmd = NULL;
-	
-	if (_pPreviewCmd)
-	{
-		// Use "preview" command as the final command
-		if (dynamic_cast<LXCommandPropertiesT<T>*>(_pPreviewCmd))
-		{
-			pCmd = _pPreviewCmd;
-			_pPreviewCmd = NULL;
-		}
-		else
-		{
-			CHK(0); 
-			delete _pPreviewCmd;
-			_pPreviewCmd = NULL;
-		}
-		
-	}
+	LXCommand* command = new LXCommandPropertiesT<T>(listProperties, newValue);
 
-	if (!pCmd)
-		pCmd = new LXCommandPropertiesT<T>(listProperties, newValue);
+	command->Do();
 
-	pCmd->Do();
-	
-	LXString message = L"Properties changed:";
-	for (const LXProperty* property : listProperties)
+	if (supportUndo)
 	{
-		message += L" " + property->GetName();
+		LXString message = L"Properties changed:";
+		for (const LXProperty* property : listProperties)
+		{
+			message += L" " + property->GetName();
+		}
+		command->SetDescription(message);
+		PushCommand(command);
 	}
-	
-	pCmd->SetDescription(message);
-	PushCommand(pCmd);
+	else
+	{
+		delete command;
+	}
 
 	// Animation
 	SetKeys setKeys;
@@ -386,134 +333,48 @@ void	LXCommandManager::ChangeProperties( const ListProperties& listProperties, c
 }
 
 template <class T>
-void LXCommandManager::PreviewChangeProperties( const ListProperties& listProperties, const T& newValue )
+void	LXCommandManager::ChangeProperty( LXPropertyT<T>* property, const T& newValue, bool supportUndo )
 {
-	CHK(listProperties.size() > 0);
-	if (listProperties.size()==0)
+	CHK(property);
+	if (!property)
 		return;
 	
-	if(!_pPreviewCmd)
-		_pPreviewCmd = new LXCommandPropertiesT<T>(listProperties, newValue); 
-	else
+	LXCommand* command = new LXCommandPropertyT<T>(property, newValue);
+	command->Do();
+
+	if (supportUndo)
 	{
-		LXCommandPropertiesT<T>* p = dynamic_cast<LXCommandPropertiesT<T>*>(_pPreviewCmd);
-		CHK(p); 
-		if (!p)
-		{
-			CHK(0);
-			delete _pPreviewCmd;
-			_pPreviewCmd = NULL;
-			return; 
-		}
-		p->SetNewValue(newValue);
-	}
-
-	_pPreviewCmd->Do();
-}
-
-template <class T>
-void	LXCommandManager::ChangeProperty( LXPropertyT<T>* pProp, const T& newValue )
-{
-	CHK(pProp);
-	if (!pProp)
-		return;
-	
-	LXCommand* pCmd = NULL;
-	if (_pPreviewCmd)
-	{
-		if (!dynamic_cast<LXCommandPropertyT<T>*>(_pPreviewCmd))
-		{
-			CHK(0);
-			delete _pPreviewCmd;
-			_pPreviewCmd = NULL;
-		}
-		else
-			pCmd = _pPreviewCmd;
-
-		_pPreviewCmd = NULL;
-	}
-	
-	if (!pCmd)
-		pCmd = new LXCommandPropertyT<T>(pProp, newValue);
-	
-
-	pCmd->Do();
-	pCmd->SetDescription(L"Property changed: " +  pProp->GetLXObject()->GetName() + "." + pProp->GetLabel());
-	PushCommand(pCmd);
-}
-
-template <class T>
-void	LXCommandManager::ChangeProperty( LXPropertyT<T>* pProp )
-{
-	ChangeProperty(pProp, pProp->GetValue());
-}
-
-template <class T>
-void LXCommandManager::PreviewChangeProperty( LXPropertyT<T>* pProp, const T& newValue )
-{
-	CHK(pProp);
-	if (!pProp)
-		return;
-
-	if (pProp->GetValue() == newValue) 
-		return; 
-
-	if(_pPreviewProperty != pProp || !_pPreviewCmd)
-	{
-		if (_pPreviewCmd)
-			delete _pPreviewCmd;
-		_pPreviewCmd = new LXCommandPropertyT<T>(pProp, newValue); 
-		_pPreviewProperty = pProp;
+		command->SetDescription(L"Property changed: " + property->GetLXObject()->GetName() + "." + property->GetLabel());
+		PushCommand(command);
 	}
 	else
 	{
-		LXCommandPropertyT<T>* p = dynamic_cast<LXCommandPropertyT<T>*>(_pPreviewCmd);
-		if (!p)
-		{
-			CHK(0);
-			delete _pPreviewCmd;
-			return; 
-		}
-		p->SetNewValue(newValue);
+		delete command;
 	}
-
-	_pPreviewCmd->Do();
-				
-#if LX_ANCHOR
-
-	// Anchor location propagation
-	if (pProp->GetXMLName() == LXPropertyID::TRANSFORMATION)
-	if (LXAnchor* pAnchor = dynamic_cast<LXAnchor*>(pProp->GetLXObject())) // TODO : GetCID() & 
-	{
-		if (LXActor* pActor = pAnchor->GetOwner())
-			pActor->OnAnchorMove(pAnchor);
-	}
-
-#endif
 }
 
-void LXCommandManager::PushQuery( LXQuery* pQuery)
+void LXCommandManager::PushQuery( LXQuery* query )
 {
-	CHK(pQuery);
-	if (!pQuery)
+	CHK(query);
+	if (!query)
 		return;
 
-	LXProject* pDocument = GetCore().GetProject();
-	CHK(pDocument);
-	if (!pDocument)
+	LXProject* project = GetCore().GetProject();
+	CHK(project);
+	if (!project)
 		return;
 
-	pDocument->GetQueryManager().PushQuery(pQuery);
+	project->GetQueryManager().PushQuery(query);
 }
 
-void LXCommandManager::ActivateView( LXViewState* pView )
+void LXCommandManager::ActivateView( LXViewState* viewState )
 {
-	LXProject* pDocument = GetCore().GetProject();
-	CHK(pDocument);
-	if (!pDocument)
+	LXProject* project = GetCore().GetProject();
+	CHK(project);
+	if (!project)
 		return;
 	
-	pDocument->SetActiveView(pView);
+	project->SetActiveView(viewState);
 }
 
 void LXCommandManager::SaveSelection( const LXString& name )
