@@ -35,6 +35,10 @@ class LXCORE_API LXTexture : public LXAsset
 public:
 
 	LXTexture(void);
+	
+	// Creates a volatile texture
+	LXTexture(uint width, uint height, ETextureFormat format);
+
 	virtual ~LXTexture(void);
 
 	int				GetWidth			( ) const { return _nWidth; }

@@ -22,6 +22,18 @@ LXTexture::LXTexture()
 	DefineProperties();
 }
 
+LXTexture::LXTexture(uint width, uint height, ETextureFormat format):
+	_nWidth(width), 
+	_nHeight(height), 
+	_eInternalFormat(format),
+	TextureSource(ETextureSource::TextureSourceMaterial)
+{
+	DefineProperties();
+	State = EResourceState::LXResourceState_Loaded;
+	CreateDeviceTexture();
+	SetPersistent(false);
+ }
+
 LXTexture::~LXTexture(void)
 {
 	LX_SAFE_DELETE_ARRAY(_Bitmap);

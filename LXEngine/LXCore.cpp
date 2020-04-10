@@ -122,8 +122,6 @@ LXCore::~LXCore()
 	LXConsoleManager::DeleteSingleton();
 		
 	LogI(Core,L"------ Core deleted ------");
-
-	LXLogger::DeleteSingleton();
 }
 
 void LXCore::Init()
@@ -233,6 +231,7 @@ void LXCore::Destroy()
 	gCore = nullptr;
 	delete this;
 	LXObject::TraceAll();
+	LXLogger::DeleteSingleton();
 }
 
 void LXCore::EnumPlugins()
