@@ -175,7 +175,7 @@ bool LXProject::LoadFile( const LXFilepath& strFilepath )
 		// Not a project file. Try to open it in a volatile viewer usage.
 		//
 
-		if (LXAssetMesh* AssetMesh = dynamic_cast<LXAssetMesh*>(GetAssetManager().Import(strFilepath, L"", true)))
+		if (shared_ptr<LXAssetMesh> AssetMesh = dynamic_pointer_cast<LXAssetMesh>(GetAssetManager().Import(strFilepath, L"", true)))
 		{
 			// Set the project as Volatile and Viewer
 			SetPersistent(false);
@@ -434,7 +434,7 @@ LXMaterial* LXProject::GetMaterial(const LXString& filename)
 		relativeFilepath = assetFolder.GetRelativeFilepath(filename);
 	}
 
-	return GetAssetManager().GetMaterial(relativeFilepath);
+	return GetAssetManager().GetMaterial(relativeFilepath).get();
 }
 
 const LXGraphTemplate* LXProject::GetGraphMaterialTemplate()

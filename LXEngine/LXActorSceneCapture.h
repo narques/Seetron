@@ -21,11 +21,11 @@ public:
 	virtual ~LXActorSceneCapture();
 
 	float GetIntensity() const { return _Intensity; }
-	const LXTexture* GetTexture() const { return _Texture; }
+	const shared_ptr<LXTexture>& GetTexture() const { return _Texture; }
 	
 private:
 
 	float _Intensity = 1.f;
-	LXTexture* _Texture = nullptr;
+	shared_ptr<LXTexture> _Texture = nullptr;
 };
 

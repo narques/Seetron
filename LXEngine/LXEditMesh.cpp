@@ -436,7 +436,7 @@ bool LXEditMesh::FinalizeGeometry(LXPrimitive* pGeometry, vector<CIndexVTN>& arr
 bool LXEditMesh::CreateMonoIndexedVertexArray2(ListPrimitives& listGeometries)
 {
 	LXPrimitive* pGeometry = NULL;
-	LXMaterial* pMaterial = NULL;
+	shared_ptr<LXMaterial> pMaterial;
 	vector<CIndexVTN> arrayIndexedVectors;
 
 	uint nFaces = (uint)m_PositionIndices.size();

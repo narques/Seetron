@@ -66,7 +66,7 @@ public:
 
 	// Misc
 	void SetMaterial(const LXString& Key);
-	void SetMaterial(LXMaterial* material);
+	void SetMaterial(shared_ptr<LXMaterial>& material);
 
 	bool Visible() const { return _visible; }
 

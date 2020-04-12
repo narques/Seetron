@@ -152,7 +152,7 @@ void LXViewport::OnLButtonUp(uint64 nFlags, LXPoint pntWnd)
 			{
 			case ESelectionMode::SelectionModeActor: GetCore().GetCommandManager().AddToSelection2(ActorPicked, nFlags); break;
 			case ESelectionMode::SelectionModePrimitive: GetCore().GetCommandManager().AddToSelection2(PrimitivePicked, nFlags); break;
-			case ESelectionMode::SelectionModeMaterial: GetCore().GetCommandManager().AddToSelection2(PrimitivePicked ? PrimitivePicked->GetMaterial(): nullptr, nFlags); break;
+			case ESelectionMode::SelectionModeMaterial: GetCore().GetCommandManager().AddToSelection2(PrimitivePicked ? PrimitivePicked->GetMaterial().get(): nullptr, nFlags); break;
 			default:CHK(0);
 			}
 		}
@@ -616,21 +616,21 @@ void LXViewport::OnDragObject( LXObject* pObject, LXPoint pntWnd)
 // 	}
 }
 
-bool LXViewport::DropAsset(LXAsset* Asset, LXPoint pntWnd)
+bool LXViewport::DropAsset(shared_ptr<LXAsset>& Asset, LXPoint pntWnd)
 {
 	CHK(Asset);
 	
-	if (LXMaterial* pMaterial = dynamic_cast<LXMaterial*>(Asset))
+	if (shared_ptr<LXMaterial> pMaterial = dynamic_pointer_cast<LXMaterial>(Asset))
 		return DropMaterial(pMaterial, pntWnd);
 
-	if (LXAssetMesh* AssetMesh = dynamic_cast<LXAssetMesh*>(Asset))
+	if (shared_ptr<LXAssetMesh> AssetMesh = dynamic_pointer_cast<LXAssetMesh>(Asset))
 		return DropAssetMesh(AssetMesh, pntWnd);
 
 
 	return false;
 }
 
-bool LXViewport::DropMaterial( LXMaterial* pMaterial, LXPoint pntWnd )
+bool LXViewport::DropMaterial( shared_ptr<LXMaterial>& pMaterial, LXPoint pntWnd )
 {
 	CHK(pMaterial);
 	if (!pMaterial)
@@ -644,7 +644,7 @@ bool LXViewport::DropMaterial( LXMaterial* pMaterial, LXPoint pntWnd )
 		CHK(pProp);
 		if (pProp)
 		{
-			GetCore().GetCommandManager().ChangeProperty(pProp, (LXAsset*)pMaterial);
+			GetCore().GetCommandManager().ChangeProperty(pProp, (LXAssetPtr)pMaterial);
 			return true;
 		}
 	}
@@ -652,7 +652,7 @@ bool LXViewport::DropMaterial( LXMaterial* pMaterial, LXPoint pntWnd )
 	return false;
 }
 
-bool LXViewport::DropAssetMesh(LXAssetMesh* AssetMesh, LXPoint pntWnd)
+bool LXViewport::DropAssetMesh(shared_ptr<LXAssetMesh>& AssetMesh, LXPoint pntWnd)
 {
 	LXActorMesh* ActorMesh = new LXActorMesh();
 	ActorMesh->SetMesh(AssetMesh->GetMesh());

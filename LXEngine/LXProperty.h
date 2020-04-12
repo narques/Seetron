@@ -24,7 +24,7 @@ class LXProperty;
 class LXAsset;
 class LXFilepath;
 class LXMatrix;
-typedef LXAsset* LXAssetPtr;
+typedef shared_ptr<LXAsset> LXAssetPtr;
 
 struct TSaveContext;
 struct TLoadContext;
@@ -305,7 +305,7 @@ typedef LXPropertyT<LXColor4f>					LXPropertyLXColor4f;
 typedef LXPropertyT<LXString>					LXPropertyString;
 typedef LXPropertyT<LXFilepath>					LXPropertyFilepath;
 typedef LXPropertyT<LXMatrix>					LXPropertyMatrix;
-typedef LXPropertyT<LXAssetPtr>					LXPropertyAssetPtr;
+typedef LXPropertyT<shared_ptr<LXAsset>>		LXPropertyAssetPtr;
 typedef LXPropertyT<ArraySmartObjects>			LXPropertyArraySmartObjects;
 typedef LXPropertyT<ListSmartObjects>			LXPropertyListSmartObjects;
 typedef LXPropertyT<ArrayVec3f>					LXPropertyArrayVec3f;	

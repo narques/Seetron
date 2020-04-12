@@ -26,7 +26,7 @@ public:
 	LXPrimitiveInstance(const shared_ptr<LXPrimitive>& InPrimitive, LXMatrix* InMatrix, LXMaterial* InMaterial);
 	~LXPrimitiveInstance();
 
-	void SetMaterial(LXMaterial* material);
+	void SetMaterial(shared_ptr<LXMaterial>& material);
 
 public:
 

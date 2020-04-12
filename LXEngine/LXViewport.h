@@ -74,9 +74,9 @@ public:
 	
 	void					DropFile		( const class LXFilepath& Filename );
 	void					OnDragObject	( LXObject* pObject, LXPoint pntWnd);
-	bool					DropAsset		( LXAsset* Asset, LXPoint pntWnd );
-	bool					DropMaterial	( LXMaterial* pMaterial, LXPoint pntWnd );
-	bool					DropAssetMesh	( LXAssetMesh* AssetMesh, LXPoint pntWnd );
+	bool					DropAsset		( shared_ptr<LXAsset>& Asset, LXPoint pntWnd );
+	bool					DropMaterial	( shared_ptr<LXMaterial>& pMaterial, LXPoint pntWnd );
+	bool					DropAssetMesh	( shared_ptr<LXAssetMesh>& AssetMesh, LXPoint pntWnd );
 
 	// Misc
 

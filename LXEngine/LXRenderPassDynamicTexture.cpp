@@ -90,7 +90,7 @@ void LXRenderPassDynamicTexture::Render(LXRenderCommandList* RCL, LXRenderCluste
 		LXActor* actor = const_cast<LXActor*>(renderCluster->RenderData->GetActor());
 		LXActorRenderToTexture* actorRTT = static_cast<LXActorRenderToTexture*>(actor);
 
-		if (const LXTexture* textureOutput = actorRTT->GetTexture())
+		if (const LXTexture* textureOutput = actorRTT->GetTexture().get())
 		{
 			if (const LXTextureD3D11* textureD3D11 = textureOutput->GetDeviceTexture())
 			{

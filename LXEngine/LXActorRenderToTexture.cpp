@@ -28,11 +28,11 @@ LXActorRenderToTexture::LXActorRenderToTexture(LXProject* project):
 
 	LXProperty::SetCurrentGroup(L"RenderToTexture");
 
-	LXPropertyAssetPtr* propertyMaterial = DefineProperty("Material", (LXAsset**)&_material);
+	LXPropertyAssetPtr* propertyMaterial = DefineProperty("Material", (shared_ptr<LXAsset>*)&_material);
 	propertyMaterial->SetName(L"Material");
 	propertyMaterial->ValueChanged.AttachMemberLambda([this](LXProperty*) { MaterialChanged(); });
 	
-	LXPropertyAssetPtr* pPropTexture = DefinePropertyAsset(L"Texture", GetAutomaticPropertyID(), (LXAsset**)&_texture);
+	LXPropertyAssetPtr* pPropTexture = DefinePropertyAsset(L"Texture", GetAutomaticPropertyID(), (shared_ptr<LXAsset>*)&_texture);
 	pPropTexture->SetName(L"Texture");
 }
 
@@ -40,16 +40,16 @@ LXActorRenderToTexture::~LXActorRenderToTexture()
 {
 }
 
-void LXActorRenderToTexture::SetTexture(LXTexture* texture)
+void LXActorRenderToTexture::SetTexture(shared_ptr<LXTexture>& texture)
 {
 	CHK(texture);
 	_texture = texture;
 }
 
-void LXActorRenderToTexture::SetMaterial(LXMaterial* Material)
+void LXActorRenderToTexture::SetMaterial(shared_ptr<LXMaterial>& material)
 {
-	CHK(Material);
-	(static_cast<LXPropertyAssetPtr*>(GetProperty(L"Material")))->SetValue(Material);
+	CHK(material);
+	(static_cast<LXPropertyAssetPtr*>(GetProperty(L"Material")))->SetValue(material);
 }
 
 void LXActorRenderToTexture::Render(int frameCount)

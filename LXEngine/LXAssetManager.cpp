@@ -29,7 +29,7 @@
 const wchar_t kDefaultMaterial[] = L"Materials/DefaultGrid.smat";
 const wchar_t kDefaultTexture[] = L"Textures/grid.stex";
 const wchar_t kTextureNoise4x4[] = L"Textures/Noise4x4.stex";
-
+const shared_ptr<LXAsset> emptyAsset;
 
 //------------------------------------------------------------------------------------------------------
 // Console commands
@@ -156,25 +156,23 @@ void LXAssetManager::Init()
 
 LXAssetManager::~LXAssetManager()
 {
-	for (auto It : _MapAssets)
-		delete It.second;
 }
 
-LXMaterial*	LXAssetManager::GetDefaultMaterial()
+const shared_ptr<LXMaterial> LXAssetManager::GetDefaultMaterial()
 {
-	LXMaterial* Material = GetMaterial(kDefaultMaterial);
+	const shared_ptr<LXMaterial>& Material = GetMaterial(kDefaultMaterial);
 	CHK(Material);
 	return Material;
 }
 
-LXTexture* LXAssetManager::GetDefaultTexture()
+const shared_ptr<LXTexture> LXAssetManager::GetDefaultTexture()
 {
-	LXTexture* texture = GetTexture(kDefaultTexture);
+	const shared_ptr<LXTexture>& texture = GetTexture(kDefaultTexture);
 	CHK(texture);
 	return texture;
 }
 
-LXAsset* LXAssetManager::GetAsset(const LXString& Name) const
+const shared_ptr<LXAsset>& LXAssetManager::GetAsset(const LXString& Name) const
 {
 	LXString key = Name;
 	key.MakeLower();
@@ -182,7 +180,8 @@ LXAsset* LXAssetManager::GetAsset(const LXString& Name) const
 	auto It = _MapAssets.find(key);
 	if (It != _MapAssets.end())
 	{
-		LXAsset* Resource = It->second;
+		const shared_ptr<LXAsset>& Resource = It->second;
+
 		if (Resource->State == LXAsset::EResourceState::LXResourceState_Unloaded && !IsRenderThread())
 		{ 
 			Resource->Load();
@@ -195,61 +194,56 @@ LXAsset* LXAssetManager::GetAsset(const LXString& Name) const
 		}
 		else
 		{
-			return nullptr;
+			return emptyAsset;
 		}
 	}
 	else
 	{
 		LogE(AssetManager, L"Resource %s not exists in ResourceManager", Name.GetBuffer());
-		return nullptr;
+		return emptyAsset;
 	}
 }
 
 template <typename T>
-T LXAssetManager::GetResourceT(const LXString& Name) const
+const  shared_ptr<T> LXAssetManager::GetResourceT(const LXString& Name) const
 {
-	return dynamic_cast<T>(GetAsset(Name));
+	const shared_ptr<LXAsset>& asset = GetAsset(Name);
+	return dynamic_pointer_cast<T>(asset);
 }
 
-LXMaterial* LXAssetManager::GetMaterial(const LXString& strFilename) const
+const shared_ptr<LXMaterial> LXAssetManager::GetMaterial(const LXString& strFilename) const
 {
-	return GetResourceT<LXMaterial*>(strFilename);
+	return GetResourceT<LXMaterial>(strFilename);
 }
 
-LXShader* LXAssetManager::GetShader(const LXString& strFilename) const
+const shared_ptr<LXShader> LXAssetManager::GetShader(const LXString& strFilename) const
 {
-	return GetResourceT<LXShader*>(strFilename);
+	return GetResourceT<LXShader>(strFilename);
 }
 
-LXTexture* LXAssetManager::GetNoiseTexture4x4()
+const shared_ptr<LXTexture> LXAssetManager::GetNoiseTexture4x4()
 {
-	LXTexture* texture = GetTexture(kTextureNoise4x4);
+	const shared_ptr<LXTexture>& texture = GetTexture(kTextureNoise4x4);
 	CHK(texture);
 	return texture;
 }
 
-LXTexture* LXAssetManager::GetTexture(const LXString& strFilename) const
+const shared_ptr<LXTexture> LXAssetManager::GetTexture(const LXString& strFilename) const
 {
-	return GetResourceT<LXTexture*>(strFilename);
+	return GetResourceT<LXTexture>(strFilename);
 }
 
-LXAssetMesh* LXAssetManager::GetAssetMesh(const LXString& strFilename) const
+const shared_ptr<LXAssetMesh> LXAssetManager::GetAssetMesh(const LXString& strFilename) const
 {
-	return GetResourceT<LXAssetMesh*>(strFilename);
+	return GetResourceT<LXAssetMesh>(strFilename);
 }
 
-LXScript* LXAssetManager::GetScript(const LXString& strFilename) const
+const shared_ptr<LXScript> LXAssetManager::GetScript(const LXString& strFilename) const
 {
-	return GetResourceT<LXScript*>(strFilename);
+	return GetResourceT<LXScript>(strFilename);
 }
 
-LXGraphTexture* LXAssetManager::GetGraphTexture(const LXString& strFilename) const
-{
-	//return GetResourceT<LXGraphTexture*>(strFilename);
-	return nullptr;
-}
-
-LXMaterial* LXAssetManager::CreateNewMaterial(const LXString& MaterialName, const LXString& RelativeAssetFolder)
+const shared_ptr<LXMaterial> LXAssetManager::CreateNewMaterial(const LXString& MaterialName, const LXString& RelativeAssetFolder)
 {
 	LXFilepath AssetFolderpath = GetCore().GetProject()->GetAssetFolder();
 	LXFilepath MaterialFilepath;
@@ -277,7 +271,7 @@ LXMaterial* LXAssetManager::CreateNewMaterial(const LXString& MaterialName, cons
 	}
 	
 
-	LXMaterial* Material = new LXMaterial();
+	shared_ptr<LXMaterial> Material = make_shared<LXMaterial>();
 	Material->Owner = EResourceOwner::LXResourceOwner_Project;
 	Material->SetFilepath(MaterialFilepath);
 	Material->State = LXAsset::EResourceState::LXResourceState_Loaded;
@@ -291,7 +285,7 @@ LXMaterial* LXAssetManager::CreateNewMaterial(const LXString& MaterialName, cons
 	return Material;
 }
 
-LXShader* LXAssetManager::CreateNewShader(const LXString& ShaderName, const LXString& RelativeAssetFolder)
+const shared_ptr<LXShader> LXAssetManager::CreateNewShader(const LXString& ShaderName, const LXString& RelativeAssetFolder)
 {
 	LXFilepath AssetFolderpath = GetCore().GetProject()->GetAssetFolder();
 	LXFilepath ShaderFilepath;
@@ -319,7 +313,7 @@ LXShader* LXAssetManager::CreateNewShader(const LXString& ShaderName, const LXSt
 	}
 
 
-	LXShader* Shader = new LXShader();
+	shared_ptr<LXShader> Shader = make_shared<LXShader>();
 	Shader->Owner = EResourceOwner::LXResourceOwner_Project;
 	Shader->SetFilepath(ShaderFilepath);
 	Shader->State = LXAsset::EResourceState::LXResourceState_Loaded;
@@ -333,7 +327,7 @@ LXShader* LXAssetManager::CreateNewShader(const LXString& ShaderName, const LXSt
 	return Shader;
 }
 
-LXTexture* LXAssetManager::CreateNewTexture(const LXString& MaterialName, const LXString& RelativeAssetFolder)
+const shared_ptr<LXTexture> LXAssetManager::CreateNewTexture(const LXString& MaterialName, const LXString& RelativeAssetFolder)
 {
 	LXFilepath AssetFolderpath = GetCore().GetProject()->GetAssetFolder();
 	LXFilepath TextureFilepath;
@@ -361,7 +355,7 @@ LXTexture* LXAssetManager::CreateNewTexture(const LXString& MaterialName, const 
 	}
 
 
-	LXTexture* Texture = new LXTexture();
+	shared_ptr<LXTexture> Texture = make_shared<LXTexture>();
 	Texture->Owner = EResourceOwner::LXResourceOwner_Project;
 	Texture->SetFilepath(TextureFilepath);
 	Texture->State = LXAsset::EResourceState::LXResourceState_Loaded;
@@ -377,7 +371,7 @@ LXTexture* LXAssetManager::CreateNewTexture(const LXString& MaterialName, const 
 }
 
 
-LXAnimation* LXAssetManager::CreateNewAnimation(const LXString& AnimationName, const LXString& RelativeAssetFolder)
+const shared_ptr<LXAnimation> LXAssetManager::CreateNewAnimation(const LXString& AnimationName, const LXString& RelativeAssetFolder)
 {
 	LXFilepath AssetFolderpath = GetCore().GetProject()->GetAssetFolder();
 	LXFilepath AnimationFilepath;
@@ -400,12 +394,12 @@ LXAnimation* LXAssetManager::CreateNewAnimation(const LXString& AnimationName, c
 		if (AnimationFilepath.IsFileExist())
 		{
 			LogW(ResourceManager, L"Animation %s already exist (%S).", AnimationName.GetBuffer(), AnimationFilepath.GetBuffer());
-			return GetResourceT<LXAnimation*>(RelativeAssetFolder + AnimationName + L"." + LX_ANIMATION_EXT);
+			return GetResourceT<LXAnimation>(RelativeAssetFolder + AnimationName + L"." + LX_ANIMATION_EXT);
 		}
 	}
 
 
-	LXAnimation* Animation = new LXAnimation();
+	shared_ptr<LXAnimation> Animation = make_shared<LXAnimation>();
 	Animation->Owner = EResourceOwner::LXResourceOwner_Project;
 	Animation->SetFilepath(AnimationFilepath);
 	Animation->State = LXAsset::EResourceState::LXResourceState_Loaded;
@@ -419,7 +413,7 @@ LXAnimation* LXAssetManager::CreateNewAnimation(const LXString& AnimationName, c
 	return Animation;
 }
 
-LXAsset* LXAssetManager::Import(const LXFilepath& Filepath, const LXString& RelativeAssetFolder, bool Transient)
+const shared_ptr<LXAsset> LXAssetManager::Import(const LXFilepath& Filepath, const LXString& RelativeAssetFolder, bool Transient)
 {
 	LXString Extension = Filepath.GetExtension().MakeLower();
 
@@ -467,7 +461,7 @@ LXAsset* LXAssetManager::Import(const LXFilepath& Filepath, const LXString& Rela
 			RelativeSourceFilepath = AssetFolderpath.GetRelativeFilepath(FinalFilepath);
 		}
 		
-		LXTexture* pTexture = new LXTexture();
+		shared_ptr<LXTexture> pTexture = make_shared<LXTexture>();
 		pTexture->SetPersistent(!Transient);
 		LXFilepath AssetFilepath = FinalFilepath;
 		AssetFilepath.RemoveExtension();
@@ -491,7 +485,7 @@ LXAsset* LXAssetManager::Import(const LXFilepath& Filepath, const LXString& Rela
 	}
 	else if (LXImporter* Importer = GetCore().GetPlugin(_pDocument, Extension))
 	{
-		LXAssetMesh* AssetMesh = nullptr;
+		shared_ptr<LXAssetMesh> AssetMesh;
 		shared_ptr<LXMesh>& Mesh = Importer->Load(Filepath);
 				
 		if (Mesh)
@@ -503,7 +497,7 @@ LXAsset* LXAssetManager::Import(const LXFilepath& Filepath, const LXString& Rela
 			LXFilepath RelativeAssetFilepath = AssetFolderpath.GetRelativeFilepath(AssetFilepath);
 			
 			// Resource
-			AssetMesh = new LXAssetMesh(Mesh);
+			shared_ptr<LXAssetMesh> AssetMesh = make_shared<LXAssetMesh>(Mesh);
 			AssetMesh->SetPersistent(!Transient);
 			AssetMesh->Owner = EResourceOwner::LXResourceOwner_Project;
 			AssetMesh->SetFilepath(AssetFilepath);
@@ -530,28 +524,6 @@ LXAsset* LXAssetManager::Import(const LXFilepath& Filepath, const LXString& Rela
 	return nullptr;
 }
 
-void LXAssetManager::Add(LXAsset* Resource)
-{
-	CHK(Resource);
-
-	if (Resource->GetFilepath().IsEmpty())
-	{
-		LXFilepath Filepath = GetSettings().GetDataFolder() + Resource->GetName() + L"." + Resource->GetFileExtension();
-		Resource->SetFilepath(Filepath);
-	}
-
-	LXString key = Resource->GetName();
-	key.MakeLower();
-	auto It = _MapAssets.find(key);
-	if (It != _MapAssets.end())
-	{
-		CHK(0); 
-		return;
-	}
-
-	_MapAssets[key] = Resource;
-}
-
 bool LXAssetManager::IsValidFile(const LXFilepath& filepath)
 {
 	// Ignore the temp and generated file
@@ -573,33 +545,33 @@ void LXAssetManager::AddAsset(const LXFilepath& filepath, const LXFilepath& asse
 	LXString AssetKey = BuildKey(resourceOwner, RelativeFilepath);
 	AssetKey.MakeLower();
 
-	LXAsset* asset = FindAsset(AssetKey);
+	shared_ptr<LXAsset> asset = FindAsset(AssetKey);
 	
 	if (asset)
 	{
 		LogE(AssetManager, L"Asset %s already exist", AssetKey.GetBuffer())
 		return;
 	}
-	
+
 	if (Extension == LX_MATERIAL_EXT)
 	{
-		asset = new LXMaterial();
+		asset = make_shared<LXMaterial>();
 	}
 	else if (Extension == LX_TEXTURE_EXT)
 	{
-		asset = new LXTexture();
+		asset = make_shared<LXTexture>();
 	}
 	else if (Extension == LX_MESH_EXT)
 	{
-		asset = new LXAssetMesh();
+		asset = make_shared<LXAssetMesh>();
 	}
 	else if (Extension == LX_SHADER_EXT)
 	{
-		asset = new LXShader();
+		asset = make_shared<LXShader>();
 	}
 	else if (Extension == LX_ANIMATION_EXT)
 	{
-		asset = new LXAnimation();
+		asset = make_shared<LXAnimation>();
 	}
 
 #ifdef LX_USE_RAW_TEXTURES_AS_ASSETS
@@ -636,7 +608,7 @@ void LXAssetManager::UpdateAsset(const LXFilepath& filepath, const LXFilepath& a
 	LXString AssetKey = BuildKey(resourceOwner, RelativeFilepath);
 	AssetKey.MakeLower();
 
-	LXAsset* asset = FindAsset(AssetKey);
+	shared_ptr<LXAsset> asset = FindAsset(AssetKey);
 
 	if (asset)
 	{
@@ -654,41 +626,33 @@ void LXAssetManager::LoadFromFolder(const LXFilepath& assetFolderpath, EResource
 	}
 }
 
-LXMaterial* LXAssetManager::CreateEngineMaterial(const wchar_t* szName)
-{
-	LXMaterial* Material = new LXMaterial();
-	Material->SetName(szName);
-	Material->State = LXAsset::EResourceState::LXResourceState_NotAFile;
-	Material->Owner = EResourceOwner::LXResourceOwner_Engine;
-	Add(Material);
-	return Material;
-}
-
 template<typename T>
-void LXAssetManager::GetAssets(list<T>& listAssets) const
+void LXAssetManager::GetAssets(list<shared_ptr<T>>& listAssets) const
 {
-	for (auto It : _MapAssets)
+	for (const auto& it : _MapAssets)
 	{
-		if (T resource = dynamic_cast<T>(It.second))
-			listAssets.push_back(resource);
+		if (shared_ptr<T> typedAsset = dynamic_pointer_cast<T>(it.second))
+		{
+			listAssets.push_back(typedAsset);
+		}
 	}
 }
 
-void LXAssetManager::GetAssetsOfType(list<LXAsset*>& listAssets, EAssetType assetType) const
+void LXAssetManager::GetAssetsOfType(list<shared_ptr<LXAsset>>& listAssets, EAssetType assetType) const
 {
 	switch (assetType)
 	{
 	case EAssetType::Material:
-		GetMaterials((list<LXMaterial*>&)listAssets);
+		GetMaterials((list<shared_ptr<LXMaterial>>&)listAssets);
 		break;
 	case EAssetType::Texture:
-		GetTextures((list<LXTexture*>&)listAssets);
+		GetTextures((list<shared_ptr<LXTexture>>&)listAssets);
 		break;
 	case EAssetType::Shader:
-		GetShaders((list<LXShader*>&)listAssets);
+		GetShaders((list<shared_ptr<LXShader>>&)listAssets);
 		break;
 	case EAssetType::Mesh:
-		GetMeshes((list<LXAssetMesh*>&)listAssets);
+		GetMeshes((list<shared_ptr<LXAssetMesh>>&)listAssets);
 		break;
 	case EAssetType::Undefined:
 	default:
@@ -722,50 +686,54 @@ void LXAssetManager::OnAssetRenamed(const LXString& Path, const LXString& OldNam
 	LXString OldAssetKey = BuildKey(ResourceOwner, OldRelativeFilepath);
 	LXString NewAssetKey = BuildKey(ResourceOwner, NewRelativeFilepath);
 	
-	LXAsset* Asset = FindAsset(OldAssetKey);
-	CHK(Asset);
+	shared_ptr<LXAsset> Asset = FindAsset(OldAssetKey);
 
 	_MapAssets.erase(OldAssetKey);
 	_MapAssets[NewAssetKey] = Asset;
 }
 
-LXAsset* LXAssetManager::FindAsset(const LXString& RelativeFilepath) const
+shared_ptr<LXAsset>& LXAssetManager::FindAsset(const LXString& RelativeFilepath) const
 {
 	LXString LC = RelativeFilepath;
 	LC.MakeLower();
 	auto It = _MapAssets.find(LC);
 	if (It != _MapAssets.end())
-		return (*It).second;
-	else 
-		return nullptr;
+	{
+		return const_cast<shared_ptr<LXAsset>&>(It->second);
+	}
+	else
+	{
+		static shared_ptr<LXAsset> empty;
+		return empty;
+	}
 }
 
-void LXAssetManager::GetTextures(list<LXTexture*>& listTextures)const
+void LXAssetManager::GetTextures(list<shared_ptr<LXTexture>>& listTextures)const
 {
-	GetAssets<LXTexture*>(listTextures);
+	GetAssets<LXTexture>(listTextures);
 }
 
-void LXAssetManager::GetScripts(list<LXScript*>& listScripts)const
+void LXAssetManager::GetScripts(list<shared_ptr<LXScript>>& listScripts)const
 {
-	GetAssets<LXScript*>(listScripts);
+	GetAssets<LXScript>(listScripts);
 }
 
-void LXAssetManager::GetMaterials(list<LXMaterial*>& listMaterials)const
+void LXAssetManager::GetMaterials(list<shared_ptr<LXMaterial>>& listMaterials)const
 {
-	GetAssets<LXMaterial*>(listMaterials);
+	GetAssets<LXMaterial>(listMaterials);
 }
 
-void LXAssetManager::GetShaders(list<LXShader*>& listShaders)const
+void LXAssetManager::GetShaders(list<shared_ptr<LXShader>>& listShaders)const
 {
-	GetAssets<LXShader*>(listShaders);
+	GetAssets<LXShader>(listShaders);
 }
 
-void LXAssetManager::GetMeshes(list<LXAssetMesh*>& listMeshes)const
+void LXAssetManager::GetMeshes(list<shared_ptr<LXAssetMesh>>& listMeshes)const
 {
-	GetAssets<LXAssetMesh*>(listMeshes);
+	GetAssets<LXAssetMesh>(listMeshes);
 }
 
-void LXAssetManager::GetAssets(list<LXAsset*>& listResources) const
+void LXAssetManager::GetAssets(list<shared_ptr<LXAsset>>& listResources) const
 {
 	for (auto It : _MapAssets)
 		listResources.push_back(It.second);

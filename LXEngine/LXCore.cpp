@@ -214,12 +214,14 @@ LXCore*	LXCore::CreateCore()
 void LXCore::BeginShutdown()
 {
 	CHK(!_shutdowning);
+	LogI(Core, L"BeginShutdown");
 	CloseProject();
 	_shutdowning = true;
 }
 
 void LXCore::EndShutdow()
 {
+	LogI(Core, L"EndShutdown");
 	_shutdowning = false;
 	_shutdown = true;
 	EngineShutdown.Invoke();
@@ -228,6 +230,7 @@ void LXCore::EndShutdow()
 void LXCore::Destroy()
 {
 	CHK(_shutdown && !_shutdowning);
+	LogI(Core, L"Destroy");
 	gCore = nullptr;
 	delete this;
 	LXObject::TraceAll();
@@ -528,6 +531,9 @@ void LXCore::SetDocument(LXProject* Document)
 
 void LXCore::Run()
 {
+	if (_shutdown)
+		return;
+
 	if (_Renderer && RenderThread && FrameNumber > -1)
 	{
 		// Wait for the RenderThread frame end.
@@ -629,7 +635,7 @@ void LXCore::Run()
 LXMaterial* LXCore::GetDefaultMaterial() const
 {
 	if (GetProject())
-		return GetProject()->GetAssetManager().GetDefaultMaterial();
+		return GetProject()->GetAssetManager().GetDefaultMaterial().get();
 	else
 		return nullptr;
 }
@@ -637,7 +643,7 @@ LXMaterial* LXCore::GetDefaultMaterial() const
 LXTexture* LXCore::GetDefaultTexture() const
 { 
 	if (GetProject())
-		return GetProject()->GetAssetManager().GetDefaultTexture();
+		return GetProject()->GetAssetManager().GetDefaultTexture().get();
 	else
 		return nullptr;
 }

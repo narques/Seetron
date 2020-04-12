@@ -74,7 +74,7 @@ LXTexture* LXGraphMaterial::GetTextureDisplacement(const LXString& textureName) 
 				if (property && property->GetType() == EPropertyType::AssetPtr)
 				{
 					LXPropertyAssetPtr* propertyAssetPtr = (LXPropertyAssetPtr*)property;
-					if (LXAsset* asset = propertyAssetPtr->GetValue())
+					if (LXAsset* asset = propertyAssetPtr->GetValue().get())
 					{
 						return dynamic_cast<LXTexture*>(asset);
 					}

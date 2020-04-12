@@ -22,7 +22,7 @@ public:
 
 private:
 
-	LXMaterial* _Material = nullptr;
+	shared_ptr<LXMaterial> _Material;
 
 };
 

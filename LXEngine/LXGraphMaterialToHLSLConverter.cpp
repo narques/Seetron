@@ -568,9 +568,9 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNodeVariable(const LXMaterialD3D1
 	{
 		LXPropertyAssetPtr* propertyAssetPtr = (LXPropertyAssetPtr*)property;
 		
-		LXTexture* texture = dynamic_cast<LXTexture*>(propertyAssetPtr->GetValue());
+		LXTexture* texture = dynamic_cast<LXTexture*>(propertyAssetPtr->GetValue().get());
 		if (!texture)
-			texture = GetAssetManager()->GetDefaultTexture();
+			texture = GetAssetManager()->GetDefaultTexture().get();
 
 		if (texture)
 		{

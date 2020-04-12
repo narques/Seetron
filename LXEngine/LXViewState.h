@@ -48,10 +48,10 @@ public:
 	void DefineProperties() 
 	{
 		DefinePropertyBool(L"Outlines", LXPropertyID::RENDERING_OUTLINES, &_outlines);
-		DefinePropertyAsset(L"Material", LXPropertyID::RENDERING_MATERIAL, (LXAsset**)&_material);
+		DefinePropertyAsset(L"Material", LXPropertyID::RENDERING_MATERIAL, (shared_ptr<LXAsset>*)&_material);
 	}
 
-	GetSetDefPtr(LXMaterial, _material, Material, NULL);
+	shared_ptr<LXMaterial> _material;
 	GetSetDef(bool, _outlines, Outlines, false);
 
 	//LX_DAE(bool, _outlines, false, Outlines, LXPropertyID::RENDERING_OUTLINES);

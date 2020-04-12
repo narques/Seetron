@@ -58,7 +58,7 @@ void LXActorMesh::DefineProperties( )
 	DefinePropertyBool(L"CastShadows", GetAutomaticPropertyID(), &_bCastShadows);
 
 	//Asset
-	auto PropAssetMesh = DefineProperty(L"AssetMesh", (LXAsset**)&_AssetMesh);
+	auto PropAssetMesh = DefineProperty(L"AssetMesh", (shared_ptr<LXAsset>*)&_AssetMesh);
 	PropAssetMesh->SetLambdaOnChange([this](LXPropertyAssetPtr* Property)
 	{
 		UpdateAssetMeshCallbacks();
@@ -130,7 +130,7 @@ void LXActorMesh::SetMesh(shared_ptr<LXMesh>& mesh)
 	InvalidateBounds(true);
 }
 
-void LXActorMesh::SetAssetMesh(LXAssetMesh* AssetMesh)
+void LXActorMesh::SetAssetMesh(shared_ptr<LXAssetMesh>& AssetMesh)
 {
 	CHK(_AssetMesh == nullptr);
 	_AssetMesh = AssetMesh;

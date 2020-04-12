@@ -310,11 +310,11 @@ void LXMesh::InvalidateBounds()
 void LXMesh::SetMaterial(const LXString& key)
 {
 	LXAssetManager& rm = GetCore().GetProject()->GetAssetManager();
-	LXMaterial* Material = rm.GetMaterial(key);
+	shared_ptr<LXMaterial> Material = rm.GetMaterial(key);
 	SetMaterial(Material);
 }
 
-void LXMesh::SetMaterial(LXMaterial* material)
+void LXMesh::SetMaterial(shared_ptr<LXMaterial>& material)
 {
 	for (const shared_ptr<LXPrimitiveInstance>& PrimitiveInstance : _vectorPrimitives)
 	{

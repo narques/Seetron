@@ -162,9 +162,9 @@ public:
 	int					GetId				( );
 	
 	bool				Save				(  const TSaveContext& saveContext  );
-	void				SetMaterial			( LXMaterial* pMaterial );
+	void				SetMaterial			( shared_ptr<LXMaterial>& pMaterial );
 	void				SetMaterial			( const LXString& Filename );
-	LXMaterial*			GetMaterial() const { return m_pMaterial; }
+	const shared_ptr<LXMaterial>& GetMaterial() const { return m_pMaterial; }
 	
 	// Draw Options
 	LXPrimitiveTopology	GetTopology			( ) const { return _Topology; }
@@ -212,7 +212,7 @@ public :
 
 	// Misc
 	LXPrimitiveTopology	_Topology;
-	LXMaterial*		m_pMaterial;
+	shared_ptr<LXMaterial> m_pMaterial;
 	int				m_nId;
 	bool			m_bValid;
 	LXBBox			m_bboxLocal;

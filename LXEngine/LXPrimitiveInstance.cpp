@@ -32,12 +32,12 @@ LXPrimitiveInstance::~LXPrimitiveInstance()
 	LX_SAFE_DELETE(MatrixRCS);
 }
 
-void LXPrimitiveInstance::SetMaterial(LXMaterial* material)
+void LXPrimitiveInstance::SetMaterial(shared_ptr<LXMaterial>& material)
 {
 	Primitive->SetMaterial(material);
 	for (LXWorldPrimitive* worldPrimitive : Owners)
 	{
-		worldPrimitive->SetMaterial(material);
+		worldPrimitive->SetMaterial(material.get());
 	}
 }
 

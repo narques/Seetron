@@ -54,7 +54,7 @@ public:
 	ArrayVec3ui				m_PositionIndices;		
 	CFace3*                 m_pTFaces;				// TexCoords indices
 	CFace3*                 m_pNFaces;				// Normals indices
-	LXMaterial**			m_ppMaterials;
+	shared_ptr<LXMaterial>* m_ppMaterials;
 
 	ArrayVec3f              m_arrayPositions;
 	ArrayVec2f 				m_arrayTexCoords;

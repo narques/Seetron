@@ -163,7 +163,7 @@ void LXPrimitive::DefineProperties( )
 	pPropBool->SetReadOnly(true);
 	pPropBool->SetLambdaOnGet([this] { return HasBiNormals(); });
 	
-	LXPropertyAssetPtr* pPropMaterial = DefinePropertyAsset(L"Material", LXPropertyID::PRIMITIVE_MATERIAL, (LXAsset**)&m_pMaterial);
+	LXPropertyAssetPtr* pPropMaterial = DefinePropertyAsset(L"Material", LXPropertyID::PRIMITIVE_MATERIAL, (shared_ptr<LXAsset>*)&m_pMaterial);
 	pPropMaterial->SetName(L"Material");
 	pPropMaterial->SetUserData((int64)EAssetType::Material);
 	pPropMaterial->SetPersistent(false);
@@ -310,7 +310,7 @@ int LXPrimitive::GetId()
 	return m_nId;
 }
 
-void LXPrimitive::SetMaterial( LXMaterial* pMaterial )
+void LXPrimitive::SetMaterial( shared_ptr<LXMaterial>& pMaterial )
 { 
 	m_pMaterial = pMaterial;
 }
@@ -318,7 +318,7 @@ void LXPrimitive::SetMaterial( LXMaterial* pMaterial )
 void LXPrimitive::SetMaterial(const LXString& Filename)
 {
 	LXAssetManager& rm = GetCore().GetProject()->GetAssetManager();
-	LXMaterial* Material = rm.GetMaterial(Filename);
+	shared_ptr<LXMaterial> Material = rm.GetMaterial(Filename);
 	SetMaterial(Material);
 }
 

@@ -26,11 +26,11 @@ public:
 	LXActorRenderToTexture(LXProject* project);
 	virtual ~LXActorRenderToTexture();
 
-	void SetMaterial(LXMaterial* Material);
-	const LXMaterial* GetMaterial() const { return _material; }
+	void SetMaterial(shared_ptr<LXMaterial>& material);
+	const shared_ptr<LXMaterial>& GetMaterial() const { return _material; }
 
-	void SetTexture(LXTexture* texture);
-	const LXTexture* GetTexture() const { return _texture; }
+	void SetTexture(shared_ptr<LXTexture>& texture);
+	const shared_ptr<LXTexture>& GetTexture() const { return _texture; }
 	
 	void SetRenderingDrive(ERenderingDrive renderingDrive) { _renderingDrive = renderingDrive; }
 	ERenderingDrive GetRenderingDrive() const { return _renderingDrive; }
@@ -54,7 +54,7 @@ private:
 
 	ERenderingDrive _renderingDrive = ERenderingDrive::OnEveryFrame;
 
-	LXMaterial* _material = nullptr;
-	LXTexture* _texture = nullptr;
+	shared_ptr<LXMaterial> _material;
+	shared_ptr<LXTexture> _texture;
 };
 

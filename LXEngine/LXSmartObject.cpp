@@ -675,7 +675,7 @@ LXPropertyMatrix* LXSmartObject::DefinePropertyMatrix(const LXString& label, con
 	return DefineProperty(label, PID, pMatrix);
 }
 
-LXPropertyAssetPtr* LXSmartObject::DefinePropertyAsset(const LXString& label, const LXPropertyID& PID, LXAsset** pAsset)
+LXPropertyAssetPtr* LXSmartObject::DefinePropertyAsset(const LXString& label, const LXPropertyID& PID, shared_ptr<LXAsset>* pAsset)
 {
 	return DefineProperty(label, PID, pAsset);
 }
@@ -890,7 +890,7 @@ template LXCORE_API LXPropertyFloat* LXSmartObject::DefineProperty(const LXStrin
 template LXCORE_API LXPropertyDouble* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, double* pDouble);
 template LXCORE_API LXPropertyArraySmartObjects* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, ArraySmartObjects* pArraySmartObjects);
 template LXCORE_API LXPropertyListSmartObjects* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, ListSmartObjects* pListSmartObjects);
-template LXCORE_API LXPropertyAssetPtr* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXAsset** pMaterialInput);
+template LXCORE_API LXPropertyAssetPtr* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXAssetPtr* pMaterialInput);
 template LXCORE_API LXPropertySmartObject* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXSmartObject* smartObject);
 template LXCORE_API LXPropertySharedObject* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, shared_ptr<LXSmartObject>* smartObject);
 template LXCORE_API LXPropertyReferenceObject* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXReference<LXSmartObject>* smartObject);

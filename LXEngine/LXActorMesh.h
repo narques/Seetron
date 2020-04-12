@@ -55,7 +55,7 @@ public:
 	// Misc
 	void							SetMesh(shared_ptr<LXMesh>& Mesh);
 	shared_ptr<LXMesh>&				GetMesh() { return Mesh; }
-	void							SetAssetMesh(LXAssetMesh* AssetMesh);
+	void							SetAssetMesh(shared_ptr<LXAssetMesh>& AssetMesh);
 	void							InvalidateWorldPrimitives();
 	virtual bool					GetCastShadows() const override { return _bCastShadows; }
 
@@ -74,7 +74,7 @@ private:
 protected:
 
 	shared_ptr<LXMesh> Mesh;
-	LXAssetMesh* _AssetMesh = nullptr;
+	shared_ptr<LXAssetMesh> _AssetMesh;
 	bool _bCastShadows = true;
 
 private:
