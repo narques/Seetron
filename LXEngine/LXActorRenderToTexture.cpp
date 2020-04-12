@@ -13,6 +13,8 @@
 #include "LXMesh.h"
 #include "LXMeshFactory.h"
 #include "LXRenderer.h"
+#include "LXRenderPassDynamicTexture.h"
+#include "LXRenderPipelineDeferred.h"
 #include "LXTexture.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
@@ -40,12 +42,34 @@ LXActorRenderToTexture::~LXActorRenderToTexture()
 
 void LXActorRenderToTexture::SetTexture(LXTexture* texture)
 {
+	CHK(texture);
 	_texture = texture;
 }
 
 void LXActorRenderToTexture::SetMaterial(LXMaterial* Material)
 {
+	CHK(Material);
 	(static_cast<LXPropertyAssetPtr*>(GetProperty(L"Material")))->SetValue(Material);
+}
+
+void LXActorRenderToTexture::Render(int frameCount)
+{
+	CHK(_renderingDrive == ERenderingDrive::OnDemand);
+	CHK(CurrentFrame == 0);
+
+	// RenderCluster is already setup,
+	// simply awake the rendering throw a RT task to guarantee
+	// the execution order.
+
+	LXTask* task = new LXTaskCallBack([this]()
+	{
+		LXRenderPipelineDeferred* rpd = dynamic_cast<LXRenderPipelineDeferred*>(GetRenderer()->GetRenderPipeline());
+		LXRenderPassDynamicTexture* renderPassDynamicTexture = const_cast<LXRenderPassDynamicTexture*>(rpd->GetRenderPassDynamicTexture());
+		renderPassDynamicTexture->AwakeActor(_renderData);
+	});
+	
+	FrameCount = frameCount;
+	GetRenderer()->EnqueueTask(task);
 }
 
 void LXActorRenderToTexture::CopyDeviceToBitmap()

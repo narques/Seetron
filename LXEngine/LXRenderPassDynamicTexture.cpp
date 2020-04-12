@@ -33,38 +33,84 @@ void LXRenderPassDynamicTexture::Render(LXRenderCommandList* RCL)
 
 	RCL->BeginEvent(L"DynamicTexture");
 
+	//
+	// 'OnEveryFrame'
+	//
+
 	for (LXRenderCluster* renderCluster : renderPipelineDeferred->GetRenderClusterRenderToTextures())
 	{
-		const LXMaterial* material = renderCluster->Material;
-
-		if (material->MaterialType == EMaterialType::MaterialTypeTexture)
+		const LXActor* actor = const_cast<LXActor*>(renderCluster->RenderData->GetActor());
+		const LXActorRenderToTexture* actorRTT = static_cast<const LXActorRenderToTexture*>(actor);
+		if (actorRTT->GetRenderingDrive() == ERenderingDrive::OnEveryFrame)
 		{
-			LXActor* actor = const_cast<LXActor*>(renderCluster->RenderData->GetActor());
-			const LXActorRenderToTexture* actorRTT = static_cast<LXActorRenderToTexture*>(actor);
+			Render(RCL, renderCluster);
+		}
+	} 
 
-			if (const LXTexture* textureOutput = actorRTT->GetTexture())
+	//
+	// 'OnDemand' 
+	//
+
+	auto itRenderData = _onDemandRenderData.begin();
+	while(itRenderData != _onDemandRenderData.end())
+	{
+		const map<LXRenderData*, list<LXRenderCluster*>>& renderClusters = Renderer->RenderClusterManager->GetActors();
+		const auto itRenderCluser = renderClusters.find(*itRenderData);
+		if (itRenderCluser != renderClusters.end())
+		{
+			const list<LXRenderCluster*> rdrc = itRenderCluser->second;
+			for (LXRenderCluster* rendercluster : rdrc)
 			{
-				if (const LXTextureD3D11* textureD3D11 = textureOutput->GetDeviceTexture())
-				{
-					ID3D11RenderTargetView* renderTargetView = textureD3D11->GetRenderTargetView();
+				Render(RCL, rendercluster);
+			}
 
-					RCL->OMSetRenderTargets(renderTargetView);
-					RCL->RSSetViewports(textureOutput->GetWidth(), textureOutput->GetHeight());
+			// lifecycle
+			const LXActorRenderToTexture* actorRTT = static_cast<const LXActorRenderToTexture*>((*itRenderData)->GetActor());
+			actorRTT->CurrentFrame++;
+			if (actorRTT->CurrentFrame >= actorRTT->FrameCount)
+			{
+				actorRTT->CurrentFrame = 0;
+				itRenderData = _onDemandRenderData.erase(itRenderData);
+				continue;
+			}
+		}
+
+		itRenderData++;
+	}
+
+	RCL->EndEvent();
+}
+
+void LXRenderPassDynamicTexture::Render(LXRenderCommandList* RCL, LXRenderCluster* renderCluster)
+{
+	const LXMaterial* material = renderCluster->Material;
+
+	if (material->MaterialType == EMaterialType::MaterialTypeTexture)
+	{
+		LXActor* actor = const_cast<LXActor*>(renderCluster->RenderData->GetActor());
+		LXActorRenderToTexture* actorRTT = static_cast<LXActorRenderToTexture*>(actor);
+
+		if (const LXTexture* textureOutput = actorRTT->GetTexture())
+		{
+			if (const LXTextureD3D11* textureD3D11 = textureOutput->GetDeviceTexture())
+			{
+				ID3D11RenderTargetView* renderTargetView = textureD3D11->GetRenderTargetView();
+
+				RCL->OMSetRenderTargets(renderTargetView);
+				RCL->RSSetViewports(textureOutput->GetWidth(), textureOutput->GetHeight());
+
+				if (actorRTT->ClearRenderTarget)
 					RCL->ClearRenderTargetView3(renderTargetView);
 
-					renderCluster->Render(ERenderPass::RenderToTexture, RCL);
+				renderCluster->Render(ERenderPass::RenderToTexture, RCL);
 
-					RCL->VSSetShader(nullptr);
-					RCL->HSSetShader(nullptr);
-					RCL->DSSetShader(nullptr);
-					RCL->GSSetShader(nullptr);
-					RCL->PSSetShader(nullptr);
-				}
-				else
-				{
-					CHK_ONCE(0);
-					LogD(LXRenderPassDynamicTexture, L"LXActorRenderToTexture texture is not set.")
-				}
+				RCL->VSSetShader(nullptr);
+				RCL->HSSetShader(nullptr);
+				RCL->DSSetShader(nullptr);
+				RCL->GSSetShader(nullptr);
+				RCL->PSSetShader(nullptr);
+				LXDelegate<>* delegateRT = &actorRTT->Rendered_RT;
+				RCL->InvokeDelegate(delegateRT);
 			}
 			else
 			{
@@ -75,13 +121,22 @@ void LXRenderPassDynamicTexture::Render(LXRenderCommandList* RCL)
 		else
 		{
 			CHK_ONCE(0);
-			LogD(LXRenderPassDynamicTexture, L"Material is not a MaterialTypeTexture.")
+			LogD(LXRenderPassDynamicTexture, L"LXActorRenderToTexture texture is not set.")
 		}
 	}
-
-	RCL->EndEvent();
+	else
+	{
+		CHK_ONCE(0);
+		LogD(LXRenderPassDynamicTexture, L"Material is not a MaterialTypeTexture.")
+	}
 }
 
 void LXRenderPassDynamicTexture::Resize(uint Width, uint Height)
 {
+}
+
+void LXRenderPassDynamicTexture::AwakeActor(LXRenderData* renderData)
+{
+	CHK(IsRenderThread());
+	_onDemandRenderData.push_back(renderData);
 }

@@ -67,6 +67,7 @@ public:
 	const LXRenderPassLighting* GetRenderPassLighting() const { return RenderPassLighting; }
 	const LXRenderPassTransparency* GetRenderPassTransparency() const { return RenderPassTransparent; }
 	const LXRenderPassAux* GetRenderPassAux() const { return RenderPassAux; }
+	const LXRenderPassDynamicTexture* GetRenderPassDynamicTexture() const { return RenderPassDynamicTexture; }
 
 	const LXRenderPass* GetPreviousRenderPass() const override { return _PreviousRenderPass; }
 	
