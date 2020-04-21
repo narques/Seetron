@@ -31,7 +31,8 @@ enum class EPropertyType
 	ListSmartObject,
 	SmartObject,
 	SharedObject,
-	ReferenceObject
+	ReferenceObject,
+	ListSharedObject
 };
 
 enum class EConnectorType

@@ -293,6 +293,8 @@ private:
 	
 };
 
+typedef list<shared_ptr<LXSmartObject>>			ListSharedObjects;
+
 typedef LXPropertyT<bool>						LXPropertyBool;
 typedef LXPropertyT<int>						LXPropertyInt;
 typedef LXPropertyT<uint>						LXPropertyUint;
@@ -312,3 +314,4 @@ typedef LXPropertyT<ArrayVec3f>					LXPropertyArrayVec3f;
 typedef LXPropertyT<LXSmartObject>				LXPropertySmartObject;
 typedef LXPropertyT<shared_ptr<LXSmartObject>>	LXPropertySharedObject;
 typedef LXPropertyT<LXReference<LXSmartObject>>	LXPropertyReferenceObject;
+typedef LXPropertyT<ListSharedObjects>			LXPropertyListSharedObjects;

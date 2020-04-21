@@ -33,6 +33,18 @@ if (objectClassName == L#name)								\
 	return new name(dcOwner);								\
 }															\
 
+#define CREATE_SHARED_OBJECT(name) \
+if (objectClassName == L#name) return make_shared<name>();
+
+#define CREATE_SHARED_OWNED_OBJECT(name, OwnerClass)						\
+if (objectClassName == L#name)								\
+{															\
+	OwnerClass* dcOwner = dynamic_cast<OwnerClass*>(owner); \
+	CHK(dcOwner);											\
+	return make_shared<name>(dcOwner);						\
+}															\
+
+
 LXSmartObject* LXObjectFactory::CreateObject(const LXString& objectClassName, LXSmartObject* owner )
 {
 	CREATE_OBJECT(LXConnection);
@@ -43,5 +55,18 @@ LXSmartObject* LXObjectFactory::CreateObject(const LXString& objectClassName, LX
 			
 	LogW(LXObjectFactory, L"Unable to create object of class %s owned by %s (%s).", objectClassName.GetBuffer(), owner->GetName().GetBuffer(), owner->GetObjectName().GetBuffer());
 	
+	return nullptr;
+}
+
+shared_ptr<LXSmartObject> LXObjectFactory::CreateSharedObject(const LXString& objectClassName, LXSmartObject* owner)
+{
+	CREATE_SHARED_OBJECT(LXConnection);
+	CREATE_SHARED_OBJECT(LXNodeTemplate);
+
+	CREATE_SHARED_OWNED_OBJECT(LXConnector, LXNode)
+	CREATE_SHARED_OWNED_OBJECT(LXNode, LXGraph)
+
+	LogW(LXObjectFactory, L"Unable to create object of class %s owned by %s (%s).", objectClassName.GetBuffer(), owner->GetName().GetBuffer(), owner->GetObjectName().GetBuffer());
+
 	return nullptr;
 }

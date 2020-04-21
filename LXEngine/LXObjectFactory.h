@@ -16,5 +16,6 @@ public:
 	~LXObjectFactory();
 
 	static LXSmartObject* CreateObject(const LXString& objectClassName, LXSmartObject* owner);
+	static shared_ptr<LXSmartObject> CreateSharedObject(const LXString& objectClassName, LXSmartObject* owner);
 };
 

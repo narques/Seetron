@@ -106,6 +106,7 @@ LX_DECLARE_GETTEMPLATETYPE(LXAssetPtr, EPropertyType::AssetPtr)
 LX_DECLARE_GETTEMPLATETYPE(LXColor4f, EPropertyType::Color)
 LX_DECLARE_GETTEMPLATETYPE(vector<LXSmartObject*>, EPropertyType::ArraySmartObject)
 LX_DECLARE_GETTEMPLATETYPE(list<LXSmartObject*>, EPropertyType::ListSmartObject)
+LX_DECLARE_GETTEMPLATETYPE(ListSharedObjects, EPropertyType::ListSmartObject)
 LX_DECLARE_GETTEMPLATETYPE(vector<vec3f>, EPropertyType::ArrayFloat3f)
 LX_DECLARE_GETTEMPLATETYPE(LXSmartObject, EPropertyType::SmartObject)
 LX_DECLARE_GETTEMPLATETYPE(shared_ptr<LXSmartObject>, EPropertyType::SharedObject)
@@ -377,6 +378,7 @@ template class LXCORE_API LXPropertyT<ArrayVec3f>;
 template class LXCORE_API LXPropertyT<LXSmartObject>;
 template class LXCORE_API LXPropertyT<shared_ptr<LXSmartObject>>;
 template class LXCORE_API LXPropertyT<LXReference<LXSmartObject>>;
+template class LXCORE_API LXPropertyT<ListSharedObjects>;
 
 //
 // --- float ---
@@ -877,6 +879,77 @@ bool LXPropertyT<ListSmartObjects>::AddItem(const LXString& itemName)
 
 template <>
 bool LXPropertyT<ListSmartObjects>::RemoveItem(LXSmartObject* item)
+{
+	OnRemoveItem.Invoke(item);
+	return true;
+}
+
+//
+// ListSharedObjects
+//
+
+template<>
+void LXPropertyListSharedObjects::GetValueFromXML2(const TLoadContext& LoadContext)
+{
+	const LXMSXMLNode& node = LoadContext.node;
+	const LXString& name = node.name();
+
+	ListSharedObjects value;
+
+	for (LXMSXMLNode e = node.begin(); e != node.end(); e++)
+	{
+		shared_ptr<LXSmartObject> smartObject = LXObjectFactory::CreateSharedObject(e.name(), _Owner/*LoadContext.pOwner*/);
+		
+		if (smartObject)
+		{
+			TLoadContext loadContextChild(e);
+			loadContextChild.pOwner = LoadContext.pOwner;
+			loadContextChild.filepath = LoadContext.filepath;
+			smartObject->Load(loadContextChild);
+			value.push_back(smartObject);
+		}
+		else
+		{
+			LogE(LXProperty, L"Unknonw object type (%s) for List", e.name());
+		}
+	}
+
+	SetValue(value, false);
+}
+
+template<>
+void LXPropertyListSharedObjects::SaveXML2(const TSaveContext& saveContext, const LXString& strXMLName, const ListSharedObjects& v)
+{
+	if (v.size() > 0)
+	{
+		fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
+		fwprintf(saveContext.pXMLFile, L"<%s>\n", strXMLName.GetBuffer());
+		saveContext.Indent++;
+		for (const shared_ptr<LXSmartObject>& SmartObject : v)
+		{
+			SmartObject->Save(saveContext);
+		}
+		saveContext.Indent--;
+		fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
+		fwprintf(saveContext.pXMLFile, L"</%s>\n", strXMLName.GetBuffer());
+	}
+}
+
+template <>
+void LXPropertyListSharedObjects::GetChoices(ArrayStrings& arrayStrings)
+{
+	GetChoiceNames.Invoke(arrayStrings);
+}
+
+template <>
+bool LXPropertyListSharedObjects::AddItem(const LXString& itemName)
+{
+	OnAddItem.Invoke(itemName);
+	return true;
+}
+
+template <>
+bool LXPropertyListSharedObjects::RemoveItem(LXSmartObject* item)
 {
 	OnRemoveItem.Invoke(item);
 	return true;

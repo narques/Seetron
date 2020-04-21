@@ -890,6 +890,7 @@ template LXCORE_API LXPropertyFloat* LXSmartObject::DefineProperty(const LXStrin
 template LXCORE_API LXPropertyDouble* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, double* pDouble);
 template LXCORE_API LXPropertyArraySmartObjects* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, ArraySmartObjects* pArraySmartObjects);
 template LXCORE_API LXPropertyListSmartObjects* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, ListSmartObjects* pListSmartObjects);
+template LXCORE_API LXPropertyListSharedObjects* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, ListSharedObjects* pListSmartObjects);
 template LXCORE_API LXPropertyAssetPtr* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXAssetPtr* pMaterialInput);
 template LXCORE_API LXPropertySmartObject* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXSmartObject* smartObject);
 template LXCORE_API LXPropertySharedObject* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, shared_ptr<LXSmartObject>* smartObject);
