@@ -40,6 +40,7 @@ public:
 	
 	// Delegates & Events
 	LXDelegate<> Rendered_RT;
+	LXDelegate<> AllFrameRendered;
 
 	// Renderer
 	atomic<bool> ClearRenderTarget = false;

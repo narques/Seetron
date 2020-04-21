@@ -71,6 +71,8 @@ void LXRenderPassDynamicTexture::Render(LXRenderCommandList* RCL)
 			{
 				actorRTT->CurrentFrame = 0;
 				itRenderData = _onDemandRenderData.erase(itRenderData);
+				LXDelegate<>* delegateAllFrameRendered = &(const_cast<LXActorRenderToTexture*>(actorRTT))->AllFrameRendered;
+				RCL->EnqueueInvokeDelegate(delegateAllFrameRendered);
 				continue;
 			}
 		}
