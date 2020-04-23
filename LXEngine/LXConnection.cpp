@@ -18,8 +18,10 @@ LXConnection::LXConnection()
 
 LXConnection::~LXConnection()
 {
-	Source->Connections.remove(this);
-	Destination->Connections.remove(this);
+	if (Source.get())
+		Source->Connections.remove(this);
+	if (Destination.get())
+		Destination->Connections.remove(this);
 }
 
 void LXConnection::Detach(LXConnector* owner)

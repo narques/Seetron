@@ -18,7 +18,7 @@ LXGraph::LXGraph()
 	// --------------------------------------------------------------------------------------------------------------
 	LXProperty::SetCurrentGroup(L"Graph");
 	// --------------------------------------------------------------------------------------------------------------
-	DefineProperty("Nodes", (ListSmartObjects*)&Nodes);
+	DefineProperty("Nodes", (ListSharedObjects*)&Nodes);
 	DefineProperty("Connections", (ListSmartObjects*)&Connections);
 }
 
@@ -27,11 +27,6 @@ LXGraph::~LXGraph()
 	for (LXConnection* connection : Connections)
 	{
 		delete connection;
-	}
-		
-	for (LXNode* node : Nodes)
-	{
-		delete node;
 	}
 }
 
@@ -43,7 +38,7 @@ void LXGraph::Clear()
 	OnGraphChanged.Invoke();
 }
 
-void LXGraph::AddNode(LXNode* node)
+void LXGraph::AddNode(shared_ptr<LXNode>& node)
 {
 	if (node->Main && _main)
 	{
@@ -60,13 +55,14 @@ void LXGraph::AddNode(LXNode* node)
 	OnGraphChanged.Invoke();
 }
 
-void LXGraph::RemoveNode(LXNode* node)
+void LXGraph::RemoveNode(shared_ptr<LXNode>& node)
 {
 	// Delete the Connections.
 	for (LXConnector* connector : node->Inputs)
 	{
-		for (LXConnection* connection : connector->Connections)
+		while(connector->Connections.size())
 		{
+			LXConnection* connection = *connector->Connections.begin();
 			Connections.remove(connection);
 			connection->Detach(connector);
 			delete connection;
@@ -76,8 +72,9 @@ void LXGraph::RemoveNode(LXNode* node)
 
 	for (LXConnector* connector : node->Outputs)
 	{
-		for (LXConnection* connection : connector->Connections)
+		while (connector->Connections.size())
 		{
+			LXConnection* connection = *connector->Connections.begin();
 			Connections.remove(connection);
 			connection->Detach(connector);
 			delete connection;
@@ -87,7 +84,6 @@ void LXGraph::RemoveNode(LXNode* node)
 	
 	// Delete the node
 	Nodes.remove(node);
-	delete node;
 	OnGraphChanged.Invoke();
 }
 
@@ -112,7 +108,6 @@ LXConnection* LXGraph::CreateConnection(LXConnector* source, LXConnector* destin
 void LXGraph::DeleteConnection(LXConnection* connection)
 {
 	CHK(std::find(Connections.begin(), Connections.end(), connection) != Connections.end());
-	Connections.remove(connection);
 	connection->Detach(nullptr);
 	delete connection;
 	OnGraphChanged.Invoke();
@@ -133,7 +128,7 @@ void LXGraph::DeleteConnector(LXConnector* connector)
 
 const LXNode* LXGraph::GetMain() const
 {
-	return _main;
+	return _main.get();
 }
 
 void LXGraph::OnLoaded()
@@ -158,7 +153,7 @@ void LXGraph::OnLoaded()
 	}
 
 	// Search for the main node
-	for (LXNode* node : Nodes)
+	for (const shared_ptr<LXNode>& node : Nodes)
 	{
 		if (node->Main)
 		{

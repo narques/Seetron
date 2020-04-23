@@ -22,7 +22,7 @@ LXGraphMaterial::~LXGraphMaterial()
 {
 }
 
-void LXGraphMaterial::AddNode(LXNode* node)
+void LXGraphMaterial::AddNode(shared_ptr<LXNode>& node)
 {
 	if (LXPropertyAssetPtr* property = dynamic_cast<LXPropertyAssetPtr*>(node->GetProperty(L"Value")))
 	{
@@ -32,7 +32,7 @@ void LXGraphMaterial::AddNode(LXNode* node)
 	__super::AddNode(node);
 }
 
-void LXGraphMaterial::RemoveNode(LXNode* node)
+void LXGraphMaterial::RemoveNode(shared_ptr<LXNode>& node)
 {
 	if (LXPropertyAssetPtr* property = dynamic_cast<LXPropertyAssetPtr*>(node->GetProperty(L"Value")))
 	{
@@ -56,7 +56,7 @@ void LXGraphMaterial::RemoveNode(LXNode* node)
 
 void LXGraphMaterial::GetChildProperties(ListProperties& listProperties) const
 {
-	for (const LXNode* node : Nodes)
+	for (const shared_ptr<LXNode>& node : Nodes)
 	{
 		node->GetUserProperties(listProperties);
 	}
@@ -128,7 +128,7 @@ void LXGraphMaterial::OnLoaded()
 {
 	_assetTextures.clear();
 
-	for (LXNode* node : Nodes)
+	for (const shared_ptr<LXNode>& node : Nodes)
 	{
 		if (LXPropertyAssetPtr* property = dynamic_cast<LXPropertyAssetPtr*>(node->GetProperty(L"Value")))
 		{

@@ -22,8 +22,8 @@ public:
 	LXGraphMaterial(LXMaterial* material);
 	virtual ~LXGraphMaterial();
 
-	virtual void AddNode(LXNode* node) override;
-	virtual void RemoveNode(LXNode* node) override;
+	virtual void AddNode(shared_ptr<LXNode>& node) override;
+	virtual void RemoveNode(shared_ptr<LXNode>& node) override;
 
 	void GetChildProperties(ListProperties& UserProperties) const override;
 	LXTexture* GetTextureDisplacement(const LXString& textureName) const;

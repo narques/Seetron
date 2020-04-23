@@ -232,8 +232,6 @@ bool LXTexture::CopyDeviceToBitmap()
 {
 	CHK(TextureSource == ETextureSource::TextureSourceMaterial);
 
-		return false;
-
 	if (!_Bitmap)
 	{
 		_Bitmap = new LXBitmap[1];

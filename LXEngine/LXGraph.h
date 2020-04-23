@@ -26,8 +26,8 @@ public:
 	void Clear();
 
 	LXConnection* CreateConnection(LXConnector* source, LXConnector* destination);
-	virtual void AddNode(LXNode* node);
-	virtual void RemoveNode(LXNode* node);
+	virtual void AddNode(shared_ptr<LXNode>& node);
+	virtual void RemoveNode(shared_ptr<LXNode>& node);
 	void DeleteConnection(LXConnection* connection);
 	void DeleteConnector(LXConnector* connector);
 
@@ -41,11 +41,11 @@ protected:
 public:
 
 	LXDelegate<> OnGraphChanged;
-	list<LXNode*> Nodes;
+	list<shared_ptr<LXNode>> Nodes;
 	list<LXConnection*> Connections;
 
 private:
 
-	LXNode * _main = nullptr;
+	shared_ptr<LXNode> _main;
 };
 
