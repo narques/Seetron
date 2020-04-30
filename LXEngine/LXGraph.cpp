@@ -32,6 +32,8 @@ LXGraph::~LXGraph()
 
 void LXGraph::Clear()
 {
+	for (LXConnection* connection : Connections)
+		delete connection;
 	Nodes.clear();
 	Connections.clear();
 	_main = nullptr;
@@ -109,6 +111,7 @@ void LXGraph::DeleteConnection(LXConnection* connection)
 {
 	CHK(std::find(Connections.begin(), Connections.end(), connection) != Connections.end());
 	connection->Detach(nullptr);
+	Connections.remove(connection);
 	delete connection;
 	OnGraphChanged.Invoke();
 }
