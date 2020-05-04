@@ -11,7 +11,6 @@
 #include "LXBitmap.h"
 #include "LXConsoleManager.h"
 #include "LXConstantBufferD3D11.h"
-#include "LXController.h"
 #include "LXCore.h"
 #include "LXMaterial.h"
 #include "LXMaterialD3D11.h"
@@ -401,9 +400,6 @@ void LXRenderer::Render()
 		_RenderPipeline->Resize(Width, Height);
 	}
 	
-	// Update the RenderClusters according the World/Scene content
-	UpdateStates();
-	
 	if (_Project)
 	{
 		_Project->GetAnimationManager().Update(time.DeltaTime());
@@ -484,28 +480,6 @@ void LXRenderer::Render()
 	_RenderPipeline->PostRender();
 
 	DirectX11->Present();
-}
-
-void LXRenderer::UpdateStates()
-{
-	ListRendererUpdates& RendererUpdates = GetController()->GetRendererUpdate();
-	for (LXRendererUpdate* RendererUpdate : RendererUpdates)
-	{
-		if (const LXRendererUpdateMatrix* RenderUpdateMatrix = dynamic_cast<LXRendererUpdateMatrix*>(RendererUpdate))
-		{
-			RenderClusterManager->UpdateMatrix(*RenderUpdateMatrix);
-		}
-		else
-		{
-			CHK(0);
-		}
-
-		delete RendererUpdate;
-	}
-	RendererUpdates.clear();
-	
-	RenderClusterManager->Tick();
-
 }
 
 bool LXRenderer::SetShaders(LXRenderClusterJobTexture* RenderCluster)

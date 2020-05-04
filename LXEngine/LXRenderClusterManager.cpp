@@ -8,7 +8,6 @@
 
 #include "stdafx.h"
 #include "LXActorType.h"
-#include "LXController.h"
 #include "LXCore.h"
 #include "LXLogger.h"
 #include "LXMaterial.h"
@@ -41,7 +40,6 @@ void LXRenderClusterManager::Empty()
 
 	ListRenderClusters.clear();
 	ActorRenderCluster.clear();
-	PrimitiveInstanceRenderClusters.clear();
 	MapPrimitiveD3D11.clear();
 }
 
@@ -208,13 +206,6 @@ void LXRenderClusterManager::RemoveActor(LXRenderData* renderData, LXFlagsRender
 	if (ActorRenderCluster[renderData].size() == 0)
 		ActorRenderCluster.erase(renderData);
 
-
-	for (LXRenderCluster* renderCuster : renderClustersToRemove)
-	{
-		
-		PrimitiveInstanceRenderClusters.erase(renderCuster->PrimitiveInstance);
-	}
-	
 	//
 	// Remove from main list
 	//
@@ -223,51 +214,6 @@ void LXRenderClusterManager::RemoveActor(LXRenderData* renderData, LXFlagsRender
 	{
 		ListRenderClusters.remove(renderCuster);
 		delete renderCuster;
-	}
-}
-
-void LXRenderClusterManager::UpdateMatrix(const LXRendererUpdateMatrix& RendererUpdateMatrix)
-{
-	LXWorldPrimitive* worldPrimitive = RendererUpdateMatrix.WorldPrimitive;
-	CHK(worldPrimitive);
-
-	auto range = PrimitiveInstanceRenderClusters.equal_range(worldPrimitive);
-	
-	for ( auto it = range.first; it != range.second; it++)
-	{
-		LXRenderCluster* RenderCluster = it->second;
-
-		if (RenderCluster->Role == LXFlagsRenderClusterRole(ERenderClusterRole::Default))
-		{
-			RenderCluster->SetMatrix(RendererUpdateMatrix.Matrix);
-			RenderCluster->SetBBoxWorld(RendererUpdateMatrix.BBox);
-		}
-		else if(RenderCluster->Role == LXFlagsRenderClusterRole(ERenderClusterRole::PrimitiveBBox))
-		{
-			LXMatrix matrixScale, matrixTranslation;
-			matrixScale.SetScale(max(RendererUpdateMatrix.BBox.GetSizeX(), 1.f), max(RendererUpdateMatrix.BBox.GetSizeY(), 1.f), max(RendererUpdateMatrix.BBox.GetSizeZ(), 1.f));
-			matrixTranslation.SetTranslation(RendererUpdateMatrix.BBox.GetCenter());
-			RenderCluster->SetMatrix(matrixTranslation * matrixScale);
-			RenderCluster->SetBBoxWorld(RendererUpdateMatrix.BBox);
-		}
-
-		// TODO: ActorBBox clusters are not in the PrimitiveInstanceRenderClusters.
-		// We could use ActorRenderCluster (renderData as key) replacing the Actor in LXRendererUpdateMatrix.
-		/*
-		else if (RenderCluster->Role == LXFlagsRenderClusterRole(ERenderClusterRole::ActorBBox))
-		{
-			const LXBBox& BBox = RenderCluster->RenderData->GetBBoxWorld();
-			LXMatrix matrixScale, matrixTranslation;
-			matrixScale.SetScale(max(BBox.GetSizeX(), 1.f), max(BBox.GetSizeY(), 1.f), max(BBox.GetSizeZ(), 1.f));
-			matrixTranslation.SetTranslation(BBox.GetCenter());
-			RenderCluster->SetMatrix(matrixTranslation * matrixScale);
-			RenderCluster->SetBBoxWorld(BBox);
-		}
-		*/
-		else
-		{
-			CHK(0); // Unknown role;
-		}
 	}
 }
 
@@ -312,7 +258,5 @@ LXRenderCluster* LXRenderClusterManager::CreateRenderCluster(LXRenderData* rende
 	ListRenderClusters.push_back(RenderCluster);
 	ActorRenderCluster[renderData].push_back(RenderCluster);
 	
-	PrimitiveInstanceRenderClusters.insert(pair<LXWorldPrimitive*, LXRenderCluster*>(worldPrimitive, RenderCluster));
-
 	return RenderCluster;
 }

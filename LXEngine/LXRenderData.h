@@ -60,7 +60,12 @@ public:
 	bool ShowPrimitiveBBox() const { return _primitiveBBox; }
 	bool ShowActorBBox() const { return _actorBBox; }
 	const LXBBox& GetBBoxWorld()const { return _bboxWorld; }
-	
+
+public:
+
+	// RenderThread only
+	list<LXRenderCluster*> RenderClusters;
+
 private:
 	
 	LXActor* _actor;

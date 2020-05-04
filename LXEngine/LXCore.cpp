@@ -13,7 +13,6 @@
 #include "LXAssetManager.h"
 #include "LXCommandManager.h"
 #include "LXConsoleManager.h"
-#include "LXController.h"
 #include "LXDirectory.h"
 #include "LXDocumentManager.h"
 #include "LXEventManager.h"
@@ -155,7 +154,6 @@ void LXCore::Init()
 	m_commandManager = new LXCommandManager;
 	m_propertyManager = new LXPropertyManager;
 	_ActorFactory = std::make_unique<LXActorFactory>();
-	_Controller = std::make_unique<LXController>();
 	_mainTasks = std::make_unique<LXTaskManager>();
 	_syncTasks = std::make_unique<LXTaskManager>();
 
@@ -452,8 +450,6 @@ bool LXCore::LoadFile(const LXString& Filename)
 
 void LXCore::CloseProject()
 {
-	LXController* Controller = GetController();
-	Controller->Purge();
 	LXProject* Project = m_documentManager->GetDocument();
 	SetDocument(nullptr);
 	LX_SAFE_DELETE(Project);
@@ -470,7 +466,6 @@ void LXCore::SetPlayMode(bool bPlay)
 void LXCore::SetRenderer(LXRenderer* Renderer)
 {
 	_Renderer = Renderer;
-	_Controller->SetRenderer(Renderer);
 }
 
 LXRenderer* LXCore::GetRenderer() const
@@ -569,7 +564,6 @@ void LXCore::Run()
 	{
 		LX_PERFOSCOPE(Thread_Synchronisation);
 		// Synchronize the data between MainThread and RenderThread
-		GetController()->Run();
 		_syncTasks->Run((float)Time.DeltaTime());
 		_Renderer->Sync();
 	}
@@ -706,11 +700,6 @@ LXMessageManager* GetMessageManager()
 {
 	static LXMessageManager messageManager;
 	return &messageManager;
-}
-
-LXController* GetController()
-{
-	return GetCore().GetController();
 }
 
 LXRenderer* GetRenderer()

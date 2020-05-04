@@ -17,7 +17,6 @@
 class LXActorFactory;
 class LXAssetManager;
 class LXCommandManager;
-class LXController;
 class LXCounter;
 class LXDocumentManager;
 class LXEventManager;
@@ -101,7 +100,6 @@ public:
 	LXPropertyManager&  GetPropertyManager(){ return *m_propertyManager; }
 	LXScriptEngine&		GetScriptEngine(){ return *m_pScriptEngine;  }
 	LXActorFactory*		GetActorFactory() { return _ActorFactory.get();  }
-	LXController*		GetController() { return _Controller.get(); }
 	LXSettings*			GetSettings() { return _settings.get(); }
 	LXStatManager*		GetStatManager() { return StatManager; }
 
@@ -174,7 +172,6 @@ private:
 	
 	std::unique_ptr<LXSettings> _settings;
 	std::unique_ptr<LXActorFactory> _ActorFactory;
-	std::unique_ptr<LXController> _Controller;
 	std::unique_ptr<LXTaskManager> _mainTasks;
 	std::unique_ptr<LXTaskManager> _syncTasks;
 
@@ -208,7 +205,6 @@ LXCORE_API LXAssetManager* GetAssetManager();
 LXCORE_API LXSelectionManager* GetSelectionManager();
 LXCORE_API LXActorFactory* GetActorFactory();
 LXCORE_API LXPrimitiveFactory* GetPrimitiveFactory();
-LXCORE_API LXController* GetController();
 LXCORE_API LXRenderer* GetRenderer();
 LXCORE_API LXStatManager* GetStatManager();
 LXCORE_API LXEventManager* GetEventManager();

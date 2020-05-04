@@ -16,7 +16,6 @@ class LXPrimitive;
 class LXPrimitiveD3D11;
 class LXRenderCluster;
 class LXRenderData;
-class LXRendererUpdateMatrix;
 class LXWorldPrimitive;
 
 class LXRenderClusterManager
@@ -36,9 +35,6 @@ public:
 	void UpdateActor(LXRenderData* renderData, LXFlagsRenderClusterRole renderClusterRole);
 	void RemoveActor(LXRenderData* renderData, LXFlagsRenderClusterRole renderClusterRole);
 
-	// PrimitiveInstance
-	void UpdateMatrix(const LXRendererUpdateMatrix& RendererUpdateMatrix);
-	
 	// Misc
 	const map<LXRenderData*, list<LXRenderCluster*>>& GetActors() { return ActorRenderCluster; }
 	
@@ -61,9 +57,8 @@ private:
 	// Helper maps to simplify data access
 	//
 
-	map<LXRenderData*, list<LXRenderCluster*>> ActorRenderCluster;
-	multimap<LXWorldPrimitive*, LXRenderCluster*> PrimitiveInstanceRenderClusters;
-
+	map<const LXRenderData*, list<LXRenderCluster*>> ActorRenderCluster;
+	
 	//
 	// D3D11 Shared Resources
 	//

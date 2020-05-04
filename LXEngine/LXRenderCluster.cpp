@@ -32,7 +32,8 @@ LXRenderCluster::LXRenderCluster(LXRenderClusterManager* renderClusterManager, L
 	_renderClusterManager(renderClusterManager)
 {
 	LX_COUNTSCOPEINC(LXRenderCluster)
-
+	renderData->RenderClusters.push_back(this);
+	
 	//
 	// Misc Ref.
 	// 
@@ -61,6 +62,7 @@ LXRenderCluster::LXRenderCluster(LXRenderClusterManager* renderClusterManager, L
 LXRenderCluster::~LXRenderCluster()
 {
 	LX_COUNTSCOPEDEC(LXRenderCluster)
+	RenderData->RenderClusters.remove(this);
 	LX_SAFE_DELETE(CBWorld);
 	LX_SAFE_DELETE(ConstantBufferDataSpotLight);
 	LX_SAFE_DELETE(LightView);

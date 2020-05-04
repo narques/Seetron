@@ -8,12 +8,12 @@
 
 #include "stdafx.h"
 #include "LXActorMesh.h"
-#include "LXController.h"
 #include "LXCore.h"
 #include "LXMesh.h"
 #include "LXPrimitive.h"
 #include "LXPrimitiveInstance.h"
 #include "LXRenderCluster.h"
+#include "LXRenderer.h"
 #include "LXRenderData.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
@@ -91,6 +91,43 @@ void LXRenderData::ComputePrimitiveWorldMatrices()
 		worldPrimitive->BBoxWorld = BBoxWorld;
 	}
 
-	GetController()->ActorWorldMatrixChanged(_actor);
-}
+	LXTask* task = new LXTaskCallBack([this]()
+	{
+		for (LXRenderCluster* renderCluster : RenderClusters)
+		{
+			if (renderCluster->Role == LXFlagsRenderClusterRole(ERenderClusterRole::Default))
+			{
+				renderCluster->SetMatrix(renderCluster->PrimitiveInstance->MatrixWorld);
+				renderCluster->SetBBoxWorld(renderCluster->PrimitiveInstance->BBoxWorld);
+			}
+			else if (renderCluster->Role == LXFlagsRenderClusterRole(ERenderClusterRole::PrimitiveBBox))
+			{
+				LXMatrix matrixScale, matrixTranslation;
+				matrixScale.SetScale(max(renderCluster->PrimitiveInstance->BBoxWorld.GetSizeX(), 1.f), max(renderCluster->PrimitiveInstance->BBoxWorld.GetSizeY(), 1.f), max(renderCluster->PrimitiveInstance->BBoxWorld.GetSizeZ(), 1.f));
+				matrixTranslation.SetTranslation(renderCluster->PrimitiveInstance->BBoxWorld.GetCenter());
+				renderCluster->SetMatrix(matrixTranslation * matrixScale);
+				renderCluster->SetBBoxWorld(renderCluster->PrimitiveInstance->BBoxWorld);
+			}
 
+			// TODO: ActorBBox clusters are not in the PrimitiveInstanceRenderClusters.
+			// We could use ActorRenderCluster (renderData as key) replacing the Actor in LXRendererUpdateMatrix.
+			/*
+			else if (RenderCluster->Role == LXFlagsRenderClusterRole(ERenderClusterRole::ActorBBox))
+			{
+				const LXBBox& BBox = RenderCluster->RenderData->GetBBoxWorld();
+				LXMatrix matrixScale, matrixTranslation;
+				matrixScale.SetScale(max(BBox.GetSizeX(), 1.f), max(BBox.GetSizeY(), 1.f), max(BBox.GetSizeZ(), 1.f));
+				matrixTranslation.SetTranslation(BBox.GetCenter());
+				RenderCluster->SetMatrix(matrixTranslation * matrixScale);
+				RenderCluster->SetBBoxWorld(BBox);
+			}
+			*/
+			else
+			{
+				CHK(0); // Unknown role;
+			}
+		}
+	});
+	
+	GetRenderer()->EnqueueTask(task);
+}

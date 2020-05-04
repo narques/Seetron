@@ -114,9 +114,7 @@ private:
 	void Render();
 	void DeleteObjects();
 	void Empty();
-
-	void UpdateStates();
-
+	
 	// RenderCluster management
 	bool SetShaders(LXRenderClusterJobTexture* RenderCluster);
 

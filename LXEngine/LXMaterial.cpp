@@ -8,7 +8,6 @@
 
 #include "StdAfx.h"
 #include "LXAssetManager.h"
-#include "LXController.h"
 #include "LXGraphMaterial.h"
 #include "LXGraphTemplate.h"
 #include "LXMaterial.h"
