@@ -80,6 +80,8 @@ LXRenderData::~LXRenderData()
 
 void LXRenderData::ComputePrimitiveWorldMatrices()
 {
+	_bboxWorld = _actor->GetBBoxWorld();
+	
 	const LXMatrix& actorWorldMatrix = _actor->GetMatrixWCS();
 	for (LXWorldPrimitive* worldPrimitive : _worldPrimitives)
 	{
@@ -108,20 +110,15 @@ void LXRenderData::ComputePrimitiveWorldMatrices()
 				renderCluster->SetMatrix(matrixTranslation * matrixScale);
 				renderCluster->SetBBoxWorld(renderCluster->PrimitiveInstance->BBoxWorld);
 			}
-
-			// TODO: ActorBBox clusters are not in the PrimitiveInstanceRenderClusters.
-			// We could use ActorRenderCluster (renderData as key) replacing the Actor in LXRendererUpdateMatrix.
-			/*
-			else if (RenderCluster->Role == LXFlagsRenderClusterRole(ERenderClusterRole::ActorBBox))
+			else if (renderCluster->Role == LXFlagsRenderClusterRole(ERenderClusterRole::ActorBBox))
 			{
-				const LXBBox& BBox = RenderCluster->RenderData->GetBBoxWorld();
+				const LXBBox& BBox = _bboxWorld;
 				LXMatrix matrixScale, matrixTranslation;
 				matrixScale.SetScale(max(BBox.GetSizeX(), 1.f), max(BBox.GetSizeY(), 1.f), max(BBox.GetSizeZ(), 1.f));
 				matrixTranslation.SetTranslation(BBox.GetCenter());
-				RenderCluster->SetMatrix(matrixTranslation * matrixScale);
-				RenderCluster->SetBBoxWorld(BBox);
+				renderCluster->SetMatrix(matrixTranslation * matrixScale);
+				renderCluster->SetBBoxWorld(BBox);
 			}
-			*/
 			else
 			{
 				CHK(0); // Unknown role;
