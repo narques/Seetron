@@ -48,6 +48,8 @@ struct LXConstantBufferData1 // Volatile, Updated at cluster creation
 {
 	LXMatrix World;
 	LXMatrix Normal; // In WorldView
+	vec3f LocalPosition;
+	float Pad;
 };
 
 struct LXConstantBufferData2

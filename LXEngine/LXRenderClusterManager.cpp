@@ -64,6 +64,8 @@ void LXRenderClusterManager::Tick()
 
 void LXRenderClusterManager::AddActor(LXRenderData* renderData, LXFlagsRenderClusterRole renderClusterRole)
 {
+	static const LXMatrix matrixIdentity;
+
 	auto it = ActorRenderCluster.find(renderData);
 	if (it != ActorRenderCluster.end())
 	{
@@ -88,15 +90,16 @@ void LXRenderClusterManager::AddActor(LXRenderData* renderData, LXFlagsRenderClu
 						
 			if (PrimitiveInstance->Primitive->GetMask() != 0)
 			{
-
-				const LXMatrix& MatrixWCS = It->MatrixWorld;
-				const LXBBox& BBoxWorld = It->BBoxWorld;
 				LXWorldPrimitive* worldPrimitive = const_cast<LXWorldPrimitive*>(It);
-
+				
+				const LXMatrix& MatrixWCS = worldPrimitive->MatrixWorld;
+				const LXMatrix& matrix = PrimitiveInstance->MatrixRCS?*PrimitiveInstance->MatrixRCS: matrixIdentity;
+				const LXBBox& BBoxWorld = worldPrimitive->BBoxWorld;
+				
 				// Creates the default RenderCluster 
 				if (renderClusterRole & ERenderClusterRole::Default)
 				{
-					LXRenderCluster* renderCluster = CreateRenderCluster(renderData, worldPrimitive, MatrixWCS, BBoxWorld, PrimitiveInstance->Primitive.get(), PrimitiveInstance->Primitive->GetMaterial().get());
+					LXRenderCluster* renderCluster = CreateRenderCluster(renderData, worldPrimitive, MatrixWCS, matrix, BBoxWorld, PrimitiveInstance->Primitive.get(), PrimitiveInstance->Primitive->GetMaterial().get());
 					renderCluster->Role = ERenderClusterRole::Default;
 					worldPrimitive->RenderCluster = renderCluster;
 					
@@ -132,7 +135,7 @@ void LXRenderClusterManager::AddActor(LXRenderData* renderData, LXFlagsRenderClu
 					MatrixScale.SetScale(max(BBoxWorld.GetSizeX(), 1.f), max(BBoxWorld.GetSizeY(), 1.f), max(BBoxWorld.GetSizeZ(), 1.f));
 					MatrixTranslation.SetTranslation(BBoxWorld.GetCenter());
 					const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->GetWireframeCube();
-					LXRenderCluster* renderClusterBBox = CreateRenderCluster(renderData, worldPrimitive, MatrixTranslation * MatrixScale, BBoxWorld, Primitive.get(), Primitive->GetMaterial().get());
+					LXRenderCluster* renderClusterBBox = CreateRenderCluster(renderData, worldPrimitive, MatrixTranslation * MatrixScale, matrix, BBoxWorld, Primitive.get(), Primitive->GetMaterial().get());
 #else				
 					// For debug purpose. Creates a WireFrameCube primitive matching the BBoxWord. So no transformation is used.
 					// Useful to verify the real BBoxWorld data
@@ -160,7 +163,7 @@ void LXRenderClusterManager::AddActor(LXRenderData* renderData, LXFlagsRenderClu
 			MatrixScale.SetScale(max(BBoxWorld.GetSizeX(), 1.f), max(BBoxWorld.GetSizeY(), 1.f), max(BBoxWorld.GetSizeZ(), 1.f));
 			MatrixTranslation.SetTranslation(BBoxWorld.GetCenter());
 			LXPrimitive* Primitive = GetPrimitiveFactory()->GetWireframeCube().get();
-			LXRenderCluster* renderClusterBBox = CreateRenderCluster(renderData, nullptr, MatrixTranslation * MatrixScale, BBoxWorld, Primitive, Primitive->GetMaterial().get());
+			LXRenderCluster* renderClusterBBox = CreateRenderCluster(renderData, nullptr, MatrixTranslation * MatrixScale, matrixIdentity, BBoxWorld, Primitive, Primitive->GetMaterial().get());
 			renderClusterBBox->Flags = ERenderClusterType::Auxiliary;
 			renderClusterBBox->Role = ERenderClusterRole::ActorBBox;
 
@@ -234,10 +237,10 @@ shared_ptr<LXPrimitiveD3D11>& LXRenderClusterManager::GetPrimitiveD3D11(LXPrimit
 	}
 }
 
-LXRenderCluster* LXRenderClusterManager::CreateRenderCluster(LXRenderData* renderData, LXWorldPrimitive* worldPrimitive, const LXMatrix& MatrixWCS, const LXBBox& BBoxWorld, LXPrimitive* Primitive, LXMaterial* Material)
+LXRenderCluster* LXRenderClusterManager::CreateRenderCluster(LXRenderData* renderData, LXWorldPrimitive* worldPrimitive, const LXMatrix& MatrixWCS, const LXMatrix& matrix, const LXBBox& BBoxWorld, LXPrimitive* Primitive, LXMaterial* Material)
 {
 	// Create the RenderCluster
-	LXRenderCluster* RenderCluster = new LXRenderCluster(this, renderData, MatrixWCS);
+	LXRenderCluster* RenderCluster = new LXRenderCluster(this, renderData, MatrixWCS, matrix);
 	RenderCluster->SetBBoxWorld(BBoxWorld);
 
 	// PrimitiveInstance 

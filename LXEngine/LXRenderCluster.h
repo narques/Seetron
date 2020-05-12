@@ -45,7 +45,7 @@ class LXRenderCluster
 
 public:
 
-	LXRenderCluster(LXRenderClusterManager* RenderClusterManager, LXRenderData* renderData, const LXMatrix& MatrixWCS);
+	LXRenderCluster(LXRenderClusterManager* RenderClusterManager, LXRenderData* renderData, const LXMatrix& matrixWCS, const LXMatrix& matrix);
 	~LXRenderCluster();
 
 	void ReleaseShaders();
@@ -89,7 +89,8 @@ public:
 	LXShaderProgramD3D11 ShaderPrograms[(int)ERenderPass::Last];
 		
 	// Cache
-	LXMatrix Matrix;
+	LXMatrix MatrixWCS;
+	vec3f LocalPosition;
 	bool ValidConstantBufferMatrix = false;
 	
 	bool CastShadow = false;

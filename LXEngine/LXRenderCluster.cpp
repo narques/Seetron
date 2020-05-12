@@ -28,7 +28,7 @@
 #include "LXWorldTransformation.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
-LXRenderCluster::LXRenderCluster(LXRenderClusterManager* renderClusterManager, LXRenderData* renderData, const LXMatrix& MatrixWCS):
+LXRenderCluster::LXRenderCluster(LXRenderClusterManager* renderClusterManager, LXRenderData* renderData, const LXMatrix& matrixWCS, const LXMatrix& matrix):
 	_renderClusterManager(renderClusterManager)
 {
 	LX_COUNTSCOPEINC(LXRenderCluster)
@@ -39,8 +39,9 @@ LXRenderCluster::LXRenderCluster(LXRenderClusterManager* renderClusterManager, L
 	// 
 
 	RenderData = renderData;
-	Matrix = MatrixWCS;
+	MatrixWCS = matrixWCS;
 	MatrixWCS.LocalToParent(BBoxWorld);
+	LocalPosition = matrix.GetOrigin();
 
 	//
 	//
@@ -50,7 +51,8 @@ LXRenderCluster::LXRenderCluster(LXRenderClusterManager* renderClusterManager, L
 
 	cb1.World = Transpose(MatrixWCS);
 	cb1.Normal = Inverse(MatrixWCS/*cb1.World*/);
-
+	cb1.LocalPosition = LocalPosition;
+	
 	CBWorld = new LXConstantBufferD3D11();
 	CBWorld->CreateConstantBuffer(&cb1, sizeof(LXConstantBufferData1));
 
@@ -120,7 +122,7 @@ void LXRenderCluster::SetPrimitive(shared_ptr<LXPrimitiveD3D11>& InPrimitiveD3D1
 
 void LXRenderCluster::SetMatrix(const LXMatrix& InMatrix)
 {
-	 Matrix = InMatrix;
+	 MatrixWCS = InMatrix;
 	 ValidConstantBufferMatrix = false;
 }
 
@@ -148,8 +150,9 @@ void LXRenderCluster::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 	if (1/*!ValidConstantBufferMatrix*/ && CBWorld)
 	{
 		//LXConstantBufferData1 cb1;
-		cb1.World = Transpose(Matrix);
-		cb1.Normal = Inverse(Matrix);
+		cb1.World = Transpose(MatrixWCS);
+		cb1.Normal = Inverse(MatrixWCS);
+		cb1.LocalPosition = LocalPosition;
 		RCL->UpdateSubresource4(CBWorld->D3D11Buffer, &cb1);
 		ValidConstantBufferMatrix = true;
 	}
@@ -177,7 +180,6 @@ void LXRenderCluster::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 		if (CBWorld)
 		{
 			RCL->VSSetConstantBuffers(1, 1, CBWorld);
-			RCL->PSSetConstantBuffers(1, 1, CBWorld);
 		}
 	}
 
@@ -207,6 +209,11 @@ void LXRenderCluster::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 	{
 		RCL->PSSetShader(ShaderProgram->PixelShader.get());
 		bHasShader = true;
+
+		if (CBWorld)
+		{
+			RCL->PSSetConstantBuffers(1, 1, CBWorld);
+		}
 	}
 
 	if (bHasShader)
@@ -275,11 +282,11 @@ void LXRenderCluster::UpdateLightParameters()
 	}
 	else
 	{
-		ConstantBufferDataSpotLight->MatrixLightView = Transpose(Matrix);
+		ConstantBufferDataSpotLight->MatrixLightView = Transpose(MatrixWCS);
 		ConstantBufferDataSpotLight->LightPosition = vec4f(ActorLight->GetPosition(), 0.0);
 	}
 
-	ConstantBufferDataSpotLight->LightDirection = vec4f(Matrix.GetVz(), 0.0) * -1.f;
+	ConstantBufferDataSpotLight->LightDirection = vec4f(MatrixWCS.GetVz(), 0.0) * -1.f;
 	
 	// ShadowMapCoords updated during RenderPassShadow
 	//ConstantBufferDataSpotLight->ShadowMapCoords;
