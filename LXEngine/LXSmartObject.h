@@ -71,9 +71,6 @@ public:
 	virtual void 					OnTrashed() {};
 	virtual void					OnRecycled() {};
 
-	// UI Helper: Child objects
-	virtual void					GetChildren(ListSmartObjects&) {}
-
 	// Properties
 	virtual const ListProperties&	GetProperties() const;
 	ListProperties					GetBranchProperties() const;

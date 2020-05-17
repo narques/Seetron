@@ -37,8 +37,8 @@ LXActor::~LXActor(void)
 {
 	LX_COUNTSCOPEDEC(LXActor);
 
-	for (auto It = _Children.begin(); It != _Children.end(); It++)
-		delete (*It);
+	for (LXActor* child : GetChildren())
+		delete child;
 
 	ReleaseRenderData(ERenderClusterRole::All);
 }
@@ -46,7 +46,7 @@ LXActor::~LXActor(void)
 void LXActor::MarkForDelete()
 {
 	CHK(GetParent() == nullptr);
-	CHK(_Children.size() == 0);
+	CHK(GetChildren().size() == 0);
 	GetCore().AddObjectForDestruction(this);
 }
 
@@ -101,7 +101,7 @@ void LXActor::DefineProperties()
 
 void LXActor::InvalidateRenderState(LXFlagsRenderClusterRole renderStates)
 {
-	if (_isLoading || GetParent() == nullptr)
+	if (_isLoading)
 		return;
 
 	CreateRenderData(renderStates);
@@ -111,7 +111,7 @@ void LXActor::CreateRenderData(LXFlagsRenderClusterRole renderStates)
 {
 	ReleaseRenderData(renderStates);
 
-	if (GetRenderer())
+	if (GetRenderer() && GetParent())
 	{
 		_renderData = new LXRenderData(this);
 		ComputePrimitiveWorldMatrices();
@@ -201,7 +201,7 @@ void LXActor::InvalidateMatrixWCS()
 		return;
 
 	// Invalidates the World Matrix recursively (this + children)
-	for (LXActor* Actor : _Children)
+	for (LXActor* Actor : _children)
 		Actor->InvalidateMatrixWCS();
 
 	// Currently used by ActorMesh to invalidate the primitive WorldMatrix.
@@ -288,8 +288,8 @@ void LXActor::InvalidateWorldBounds(bool bPropagateToParent)
 		return;
 
 	_BBoxWorld.Invalidate();
-	if (bPropagateToParent && _Parent)
-		_Parent->InvalidateWorldBounds(true);
+	if (bPropagateToParent && _parent)
+		_parent->InvalidateWorldBounds(true);
 }
 
 void LXActor::ComputeBBoxLocal()
@@ -314,7 +314,7 @@ void LXActor::ComputeBBoxWorld()
 	
 	_BBoxWorld = GetBBoxLocal();
 
-	for (LXActor* Child : _Children)
+	for (LXActor* Child : _children)
 	{
 		if (Child->ParticipateToSceneBBox())
 		{
@@ -336,47 +336,25 @@ void LXActor::ComputePrimitiveWorldMatrices()
 
 void LXActor::AddChild(LXActor* Actor)
 {
-	CHK(Actor);
-	
-	CHK(!Actor->GetParent());
-	Actor->SetParent(this);
-
-	_Children.push_back(Actor);
+	__super::AddChild(Actor);
 	InvalidateWorldBounds(true);
 	Actor->InvalidateRenderState();
-
 	GetScene()->OnActorAdded(Actor);
 }
 
 void LXActor::RemoveChild(LXActor* Actor)
 {
-	CHK(Actor);
-	if (!Actor)
-		return;
-
-	CHK(Actor->GetParent());
-
-	ListActors::iterator It = find(_Children.begin(), _Children.end(), Actor);
-	if (It != _Children.end())
-	{
-		// InvalidateRenderState before
-		Actor->InvalidateRenderState(); 
-		_Children.erase(It);
-		Actor->_LastKnownParent = Actor->_Parent;
-		Actor->SetParent(nullptr);
-		InvalidateWorldBounds(true);
-
-		GetScene()->OnActorRemoved(Actor);
-	}
-	else
-		CHK(0);
+	__super::RemoveChild(Actor);
+	Actor->InvalidateRenderState();
+	InvalidateWorldBounds(true);
+	GetScene()->OnActorRemoved(Actor);
 }
 
 bool LXActor::OnSaveChild(const TSaveContext& saveContext) const
 {
-	for (ListActors::const_iterator It = _Children.begin(); It != _Children.end(); It++)
+	for (LXActor* child : _children)
 	{
-		(*It)->Save(saveContext);
+		child->Save(saveContext);
 	}
 	return true;
 }
@@ -428,7 +406,7 @@ void LXActor::SetPrimitiveBBoxVisible(bool visible)
 
 void LXActor::Run(double frameTime)
 {
-	for (LXActor* Child : _Children)
+	for (LXActor* Child : _children)
 	{
 		Child->Run(frameTime);
 	}
@@ -436,7 +414,7 @@ void LXActor::Run(double frameTime)
 
 void LXActor::RunRT(double frameTime)
 {
-	for (LXActor* Child : _Children)
+	for (LXActor* Child : _children)
 	{
 		Child->RunRT(frameTime);
 	}

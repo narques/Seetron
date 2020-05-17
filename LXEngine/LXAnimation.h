@@ -28,7 +28,6 @@ public:
 
 	virtual bool OnSaveChild(const TSaveContext& saveContext) const override;
 	virtual bool OnLoadChild(const TLoadContext& loadContext) override;
-	virtual void GetChildren(ListSmartObjects&) override;
 	
 	//
 	// Overridden From LXAsset

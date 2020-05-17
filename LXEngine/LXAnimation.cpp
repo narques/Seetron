@@ -141,14 +141,6 @@ void LXAnimation::AddKey(LXProperty* pProp, const T& newValue, DWORD dwTime)
 		_dDuration = dwTime;
 }
 
-void LXAnimation::GetChildren(ListSmartObjects& list)
-{
-	for (auto& track : _tracks)
-	{
-		list.push_back(track.second);
-	}
-}
-
 void LXAnimation::DefineProperties()
 {
 	auto propertyDuration = DefineProperty("Duration", LXPropertyID::AnimationDuration, &_dDuration);

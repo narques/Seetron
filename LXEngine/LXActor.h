@@ -13,6 +13,7 @@
 #include "LXBBox.h"
 #include "LXRenderClusterType.h"
 #include "LXTransformation.h"
+#include "LXTree.h"
 
 class LXProject;
 class LXAnchor;
@@ -35,7 +36,7 @@ enum class EConstraint
 	Local_Rotate_Z
 };
 
-class LXCORE_API LXActor : public LXSmartObject
+class LXCORE_API LXActor : public LXSmartObject, public LXTreeNode<LXActor>
 {
 
 public:
@@ -95,13 +96,9 @@ public:
 	virtual bool		ParticipateToSceneBBox() const { return true; };
 	
 	// World hierarchy
-	void				SetParent(LXActor* pGroup) { _Parent = pGroup; }
-	LXActor*			GetParent() { return _Parent; }
-	LXActor*			GetPreviousParent() { return _LastKnownParent; }
-	ListActors&			GetChildren() { return _Children; }
-	void				AddChild(LXActor* Actor);
-	void				RemoveChild(LXActor* Actor);
-
+	void				AddChild(LXActor* Actor) override;
+	void				RemoveChild(LXActor* Actor) override;
+	
 	// Serialization
 	bool				OnSaveChild(const TSaveContext& saveContext) const override;
 	bool				OnLoadChild(const TLoadContext& loadContext) override;
@@ -156,11 +153,6 @@ private:
 	virtual	void		OnInvalidateMatrixWCS() { };
 
 protected:
-
-	// Hierarchy
-	LXActor*			_Parent = nullptr;
-	LXActor*			_LastKnownParent = nullptr;
-	ListActors			_Children;
 
 	// Transformation
 	LXTransformation	_Transformation; // Local transformation

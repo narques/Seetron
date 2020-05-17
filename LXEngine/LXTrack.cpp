@@ -224,14 +224,6 @@ bool LXTrack::HasKey(int position)
 		return false;
 }
 
-void LXTrack::GetChildren(ListSmartObjects& list)
-{
-	for (auto& key : _keys)
-	{
-		list.push_back(key.second);
-	}
-}
-
 void LXTrack::DefineProperties()
 {
 	// ID of the targeted object
