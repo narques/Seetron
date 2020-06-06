@@ -38,6 +38,7 @@ enum class EConstraint
 
 class LXCORE_API LXActor : public LXSmartObject, public LXTreeNode<LXActor>
 {
+	friend LXRenderData;
 
 public:
 
@@ -72,7 +73,6 @@ public:
 	const LXMatrix&		GetMatrix() { return _Transformation.GetMatrix(); }
 	const LXMatrix&		GetMatrixWCS();
 	void				SetMatrixWCS(const LXMatrix& matrix, bool ComputeLocalMatrix = false);
-	void				InvalidateMatrixWCS();
 	void				ValidateMatrixWCS() { _bValidMatrixWCS = true; }
 	
 	const vec3f&		GetPosition() const { return _Transformation.GetTranslation(); }
@@ -141,14 +141,24 @@ public:
 
 protected:
 
-	virtual void		ComputeBBoxLocal();
-	virtual void		ComputeBBoxWorld();
-	
-	void				InvalidateWorldPrimitivMartrices() { _bValidWorldPrimitiveMatrices = false; }
+	// Transformation
+	void				InvalidateMatrixWCS();
 	virtual void		ComputePrimitiveWorldMatrices();
+	virtual void		OnComputedPrimitivesWordBBoxes() {};
+
+	// Bounds
+	virtual void		ComputeBBoxLocal();
 	
 private:
 
+	// Transformation
+	void				InvalidateBranchMatrixWCS();
+	void				ComputeMatrixWCS();
+	
+	// Bounds
+	void				InvalidateBranchWorldBounds(bool bPropagateToParent);
+	void				ComputeBBoxWorld();
+	   
 	void				DefineProperties();
 	virtual	void		OnInvalidateMatrixWCS() { };
 
@@ -176,7 +186,6 @@ protected:
 	bool				_bPickable = true;		// Avoid Selection OnMouseClick or RectangularSelection
 	bool				_bDrawSelection = true;	// Avoid DrawSelection
 	int					_nCID;
-	bool				_bValidWorldPrimitiveMatrices = false;
 #if LX_ANCHOR
 	ArrayAnchors		_ArrayAnchors;
 #endif

@@ -101,7 +101,6 @@ void LXActorMesh::UpdateAssetMeshCallbacks()
 
 		_AssetMesh->RegisterCB(this, L"VisibiltyChanged", [this](LXSmartObject* SmartObject)
 		{
-			_bValidWorldPrimitiveMatrices = false;
 			InvalidateRenderState();
 		});
 	}
@@ -168,7 +167,6 @@ void LXActorMesh::AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, LXMatri
 	Mesh->AddPrimitive(Primitive, InMatrix, InMaterial);
 	InvalidateBounds(true);
 	InvalidateRenderState();
-	_bValidWorldPrimitiveMatrices = false;
 }
 
 void LXActorMesh::ReleaseAllPrimitives()
@@ -177,7 +175,6 @@ void LXActorMesh::ReleaseAllPrimitives()
 	InvalidateWorldPrimitives();
 	InvalidateBounds(true);
 	InvalidateRenderState();
-	_bValidWorldPrimitiveMatrices = false;
 }
 
 void LXActorMesh::InvalidateWorldPrimitives()
@@ -195,26 +192,3 @@ const TWorldPrimitives& LXActorMesh::GetAllPrimitives()
 		return empty;
 }
 
-void LXActorMesh::ComputeBBoxWorld()
-{
-	if (_BBoxWorld.IsValid())
-		return;
-
-	__super::ComputeBBoxWorld();
-	 
-	if (_renderData)
-	{
-		LXBBox box;
-		for (const LXWorldPrimitive* worldPrimitive : _renderData->GetPrimitives())
-		{
-			CHK(worldPrimitive->BBoxWorld.IsValid());
-			box.Add(worldPrimitive->BBoxWorld);
-		}
-		_BBoxWorld.Add(box);
-	}
-}
-
-void LXActorMesh::OnInvalidateMatrixWCS()
-{
-	_bValidWorldPrimitiveMatrices = false;
-}

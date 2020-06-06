@@ -36,7 +36,6 @@ public:
 	virtual void					MarkForDelete() override;
 	static int						GetCIDBit() { return LX_NODETYPE_MESH; }
 
-	virtual void					ComputeBBoxLocal() override;
 		
 	// Overridden from LXSmartObject
 	void							OnPropertyChanged( LXProperty* Property) override;
@@ -59,18 +58,16 @@ public:
 	void							InvalidateWorldPrimitives();
 	virtual bool					GetCastShadows() const override { return _bCastShadows; }
 
-protected:
-
-	// Bounds
-	virtual	void					ComputeBBoxWorld() override;
 	
 private:
 
+	// Bounds
+	virtual void					ComputeBBoxLocal() override;
+	
 	//virtual void					OnLoaded() override;
 	void							UpdateAssetMeshCallbacks();
 	void							UpdateMesh();
-	void							OnInvalidateMatrixWCS() override;
-		
+			
 protected:
 
 	shared_ptr<LXMesh> Mesh;

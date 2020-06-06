@@ -53,6 +53,7 @@ public:
 	// Common
 	const TWorldPrimitives& GetPrimitives() { return _worldPrimitives; }
 	void ComputePrimitiveWorldMatrices();
+	void ComputePrimitiveWorldBounds();
 
 	// RenderThread only
 	int32 GetActorType() const { return _actorType; }

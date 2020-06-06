@@ -114,8 +114,8 @@ void LXActor::CreateRenderData(LXFlagsRenderClusterRole renderStates)
 	if (GetRenderer() && GetParent())
 	{
 		_renderData = new LXRenderData(this);
-		ComputePrimitiveWorldMatrices();
-
+		InvalidateMatrixWCS();
+		InvalidateBounds();	
 		if (_bVisible)
 		{
 			GetRenderer()->UpdateActor(_renderData, renderStates);
@@ -167,16 +167,23 @@ LXAnchor* LXActor::GetAnchor(uint position) const
 const LXMatrix& LXActor::GetMatrixWCS()
 {
 	if (!_bValidMatrixWCS)
-	{
-		if (GetParent())
-		{
-			LXMatrix m = GetParent()->GetMatrixWCS() * _Transformation.GetMatrix();
-			SetMatrixWCS(m);
-		}
-		else
-			SetMatrixWCS(_Transformation.GetMatrix());
-	}
+		ComputeMatrixWCS();
+
 	return _MatrixWCS;
+}
+
+void LXActor::ComputeMatrixWCS()
+{
+	if (_bValidMatrixWCS)
+		return;
+
+	_MatrixWCS = GetParent() ? GetParent()->GetMatrixWCS() * _Transformation.GetMatrix() : _Transformation.GetMatrix();
+	_bValidMatrixWCS = true;
+
+	if (_renderData)
+	{
+		_renderData->ComputePrimitiveWorldMatrices();
+	}
 }
 
 void LXActor::SetMatrixWCS(const LXMatrix& matrix, bool ComputeLocalMatrix /*= false*/)
@@ -200,24 +207,28 @@ void LXActor::InvalidateMatrixWCS()
 	if (_isLoading)
 		return;
 
+	// Invalidate Matrices & Bounds
+	InvalidateBranchMatrixWCS();
+
+	// Recompute
+	ComputeMatrixWCS();
+	ComputeBBoxWorld();
+}
+	
+
+void LXActor::InvalidateBranchMatrixWCS()
+{
 	// Invalidates the World Matrix recursively (this + children)
 	for (LXActor* Actor : _children)
-		Actor->InvalidateMatrixWCS();
+		Actor->InvalidateBranchMatrixWCS();
 
 	// Currently used by ActorMesh to invalidate the primitive WorldMatrix.
 	OnInvalidateMatrixWCS();
 
 	// By the way, Invalidates the World Bounds recursively (this + parent)
-	InvalidateWorldBounds(true);
+	InvalidateBranchWorldBounds(true);
 
 	_bValidMatrixWCS = false;
-
-	// No need to update an object without parent.
-	// It cannot exist in the Renderer
-	if (GetParent())
-	{
-		ComputePrimitiveWorldMatrices();
-	}
 }
 
 void LXActor::SetPosition(const vec3f& Translation)
@@ -255,13 +266,6 @@ LXBBox& LXActor::GetBBoxLocal()
 	if (!_BBoxLocal.IsValid())
 		ComputeBBoxLocal();
 
-	if (!_BBoxLocal.IsValid())
-	{
-		LogD(Actor, L"Set the default BBox size for %s", GetName());
-		_BBoxLocal.Add(LX_VEC3F_XYZ_50);
-		_BBoxLocal.Add(LX_VEC3F_NXYZ_50);
-	}
-
 	return _BBoxLocal;
 }
 
@@ -287,9 +291,18 @@ void LXActor::InvalidateWorldBounds(bool bPropagateToParent)
 	if (_isLoading)
 		return;
 
+	// Invalidate Bounds
+	InvalidateBranchWorldBounds(bPropagateToParent);
+
+	// Recompute
+	ComputeBBoxWorld();
+}
+
+void LXActor::InvalidateBranchWorldBounds(bool bPropagateToParent)
+{
 	_BBoxWorld.Invalidate();
 	if (bPropagateToParent && _parent)
-		_parent->InvalidateWorldBounds(true);
+		_parent->InvalidateBranchWorldBounds(true);
 }
 
 void LXActor::ComputeBBoxLocal()
@@ -323,14 +336,26 @@ void LXActor::ComputeBBoxWorld()
 	}
 	
 	GetMatrixWCS().LocalToParent(_BBoxWorld);
+
+	if (_renderData)
+	{
+		_renderData->ComputePrimitiveWorldBounds();
+
+		LXBBox box;
+		for (const LXWorldPrimitive* worldPrimitive : _renderData->GetPrimitives())
+		{
+			CHK(worldPrimitive->BBoxWorld.IsValid());
+			box.Add(worldPrimitive->BBoxWorld);
+		}
+		_BBoxWorld.Add(box);
+	}
 }
 
 void LXActor::ComputePrimitiveWorldMatrices()
 {
-	if (_renderData && !_bValidWorldPrimitiveMatrices)
+	if (_renderData)
 	{
 		_renderData->ComputePrimitiveWorldMatrices();
-		_bValidWorldPrimitiveMatrices = true;
 	}
 }
 
@@ -379,10 +404,11 @@ void LXActor::SetVisible(bool bVisible)
 	if (_bVisible != bVisible)
 	{
 		_bVisible = bVisible;
-		InvalidateRenderState();
 
 		if (!(GetCID() & LX_NODETYPE_CAMERA))
 			InvalidateBounds(true);
+
+		InvalidateRenderState();
 	}
 }
 

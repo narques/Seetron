@@ -64,8 +64,6 @@ LXRenderData::LXRenderData(LXActor* actor):
 			_worldPrimitives.push_back(new LXWorldPrimitive(primitiveInstance));
 		}
 	}
-
-	ComputePrimitiveWorldMatrices();
 }
 
 LXRenderData::~LXRenderData()
@@ -81,6 +79,7 @@ LXRenderData::~LXRenderData()
 void LXRenderData::ComputePrimitiveWorldMatrices()
 {
 	_bboxWorld = _actor->GetBBoxWorld();
+	CHK(_bboxWorld.IsValid());
 	
 	const LXMatrix& actorWorldMatrix = _actor->GetMatrixWCS();
 	for (LXWorldPrimitive* worldPrimitive : _worldPrimitives)
@@ -92,6 +91,8 @@ void LXRenderData::ComputePrimitiveWorldMatrices()
 		worldPrimitive->MatrixWorld = matrixMeshWCS;
 		worldPrimitive->BBoxWorld = BBoxWorld;
 	}
+
+	_actor->OnComputedPrimitivesWordBBoxes();
 
 	LXTask* task = new LXTaskCallBack([this]()
 	{
@@ -126,5 +127,46 @@ void LXRenderData::ComputePrimitiveWorldMatrices()
 		}
 	});
 	
+	GetRenderer()->EnqueueTask(task);
+}
+
+void LXRenderData::ComputePrimitiveWorldBounds()
+{
+	_bboxWorld = _actor->GetBBoxWorld();
+	CHK(_bboxWorld.IsValid());
+
+	for (LXWorldPrimitive* worldPrimitive : _worldPrimitives)
+	{
+		LXBBox BBoxWorld = worldPrimitive->PrimitiveInstance->Primitive->GetBBoxLocal();
+		worldPrimitive->MatrixWorld.LocalToParent(BBoxWorld);
+		worldPrimitive->BBoxWorld = BBoxWorld;
+	}
+
+	_actor->OnComputedPrimitivesWordBBoxes();
+
+	LXTask* task = new LXTaskCallBack([this]()
+	{
+		for (LXRenderCluster* renderCluster : RenderClusters)
+		{
+			if (renderCluster->Role == LXFlagsRenderClusterRole(ERenderClusterRole::Default))
+			{
+				renderCluster->SetBBoxWorld(renderCluster->PrimitiveInstance->BBoxWorld);
+			}
+			else if (renderCluster->Role == LXFlagsRenderClusterRole(ERenderClusterRole::PrimitiveBBox))
+			{
+				renderCluster->SetBBoxWorld(renderCluster->PrimitiveInstance->BBoxWorld);
+			}
+			else if (renderCluster->Role == LXFlagsRenderClusterRole(ERenderClusterRole::ActorBBox))
+			{
+				const LXBBox& BBox = _bboxWorld;
+				renderCluster->SetBBoxWorld(BBox);
+			}
+			else
+			{
+				CHK(0); // Unknown role;
+			}
+		}
+	});
+
 	GetRenderer()->EnqueueTask(task);
 }
