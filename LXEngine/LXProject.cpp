@@ -456,7 +456,7 @@ const LXFilepath LXProject::GetFolder()
 
 void LXProject::CreateTerrainActor()
 {
-	LXTerrain* Actor = new LXTerrain(this);
+	LXActorTerrain* Actor = new LXActorTerrain(this);
 	m_pScene->AddChild(Actor);
 }
 

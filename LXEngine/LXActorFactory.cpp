@@ -126,7 +126,7 @@ LXConsoleCommandNoArg CCCreateTerrain(L"Create.Terrain", []()
 {
 	if (LXProject* Project = GetProject())
 	{
-		LXTerrain* Actor = new LXTerrain(Project);
+		LXActorTerrain* Actor = new LXActorTerrain(Project);
 		Project->GetScene()->AddChild(Actor);
 	}
 }, []()
@@ -191,9 +191,9 @@ LXActor* LXActorFactory::CreateActor(const LXString& className)
 	{
 		actor = new LXActorLight(project);
 	}
-	else if (className == L"LXTerrain")
+	else if (className == L"LXActorTerrain")
 	{
-		actor = new LXTerrain(project);
+		actor = new LXActorTerrain(project);
 	}
 	else if (className == L"LXActorForest")
 	{

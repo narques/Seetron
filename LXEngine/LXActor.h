@@ -126,7 +126,6 @@ public:
 	virtual void		SceneLoaded() {};
 	// Play
 	virtual void		Run(double frameTime);
-	virtual void		RunRT(double frameTime);
 
 	// Event Callbacks from EventManager
 	virtual void		OnMouseMove() { CHK(0); }

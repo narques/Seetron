@@ -552,7 +552,7 @@ void LXPickTraverser::PickIndexedTriangles(LXAxis& rayLCS, LXActor* pMesh, LXPri
 		const vec3f& v1 = arrayPosition[b];
 		const vec3f& v2 = arrayPosition[c];
 
-		if (LXTerrain* Terrain = dynamic_cast<LXTerrain*>(pMesh))
+		if (LXActorTerrain* Terrain = dynamic_cast<LXActorTerrain*>(pMesh))
 		{
 			vec3f w0, w1, w2;
 			w0 = v0;

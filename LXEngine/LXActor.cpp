@@ -438,10 +438,3 @@ void LXActor::Run(double frameTime)
 	}
 }
 
-void LXActor::RunRT(double frameTime)
-{
-	for (LXActor* Child : _children)
-	{
-		Child->RunRT(frameTime);
-	}
-}

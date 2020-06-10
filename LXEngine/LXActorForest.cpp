@@ -48,7 +48,7 @@ void LXActorForest::Generate()
 	if (!Scene)
 		return;
 	
-	LXTerrain* Terrain = dynamic_cast<LXTerrain*>(Scene->GetActor(L"Terrain"));
+	LXActorTerrain* Terrain = dynamic_cast<LXActorTerrain*>(Scene->GetActor(L"Terrain"));
 	if (!Terrain)
 		return;
 

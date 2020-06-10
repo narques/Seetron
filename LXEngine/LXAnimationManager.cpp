@@ -77,11 +77,6 @@ bool LXAnimationManager::Update(double dFrameTime)
 
 	if (GetCore().GetPlayMode())
 	{
-		for (auto It : _setSceneObjectToUpdate)
-		{
-			It->RunRT(dFrameTime);
-		}
-
 		_activeAnimation->Update(dFrameTime);
 	}
 	

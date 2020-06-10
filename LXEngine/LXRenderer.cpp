@@ -405,11 +405,6 @@ void LXRenderer::Render()
 		_Project->GetAnimationManager().Update(time.DeltaTime());
 	}
 
-	if (GetScene())
-	{
-		GetScene()->RunRT(time.DeltaTime());
-	}
-
 	// TODO END
 	//-----------------
 	
