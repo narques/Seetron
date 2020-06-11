@@ -13,6 +13,7 @@
 #pragma once
 
 #include "LXObject.h"
+#include "LXBBox.h"
 
 class LXMaterial;
 class LXMesh;
