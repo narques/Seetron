@@ -400,6 +400,8 @@ const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateTerrainPatch(int QuadCo
 	Primitive->GetArrayTexCoords().reserve(VertexCount);
 	Primitive->GetArrayIndices().reserve(IndexCount);
 
+	const float uvStep = 1.f / QuadCount;
+
 	// Vertices
 	for (int j = 0; j < (QuadCount + 1); j++)
 	{
@@ -410,8 +412,10 @@ const shared_ptr<LXPrimitive>& LXPrimitiveFactory::CreateTerrainPatch(int QuadCo
 			float z = 0.f;
 			Primitive->GetArrayPositions().push_back(vec3f(x, y, z));
 			Primitive->GetArrayNormals().push_back(vec3f(0.f, 0.f, 1.f));
-			float u = x * 0.01f;
-			float v = y * 0.01f;
+
+			float u = i * uvStep;
+			float v = j * uvStep;
+
 			Primitive->GetArrayTexCoords().push_back(vec2f(u, v));
 		}
 	}
