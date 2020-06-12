@@ -98,7 +98,7 @@ void LXRenderPassSSAO::Render(LXRenderCommandList* RCL)
 
 	LXTextureD3D11* Depth = RenderPassGBuffer->TextureDepth;
 	LXTextureD3D11* Normal = RenderPassGBuffer->TextureNormal;
-	const LXTextureD3D11* Noise4x4 = RenderPipelineDeferred->GetTextureNoise4x4();
+	const LXTextureD3D11* Noise4x4 = Renderer->GetTextureNoise4x4();
 
 	//
 	// SSAO

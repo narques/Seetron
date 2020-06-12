@@ -8,6 +8,7 @@
 
 #include "stdafx.h"
 #include "LXAnimationManager.h"
+#include "LXAssetManager.h"
 #include "LXBitmap.h"
 #include "LXConsoleManager.h"
 #include "LXConstantBufferD3D11.h"
@@ -316,6 +317,14 @@ void LXRenderer::DrawScreenSpacePrimitive(LXRenderCommandList* RCL)
 void LXRenderer::SetDocument(LXProject* Project)
 { 
 	_NewProject = Project;
+	if (_NewProject)
+	{
+		_TextureNoise4x4 = GetAssetManager()->GetNoiseTexture4x4();
+	}
+	else
+	{
+		_TextureNoise4x4 = nullptr;
+	}
 }
 
 const LXProject* LXRenderer::GetProject() const
@@ -515,6 +524,11 @@ bool LXRenderer::HasPendingTasks() const
 {
 	CHK(IsRenderThread() || IsSyncPoint);
 	return _mainTasks->HasTasks() || !_actorsToUpdate.IsEmpty() || !_toRelease.IsEmpty();
+}
+
+const LXTextureD3D11* LXRenderer::GetTextureNoise4x4() const
+{
+	return _TextureNoise4x4 ? _TextureNoise4x4->GetDeviceTexture() : nullptr;
 }
 
 void LXRenderer::UpdateActor(LXRenderData* renderData, LXFlagsRenderClusterRole renderStates)

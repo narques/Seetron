@@ -8,15 +8,14 @@
 
 #include "stdafx.h"
 #include "LXRenderPipelineDeferred.h"
-#include "LXAssetManager.h"
 #include "LXActorCamera.h"
+#include "LXActorSceneCapture.h"
 #include "LXFrustum.h"
 #include "LXProject.h"
 #include "LXRenderCluster.h"
 #include "LXRenderClusterManager.h"
+#include "LXRenderCommandList.h"
 #include "LXRenderData.h"
-#include "LXRenderer.h"
-//#include "LXRenderPassAA.h"
 #include "LXRenderPassAux.h"
 #include "LXRenderPassDepth.h"
 #include "LXRenderPassDepthOfField.h"
@@ -24,17 +23,16 @@
 #include "LXRenderPassDynamicTexture.h"
 #include "LXRenderPassGBuffer.h"
 #include "LXRenderPassLighting.h"
-#include "LXRenderPassShadow.h"
 #include "LXRenderPassSSAO.h"
+#include "LXRenderPassShadow.h"
 #include "LXRenderPassToneMapping.h"
 #include "LXRenderPassTransparency.h"
 #include "LXRenderPassUI.h"
-#include "LXTexture.h"
+#include "LXRenderer.h"
+#include "LXViewState.h"
 #include "LXViewport.h"
 #include "LXMemory.h" // --- Must be the last included ---
-#include "LXRenderCommandList.h"
-#include "LXActorSceneCapture.h"
-#include "LXViewState.h"
+
 
 LXRenderPipelineDeferred::LXRenderPipelineDeferred(LXRenderer* Renderer):_Renderer(Renderer)
 {
@@ -205,8 +203,8 @@ void LXRenderPipelineDeferred::BuildRenderClusterLists()
 	_CBViewProjectionData.ViewInv = Transpose(WorldTransformation->GetMatrixViewInv());
 	_CBViewProjectionData.CameraPosition = vec4f(Camera->GetPosition(), 0.f);
 	_CBViewProjectionData.RendererSize = vec2f((float)_Renderer->Width, (float)_Renderer->Height);
-	_CBViewProjectionData.Time = GetCore().Time.Time();
-	_CBViewProjectionData.DeltaTime = GetCore().Time.DeltaTime();
+	_CBViewProjectionData.Time = (float)GetCore().Time.Time();
+	_CBViewProjectionData.DeltaTime = (float)GetCore().Time.DeltaTime();
 
 	if (const LXActorSceneCapture* SceneCapture = GetCore().GetProject()->GetSceneCapture())
 	{
@@ -219,14 +217,6 @@ void LXRenderPipelineDeferred::Render(LXRenderCommandList* RenderCommandList)
 	// Creates and sorts the RenderCluster lists
 	// Prepare the ViewState (Camera) data
 	BuildRenderClusterLists();
-
-	if (GetProject() && GetProject()->IsInitialized())
-	{
-		if (LXTexture* Texture = GetAssetManager()->GetNoiseTexture4x4().get())
-		{
-			_TextureNoise4x4 = const_cast<LXTextureD3D11*>(Texture->GetDeviceTexture());
-		}
-	}
 
 	// Update shared constant buffers
 	RenderCommandList->UpdateSubresource4(RenderPassTransparent->CBImageBaseLighting->D3D11Buffer, &RenderPassTransparent->CBImageBaseLightingData);

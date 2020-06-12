@@ -71,6 +71,8 @@ public:
 	LXTextureManager* GetTextureManager() const { return TextureManager; }
 	LXRenderPipeline* GetRenderPipeline() const { return _RenderPipeline; }
 
+	const LXTextureD3D11* GetTextureNoise4x4() const;
+	
 	void UpdateActor(LXRenderData* renderData, LXFlagsRenderClusterRole renderStates);
 	void ReleaseRenderData(LXRenderData* actor, LXFlagsRenderClusterRole renderStates);
 		
@@ -171,6 +173,9 @@ private:
 	ID3D11SamplerState* D3D11SamplerStateTexturing = nullptr;
 	ID3D11SamplerState* D3D11SamplerStateRenderTarget = nullptr;
 
+	// Resources
+	shared_ptr<LXTexture> _TextureNoise4x4;
+
 	// Scene & Document
 	LXProject* _Project = nullptr;
 	LXProject* _NewProject = nullptr;
@@ -178,20 +183,21 @@ private:
 
 	// Console
 	list<LXString> ConsoleBuffer;
-
-
+	
 	// Managers
 	LXShaderManager* ShaderManager = nullptr;
 	LXTextureManager* TextureManager = nullptr;
 	LXRenderPipeline* _RenderPipeline = nullptr;
 
-	LXSynchronisableSet<pair<LXRenderData*, LXFlagsRenderClusterRole>> _actorsToUpdate;
-	LXSynchronisableSet<pair<LXRenderData*, LXFlagsRenderClusterRole>> _toRelease;
-	
 	//
 	// Tasks
 	//
 
+	// RenderData to Update or Release at the frame beginning.
+	LXSynchronisableSet<pair<LXRenderData*, LXFlagsRenderClusterRole>> _actorsToUpdate;
+	LXSynchronisableSet<pair<LXRenderData*, LXFlagsRenderClusterRole>> _toRelease;
+
+	// RenderThread tasks run at the frame beginning.
 	std::unique_ptr<LXTaskManager> _mainTasks;
 };
 
