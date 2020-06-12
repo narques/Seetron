@@ -15,10 +15,11 @@
 #include "LXRenderer.h"
 #include "LXSettings.h"
 #include "LXXMLDocument.h"
-#include "LXMemory.h" // --- Must be the last included ---
+//#include "LXMemory.h" // --- Must be the last included --- TODO: Placement new support
 
 LXTexture::LXTexture()
 {
+	LX_COUNTSCOPEINC(LXTexture)
 	DefineProperties();
 }
 
@@ -28,6 +29,7 @@ LXTexture::LXTexture(uint width, uint height, ETextureFormat format):
 	_eInternalFormat(format),
 	TextureSource(ETextureSource::TextureSourceMaterial)
 {
+	LX_COUNTSCOPEINC(LXTexture)
 	DefineProperties();
 	State = EResourceState::LXResourceState_Loaded;
 	CreateDeviceTexture();
@@ -36,6 +38,7 @@ LXTexture::LXTexture(uint width, uint height, ETextureFormat format):
 
 LXTexture::~LXTexture(void)
 {
+	LX_COUNTSCOPEDEC(LXTexture)
 	LX_SAFE_DELETE_ARRAY(_Bitmap);
 	ReleaseDeviceTexture();
 }
