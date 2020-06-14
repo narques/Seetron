@@ -14,7 +14,7 @@ class LXRenderTarget;
 
 namespace
 {
-	const int maxDownSample = 10;  // Enough for 1920x1080 to 1x1
+	const int maxDownSample = 12;  // Enough for 4096x4096 to 1x1
 }
 
 enum class EDownsampleFunction
