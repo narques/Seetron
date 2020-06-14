@@ -32,9 +32,15 @@ LXTexture::LXTexture(uint width, uint height, ETextureFormat format):
 	LX_COUNTSCOPEINC(LXTexture)
 	DefineProperties();
 	State = EResourceState::LXResourceState_Loaded;
-	CreateDeviceTexture();
 	SetPersistent(false);
  }
+
+std::shared_ptr<LXTexture> LXTexture::Create(uint width, uint height, ETextureFormat format)
+{
+	shared_ptr<LXTexture> texture = make_shared<LXTexture>(width, height, format);
+	texture->CreateDeviceTexture();
+	return texture;
+}
 
 LXTexture::~LXTexture(void)
 {
@@ -207,16 +213,9 @@ void LXTexture::DefineProperties()
 
 void LXTexture::CreateDeviceTexture()
 {
-	if (DeviceCreationEnqueued)
-	{
-		CHK(0);
-		return;
-	}
-
 	if (GetRenderer())
 	{
-		DeviceCreationEnqueued = true;
-		GetRenderer()->CreateDeviceTexture(this);
+		GetRenderer()->CreateDeviceTexture(shared_from_this());
 	}
 }
 

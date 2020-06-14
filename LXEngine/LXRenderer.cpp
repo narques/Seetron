@@ -543,19 +543,24 @@ void LXRenderer::ReleaseRenderData(LXRenderData* renderData, LXFlagsRenderCluste
 	_toRelease.In->insert(pair<LXRenderData*, LXFlagsRenderClusterRole>(renderData, renderStates));
 }
 
-void LXRenderer::CreateDeviceTexture(LXTexture* texture)
+void LXRenderer::CreateDeviceTexture(shared_ptr<LXTexture> texture)
 {
 	if (IsRenderThread())
 	{
-		CreateDeviceTexture_RT(texture);
+		CreateDeviceTexture_RT(texture.get());
 	}
 	else
 	{
-		LXTask* task = new LXTaskCallBack([this, texture]()
+		LXTexture* texturePtr = texture.get();
+
+		LXTask* task = new LXTaskCallBack([this, texturePtr]()
 		{
-			CreateDeviceTexture_RT(texture);
+			CreateDeviceTexture_RT(texturePtr);
 		});
 
+		// Check that the texture is not already enqueued.
+		CHK(_enqueuedTexture.find(texturePtr) == _enqueuedTexture.end());
+		_enqueuedTexture[texturePtr] = texture;
 		EnqueueTask(task);
 	}
 }
@@ -569,8 +574,13 @@ void LXRenderer::CreateDeviceTexture_RT(LXTexture* texture)
 
 	LXTextureD3D11* texture3D11 = LXTextureD3D11::CreateFromTexture(texture);
 	texture->SetDeviceTexture(texture3D11);
-	texture->DeviceCreationEnqueued = false;
+	
+	LXTask* task = new LXTaskCallBack([this, texture]()
+	{
+		_enqueuedTexture.erase(texture);
+	});
 	GetCore().EnqueueInvokeDelegate(&texture->DeviceCreated);
+	GetCore().EnqueueTask(task);
 }
 
 void LXRenderer::ReleaseDeviceTexture(LXTexture* texture)

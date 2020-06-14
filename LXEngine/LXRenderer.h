@@ -76,7 +76,7 @@ public:
 	void UpdateActor(LXRenderData* renderData, LXFlagsRenderClusterRole renderStates);
 	void ReleaseRenderData(LXRenderData* actor, LXFlagsRenderClusterRole renderStates);
 		
-	void CreateDeviceTexture(LXTexture* texture);
+	void CreateDeviceTexture(shared_ptr<LXTexture> texture);
 	void ReleaseDeviceTexture(LXTexture* texture);
 	void CopyDeviceTexture(LXTexture* texture);
 	
@@ -199,5 +199,9 @@ private:
 
 	// RenderThread tasks run at the frame beginning.
 	std::unique_ptr<LXTaskManager> _mainTasks;
+
+	// Enqueued Textures for device creation. Set by the MainThread.
+	// Avoid early texture destruction.
+	map <LXTexture*, shared_ptr<LXTexture>> _enqueuedTexture;
 };
 

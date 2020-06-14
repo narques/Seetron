@@ -21,7 +21,14 @@ class LXScript;
 class LXShader;
 class LXTexture;
 
-typedef map<LXString, shared_ptr<LXAsset>> MapAssets;
+struct LXAssetFileInfo
+{
+	LXFilepath FullFileName;
+	EResourceOwner Owner;
+	weak_ptr<LXAsset> Asset;
+};
+
+typedef map<LXString, LXAssetFileInfo> MapAssets;
 
 #define LX_DEFAULT_MESH_FOLDER		L"Meshes/"
 #define LX_DEFAULT_MATERIAL_FOLDER	L"Materials/"
@@ -39,7 +46,7 @@ public:
 	void Init();
 
 	// Asset
-	const shared_ptr<LXAsset>&	GetAsset(const LXString& Name) const;
+	const shared_ptr<LXAsset> GetAsset(const LXString& Name) const;
 	
 	// Material
 	const shared_ptr<LXMaterial> GetDefaultMaterial();
@@ -85,7 +92,7 @@ public:
 	void				GetMeshes(list<shared_ptr<LXAssetMesh>>& listMeshes)const;
 	void				GetAssets(list<shared_ptr<LXAsset>>& listAssets)const;
 	void				GetAssetsOfType(list<shared_ptr<LXAsset>>& listAssets, EAssetType assetType)const;
-	shared_ptr<LXAsset>& FindAsset(const LXString& RelativeFilepath)const;
+	shared_ptr<LXAsset> FindAsset(const LXString& RelativeFilepath)const;
 	const MapAssets&	GetAssets() const { return _MapAssets; }
 
 	// Update the renamed asset in the map
@@ -102,7 +109,16 @@ private:
 	const shared_ptr<T> GetResourceT(const LXString& Name) const;
 
 	void LoadFromFolder(const LXFilepath& assetFolderpath, EResourceOwner resourceOwner);
+	
+	// Add a FileInfo asset to the library.
 	void AddAsset(const LXFilepath& filepath, const LXFilepath& assetFolderpath, EResourceOwner resourceOwner);
+	
+	// Add a existing asset to the library.
+	void AddAsset(shared_ptr<LXAsset> asset);
+
+	// Create Asset from the given AssetFileInfo
+	shared_ptr<LXAsset> CreateAsset(const LXAssetFileInfo& assetFileInfo) const;
+	
 	void UpdateAsset(const LXFilepath& filepath, const LXFilepath& assetFolderpath, EResourceOwner resourceOwner);
 	void RemoveAsset(const LXFilepath& filepath, const LXFilepath& assetFolderpath, EResourceOwner resourceOwner);
 	bool IsValidFile(const LXFilepath& filepath);
@@ -111,9 +127,11 @@ private:
 protected:
 
 	LXProject*		_pDocument;
-	MapAssets		_MapAssets;
+	mutable MapAssets _MapAssets;
 	
 private:
+
+	shared_ptr<LXMaterial> _defaultMaterial;
 
 	unique_ptr<LXGraphTemplate> _graphMaterialTemplate;
 
