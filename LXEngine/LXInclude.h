@@ -55,7 +55,6 @@ using namespace std;
 // Misc
 //
 
-#include <stdlib.h>
 #include <math.h>		// For sqrt
 #include <float.h>		// For FLT_MAX
 
@@ -87,8 +86,20 @@ using namespace std;
 //
 
 #ifdef LX_DEBUGFLAG
-#define NA_DEBUG_CLIENTBLOCK new( _CLIENT_BLOCK, __FILE__, __LINE__)
+
 #define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#define NA_DEBUG_CLIENTBLOCK new( _CLIENT_BLOCK, __FILE__, __LINE__)
+#define new NA_DEBUG_CLIENTBLOCK
+
 #else
-#define NA_DEBUG_CLIENTBLOCK
+
+#ifdef LX_VLD
+#include <vld.h>
 #endif
+
+#endif
+
+
+ 
