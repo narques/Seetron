@@ -15,7 +15,7 @@
 #include "LXRenderer.h"
 #include "LXSettings.h"
 #include "LXXMLDocument.h"
-//#include "LXMemory.h" // --- Must be the last included --- TODO: Placement new support
+#include "LXMemory.h" // --- Must be the last included
 
 LXTexture::LXTexture()
 {
@@ -39,7 +39,7 @@ LXTexture::LXTexture(uint width, uint height, ETextureFormat format):
 LXTexture::~LXTexture(void)
 {
 	LX_COUNTSCOPEDEC(LXTexture)
-	LX_SAFE_DELETE_ARRAY(_Bitmap);
+	LX_SAFE_DELETE(_Bitmap);
 	ReleaseDeviceTexture();
 }
 
@@ -95,7 +95,7 @@ bool LXTexture::LoadSource()
 		return false;
 	}
 
-	LX_SAFE_DELETE_ARRAY(_Bitmap);
+	LX_SAFE_DELETE(_Bitmap);
 
 // 	if ((LXFilepath(strFilename).GetFilename().MakeLower() == L"cubemap.xml") || (LXFilepath(strFilename).GetExtension().MakeLower() == L"cm"))
 // 	{
@@ -129,7 +129,7 @@ bool LXTexture::LoadSource()
 // 	}
 // 	else
 	{
-		_Bitmap = new LXBitmap[1];
+		_Bitmap = new LXBitmap();
 		if (_Bitmap->Load(strFilename))
 		{
 			_nWidth = _Bitmap->GetWidth();
@@ -156,10 +156,7 @@ LXBitmap* LXTexture::GetBitmap( int index ) const
 	if (!_Bitmap)// && (State == LXResource::ResourceState_Unloaded))
 		const_cast<LXTexture*>(this)->Load();
 	
-	if (_Bitmap)
-		return &(_Bitmap[index]);
-	else
-		return nullptr;
+	return _Bitmap;
 }
 
 void LXTexture::DefineProperties()
@@ -237,8 +234,7 @@ bool LXTexture::CopyDeviceToBitmap()
 
 	if (!_Bitmap)
 	{
-		_Bitmap = new LXBitmap[1];
-		new(_Bitmap)LXBitmap(_nWidth, _nHeight, _eInternalFormat);
+		_Bitmap = new LXBitmap(_nWidth, _nHeight, _eInternalFormat);
 	}
 
 	if (GetRenderer())
