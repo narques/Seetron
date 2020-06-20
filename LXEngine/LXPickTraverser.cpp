@@ -35,7 +35,7 @@ LXPickTraverser::~LXPickTraverser(void)
 {
 }
 
-LXMatrix* GetMatrixWCS(LXActorMesh* ActorMesh, LXPrimitiveInstance* PrimitiveInstance)
+const LXMatrix* GetMatrixWCS(LXActorMesh* ActorMesh, LXPrimitiveInstance* PrimitiveInstance)
 {
 	if (PrimitiveInstance->Matrix)
 		return PrimitiveInstance->Matrix;

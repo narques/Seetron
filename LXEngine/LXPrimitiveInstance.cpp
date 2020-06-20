@@ -14,7 +14,7 @@
 #include "LXActorMesh.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
-LXPrimitiveInstance::LXPrimitiveInstance(const shared_ptr<LXPrimitive>& InPrimitive, LXMatrix* InMatrix, LXMaterial* InMaterial)
+LXPrimitiveInstance::LXPrimitiveInstance(const shared_ptr<LXPrimitive>& InPrimitive, const LXMatrix* InMatrix, const LXMaterial* InMaterial)
 {
 	LX_COUNTSCOPEINC(LXPrimitiveInstance)
 	Primitive = InPrimitive;

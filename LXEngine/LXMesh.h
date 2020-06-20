@@ -45,7 +45,7 @@ public:
 	const ListMeshes& GetChild() const { return _Children; } // GetChildren already exists in SmartObjects
 
 	// Primitive management
-	void AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, LXMatrix* Matrix = nullptr, LXMaterial* Material = nullptr);
+	void AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, const LXMatrix* Matrix = nullptr, const LXMaterial* Material = nullptr);
 	void RemovePrimitive(LXPrimitive* Primitive);
 	void RemoveAllPrimitives();
 	const VectorPrimitiveInstances& GetPrimitives() { return _vectorPrimitives; }

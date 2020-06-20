@@ -174,7 +174,7 @@ void LXMesh::AddChild(LXMesh* Mesh)
 	
 }
 
-void LXMesh::AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, LXMatrix* InMatrix /*= nullptr*/, LXMaterial* InMaterial /*= nullptr */)
+void LXMesh::AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, const LXMatrix* InMatrix /*= nullptr*/, const LXMaterial* InMaterial /*= nullptr */)
 {
 	LX_CHK_RET(Primitive);
 	
