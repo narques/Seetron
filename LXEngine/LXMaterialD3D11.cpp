@@ -11,6 +11,8 @@
 #include "LXConstantBufferD3D11.h"
 #include "LXGraphMaterialToHLSLConverter.h"
 #include "LXMaterial.h"
+#include "LXMaterialInstance.h"
+#include "LXMaterialUtility.h"
 #include "LXRenderCommandList.h"
 #include "LXRenderPassLighting.h"
 #include "LXRenderPassTransparency.h"
@@ -146,7 +148,7 @@ void LXMaterialD3D11::Render(ERenderPass RenderPass, LXRenderCommandList* RCL) c
 	}
 }
 
-void LXMaterialD3D11::Update(const LXMaterial* Material)
+void LXMaterialD3D11::Update(const LXMaterialBase* Material)
 {
 	//
 	// Update the ConstantBuffer data values.
@@ -158,41 +160,44 @@ void LXMaterialD3D11::Update(const LXMaterial* Material)
 	// Misc properties
 	//
 
-	if (TwoSided != Material->GetTwoSided())
+	const LXMaterial* material = LXMaterialUtility::GetMaterialFromBase(Material);
+
+	if (TwoSided != material->GetTwoSided())
 	{
-		TwoSided = Material->GetTwoSided();
+		TwoSided = material->GetTwoSided();
 	}
 
-	if (Transparent != Material->IsTransparent())
+	if (Transparent != material->IsTransparent())
 	{
-		Transparent = Material->IsTransparent();
+		Transparent = material->IsTransparent();
 	}
 
 }
 
-LXMaterialD3D11* LXMaterialD3D11::CreateFromMaterial(const LXMaterial* material)
+LXMaterialD3D11* LXMaterialD3D11::CreateFromMaterial(const LXMaterialBase* material)
 {
 	LXMaterialD3D11* materialD3D11 = new LXMaterialD3D11();
 	CHK(materialD3D11->Create(material));
 	return materialD3D11;
 }
 
-bool LXMaterialD3D11::Create(const LXMaterial* InMaterial)
+bool LXMaterialD3D11::Create(const LXMaterialBase* materialBase)
 {
 	// Release Previous Objects
 	Release();
 	
-	CHK(InMaterial);
+	CHK(materialBase);
 	//CHK(Material == nullptr);
 
-	Material = InMaterial;
+	Material = materialBase;
+	const LXMaterial* material = LXMaterialUtility::GetMaterialFromBase(Material);
 	
 	ComputeNormals = 0;
 	//if (Material->GetComputeNormals())
 	//	ComputeNormals = 1;
 	
-	TwoSided = Material->GetTwoSided() == true;
-	Transparent = Material->IsTransparent();
+	TwoSided = material->GetTwoSided() == true;
+	Transparent = material->IsTransparent();
 
 	LXGraphMaterialToHLSLConverter graphMaterialToHLSLConverter;
 
@@ -200,7 +205,7 @@ bool LXMaterialD3D11::Create(const LXMaterial* InMaterial)
 	// Build the VS Constant Buffer 
 	//
 
-	VRF(graphMaterialToHLSLConverter.GenerateConstanBuffer((const LXGraph*)Material->GetGraph(), EShader::VertexShader, ConstantBufferVS));
+	VRF(graphMaterialToHLSLConverter.GenerateConstanBuffer((const LXGraph*)material->GetGraph(), EShader::VertexShader, ConstantBufferVS));
 
 	if (ConstantBufferVS.HasData())
 	{
@@ -214,7 +219,7 @@ bool LXMaterialD3D11::Create(const LXMaterial* InMaterial)
 	// Build the PS Constant Buffer structure according the MaterialNodes
 	//
 
-	VRF(graphMaterialToHLSLConverter.GenerateConstanBuffer((const LXGraph*)Material->GetGraph(), EShader::PixelShader, ConstantBufferPS));
+	VRF(graphMaterialToHLSLConverter.GenerateConstanBuffer((const LXGraph*)material->GetGraph(), EShader::PixelShader, ConstantBufferPS));
 
 	if (ConstantBufferPS.HasData())
 	{
@@ -227,7 +232,7 @@ bool LXMaterialD3D11::Create(const LXMaterial* InMaterial)
 	// Textures and TextureSamplers
 	//
 		
-	LogI(MaterialD3D11, L"Successful create %s", Material->GetName().GetBuffer());
+	LogI(MaterialD3D11, L"Successful create %s", material->GetName().GetBuffer());
 	_bValid = true;
 	return true;
 }

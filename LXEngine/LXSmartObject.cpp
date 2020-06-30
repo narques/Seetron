@@ -564,6 +564,17 @@ LXPropertyT<T>* LXSmartObject::DefineProperty(const LXString& label, const LXStr
 	return pProperty;
 }
 
+bool LXSmartObject::RemoveProperty(LXProperty* property)
+{
+	auto it = find(_listProperties.begin(), _listProperties.end(), property);
+	if (it != _listProperties.end())
+	{
+		_listProperties.remove(property);
+		return true;
+	}
+	return false;
+}
+
 template<class T>
 LXPropertyT<T>*	LXSmartObject::DefinePropertyEval(const LXString& name, const LXPropertyID& id, std::function<int()> eval, T def)
 {

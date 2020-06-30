@@ -9,12 +9,14 @@
 #pragma once
 #include "LXObject.h"
 
-class LXGraph;
-class LXNode;
 class LXConstantBuffer;
 class LXConnector;
-class LXTexture;
+class LXGraph;
+class LXMaterialBase;
 class LXMaterialD3D11;
+class LXNode;
+class LXTexture;
+
 enum class ERenderPass;
 enum class EShader;
 
@@ -54,7 +56,7 @@ public:
 private:
 
 	int _layoutMask = 0;
-	const LXMaterial* _material = nullptr;
+	const LXMaterialBase* _material = nullptr;
 	ERenderPass _renderPass;
 	EShader _shader;
 

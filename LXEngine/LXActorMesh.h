@@ -12,6 +12,7 @@
 #include "LXRenderData.h"
 
 class LXAssetMesh;
+class LXMaterialBase;
 class LXMesh;
 class LXRenderCluster;
 
@@ -48,7 +49,7 @@ public:
 	const TWorldPrimitives&			GetAllPrimitives();
 
 	// Add a primitive to the root mesh
-	void							AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, const LXMatrix* Matrix = nullptr, const LXMaterial* Material = nullptr);
+	void							AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, const LXMatrix* Matrix = nullptr, const LXMaterialBase* Material = nullptr);
 	void							ReleaseAllPrimitives();
 		
 	// Misc

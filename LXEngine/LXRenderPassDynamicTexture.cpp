@@ -85,9 +85,9 @@ void LXRenderPassDynamicTexture::Render(LXRenderCommandList* RCL)
 
 void LXRenderPassDynamicTexture::Render(LXRenderCommandList* RCL, LXRenderCluster* renderCluster)
 {
-	const LXMaterial* material = renderCluster->Material;
+	const LXMaterialBase* material = renderCluster->Material;
 
-	if (material->MaterialType == EMaterialType::MaterialTypeTexture)
+	if (material->GetType() == EMaterialType::MaterialTypeTexture)
 	{
 		LXActor* actor = const_cast<LXActor*>(renderCluster->RenderData->GetActor());
 		LXActorRenderToTexture* actorRTT = static_cast<LXActorRenderToTexture*>(actor);

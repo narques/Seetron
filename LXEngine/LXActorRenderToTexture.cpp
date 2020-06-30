@@ -46,7 +46,7 @@ void LXActorRenderToTexture::SetTexture(shared_ptr<LXTexture>& texture)
 	_texture = texture;
 }
 
-void LXActorRenderToTexture::SetMaterial(shared_ptr<LXMaterial>& material)
+void LXActorRenderToTexture::SetMaterial(shared_ptr<LXMaterialBase>& material)
 {
 	CHK(material);
 	(static_cast<LXPropertyAssetPtr*>(GetProperty(L"Material")))->SetValue(material);

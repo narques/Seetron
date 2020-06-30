@@ -283,10 +283,9 @@ shared_ptr<LXShaderD3D11> LXShaderManager::FindOrCreate(T& Signature, M& Shaders
 bool LXShaderManager::CreateShader(const LXVSSignature& VSSignature, LXShaderD3D11* Shader)
 {
 	// Retrieve the shader filename
-	LXFilepath ShaderFilePath = VSSignature.Material->GetMaterial()->GetFilepath();
+	const LXString BaseName = VSSignature.Material->GetMaterial()->GetShaderBaseName();
 
 	// Compute the shader filename and generate the it (EDITOR only)
-	const LXString BaseName = ShaderFilePath.GetFilenameNoExt();
 	LXFilepath GeneretedShaderFilePath = GetProject()->GetAssetFolder() + L"Shaders/" + LXShaderFactory::BuildShaderFilename(BaseName, VSSignature.RenderPass, VSSignature.LayoutMask, EShader::VertexShader);
 		
 	LXShaderFactory::GenerateVertexShader(GeneretedShaderFilePath, VSSignature.Material, VSSignature.RenderPass, VSSignature.LayoutMask);
@@ -316,10 +315,9 @@ bool LXShaderManager::CreateShader(const LXPSSignature& PSSignature, LXShaderD3D
 		PSSignature.RenderPass == ERenderPass::RenderToTexture))
 	{
 		// Retrieve the shader filename
-		LXFilepath ShaderFilePath = PSSignature.Material->GetMaterial()->GetFilepath();
+		const LXString BaseName = PSSignature.Material->GetMaterial()->GetShaderBaseName();
 		
 		// Compute the shader filename and generate the it (EDITOR only)
-		const LXString BaseName = ShaderFilePath.GetFilenameNoExt();
 		LXFilepath GeneretedShaderFilePath = GetProject()->GetAssetFolder() + L"Shaders/" + LXShaderFactory::BuildShaderFilename(BaseName, PSSignature.RenderPass, -1, EShader::PixelShader);
 		
 		LXShaderFactory::GeneratePixelShader(GeneretedShaderFilePath, PSSignature.Material, PSSignature.RenderPass);

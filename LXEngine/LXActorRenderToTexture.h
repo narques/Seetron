@@ -10,6 +10,7 @@
 
 #include "LXActorMesh.h"
 
+class LXMaterialBase;
 class LXTexture;
 
 enum class ERenderingDrive
@@ -26,8 +27,8 @@ public:
 	LXActorRenderToTexture(LXProject* project);
 	virtual ~LXActorRenderToTexture();
 
-	void SetMaterial(shared_ptr<LXMaterial>& material);
-	const shared_ptr<LXMaterial>& GetMaterial() const { return _material; }
+	void SetMaterial(shared_ptr<LXMaterialBase>& material);
+	const shared_ptr<LXMaterialBase>& GetMaterial() const { return _material; }
 
 	void SetTexture(shared_ptr<LXTexture>& texture);
 	const shared_ptr<LXTexture>& GetTexture() const { return _texture; }
@@ -55,7 +56,7 @@ private:
 
 	ERenderingDrive _renderingDrive = ERenderingDrive::OnEveryFrame;
 
-	shared_ptr<LXMaterial> _material;
+	shared_ptr<LXMaterialBase> _material;
 	shared_ptr<LXTexture> _texture;
 };
 

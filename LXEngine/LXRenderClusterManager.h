@@ -11,7 +11,7 @@
 #include "LXRenderClusterType.h"
 
 class LXActorMesh;
-class LXMaterial;
+class LXMaterialBase;
 class LXPrimitive;
 class LXPrimitiveD3D11;
 class LXRenderCluster;
@@ -41,7 +41,7 @@ public:
 private:
 
 	shared_ptr<LXPrimitiveD3D11>& GetPrimitiveD3D11(LXPrimitive* Primitive, const ArrayVec3f* ArrayInstancePosition = nullptr);
-	LXRenderCluster* CreateRenderCluster(LXRenderData* renderData, LXWorldPrimitive* worldPrimitive, const LXMatrix& MatrixWCS, const LXMatrix& matrix, const LXBBox& BBoxWorld, LXPrimitive* Primitive, LXMaterial* Material);
+	LXRenderCluster* CreateRenderCluster(LXRenderData* renderData, LXWorldPrimitive* worldPrimitive, const LXMatrix& MatrixWCS, const LXMatrix& matrix, const LXBBox& BBoxWorld, LXPrimitive* Primitive, const LXMaterialBase* Material);
 
 	// Remove the RenderCluster from the Rendering (ListRendersClusters)
 	// Plus the additional helper maps

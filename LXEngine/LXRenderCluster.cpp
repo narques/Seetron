@@ -70,7 +70,7 @@ LXRenderCluster::~LXRenderCluster()
 	LX_SAFE_DELETE(LightView);
 }
 
-void LXRenderCluster::SetMaterial(LXMaterial* material)
+void LXRenderCluster::SetMaterial(const LXMaterialBase* material)
 {
 	if (Material != material)
 	{

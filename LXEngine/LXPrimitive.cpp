@@ -310,7 +310,7 @@ int LXPrimitive::GetId()
 	return m_nId;
 }
 
-void LXPrimitive::SetMaterial( shared_ptr<LXMaterial>& pMaterial )
+void LXPrimitive::SetMaterial( shared_ptr<LXMaterialBase>& pMaterial )
 { 
 	m_pMaterial = pMaterial;
 }
@@ -318,8 +318,9 @@ void LXPrimitive::SetMaterial( shared_ptr<LXMaterial>& pMaterial )
 void LXPrimitive::SetMaterial(const LXString& Filename)
 {
 	LXAssetManager& rm = GetCore().GetProject()->GetAssetManager();
-	shared_ptr<LXMaterial> Material = rm.GetMaterial(Filename);
-	SetMaterial(Material);
+	shared_ptr<LXMaterial> material = rm.GetMaterial(Filename);
+	shared_ptr<LXMaterialBase> materialBase = static_pointer_cast<LXMaterialBase>(material);
+	SetMaterial(materialBase);
 }
 
 void LXPrimitive::ComputeNormals()

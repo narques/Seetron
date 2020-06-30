@@ -26,8 +26,6 @@ public:
 	virtual void RemoveNode(shared_ptr<LXNode>& node) override;
 
 	void GetChildProperties(ListProperties& UserProperties) const override;
-	LXTexture* GetTextureDisplacement(const LXString& textureName) const;
-	LXPropertyAssetPtr* GetPropertyTextureByName(const LXString& textureName) const;
 	bool GetFloatParameter(const LXString& textureName, float& outValue) const;
 
 private:
@@ -35,13 +33,13 @@ private:
 	void OnLoaded() override;
 	void OnPropertyChanged(LXProperty* property) override;
 
+	// Create a transient property to simplify the node property access and allows overrides.
+	void Register(const shared_ptr<LXNode>& node);
+	void Unregister(const shared_ptr<LXNode>& node);
+
 public:
 
 	LXMaterial* Material = nullptr;
-
-private:
-
-	multimap<LXString, LXPropertyAssetPtr*> _assetTextures;
 };
 
 

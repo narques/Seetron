@@ -174,7 +174,7 @@ void LXMesh::AddChild(LXMesh* Mesh)
 	
 }
 
-void LXMesh::AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, const LXMatrix* InMatrix /*= nullptr*/, const LXMaterial* InMaterial /*= nullptr */)
+void LXMesh::AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, const LXMatrix* InMatrix /*= nullptr*/, const LXMaterialBase* InMaterial /*= nullptr */)
 {
 	LX_CHK_RET(Primitive);
 	
@@ -310,11 +310,11 @@ void LXMesh::InvalidateBounds()
 void LXMesh::SetMaterial(const LXString& key)
 {
 	LXAssetManager& rm = GetCore().GetProject()->GetAssetManager();
-	shared_ptr<LXMaterial> Material = rm.GetMaterial(key);
+	shared_ptr<LXMaterialBase> Material = rm.GetMaterial(key);
 	SetMaterial(Material);
 }
 
-void LXMesh::SetMaterial(shared_ptr<LXMaterial>& material)
+void LXMesh::SetMaterial(shared_ptr<LXMaterialBase>& material)
 {
 	for (const shared_ptr<LXPrimitiveInstance>& PrimitiveInstance : _vectorPrimitives)
 	{

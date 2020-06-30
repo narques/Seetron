@@ -162,7 +162,7 @@ void LXActorMesh::ComputeBBoxLocal()
 	}
 }
 
-void LXActorMesh::AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, const LXMatrix* InMatrix, const LXMaterial* InMaterial)
+void LXActorMesh::AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, const LXMatrix* InMatrix, const LXMaterialBase* InMaterial)
 {	
 	Mesh->AddPrimitive(Primitive, InMatrix, InMaterial);
 	InvalidateBounds(true);

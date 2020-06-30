@@ -8,19 +8,12 @@
 
 #pragma once
 
-#include "LXAsset.h"
+#include "LXMaterialBase.h"
 #include "LXMaterialNode.h"
 
 class LXShader;
 class LXGraphMaterial;
-class LXMaterialD3D11;
 class LXTexture;
-
-enum class EMaterialType // ! DataModel 
-{
-	MaterialTypeStandard,
-	MaterialTypeTexture
-};
 
 enum class EMaterialLightingModel
 {
@@ -29,7 +22,7 @@ enum class EMaterialLightingModel
 	Transparent
 };
 
-class LXCORE_API LXMaterial : public LXAsset
+class LXCORE_API LXMaterial : public LXMaterialBase
 {
 
 public:
@@ -51,53 +44,39 @@ public:
 	LXString GetFileExtension() override { return LX_MATERIAL_EXT; }
 	bool Load() override;
 	bool Reload() override;
-	bool Compile();
+	bool Compile() override;
 
 	// Misc
 	
-	bool IsTransparent() const { return _LightingModel == EMaterialLightingModel::Transparent; }
+	void DefineProperties();
+	virtual bool IsTransparent() const override { return _LightingModel == EMaterialLightingModel::Transparent; }
 	bool GetTwoSided() const { return _bTwoSided; }
 	void SetTwoSided(bool b) { _bTwoSided = b; }
-	LXTexture* GetTextureDisplacement(const LXString& textureName) const;
-	LXPropertyAssetPtr* GetPropertyTextureByName(const LXString& textureName) const;
-	bool GetFloatParameter(const LXString& textureName, float& outValue) const;
+	const LXPropertyAssetPtr* GetPropertyTextureByName(const LXString& textureName) const;
+	virtual bool GetFloatParameter(const LXString& textureName, float& outValue) const override;
 	EMaterialLightingModel GetLightingModel() const { return _LightingModel; }
+	virtual EMaterialType GetType() const override { return MaterialType; }
 
 	// Graph
 	
 	LXGraphMaterial* GetGraph() const;
 	void ReleaseGraph();
 
-	//
 	// Rendering
-	//
+	virtual LXString GetShaderBaseName() const override;
 
-	const LXMaterialD3D11* GetDeviceMaterial() const { return _materialD3D11; }
-	void SetDeviceMaterial(LXMaterialD3D11* materialD3D11) { _materialD3D11 = materialD3D11; }
-
-	void DefineProperties();
-	void CreateDeviceMaterial();
-	void ReleaseDeviceMaterial();
-	
 public:
 
-	// Misc
-	EMaterialType MaterialType;
-
-	// Delegates & Events
-	
-	// Fired when the material device is created (including the Graph to HLSL translation)
-	LXDelegate<> Compiled;
+	int InstanceCount = 0;
 
 private:
+
+	EMaterialType MaterialType;
 
 	// Graph 
 	unique_ptr<LXGraphMaterial> GraphMaterial;
 
 	EMaterialLightingModel _LightingModel = EMaterialLightingModel::Lit;
 	bool  _bTwoSided = false;
-
-	// Rendering
-	LXMaterialD3D11* _materialD3D11 = nullptr;
 };
 

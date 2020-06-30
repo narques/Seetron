@@ -13,7 +13,7 @@
 #include "LXRenderPassType.h"
 
 class LXRenderCommandList;
-class LXMaterial;
+class LXMaterialBase;
 class LXTexture;
 class LXMaterialNodeTextureSampler;
 class LXConstantBufferD3D11;
@@ -29,9 +29,9 @@ public:
 
 	void Release();
 	void Render(ERenderPass RenderPass, LXRenderCommandList* RCL) const;
-	void Update(const LXMaterial* Material);
+	void Update(const LXMaterialBase* Material);
 
-	const LXMaterial* GetMaterial() const { return Material; }
+	const LXMaterialBase* GetMaterial() const { return Material; }
 	bool DoComputeNormals() const { return ComputeNormals; }
 	bool IsTransparent() const { return Transparent; }
 
@@ -41,11 +41,11 @@ public:
 	const list<LXTexture*>& GetTexturesPS() const { return ListPSTextures; }
 
 	// Helpers
-	static LXMaterialD3D11* CreateFromMaterial(const LXMaterial* material);
+	static LXMaterialD3D11* CreateFromMaterial(const LXMaterialBase* material);
 			
 private:
 
-	bool Create(const LXMaterial*);
+	bool Create(const LXMaterialBase*);
 	void UpdateConstantBufferDataValues();
 
 public:
@@ -67,7 +67,7 @@ private:
 	uint Transparent : 1;
 
 	// Ref.
-	const LXMaterial* Material = nullptr;
+	const LXMaterialBase* Material = nullptr;
 
 	bool _bValid = false;
 

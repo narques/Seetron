@@ -14,6 +14,8 @@
 #include "LXVec3.h"
 #include "LXVec2.h"
 
+class LXMaterialBase;
+
 #define POSITION3F vec3f position;
 #define TEXCOORD2F vec2f texCoord;
 #define NORMAL3F vec3f normal;
@@ -162,9 +164,9 @@ public:
 	int					GetId				( );
 	
 	bool				Save				(  const TSaveContext& saveContext  );
-	void				SetMaterial			( shared_ptr<LXMaterial>& pMaterial );
+	void				SetMaterial			( shared_ptr<LXMaterialBase>& pMaterial );
 	void				SetMaterial			( const LXString& Filename );
-	const shared_ptr<LXMaterial>& GetMaterial() const { return m_pMaterial; }
+	const shared_ptr<LXMaterialBase>& GetMaterial() const { return m_pMaterial; }
 	
 	// Draw Options
 	LXPrimitiveTopology	GetTopology			( ) const { return _Topology; }
@@ -212,7 +214,7 @@ public :
 
 	// Misc
 	LXPrimitiveTopology	_Topology;
-	shared_ptr<LXMaterial> m_pMaterial;
+	shared_ptr<LXMaterialBase> m_pMaterial;
 	int				m_nId;
 	bool			m_bValid;
 	LXBBox			m_bboxLocal;

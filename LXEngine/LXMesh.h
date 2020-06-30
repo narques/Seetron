@@ -9,13 +9,15 @@
 #pragma once
 
 #include "LXSmartObject.h"
-#include "LXMatrix.h"
-#include "LXTransformation.h"
-#include "LXBBox.h"
 
+// Seetron
+#include "LXBBox.h"
+#include "LXTransformation.h"
+
+class LXAssetMesh;
+class LXMaterialBase;
 class LXMesh;
 class LXPrimitive;
-class LXAssetMesh;
 
 typedef list<LXMesh*> ListMeshes;
 
@@ -45,7 +47,7 @@ public:
 	const ListMeshes& GetChild() const { return _Children; } // GetChildren already exists in SmartObjects
 
 	// Primitive management
-	void AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, const LXMatrix* Matrix = nullptr, const LXMaterial* Material = nullptr);
+	void AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, const LXMatrix* Matrix = nullptr, const LXMaterialBase* Material = nullptr);
 	void RemovePrimitive(LXPrimitive* Primitive);
 	void RemoveAllPrimitives();
 	const VectorPrimitiveInstances& GetPrimitives() { return _vectorPrimitives; }
@@ -66,7 +68,7 @@ public:
 
 	// Misc
 	void SetMaterial(const LXString& Key);
-	void SetMaterial(shared_ptr<LXMaterial>& material);
+	void SetMaterial(shared_ptr<LXMaterialBase>& material);
 
 	bool Visible() const { return _visible; }
 

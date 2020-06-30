@@ -18,7 +18,7 @@
 
 class LXActor;
 class LXConstantBufferD3D11;
-class LXMaterial;
+class LXMaterialBase;
 class LXMatrix;
 class LXPrimitiveD3D11;
 class LXRenderClusterManager;
@@ -50,7 +50,7 @@ public:
 
 	void ReleaseShaders();
 
-	void SetMaterial(LXMaterial* material);
+	void SetMaterial(const LXMaterialBase* material);
 	void SetPrimitive(shared_ptr<LXPrimitiveD3D11>& InPrimitiveD3D11);
 			
 	void SetMatrix(const LXMatrix& InMatrix);
@@ -81,7 +81,7 @@ public:
 	LXConstantBufferDataSpotLight* ConstantBufferDataSpotLight = nullptr;
 	LXConstantBufferData0* LightView = nullptr;
 		
-	LXMaterial* Material = nullptr;
+	const LXMaterialBase* Material = nullptr;
 	shared_ptr<LXPrimitiveD3D11> Primitive;
 		
 	LXBBox BBoxWorld;

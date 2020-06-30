@@ -8,24 +8,26 @@
 
 #include "stdafx.h"
 #include "LXGraphMaterialToHLSLConverter.h"
+
+// Seetron
 #include "LXAssetManager.h"
 #include "LXConstantBuffer.h"
 #include "LXConnection.h"
 #include "LXConnector.h"
 #include "LXCore.h"
 #include "LXFile.h"
-#include "LXGraph.h"
 #include "LXGraphMaterial.h"
 #include "LXShaderFactory.h"
 #include "LXGraphTemplate.h"
 #include "LXMaterial.h"
+#include "LXMaterialInstance.h"
+#include "LXMaterialUtility.h"
 #include "LXNode.h"
 #include "LXRenderPassType.h"
 #include "LXTexture.h"
 #include "LXMaterialD3D11.h"
 #include "LXReference.h"
 #include "LXInputElementDescD3D11Factory.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXGraphMaterialToHLSLConverter::LXGraphMaterialToHLSLConverter()
 {
@@ -50,7 +52,8 @@ LXStringA LXGraphMaterialToHLSLConverter::GenerateCode(const LXMaterialD3D11* ma
 	default: CHK(0); break;
 	}
 	   	 	
-	const LXGraph* graph = (const LXGraph*)materialD3D11->GetMaterial()->GetGraph();
+	const LXMaterial* material =  LXMaterialUtility::GetMaterialFromBase(_material);
+	const LXGraphMaterial* graph = material->GetGraph();
 		
 	// Start from the "main function node"
 	const LXNode* nodeRoot = graph->GetMain();
@@ -566,8 +569,9 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNodeVariable(const LXMaterialD3D1
 	}
 	else if (property->GetType() == EPropertyType::AssetPtr)
 	{
-		LXPropertyAssetPtr* propertyAssetPtr = (LXPropertyAssetPtr*)property;
-		
+		// Retrieve the texture using the MaterialBase to get the override value.
+		const LXProperty* propertyTEMP = _material->GetProperty(node->GetName());
+		LXPropertyAssetPtr* propertyAssetPtr = (LXPropertyAssetPtr*)propertyTEMP;
 		LXTexture* texture = dynamic_cast<LXTexture*>(propertyAssetPtr->GetValue().get());
 		if (!texture)
 			texture = GetAssetManager()->GetDefaultTexture().get();
@@ -864,10 +868,12 @@ LXStringA LXGraphMaterialToHLSLConverter::CreateVertexShaderEntryPoint(int Layou
 LXStringA LXGraphMaterialToHLSLConverter::CreatePixelShaderEntryPoint()
 {
 	LXStringA code;
+	
+	const LXMaterial* material = LXMaterialUtility::GetMaterialFromBase(_material);
 
 	if (_renderPass == ERenderPass::GBuffer)
 	{
-		if (_material->GetLightingModel() == EMaterialLightingModel::Unlit)
+		if (material->GetLightingModel() == EMaterialLightingModel::Unlit)
 		{
 			code = "static const float lightModel = 1.0;\n"; // Unlit
 		}
@@ -904,7 +910,7 @@ LXStringA LXGraphMaterialToHLSLConverter::CreatePixelShaderEntryPoint()
 	}
 	else if (_renderPass == ERenderPass::Transparency)
 	{
-		if (_material->GetLightingModel() == EMaterialLightingModel::Unlit)
+		if (material->GetLightingModel() == EMaterialLightingModel::Unlit)
 		{
 			code =
 				"//--------------------------------------------------------------------------------------\n"

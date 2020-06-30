@@ -10,7 +10,7 @@
 
 class LXPrimitive;
 class LXMatrix;
-class LXMaterial;
+class LXMaterialBase;
 class LXWorldPrimitive;
 
 // Represents an instanced Primitive in a Mesh 
@@ -23,10 +23,11 @@ class LXPrimitiveInstance
 
 public:
 
-	LXPrimitiveInstance(const shared_ptr<LXPrimitive>& InPrimitive, const LXMatrix* InMatrix, const LXMaterial* InMaterial);
+	LXPrimitiveInstance(const shared_ptr<LXPrimitive>& InPrimitive, const LXMatrix* InMatrix, const LXMaterialBase* InMaterial);
 	~LXPrimitiveInstance();
 
-	void SetMaterial(shared_ptr<LXMaterial>& material);
+	// Set the material to the Primitive itself (not the instance)
+	void SetMaterial(shared_ptr<LXMaterialBase>& material);
 
 public:
 
@@ -43,7 +44,7 @@ public:
 	const LXMatrix* MatrixRCS = nullptr;
 
 	// Material (Optional)
-	const LXMaterial* Material = nullptr;
+	const LXMaterialBase* Material = nullptr;
 };
 
 

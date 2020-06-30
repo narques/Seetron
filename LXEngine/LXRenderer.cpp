@@ -13,7 +13,7 @@
 #include "LXConsoleManager.h"
 #include "LXConstantBufferD3D11.h"
 #include "LXCore.h"
-#include "LXMaterial.h"
+#include "LXMaterialBase.h"
 #include "LXMaterialD3D11.h"
 #include "LXPrimitiveD3D11.h"
 #include "LXProject.h"
@@ -558,8 +558,11 @@ void LXRenderer::CreateDeviceTexture(shared_ptr<LXTexture> texture)
 			CreateDeviceTexture_RT(texturePtr);
 		});
 
-		// Check that the texture is not already enqueued.
-		CHK(_enqueuedTexture.find(texturePtr) == _enqueuedTexture.end());
+		if (_enqueuedTexture.find(texturePtr) != _enqueuedTexture.end())
+		{
+			return;
+		}
+		
 		_enqueuedTexture[texturePtr] = texture;
 		EnqueueTask(task);
 	}
@@ -689,24 +692,32 @@ void LXRenderer::CopyDeviceTexture_RT(LXTexture* texture)
 	GetCore().EnqueueInvokeDelegate(&texture->BitmapChanged);
 }
 
-void LXRenderer::CreateDeviceMaterial(LXMaterial* material)
+void LXRenderer::CreateDeviceMaterial(shared_ptr<LXMaterialBase> material)
 {
 	if (IsRenderThread())
 	{ 
-		CreateDeviceMaterial_RT(material);
+		CreateDeviceMaterial_RT(material.get());
 	}
 	else
 	{
-		LXTask* task = new LXTaskCallBack([this, material]()
+		LXMaterialBase* materialPtr = material.get();
+
+		if (_enqueuedMaterials.find(materialPtr) != _enqueuedMaterials.end())
 		{
-			CreateDeviceMaterial_RT(material);
+			return;
+		}
+		
+		LXTask* task = new LXTaskCallBack([this, materialPtr]()
+		{
+			CreateDeviceMaterial_RT(materialPtr);
 		});
 
+		_enqueuedMaterials[materialPtr] = material;
 		EnqueueTask(task);
 	}
 }
 
-void LXRenderer::CreateDeviceMaterial_RT(LXMaterial* material)
+void LXRenderer::CreateDeviceMaterial_RT(LXMaterialBase* material)
 {
 	if (const LXMaterialD3D11* materialD3D11 = material->GetDeviceMaterial())
 	{
@@ -716,10 +727,17 @@ void LXRenderer::CreateDeviceMaterial_RT(LXMaterial* material)
 
 	LXMaterialD3D11* texture3D11 = LXMaterialD3D11::CreateFromMaterial(material);
 	material->SetDeviceMaterial(texture3D11);
+
+	LXTask* task = new LXTaskCallBack([this, material]()
+	{
+		_enqueuedMaterials.erase(material);
+	});
+
 	GetCore().EnqueueInvokeDelegate(&material->Compiled);
+	GetCore().EnqueueTask(task);
 }
 
-void LXRenderer::ReleaseDeviceMaterial(LXMaterial* material)
+void LXRenderer::ReleaseDeviceMaterial(LXMaterialBase* material)
 {
 	const LXMaterialD3D11* materialD3D11 = material->GetDeviceMaterial();
 	material->SetDeviceMaterial(nullptr);
@@ -740,7 +758,7 @@ void LXRenderer::ReleaseDeviceMaterial(LXMaterial* material)
 	}
 }
 
-void LXRenderer::UpdateDeviceMaterial(LXMaterial* material)
+void LXRenderer::UpdateDeviceMaterial(LXMaterialBase* material)
 {
 	LXMaterialD3D11* materialD3D11 = const_cast<LXMaterialD3D11*>(material->GetDeviceMaterial());
 

@@ -7,15 +7,17 @@
 //------------------------------------------------------------------------------------------------------
 
 #include "StdAfx.h"
+#include "LXMaterial.h"
+
+// Seetron
 #include "LXAssetManager.h"
 #include "LXGraphMaterial.h"
 #include "LXGraphTemplate.h"
-#include "LXMaterial.h"
 #include "LXMaterialNode.h"
 #include "LXNode.h"
 #include "LXProject.h"
 #include "LXRenderer.h"
-#include "LXMemory.h" // --- Must be the last included ---*
+#include "LXTexture.h"
 
 LXMaterial::LXMaterial(EMaterialType InMaterialType):MaterialType(InMaterialType)
 {
@@ -26,7 +28,6 @@ LXMaterial::LXMaterial(EMaterialType InMaterialType):MaterialType(InMaterialType
 
 LXMaterial::~LXMaterial(void)
 {
-	ReleaseDeviceMaterial();
 }
 
 void LXMaterial::DefineProperties()
@@ -92,22 +93,9 @@ bool LXMaterial::Compile()
 	return true;
 }
 
-LXTexture* LXMaterial::GetTextureDisplacement(const LXString& textureName) const
+const LXPropertyAssetPtr* LXMaterial::GetPropertyTextureByName(const LXString& textureName) const
 {
-	if (LXGraphMaterial* graphMaterial = GetGraph())
-	{
-		return graphMaterial->GetTextureDisplacement(textureName);
-	}
-	else
-	{
-		return nullptr;
-	}
-}
-
-LXPropertyAssetPtr* LXMaterial::GetPropertyTextureByName(const LXString& textureName) const
-{
-	LXGraphMaterial* graphMaterial = GetGraph();
-	return graphMaterial ? graphMaterial->GetPropertyTextureByName(textureName) : nullptr;
+	return dynamic_cast<LXPropertyAssetPtr*>(GetProperty(textureName));
 }
 
 bool LXMaterial::GetFloatParameter(const LXString& textureName, float& outValue) const
@@ -139,20 +127,9 @@ void LXMaterial::ReleaseGraph()
 	GraphMaterial->Clear();
 }
 
-void LXMaterial::CreateDeviceMaterial()
+LXString LXMaterial::GetShaderBaseName() const
 {
-	if (GetRenderer())
-	{
-		GetRenderer()->CreateDeviceMaterial(this);
-	}
-}
-
-void LXMaterial::ReleaseDeviceMaterial()
-{
-	if (_materialD3D11 && GetRenderer())
-	{
-		GetRenderer()->ReleaseDeviceMaterial(this);
-	}
+	return GetFilepath().GetFilenameNoExt();
 }
 
 void LXMaterial::OnPropertyChanged(LXProperty* pProperty)
@@ -162,3 +139,4 @@ void LXMaterial::OnPropertyChanged(LXProperty* pProperty)
 		GetRenderer()->UpdateDeviceMaterial(this);
 	}
 }
+

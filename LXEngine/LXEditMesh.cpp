@@ -454,7 +454,8 @@ bool LXEditMesh::CreateMonoIndexedVertexArray2(ListPrimitives& listGeometries)
 		{
 			if (pGeometry)
 			{
-				pGeometry->SetMaterial(pMaterial);
+				shared_ptr<LXMaterialBase> materialBase = static_pointer_cast<LXMaterialBase>(pMaterial);
+				pGeometry->SetMaterial(materialBase);
 				FinalizeGeometry(pGeometry, arrayIndexedVectors);
 			}
 
@@ -488,7 +489,8 @@ bool LXEditMesh::CreateMonoIndexedVertexArray2(ListPrimitives& listGeometries)
 	CHK(pGeometry);
 	if (pGeometry)
 	{
-		pGeometry->SetMaterial(pMaterial);
+		shared_ptr<LXMaterialBase> materialBase = static_pointer_cast<LXMaterialBase>(pMaterial);
+		pGeometry->SetMaterial(materialBase);
 		FinalizeGeometry(pGeometry, arrayIndexedVectors);
 	}
 

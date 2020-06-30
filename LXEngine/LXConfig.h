@@ -28,6 +28,7 @@
 
 #define LX_PROJECT_EXT				L"seproj"
 #define LX_MATERIAL_EXT				L"smat"
+#define LX_MATERIALINSTANCE_EXT		L"smi"
 #define LX_SHADER_EXT				L"hlsl"
 #define LX_TEXTURE_EXT				L"stex"
 #define LX_ANIMATION_EXT			L"anim"

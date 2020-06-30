@@ -36,7 +36,7 @@ LXWorldPrimitive::~LXWorldPrimitive()
 	PrimitiveInstance->Owners.remove(this);
 }
 
-void LXWorldPrimitive::SetMaterial(LXMaterial* material)
+void LXWorldPrimitive::SetMaterial(const LXMaterialBase* material)
 {
 	if (RenderCluster)
 	{

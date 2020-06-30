@@ -15,7 +15,7 @@
 #include "LXObject.h"
 #include "LXBBox.h"
 
-class LXMaterial;
+class LXMaterialBase;
 class LXMesh;
 class LXPrimitiveInstance;
 class LXRenderCluster;
@@ -29,7 +29,7 @@ public:
 	LXWorldPrimitive(const shared_ptr<LXPrimitiveInstance>& primitiveInstance, const LXMatrix& matrix, const LXBBox& box);
 	~LXWorldPrimitive();
 
-	void SetMaterial(LXMaterial* material);
+	void SetMaterial(const LXMaterialBase* material);
 	
 	shared_ptr<LXPrimitiveInstance> PrimitiveInstance;
 	LXMatrix MatrixWorld;

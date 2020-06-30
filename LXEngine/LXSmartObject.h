@@ -78,8 +78,8 @@ public:
 
 	void							GetUserProperties(ListProperties& UserProperties) const;
 	void							AttachPropertiesToThis();
-	LXProperty*						GetProperty(const LXPropertyID& PID);
-	LXProperty*						GetProperty(const LXString& name) const;
+	virtual LXProperty*				GetProperty(const LXPropertyID& PID);
+	virtual LXProperty*				GetProperty(const LXString& name) const;
 	virtual void					OnPropertyChanged(LXProperty* pProperty);
 
 	//
@@ -166,6 +166,8 @@ public:
 	LXPropertyT<T>*					DefineProperty(const LXString& name, const LXPropertyID& PID, T* var, T Min, T Max);
 	template<class T>
 	LXPropertyListSmartObjects*		DefinePropertyList(const LXString &name, T* var) { return DefineProperty(name, (ListSmartObjects*)var); }
+
+	bool							RemoveProperty(LXProperty* property);
 	
 protected:
 

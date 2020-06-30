@@ -17,6 +17,7 @@ class LXConstantBufferD3D11;
 class LXDirectX11;
 class LXMaterialD3D11;
 class LXMatrix;
+class LXMaterialBase;
 class LXPrimitive;
 class LXPrimitiveD3D11;
 class LXProject;
@@ -80,9 +81,9 @@ public:
 	void ReleaseDeviceTexture(LXTexture* texture);
 	void CopyDeviceTexture(LXTexture* texture);
 	
-	void CreateDeviceMaterial(LXMaterial* material);
-	void ReleaseDeviceMaterial(LXMaterial* material);
-	void UpdateDeviceMaterial(LXMaterial* material);
+	void CreateDeviceMaterial(shared_ptr<LXMaterialBase> material);
+	void ReleaseDeviceMaterial(LXMaterialBase* material);
+	void UpdateDeviceMaterial(LXMaterialBase* material);
 
 	// Shared objects
 	ID3D11RasterizerState* GetDefaultRasterizerState () const { return D3D11RasterizerState; }
@@ -130,7 +131,7 @@ private:
 	void ReleaseRenderData_RT();
 	void CreateDeviceTexture_RT(LXTexture* texture);
 	void CopyDeviceTexture_RT(LXTexture* texture);
-	void CreateDeviceMaterial_RT(LXMaterial* material);
+	void CreateDeviceMaterial_RT(LXMaterialBase* material);
 
 public:
 
@@ -203,5 +204,6 @@ private:
 	// Enqueued Textures for device creation. Set by the MainThread.
 	// Avoid early texture destruction.
 	map <LXTexture*, shared_ptr<LXTexture>> _enqueuedTexture;
+	map <LXMaterialBase*, shared_ptr<LXMaterialBase>> _enqueuedMaterials;
 };
 
