@@ -199,7 +199,7 @@ bool LXMaterialD3D11::Create(const LXMaterialBase* materialBase)
 	TwoSided = material->GetTwoSided() == true;
 	Transparent = material->IsTransparent();
 
-	LXGraphMaterialToHLSLConverter graphMaterialToHLSLConverter;
+	LXGraphMaterialToHLSLConverter graphMaterialToHLSLConverter(Material);
 
 	//
 	// Build the VS Constant Buffer 

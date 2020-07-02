@@ -794,7 +794,7 @@ void LXSmartObject::DeleteProperty(LXProperty* pProperty)
 {
 }
 
-LXString* LXSmartObject::GetUID(bool bBuild)
+LXString* LXSmartObject::GetUID(bool bBuild) const
 {
 	if (bBuild && !_pUID)
 	{

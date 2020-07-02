@@ -29,7 +29,7 @@
 #include "LXReference.h"
 #include "LXInputElementDescD3D11Factory.h"
 
-LXGraphMaterialToHLSLConverter::LXGraphMaterialToHLSLConverter()
+LXGraphMaterialToHLSLConverter::LXGraphMaterialToHLSLConverter(const LXMaterialBase* material): _material(material)
 {
 }
 
@@ -39,7 +39,6 @@ LXGraphMaterialToHLSLConverter::~LXGraphMaterialToHLSLConverter()
 
 LXStringA LXGraphMaterialToHLSLConverter::GenerateCode(const LXMaterialD3D11* materialD3D11, ERenderPass renderPass, EShader Shader, int layoutMask)
 {
-	_material = materialD3D11->GetMaterial();
 	_renderPass = renderPass;
 	_shader = Shader;
 	_layoutMask = layoutMask;
@@ -249,27 +248,27 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNode(const LXMaterialD3D11* mater
 
 					if (connector->Type == EConnectorType::Float)
 					{
-						userParameters += ",/*float*/ $" + connector->GetName().ToStringA();
+						userParameters += ",/*float*/ $" + connector->GetUID()->ToStringA();
 					}
 					else if (connector->Type == EConnectorType::Float2)
 					{
-						userParameters += ",/*float2*/ $" + connector->GetName().ToStringA();
+						userParameters += ",/*float2*/ $" + connector->GetUID()->ToStringA();
 					}
 					else if (connector->Type == EConnectorType::Float3)
 					{
-						userParameters += ",/*float3*/ $" + connector->GetName().ToStringA();
+						userParameters += ",/*float3*/ $" + connector->GetUID()->ToStringA();
 					}
 					else if (connector->Type == EConnectorType::Float4)
 					{
-						userParameters += ",/*float4*/ $" + connector->GetName().ToStringA();
+						userParameters += ",/*float4*/ $" + connector->GetUID()->ToStringA();
 					}
 					else if (connector->Type == EConnectorType::Texture2D)
 					{
-						userParameters += ",/*Texture2D*/ $" + connector->GetName().ToStringA();
+						userParameters += ",/*Texture2D*/ $" + connector->GetUID()->ToStringA();
 					}
 					else if (connector->Type == EConnectorType::SamplerState)
 					{
-						userParameters += ",/*SamplerState*/ $" + connector->GetName().ToStringA();
+						userParameters += ",/*SamplerState*/ $" + connector->GetUID()->ToStringA();
 					}
 					else
 					{
@@ -292,8 +291,20 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNode(const LXMaterialD3D11* mater
 	for (const LXConnector* connector : node->Inputs)
 	{
 		const LXStringA connectorName = "$" + connector->GetName().ToStringA();
-		const int i = code.Find(connectorName);
-		const int j = variableDeclaration ? variableDeclaration->Find(connectorName): string::npos;
+		const LXStringA connectorUID = "$" + connector->GetUID()->ToStringA();
+
+		int i = code.Find(connectorName);
+		if (i == -1)
+			i = code.Find(connectorUID);
+		
+		int j = string::npos;
+		if (variableDeclaration)
+		{
+			j = variableDeclaration->Find(connectorName);
+			if (j == -1)
+				j = variableDeclaration->Find(connectorUID);
+		}
+		
 		
 		if (i == string::npos && j == string::npos)
 		{
@@ -414,6 +425,7 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNode(const LXMaterialD3D11* mater
 
 		CHK(!connectorValue.IsEmpty());
 		code.Replace(connectorName, connectorValue);
+		code.Replace(connectorUID, connectorValue);
 
 		if (variableDeclaration)
 		{
@@ -460,8 +472,16 @@ bool LXGraphMaterialToHLSLConverter::ParseNodeCB(const LXNode& node, LXConstantB
 		// Variables have not input.
 		CHK(node.Inputs.size() == 0);
 
-		// Retrieve the UserProperty where is stored the "Variable"
-		LXProperty* property = node.GetProperty(L"Value");
+		// Try to retrieve the texture using the MaterialBase to get the override value.
+		const LXProperty* property = _material->GetProperty(node.GetName());
+
+		if (!property)
+		{
+			// Retrieve the UserProperty where is stored the "Variable"
+			property = node.GetProperty(L"Value");
+		}
+		
+
 		if (property->GetType() == EPropertyType::Float)
 		{
 			LXPropertyFloat* propertyFloat = (LXPropertyFloat*)property;
@@ -510,7 +530,7 @@ bool LXGraphMaterialToHLSLConverter::ParseNodeCB(const LXNode& node, LXConstantB
 
 	for (const LXConnector* connector : node.Inputs)
 	{
-		LXStringA connectorName = "$" + connector->GetName().ToStringA();
+		LXStringA connectorName = "$" + connector->GetUID()->ToStringA();
 
 		// Input is unique
 		CHK(connector->Connections.size() <= 1);

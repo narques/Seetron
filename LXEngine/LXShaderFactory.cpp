@@ -37,7 +37,7 @@ LXShaderFactory::~LXShaderFactory()
 
 void LXShaderFactory::GenerateVertexShader(const LXFilepath& Filename, const LXMaterialD3D11* materialD3D11, ERenderPass renderPass, int layoutMask)
 {
-	LXGraphMaterialToHLSLConverter graphMaterialToHLSLConverer;
+	LXGraphMaterialToHLSLConverter graphMaterialToHLSLConverer(materialD3D11->GetMaterial());
 	LXStringA ShaderBuffer = graphMaterialToHLSLConverer.GenerateCode(materialD3D11, renderPass, EShader::VertexShader, layoutMask);
 
 	//
@@ -99,7 +99,7 @@ void LXShaderFactory::GenerateVertexShader(const LXFilepath& Filename, const LXM
 
 void LXShaderFactory::GeneratePixelShader(const LXFilepath& Filename, const LXMaterialD3D11* materialD3D11, ERenderPass renderPass)
 {
-	LXGraphMaterialToHLSLConverter graphMaterialToHLSLConverer;
+	LXGraphMaterialToHLSLConverter graphMaterialToHLSLConverer(materialD3D11->GetMaterial());
 	LXStringA ShaderBuffer = graphMaterialToHLSLConverer.GenerateCode(materialD3D11, renderPass, EShader::PixelShader);
 
 	//

@@ -148,7 +148,7 @@ public:
 
 	// Misc 
 	bool							IsNeedSave() const { return _bNeedSave; }
-	LXString*						GetUID(bool bBuild = false);
+	LXString*						GetUID(bool bBuild = false) const;
 		
 	template<class T>
 	LXPropertyT<T>*					CreateUserProperty(const LXString& Name, const T& DefaultValue);
@@ -224,7 +224,7 @@ protected:
 	
 private:
 
-	LXString*						_pUID = nullptr;
+	mutable LXString*				_pUID = nullptr;
 	ListProperties					_listProperties;		// Engine defined properties
 	list<LXVariant*>				_listVariants;			// User defined variables
 

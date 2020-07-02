@@ -25,7 +25,7 @@ class LXGraphMaterialToHLSLConverter : public LXObject
 
 public:
 
-	LXGraphMaterialToHLSLConverter();
+	LXGraphMaterialToHLSLConverter(const LXMaterialBase* material);
 	virtual ~LXGraphMaterialToHLSLConverter();
 
 	LXStringA GenerateCode(const LXMaterialD3D11* materialD3D11, ERenderPass renderPass, EShader Shader, int layoutMask = -1);

@@ -29,6 +29,30 @@ public:
 	virtual LXProperty* GetProperty(const LXPropertyID& PID) override;
 	virtual LXProperty* GetProperty(const LXString& propertyName) const override;
 
+	// [Create] and set a generic property override
+	template<typename P>
+	bool SetProperty(const LXString& propertyName, const P& propertyValue)
+	{
+		// Ensure the property exists on parent
+		const LXSmartObject* material = Parent.get();
+		LXProperty* property = material->GetProperty(propertyName);
+
+		if (const LXPropertyT<P>* propertyTyped = dynamic_cast<const LXPropertyT<P>*>(property))
+		{
+			LXPropertyT<P>* propertyOverride = dynamic_cast<LXPropertyT<P>*>(LXSmartObject::GetProperty(propertyName));
+ 
+			if (!propertyOverride)
+			{
+				propertyOverride = CreateUserProperty<P>(propertyName, propertyTyped->GetValue());
+			}
+ 
+			propertyOverride->SetValue(propertyValue, false);
+			return true;
+		}
+ 
+		return false;
+	}
+
 public:
 
 	shared_ptr<T> Parent;
