@@ -67,6 +67,13 @@ void SaveXML(const TSaveContext& saveContext, const LXString& strXMLName, const 
 
 LXString LXPropertyInfo::_CurrentGroup = L"MISC";
 
+LXProperty* LXProperty::Create(const LXString& name, void* var) const
+{
+	// Must be implemented in child classes
+	CHK(0);
+	return nullptr;
+}
+
 LXProperty::LXProperty(EPropertyType type):
 _Owner(nullptr),
 _Type(type)
@@ -115,6 +122,16 @@ LX_DECLARE_GETTEMPLATETYPE(LXReference<LXSmartObject>, EPropertyType::ReferenceO
 //--------------------------------------------------------------------------
 // LXPropertyT 
 //--------------------------------------------------------------------------
+
+template<class T>
+LXProperty* LXPropertyT<T>::Create(const LXString& name, void* var) const
+{
+	LXPropertyT<T>* property = new LXPropertyT<T>(LXProperty::GetTemplateType<T>());
+	property->SetName(name);
+	property->SetID(GetAutomaticPropertyID());
+	property->SetVarPtr((T*)var);
+	return property;
+}
 
 template <class T>
 LXPropertyT<T>::LXPropertyT(EPropertyType type):LXProperty(type), _Var(nullptr)

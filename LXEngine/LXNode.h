@@ -18,6 +18,7 @@ class LXConnectorTemplate;
 enum class ENodeType
 {
 	Undefined,
+	Constant,
 	Variable,
 	Function
 };
@@ -31,6 +32,8 @@ public:
 	LXNode(LXGraph* graph, const LXNodeTemplate* nodeTemplate);
 	virtual ~LXNode();
 
+	ENodeType GetType() const;
+		
 	int GetOuputConnectorIndex(const LXConnector* connector);
 
 	void GetNewListItemChoices(const LXPropertyListSmartObjects* property, list<LXString>& outStrings) override;

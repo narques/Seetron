@@ -167,6 +167,7 @@ public:
 	template<class T>
 	LXPropertyListSmartObjects*		DefinePropertyList(const LXString &name, T* var) { return DefineProperty(name, (ListSmartObjects*)var); }
 
+	bool							AddProperty(LXProperty* pProperty);
 	bool							RemoveProperty(LXProperty* property);
 	
 protected:
@@ -202,7 +203,6 @@ private:
 	virtual bool					OnLoadChild(const TLoadContext& loadContext) { return true; }
 	
 	void							DefineProperties();
-	bool							AddProperty(LXProperty* pProperty);
 	void							DeleteProperty(LXProperty* pProperty);
 
 public:

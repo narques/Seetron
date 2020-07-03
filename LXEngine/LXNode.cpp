@@ -90,6 +90,18 @@ LXNode::~LXNode()
 	Outputs.clear();
 }
 
+ENodeType LXNode::GetType() const
+{
+	if (NodeTemplate->Type == L"Constant")
+		return ENodeType::Constant;
+	else if (NodeTemplate->Type == L"Variable")
+		return ENodeType::Variable;
+	else if (NodeTemplate->Type == L"Function")
+		return ENodeType::Function;
+	else
+		return ENodeType::Undefined;
+}
+
 int LXNode::GetOuputConnectorIndex(const LXConnector* connector)
 {
 	int i = 0;
@@ -121,6 +133,9 @@ void LXNode::DefineProperties()
 
 void LXNode::OnLoaded()
 {
+	const LXGraphTemplate* graphTemplate = GetAssetManager()->GetGraphMaterialTemplate();
+	NodeTemplate = graphTemplate->GetNodeTemplate(TemplateID);
+
 // 	// Check if the 
 // 	CHK(VerifyConformity(TemplateID))
 	Update(TemplateID);

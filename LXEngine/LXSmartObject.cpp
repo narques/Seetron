@@ -528,7 +528,6 @@ LXPropertyT<T>* LXSmartObject::DefineProperty(const LXString& name, const LXProp
 {
 	LXPropertyT<T>* pProperty = new LXPropertyT<T>(LXProperty::GetTemplateType<T>());
 
-	pProperty->SetObject(this);
 	pProperty->SetName(name);
 	pProperty->SetID(PID);
 	pProperty->SetVarPtr(var);
@@ -541,7 +540,6 @@ LXPropertyT<T>* LXSmartObject::DefineProperty(const LXString& name, const LXProp
 {
 	LXPropertyT<T>* pProperty = new LXPropertyT<T>(LXProperty::GetTemplateType<T>());
 
-	pProperty->SetObject(this);
 	pProperty->SetName(name);
 	pProperty->SetID(PID);
 	pProperty->SetVarPtr(var);
@@ -555,7 +553,6 @@ LXPropertyT<T>* LXSmartObject::DefineProperty(const LXString& label, const LXStr
 {
 	LXPropertyT<T>* pProperty = new LXPropertyT<T>(LXProperty::GetTemplateType<T>());
 
-	pProperty->SetObject(this);
 	pProperty->SetID(PID);
 	pProperty->SetName(name);
 	pProperty->SetLabel(label);
@@ -580,7 +577,6 @@ LXPropertyT<T>*	LXSmartObject::DefinePropertyEval(const LXString& name, const LX
 {
 	LXPropertyT<T>* pProperty = new LXPropertyT<T>();
 
-	pProperty->SetObject(this);
 	pProperty->SetName(name);
 	pProperty->SetID(id);
 	pProperty->SetLambdaOnGet(eval);
@@ -592,7 +588,6 @@ LXPropertyEnum* LXSmartObject::DefinePropertyEnum(const LXString& name, const LX
 {
 	LXPropertyEnum* pPropEnum = new LXPropertyEnum();
 
-	pPropEnum->SetObject(this);
 	pPropEnum->SetID(propID);
 	pPropEnum->SetName(name);
 	pPropEnum->SetVarPtr(pEnum);
@@ -784,7 +779,7 @@ bool LXSmartObject::AddProperty(LXProperty* pProperty)
 			pProperty->SetLabel(xmlName);
 	}
 
-	
+	pProperty->SetObject(this);
 	_listProperties.push_back(pProperty);
 	
 	return true;

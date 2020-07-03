@@ -72,6 +72,9 @@ class LXCORE_API LXProperty// : public LXObject
 
 public:
 
+	// Creates a new 'var' based property
+	virtual LXProperty* Create(const LXString& name, void* var) const;
+
 	LXProperty(EPropertyType type);
 	virtual ~LXProperty(void);
 
@@ -124,7 +127,7 @@ public:
 	
 	virtual	LXVariant*		CreateVariant	( ) = 0;
 	virtual void			SetValue		( const LXVariant& variant, bool InvokeOnPropertyChanged ) = 0;
-	virtual void*			GetVarPtr		( ) = 0;
+	virtual void*			GetVarPtr		( ) const = 0;
 
 	// User property tools
 	virtual	LXString		GetTypeName() = 0;
@@ -166,6 +169,8 @@ public:
 	
 	// Constructors & Destructor
 
+	virtual LXProperty* Create(const LXString& name, void* var) const override;
+
 	LXPropertyT			( EPropertyType type );
 	LXPropertyT			( const LXPropertyT& prop );
 	virtual ~LXPropertyT( );
@@ -181,7 +186,7 @@ public:
 	void				SetLambdaOnChange(std::function<void(LXPropertyT*)> eval)   { _funcOnChange = eval; }
 
 	void				SetVarPtr		( T* pVar )									{ CHK(!_funcOnSet); _Var = pVar; }
-	void*				GetVarPtr		( ) override								{ return _Var; }
+	void*				GetVarPtr		( ) const override							{ return _Var; }
 	
 	const T&			GetValue		( ) const;
 	void				SetValue		( const T& value, bool InvokeOnPropertyChanged = true);

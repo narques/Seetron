@@ -90,19 +90,20 @@ void LXGraphMaterial::OnPropertyChanged(LXProperty* property)
 
 void LXGraphMaterial::Register(const shared_ptr<LXNode>& node)
 {
-	if (LXPropertyAssetPtr* property = dynamic_cast<LXPropertyAssetPtr*>(node->GetProperty(L"Value")))
+	if (const LXProperty* property = node->GetProperty(L"Value"))
 	{
-		LXAssetPtr* var = (LXAssetPtr*)property->GetVarPtr();
-		LXPropertyAssetPtr* newProperty = Material->DefineProperty<LXAssetPtr>(node->GetName(), var);
+		void* var = property->GetVarPtr();
+		LXProperty* newProperty = property->Create(node->GetName(), var);
 		newProperty->SetPersistent(false);
+		Material->AddProperty(newProperty);
 	}
 }
 
 void LXGraphMaterial::Unregister(const shared_ptr<LXNode>& node)
 {
-	if (LXPropertyAssetPtr* property = dynamic_cast<LXPropertyAssetPtr*>(node->GetProperty(L"Value")))
+	if (const LXProperty* property = node->GetProperty(L"Value"))
 	{
-		LXPropertyAssetPtr* propertyFromMaterial = dynamic_cast<LXPropertyAssetPtr*>(Material->GetProperty(node->GetName()));
+		LXProperty* propertyFromMaterial = Material->GetProperty(node->GetName());
 		CHK(propertyFromMaterial);
 		CHK(Material->RemoveProperty(propertyFromMaterial));
 		delete propertyFromMaterial;
