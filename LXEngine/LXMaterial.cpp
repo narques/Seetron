@@ -13,6 +13,7 @@
 #include "LXAssetManager.h"
 #include "LXGraphMaterial.h"
 #include "LXGraphTemplate.h"
+#include "LXMaterialInstance.h"
 #include "LXMaterialNode.h"
 #include "LXNode.h"
 #include "LXProject.h"
@@ -90,6 +91,12 @@ bool LXMaterial::Compile()
 	}
 
 	CreateDeviceMaterial();
+
+	for (LXMaterialInstance* instance : Instances)
+	{
+		instance->Compile();
+	}
+
 	return true;
 }
 

@@ -21,13 +21,16 @@ LXMaterialInstance::LXMaterialInstance()
 
 LXMaterialInstance::~LXMaterialInstance()
 {
+	Parent->Instances.remove(this);
 }
 
 shared_ptr<LXMaterialInstance> LXMaterialInstance::Create(const shared_ptr<LXMaterial>& material)
 {
 	shared_ptr<LXMaterialInstance> materialInstance = make_shared<LXMaterialInstance>();
 	materialInstance->Parent = material;
-	materialInstance->InstanceID = ++material->InstanceCount;
+	materialInstance->InstanceID = material->Instances.size();
+	material->Instances.push_back(materialInstance.get());
+
 	return materialInstance;
 }
 

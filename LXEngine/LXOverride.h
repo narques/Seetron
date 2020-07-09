@@ -57,9 +57,6 @@ public:
 
 	shared_ptr<T> Parent;
 
-private:
-
-	ListProperties _listProperties;
 };
 
 template <typename T>

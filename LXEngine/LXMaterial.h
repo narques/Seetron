@@ -67,7 +67,7 @@ public:
 
 public:
 
-	int InstanceCount = 0;
+	list<class LXMaterialInstance*> Instances;
 
 private:
 
