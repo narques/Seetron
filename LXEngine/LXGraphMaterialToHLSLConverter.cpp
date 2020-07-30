@@ -178,7 +178,7 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNode(const LXMaterialD3D11* mater
 	// Node may use a intermediate variable.
 	
 	// Generate a free var name
-	LXStringA variableName = "toto";
+	LXStringA variableName = "var";
 
 	// fix the var name declaration
 	LXStringA* variableDeclaration = nullptr;
@@ -192,7 +192,7 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNode(const LXMaterialD3D11* mater
 			// Local variable to add.
 //			variableName = nodeTemplate->LocalVariables.ToStringA();
 
-			LXStringA v = "const float4 toto = $x;";
+			LXStringA v = "const float4 var = $x;";
 			_variableDeclarations.push_back(v);
 
 			variableDeclaration = &_variableDeclarations.back();
@@ -727,10 +727,10 @@ LXStringA LXGraphMaterialToHLSLConverter::CreateVertexShaderEntryPoint(int Layou
 				"//--------------------------------------------------------------------------------------\n"
 				"VS_OUTPUT_PT VS(VS_INPUT_PT input)\n"
 				"{\n"
-				"	//VARIABLES\n"
 				"	VS_OUTPUT_PT vertex = (VS_OUTPUT_PT)0;\n"
 				"	vertex.Pos = input.Pos;\n"
 				"	vertex.TexCoord = input.TexCoord;\n"
+				"	//VARIABLES\n"
 				"	return vertex;\n"
 				"}\n";
 
@@ -752,16 +752,16 @@ LXStringA LXGraphMaterialToHLSLConverter::CreateVertexShaderEntryPoint(int Layou
 			"//--------------------------------------------------------------------------------------\n"
 			"VS_OUTPUT VS(VS_INPUT_P input)\n"
 			"{\n"
+			"	VS_VERTEX vertex = (VS_VERTEX)0;\n"
+			"	vertex.Pos = input.Pos;\n"
+			"	vertex.Normal = float3(0.0, 0.0, 1.0);\n"
+			"	vertex.Tangent = float3(1.0, 0.0, 0.0);\n"
+			"	vertex.Binormal = float3(0.0, 1.0, 0.0);\n"
+			"	vertex.TexCoord = float2(0.0, 0.0);\n"
+			"	vertex.InstanceID = 0;\n"
+			"	vertex.InstancePos = float3(0.0, 0.0, 0.0);\n"
 			"	//VARIABLES\n"
-			"	VS_VERTEX Vertex = (VS_VERTEX)0;\n"
-			"	Vertex.Pos = input.Pos;\n"
-			"	Vertex.Normal = float3(0.0, 0.0, 1.0);\n"
-			"	Vertex.Tangent = float3(1.0, 0.0, 0.0);\n"
-			"	Vertex.Binormal = float3(0.0, 1.0, 0.0);\n"
-			"	Vertex.TexCoord = float2(0.0, 0.0);\n"
-			"	Vertex.InstanceID = 0;\n"
-			"	Vertex.InstancePos = float3(0.0, 0.0, 0.0);\n"
-			"	return ComputeVertex(Vertex, $Displacement);\n"
+			"	return ComputeVertex(vertex, $Displacement);\n"
 			"}\n";
 	}
 	else if (LayoutMask == (int)EPrimitiveLayout::PT)
@@ -772,16 +772,16 @@ LXStringA LXGraphMaterialToHLSLConverter::CreateVertexShaderEntryPoint(int Layou
 			"//--------------------------------------------------------------------------------------\n"
 			"VS_OUTPUT VS(VS_INPUT_PT input)\n"
 			"{\n"
+			"	VS_VERTEX vertex = (VS_VERTEX)0;\n"
+			"	vertex.Pos = input.Pos;\n"
+			"	vertex.Normal = float3(0.0, 0.0, 1.0);\n"
+			"	vertex.Tangent = float3(1.0, 0.0, 0.0);\n"
+			"	vertex.Binormal = float3(0.0, 1.0, 0.0);\n"
+			"	vertex.TexCoord = input.TexCoord;\n"
+			"	vertex.InstanceID = 0;\n"
+			"	vertex.InstancePos = float3(0.0, 0.0, 0.0);\n"
 			"	//VARIABLES\n"
-			"	VS_VERTEX Vertex = (VS_VERTEX)0;\n"
-			"	Vertex.Pos = input.Pos;\n"
-			"	Vertex.Normal = float3(0.0, 0.0, 1.0);\n"
-			"	Vertex.Tangent = float3(1.0, 0.0, 0.0);\n"
-			"	Vertex.Binormal = float3(0.0, 1.0, 0.0);\n"
-			"	Vertex.TexCoord = input.TexCoord;\n"
-			"	Vertex.InstanceID = 0;\n"
-			"	Vertex.InstancePos = float3(0.0, 0.0, 0.0);\n"
-			"	return ComputeVertex(Vertex, $Displacement);\n"
+			"	return ComputeVertex(vertex, $Displacement);\n"
 			"}\n";
 	}
 	else if (LayoutMask == (int)EPrimitiveLayout::PN)
@@ -792,16 +792,16 @@ LXStringA LXGraphMaterialToHLSLConverter::CreateVertexShaderEntryPoint(int Layou
 			"//--------------------------------------------------------------------------------------\n"
 			"VS_OUTPUT VS(VS_INPUT_PN input)\n"
 			"{\n"
+			"	VS_VERTEX vertex = (VS_VERTEX)0;\n"
+			"	vertex.Pos = input.Pos;\n"
+			"	vertex.Normal = input.Normal; \n"
+			"	vertex.Tangent = float3(1.0, 0.0, 0.0);\n"
+			"	vertex.Binormal = float3(0.0, 1.0, 0.0);\n"
+			"	vertex.TexCoord = float2(0.0, 0.0);\n"
+			"	vertex.InstanceID = 0;\n"
+			"	vertex.InstancePos = float3(0.0, 0.0, 0.0);\n"
 			"	//VARIABLES\n"
-			"	VS_VERTEX Vertex = (VS_VERTEX)0;\n"
-			"	Vertex.Pos = input.Pos;\n"
-			"	Vertex.Normal = input.Normal; \n"
-			"	Vertex.Tangent = float3(1.0, 0.0, 0.0);\n"
-			"	Vertex.Binormal = float3(0.0, 1.0, 0.0);\n"
-			"	Vertex.TexCoord = float2(0.0, 0.0);\n"
-			"	Vertex.InstanceID = 0;\n"
-			"	Vertex.InstancePos = float3(0.0, 0.0, 0.0);\n"
-			"	return ComputeVertex(Vertex, $Displacement);\n"
+			"	return ComputeVertex(vertex, $Displacement);\n"
 			"}\n";
 	}
 	else if (LayoutMask == (int)EPrimitiveLayout::PNT)
@@ -812,16 +812,16 @@ LXStringA LXGraphMaterialToHLSLConverter::CreateVertexShaderEntryPoint(int Layou
 			"//--------------------------------------------------------------------------------------\n"
 			"VS_OUTPUT VS(VS_INPUT_PNT input)\n"
 			"{\n"
+			"	VS_VERTEX vertex = (VS_VERTEX)0;\n"
+			"	vertex.Pos = input.Pos;\n"
+			"	vertex.Normal = input.Normal; \n"
+			"	vertex.TexCoord = input.TexCoord;\n"
+			"	vertex.Tangent = float3(1.0, 0.0, 0.0);\n"
+			"	vertex.Binormal = float3(0.0, 1.0, 0.0);\n"
+			"	vertex.InstanceID = 0;\n"
+			"	vertex.InstancePos = float3(0.0, 0.0, 0.0);\n"
 			"	//VARIABLES\n"
-			"	VS_VERTEX Vertex = (VS_VERTEX)0;\n"
-			"	Vertex.Pos = input.Pos;\n"
-			"	Vertex.Normal = input.Normal; \n"
-			"	Vertex.TexCoord = input.TexCoord;\n"
-			"	Vertex.Tangent = float3(1.0, 0.0, 0.0);\n"
-			"	Vertex.Binormal = float3(0.0, 1.0, 0.0);\n"
-			"	Vertex.InstanceID = 0;\n"
-			"	Vertex.InstancePos = float3(0.0, 0.0, 0.0);\n"
-			"	return ComputeVertex(Vertex, $Displacement);\n"
+			"	return ComputeVertex(vertex, $Displacement);\n"
 			"}\n";
 	}
 	else if (LayoutMask == (int)EPrimitiveLayout::PNABT)
@@ -832,18 +832,17 @@ LXStringA LXGraphMaterialToHLSLConverter::CreateVertexShaderEntryPoint(int Layou
 			"//--------------------------------------------------------------------------------------\n"
 			"VS_OUTPUT VS(VS_INPUT_PNABT input)\n"
 			"{\n"
+			"	VS_VERTEX vertex = (VS_VERTEX)0;\n"
+			"	vertex.Pos = input.Pos; \n"
+			"	vertex.Normal = input.Normal; \n"
+			"	vertex.Tangent = input.Tangent;\n"
+			"	vertex.Binormal = input.Binormal;\n"
+			"	vertex.TexCoord = input.TexCoord;\n"
+			"	vertex.SupportNormalMap = true;\n"
+			"	vertex.InstanceID = 0;\n"
+			"	vertex.InstancePos = float3(0.0, 0.0, 0.0);\n"
 			"	//VARIABLES\n"
-			"	VS_VERTEX Vertex = (VS_VERTEX)0;\n"
-			"	Vertex.Pos = input.Pos; \n"
-			"	Vertex.Normal = input.Normal; \n"
-			"	Vertex.Tangent = input.Tangent;\n"
-			"	Vertex.Binormal = input.Binormal;\n"
-			"	Vertex.TexCoord = input.TexCoord;\n"
-			"	Vertex.SupportNormalMap = true;\n"
-			"	Vertex.InstanceID = 0;\n"
-			"	Vertex.InstancePos = float3(0.0, 0.0, 0.0);\n"
-			"	VS_OUTPUT output = ComputeVertex(Vertex, $Displacement);\n"
-			"	return output;\n"
+			"	return ComputeVertex(vertex, $Displacement);\n"
 			"}\n";
 	}
 	else if (LayoutMask == (int)EPrimitiveLayout::PNABTI)
@@ -852,19 +851,19 @@ LXStringA LXGraphMaterialToHLSLConverter::CreateVertexShaderEntryPoint(int Layou
 			"//--------------------------------------------------------------------------------------\n"
 			"// Vertex Shader - GBuffer - 'PNABTI' layout \n"
 			"//--------------------------------------------------------------------------------------\n"
-			"VS_OUTPUT VS(VS_INPUT_PNABTI input1, uint instanceID : SV_InstanceID)\n"
+			"VS_OUTPUT VS(VS_INPUT_PNABTI input, uint instanceID : SV_InstanceID)\n"
 			"{\n"
+			"	VS_VERTEX vertex = (VS_VERTEX)0;\n"
+			"	vertex.Pos = input.Pos;\n"
+			"	vertex.Normal = input.Normal; \n"
+			"	vertex.Tangent = input.Tangent;\n"
+			"	vertex.Binormal = input.Binormal;\n"
+			"	vertex.TexCoord = input.TexCoord;\n"
+			"	vertex.SupportNormalMap = true;\n"
+			"	vertex.InstanceID = instanceID;\n"
+			"	vertex.InstancePos = input.InstancePos;\n"
 			"	//VARIABLES\n"
-			"	VS_VERTEX Vertex = (VS_VERTEX)0;\n"
-			"	Vertex.Pos = input.Pos;\n"
-			"	Vertex.Normal = input.Normal; \n"
-			"	Vertex.Tangent = input.Tangent;\n"
-			"	Vertex.Binormal = input.Binormal;\n"
-			"	Vertex.TexCoord = input.TexCoord;\n"
-			"	Vertex.SupportNormalMap = true;\n"
-			"	Vertex.InstanceID = instanceID;\n"
-			"	Vertex.InstancePos = input.InstancePos;\n"
-			"	return ComputeVertex(Vertex, $Displacement);\n"
+			"	return ComputeVertex(vertex, $Displacement);\n"
 			"}\n";
 	}
 	else

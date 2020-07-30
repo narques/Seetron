@@ -110,7 +110,7 @@ LXAssetManager::LXAssetManager(LXProject* Project) :_pDocument(Project)
 	CHK(IsMainThread());
 
 	_graphMaterialTemplate = make_unique<LXGraphTemplate>();
-	VRF(_graphMaterialTemplate->LoadWithMSXML(GetSettings().GetCoreFolder() + L"/GraphMaterialTempale.xml"));
+	VRF(_graphMaterialTemplate->LoadWithMSXML(GetSettings().GetCoreFolder() + L"/GraphMaterialTemplate.xml"));
 				
 	_ListAssetExtentions.push_back(LX_MATERIAL_EXT);
 	_ListAssetExtentions.push_back(LX_TEXTURE_EXT);
