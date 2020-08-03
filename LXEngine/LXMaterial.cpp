@@ -68,7 +68,6 @@ bool LXMaterial::Load()
 	if (Result)
 	{
 		State = EResourceState::LXResourceState_Loaded;
-		CreateDeviceMaterial();
 	}
 
 	return false;
@@ -90,7 +89,8 @@ bool LXMaterial::Compile()
 		return false;
 	}
 
-	CreateDeviceMaterial();
+	// Release the existing devices resources, the Renderer will recreate them.
+	ReleaseDeviceMaterials();
 
 	for (LXMaterialInstance* instance : Instances)
 	{
@@ -141,9 +141,9 @@ LXString LXMaterial::GetShaderBaseName() const
 
 void LXMaterial::OnPropertyChanged(LXProperty* pProperty)
 {
-	if (_materialD3D11 && GetRenderer())
+	if (GetRenderer())
 	{
-		GetRenderer()->UpdateDeviceMaterial(this);
+		GetRenderer()->UpdateDeviceMaterials(this);
 	}
 }
 

@@ -174,9 +174,9 @@ void LXMaterialD3D11::Update(const LXMaterialBase* Material)
 
 }
 
-LXMaterialD3D11* LXMaterialD3D11::CreateFromMaterial(const LXMaterialBase* material)
+shared_ptr<LXMaterialD3D11> LXMaterialD3D11::CreateFromMaterial(const LXMaterialBase* material)
 {
-	LXMaterialD3D11* materialD3D11 = new LXMaterialD3D11();
+	shared_ptr<LXMaterialD3D11> materialD3D11 = make_shared<LXMaterialD3D11>();
 	CHK(materialD3D11->Create(material));
 	return materialD3D11;
 }

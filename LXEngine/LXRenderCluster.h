@@ -19,6 +19,7 @@
 class LXActor;
 class LXConstantBufferD3D11;
 class LXMaterialBase;
+class LXMaterialD3D11;
 class LXMatrix;
 class LXPrimitiveD3D11;
 class LXRenderClusterManager;
@@ -87,6 +88,7 @@ public:
 	LXBBox BBoxWorld;
 	
 	LXShaderProgramD3D11 ShaderPrograms[(int)ERenderPass::Last];
+	shared_ptr<LXMaterialD3D11> ShaderResources[(int)ERenderPass::Last];
 		
 	// Cache
 	LXMatrix MatrixWCS;

@@ -115,6 +115,7 @@ public:
 
 	void EnqueueTask(LXTask* task);
 	void EnqueueInvokeDelegate(LXDelegate<>* delegate);
+	void EnqueueInvokeDelegate(const LXDelegate<>* delegate);
 	void AddObjectForDestruction(LXObject* object);
 		
 	// Misc

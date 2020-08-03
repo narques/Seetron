@@ -14,6 +14,7 @@
 #include "LXTime.h"
 
 class LXConstantBufferD3D11;
+class LXDeviceResourceManager;
 class LXDirectX11;
 class LXMaterialD3D11;
 class LXMatrix;
@@ -69,6 +70,7 @@ public:
 
 	// Resources
 	LXShaderManager* GetShaderManager() const { return ShaderManager; }
+	LXDeviceResourceManager* GetDeviceResourceManager() const { return _deviceResourceManager; }
 	LXTextureManager* GetTextureManager() const { return TextureManager; }
 	LXRenderPipeline* GetRenderPipeline() const { return _RenderPipeline; }
 
@@ -81,9 +83,8 @@ public:
 	void ReleaseDeviceTexture(LXTexture* texture);
 	void CopyDeviceTexture(LXTexture* texture);
 	
-	void CreateDeviceMaterial(shared_ptr<LXMaterialBase> material);
-	void ReleaseDeviceMaterial(LXMaterialBase* material);
-	void UpdateDeviceMaterial(LXMaterialBase* material);
+	void ReleaseDeviceMaterials(LXMaterialBase* material);
+	void UpdateDeviceMaterials(LXMaterialBase* material);
 
 	// Shared objects
 	ID3D11RasterizerState* GetDefaultRasterizerState () const { return D3D11RasterizerState; }
@@ -131,7 +132,6 @@ private:
 	void ReleaseRenderData_RT();
 	void CreateDeviceTexture_RT(LXTexture* texture);
 	void CopyDeviceTexture_RT(LXTexture* texture);
-	void CreateDeviceMaterial_RT(LXMaterialBase* material);
 
 public:
 
@@ -187,6 +187,7 @@ private:
 	
 	// Managers
 	LXShaderManager* ShaderManager = nullptr;
+	LXDeviceResourceManager* _deviceResourceManager = nullptr;
 	LXTextureManager* TextureManager = nullptr;
 	LXRenderPipeline* _RenderPipeline = nullptr;
 

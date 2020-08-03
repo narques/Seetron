@@ -488,6 +488,15 @@ void LXCore::EnqueueInvokeDelegate(LXDelegate<>* delegate)
 	_mainTasks->EnqueueTask(task);
 }
 
+void LXCore::EnqueueInvokeDelegate(const LXDelegate<>* delegate)
+{
+	LXTask* task = new LXTaskCallBack([delegate]()
+	{
+		delegate->Invoke();
+	});
+	_mainTasks->EnqueueTask(task);
+}
+
 void LXCore::AddObjectForDestruction(LXObject* object)
 {
 	LXTask* task = new LXTaskCallBack([object]()

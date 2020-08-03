@@ -41,10 +41,11 @@ bool LXMaterialInstance::Load()
 
 bool LXMaterialInstance::Compile()
 {
-	// Parent material must be loaded, but no need to create its Device
+	// Parent material must be loaded, but no need to recreate its Device
 	if (Parent->State == LXAsset::EResourceState::LXResourceState_Loaded)
 	{
-		CreateDeviceMaterial();
+		// Release the existing instance device resources, the Renderer will recreate them.
+		ReleaseDeviceMaterials();
 		return true;
 	}
 	else

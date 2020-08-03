@@ -13,6 +13,7 @@
 #include "LXConsoleManager.h"
 #include "LXConstantBufferD3D11.h"
 #include "LXCore.h"
+#include "LXDeviceResourceManager.h"
 #include "LXMaterialBase.h"
 #include "LXMaterialD3D11.h"
 #include "LXPrimitiveD3D11.h"
@@ -136,6 +137,9 @@ void LXRenderer::Init()
 
 	ShaderManager = new LXShaderManager();
 	ShaderManager->CreateDefaultShaders();
+
+	_deviceResourceManager = new LXDeviceResourceManager();
+	
 	TextureManager = new LXTextureManager();
 	RenderClusterManager = new LXRenderClusterManager();
 	RenderCommandList->Renderer = this;
@@ -279,6 +283,7 @@ void LXRenderer::DeleteObjects()
 {
 	CHK(IsRenderThread());
 	LX_SAFE_DELETE(ShaderManager);
+	LX_SAFE_DELETE(_deviceResourceManager);
 	LX_SAFE_DELETE(TextureManager);
 	LX_SAFE_DELETE(RenderClusterManager);
 	LX_SAFE_DELETE(SSTriangle);
@@ -381,10 +386,11 @@ void LXRenderer::Render()
 	_mainTasks->Run((float)time.DeltaTime());
 
 
-	// "Tick" the ShaderManager
-	// Maybe it has things to delete/release
+	// "Tick" the ShaderManager & the ResourceManager
+	// Maybe they have things to delete/release
 	ShaderManager->Run();
-		
+	_deviceResourceManager->Run();
+			
 	if (gResetShaders)
 	{
 		ShaderManager->RebuildShaders();
@@ -692,86 +698,36 @@ void LXRenderer::CopyDeviceTexture_RT(LXTexture* texture)
 	GetCore().EnqueueInvokeDelegate(&texture->BitmapChanged);
 }
 
-void LXRenderer::CreateDeviceMaterial(shared_ptr<LXMaterialBase> material)
+void LXRenderer::ReleaseDeviceMaterials(LXMaterialBase* material)
 {
 	if (IsRenderThread())
-	{ 
-		CreateDeviceMaterial_RT(material.get());
+	{
+		_deviceResourceManager->RemoveShaderResources(material);
 	}
 	else
 	{
-		LXMaterialBase* materialPtr = material.get();
-
-		if (_enqueuedMaterials.find(materialPtr) != _enqueuedMaterials.end())
-		{
-			return;
-		}
-		
-		LXTask* task = new LXTaskCallBack([this, materialPtr]()
-		{
-			CreateDeviceMaterial_RT(materialPtr);
-		});
-
-		_enqueuedMaterials[materialPtr] = material;
-		EnqueueTask(task);
-	}
-}
-
-void LXRenderer::CreateDeviceMaterial_RT(LXMaterialBase* material)
-{
-	if (const LXMaterialD3D11* materialD3D11 = material->GetDeviceMaterial())
-	{
-		GetShaderManager()->ReleaseShaders(materialD3D11);
-		delete materialD3D11;
-	}
-
-	LXMaterialD3D11* texture3D11 = LXMaterialD3D11::CreateFromMaterial(material);
-	material->SetDeviceMaterial(texture3D11);
-
-	LXTask* task = new LXTaskCallBack([this, material]()
-	{
-		_enqueuedMaterials.erase(material);
-	});
-
-	GetCore().EnqueueInvokeDelegate(&material->Compiled);
-	GetCore().EnqueueTask(task);
-}
-
-void LXRenderer::ReleaseDeviceMaterial(LXMaterialBase* material)
-{
-	const LXMaterialD3D11* materialD3D11 = material->GetDeviceMaterial();
-	material->SetDeviceMaterial(nullptr);
-	
-	if (IsRenderThread())
-	{
-		delete materialD3D11;
-	}
-	else
-	{
-		LXTask* task = new LXTaskCallBack([material, materialD3D11]()
+		LXTask* task = new LXTaskCallBack([this, material]()
 		{
 			CHK(IsRenderThread());
-			delete materialD3D11;
+			_deviceResourceManager->RemoveShaderResources(material);
 		});
 
 		EnqueueTask(task);
 	}
 }
 
-void LXRenderer::UpdateDeviceMaterial(LXMaterialBase* material)
+void LXRenderer::UpdateDeviceMaterials(LXMaterialBase* material)
 {
-	LXMaterialD3D11* materialD3D11 = const_cast<LXMaterialD3D11*>(material->GetDeviceMaterial());
-
 	if (IsRenderThread())
 	{
-		materialD3D11->Update(material);
+		_deviceResourceManager->UpdateShaderResources(material);
 	}
 	else
 	{
-		LXTask* task = new LXTaskCallBack([materialD3D11, material]()
+		LXTask* task = new LXTaskCallBack([this, material]()
 		{
 			CHK(IsRenderThread());
-			materialD3D11->Update(material);
+			_deviceResourceManager->UpdateShaderResources(material);
 		});
 
 		EnqueueTask(task);

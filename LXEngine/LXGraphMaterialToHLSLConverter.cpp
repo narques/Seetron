@@ -602,9 +602,9 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNodeVariable(const LXMaterialD3D1
 			switch (_shader)
 			{
 			case EShader::VertexShader:
-				listTextures = const_cast<list<LXTexture*>*>(&_material->GetDeviceMaterial()->GetTexturesVS()); break;
+				listTextures = const_cast<list<LXTexture*>*>(&materialD3D11->GetTexturesVS()); break;
 			case EShader::PixelShader:
-				listTextures = const_cast<list<LXTexture*>*>(&_material->GetDeviceMaterial()->GetTexturesPS()); break;
+				listTextures = const_cast<list<LXTexture*>*>(&materialD3D11->GetTexturesPS()); break;
 			default: CHK(0);
 			}
 

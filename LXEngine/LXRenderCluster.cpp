@@ -8,10 +8,13 @@
 
 #include "stdafx.h"
 #include "LXRenderCluster.h"
+
+// Seetron
 #include "LXActorLight.h"
 #include "LXCamera.h"
 #include "LXConstantBufferD3D11.h"
 #include "LXCore.h"
+#include "LXDeviceResourceManager.h"
 #include "LXDirectX11.h"
 #include "LXLogger.h"
 #include "LXMaterial.h"
@@ -26,7 +29,6 @@
 #include "LXShaderProgramD3D11.h"
 #include "LXStatistic.h"
 #include "LXWorldTransformation.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXRenderCluster::LXRenderCluster(LXRenderClusterManager* renderClusterManager, LXRenderData* renderData, const LXMatrix& matrixWCS, const LXMatrix& matrix):
 	_renderClusterManager(renderClusterManager)
@@ -83,18 +85,20 @@ bool LXRenderCluster::UpdateDeviceMaterialAndShaders(ERenderPass renderPass)
 	CHK(IsRenderThread());
 	
 	LXRenderer* renderer = GetCore().GetRenderer();
-	const LXMaterialD3D11* materialD3D11 = Material->GetDeviceMaterial();
-
-	if (!materialD3D11)
-		return false;
 	   	   
 #if LX_BUILD_SHADERS_FOR_ALL_PASSES 
 	for (auto i = 0; i < (int)ERenderPass::Last; i++)
 	{
 		renderPass = (ERenderPass)i;
 #endif
+
+		// Resources
+		const shared_ptr<LXMaterialD3D11> materialD3D11 = renderer->GetDeviceResourceManager()->GetShaderResources(renderPass, Material);
+		ShaderResources[(int)renderPass] = materialD3D11;
+
+		// Shaders
 		LXShaderProgramD3D11 shaderProgram;
-		if (renderer->GetShaderManager()->GetShaders(renderPass, Primitive.get(), materialD3D11, &shaderProgram))
+		if (renderer->GetShaderManager()->GetShaders(renderPass, Primitive.get(), materialD3D11.get(), &shaderProgram))
 		{
 			LXShaderProgramD3D11* RenderClusterShaderProgram = &ShaderPrograms[(int)renderPass];
 			RenderClusterShaderProgram->VertexShader = shaderProgram.VertexShader;
@@ -145,7 +149,8 @@ void LXRenderCluster::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 		return;
 	}
 	
-	LXShaderProgramD3D11* ShaderProgram = &ShaderPrograms[(int)RenderPass];
+	const LXShaderProgramD3D11* ShaderProgram = &ShaderPrograms[(int)RenderPass];
+	const shared_ptr<LXMaterialD3D11>& materialD3D11 = ShaderResources[(int)RenderPass];
 
 	if (1/*!ValidConstantBufferMatrix*/ && CBWorld)
 	{
@@ -218,7 +223,8 @@ void LXRenderCluster::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 
 	if (bHasShader)
 	{
-		Material->GetDeviceMaterial()->Render(RenderPass, RCL);
+		materialD3D11->Render(RenderPass, RCL);
+
 		Primitive->Render(RCL);
 	}
 }

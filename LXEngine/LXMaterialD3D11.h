@@ -41,7 +41,7 @@ public:
 	const list<LXTexture*>& GetTexturesPS() const { return ListPSTextures; }
 
 	// Helpers
-	static LXMaterialD3D11* CreateFromMaterial(const LXMaterialBase* material);
+	static shared_ptr<LXMaterialD3D11> CreateFromMaterial(const LXMaterialBase* material);
 			
 private:
 

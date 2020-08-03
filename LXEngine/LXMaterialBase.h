@@ -11,9 +11,6 @@
 #include "LXAsset.h"
 #include "LXDelegate.h"
 
-class LXMaterialD3D11;
-class LXTexture;
-
 enum class EMaterialType // ! DataModel 
 {
 	MaterialTypeStandard,
@@ -29,10 +26,7 @@ public:
 	virtual ~LXMaterialBase();
 
 	// Rendering
-	const LXMaterialD3D11* GetDeviceMaterial() const { return _materialD3D11; }
-	void SetDeviceMaterial(LXMaterialD3D11* materialD3D11) { _materialD3D11 = materialD3D11; }
-	void CreateDeviceMaterial();
-	void ReleaseDeviceMaterial();
+	void ReleaseDeviceMaterials();
 
 	virtual bool Compile() = 0;
 
@@ -47,10 +41,5 @@ public:
 
 	// Fired when the material device is created (including the Graph to HLSL translation)
 	LXDelegate<> Compiled;
-
-protected:
-	   
-	// Rendering
-	LXMaterialD3D11* _materialD3D11 = nullptr;
 };
 

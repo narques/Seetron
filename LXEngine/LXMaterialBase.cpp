@@ -19,22 +19,13 @@ LXMaterialBase::LXMaterialBase()
 
 LXMaterialBase::~LXMaterialBase()
 {
-	ReleaseDeviceMaterial();
 }
 
-void LXMaterialBase::CreateDeviceMaterial()
+void LXMaterialBase::ReleaseDeviceMaterials()
 {
 	if (GetRenderer())
 	{
-		GetRenderer()->CreateDeviceMaterial(shared_from_this());
-	}
-}
-
-void LXMaterialBase::ReleaseDeviceMaterial()
-{
-	if (_materialD3D11 && GetRenderer())
-	{
-		GetRenderer()->ReleaseDeviceMaterial(this);
+		GetRenderer()->ReleaseDeviceMaterials(this);
 	}
 }
 

@@ -24,7 +24,6 @@ class LXPrimitive;
 class LXQueryManager;
 class LXScene;
 class LXSelectionManager;
-class LXShaderManager;
 class LXSnapshotManager;
 class LXTextureManager;
 class LXViewState;
@@ -85,7 +84,6 @@ public:
 
 	LXSelectionManager&			GetSelectionManager		( )  { CHK(m_pSelectionManager); return *m_pSelectionManager; }
 	LXQueryManager&				GetQueryManager			( )  { CHK(m_pQueryManager); return *m_pQueryManager; }
-	LXShaderManager&			GetShaderManager		( )  { CHK(m_pShaderManager); return *m_pShaderManager; }
 	LXViewStateManager&			GetViewStateManager		( )  { CHK(m_pViewStateManager);  return *m_pViewStateManager; }
 	LXAnimationManager&			GetAnimationManager		( )  { CHK(m_pAnimationManager); return *m_pAnimationManager; }
 	LXSnapshotManager&			GetSnapshotManager		( )  { CHK(m_pSnapshotManager); return *m_pSnapshotManager; }
@@ -179,7 +177,6 @@ private:
 		
 	// Volatile 
 	LXQueryManager*					m_pQueryManager;
-	LXShaderManager*				m_pShaderManager;
 	LXAnimationManager*				m_pAnimationManager;
 	LXPrimitiveFactory*				m_pPrimitiveFactory;
 	LXMeshFactory*					_meshFactory;

@@ -136,7 +136,7 @@ public:
 	// ...
 	//
 
-	R Invoke(Params... params)
+	R Invoke(Params... params) const
 	{
 		std::vector<LXFunction<R, Params...>*> invokes;
 		
