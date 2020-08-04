@@ -29,7 +29,12 @@ public:
 	virtual ~LXGraphMaterialToHLSLConverter();
 
 	LXStringA GenerateCode(const LXMaterialD3D11* materialD3D11, ERenderPass renderPass, EShader Shader, int layoutMask = -1);
+	
+	// Parse the GraphMaterial to gather the ConstantBuffers
 	bool GenerateConstanBuffer(const LXGraph* graph, EShader Shader, LXConstantBuffer& outConstantBuffer);
+
+	// Parse the GraphMaterial to gather the Textures
+	void GatherTextures(const LXGraph* graph, EShader shader, list<LXTexture*>& outTextures);
 
 private:
 
@@ -46,6 +51,8 @@ private:
 	bool IsConnectorUsableInContext(const LXConnector* connector);
 
 	bool ParseNodeCB(const LXNode& node, LXConstantBuffer& outConstantBuffer);
+	void ParseNodeTexture(const LXNode& node, list<LXTexture*>& outTextures);
+
 	LXStringA GenerateHeaderComment() const;
 
 public:
@@ -64,5 +71,8 @@ private:
 	set<const LXNode*> _addedNode;
 	
 	list<LXStringA> _variableDeclarations;
+
+	int _HLSLVSTextureIndex = 0;
+	int _HLSLPSTextureIndex = 0;
 };
 

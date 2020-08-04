@@ -48,11 +48,6 @@ private:
 	bool Create(const LXMaterialBase*);
 	void UpdateConstantBufferDataValues();
 
-public:
-
-	mutable int HLSLVSTextureIndex = 0;
-	mutable int HLSLPSTextureIndex = 0;
-	
 private:
 
 	// List of texture to bind to the corresponding shader

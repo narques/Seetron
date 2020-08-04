@@ -231,7 +231,10 @@ bool LXMaterialD3D11::Create(const LXMaterialBase* materialBase)
 	//
 	// Textures and TextureSamplers
 	//
-		
+
+	graphMaterialToHLSLConverter.GatherTextures((const LXGraph*)material->GetGraph(), EShader::VertexShader, ListVSTextures);
+	graphMaterialToHLSLConverter.GatherTextures((const LXGraph*)material->GetGraph(), EShader::PixelShader, ListPSTextures);
+			
 	LogI(MaterialD3D11, L"Successful create %s", material->GetName().GetBuffer());
 	_bValid = true;
 	return true;
