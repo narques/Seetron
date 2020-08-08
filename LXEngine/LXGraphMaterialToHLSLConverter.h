@@ -41,7 +41,7 @@ private:
 	// 
 	// connector : the output connector from where we enter in the node.
 	//
-	LXStringA ParseNode(const LXMaterialD3D11* materialD3D11, int outputConnectorIndex, const LXConnector* connector, const LXNode* node, ERenderPass renderPass);
+	LXStringA ParseNode(const LXMaterialD3D11* materialD3D11, const LXConnector* connector, const LXNode* node, ERenderPass renderPass);
 	LXStringA ParseNodeVariable(const LXMaterialD3D11* materialD3D11, const LXNode* node);
 	LXStringA ParseNodeConstant(const LXNode* node);
 	

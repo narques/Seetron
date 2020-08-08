@@ -73,7 +73,7 @@ LXStringA LXGraphMaterialToHLSLConverter::GenerateCode(const LXMaterialD3D11* ma
 	
 	_HLSLVSTextureIndex = 0;
 	_HLSLPSTextureIndex = 0;
-	ShaderBuffer += ParseNode(materialD3D11, -1,  nullptr, nodeRoot, renderPass);
+	ShaderBuffer += ParseNode(materialD3D11, nullptr, nodeRoot, renderPass);
 
 	// Insert the includes file
 	int start = ShaderBuffer.Find("//INCLUDES");
@@ -150,7 +150,7 @@ void LXGraphMaterialToHLSLConverter::GatherTextures(const LXGraph* graph, EShade
 	ParseNodeTexture(*nodeRoot, outTextures);
 }
 
-LXStringA LXGraphMaterialToHLSLConverter::ParseNode(const LXMaterialD3D11* materialD3D11, int outputConnectorIndex, const LXConnector* connector, const LXNode* node, ERenderPass renderPass)
+LXStringA LXGraphMaterialToHLSLConverter::ParseNode(const LXMaterialD3D11* materialD3D11, const LXConnector* connector, const LXNode* node, ERenderPass renderPass)
 {
 	
 	//
@@ -159,8 +159,17 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNode(const LXMaterialD3D11* mater
 
 	const LXGraphTemplate* graphTemplate = GetAssetManager()->GetGraphMaterialTemplate();
 	const LXNodeTemplate* nodeTemplate = graphTemplate->GetNodeTemplate(node->TemplateID);
-	const LXConnectorTemplate* connectorTemplate = nodeTemplate->GetOutputConnectorTemplate(outputConnectorIndex);
-	
+	const LXConnectorTemplate* connectorTemplate = nodeTemplate->GetOutputConnectorTemplate(connector);
+
+	if (connector && !connectorTemplate)
+	{
+		const wchar_t* t1 = connector->GetName().GetBuffer();
+		const wchar_t* t2 = *connector->GetName();
+		
+		LogE(LXGraphMaterialToHLSLConverter, L"Failed to found a ConnectorTemplace for Material %s, Node %s, Connector %s.", *_material->GetFilepath(), *node->GetName(), *connector->GetName());
+		return "";
+	}
+		
 	//
 	// Variable -> ConstantBuffer
 	//
@@ -343,7 +352,7 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNode(const LXMaterialD3D11* mater
 
 				if (connectorSourceIndex != -1)
 				{
-					connectorValue = ParseNode(materialD3D11, connectorSourceIndex, connectorSource, callerNode, renderPass);
+					connectorValue = ParseNode(materialD3D11, connectorSource, callerNode, renderPass);
 				}
 				else
 				{

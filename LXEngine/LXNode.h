@@ -84,7 +84,7 @@ public:
 	LXNodeTemplate();
 	~LXNodeTemplate();
 
-	const LXConnectorTemplate* GetOutputConnectorTemplate(int index) const;
+	const LXConnectorTemplate* GetOutputConnectorTemplate(const LXConnector* connector) const;
 	
 private:
 

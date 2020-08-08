@@ -288,11 +288,15 @@ LXNodeTemplate::~LXNodeTemplate()
 	}
 }
 
-const LXConnectorTemplate* LXNodeTemplate::GetOutputConnectorTemplate(int index) const
+const LXConnectorTemplate* LXNodeTemplate::GetOutputConnectorTemplate(const LXConnector* connector) const
 {
-	if (index < 0)
-		return nullptr;
-	return Outputs[index];
+	auto it = std::find_if(Outputs.begin(), Outputs.end(), [connector](LXConnectorTemplate* connectorTemplate)
+	{
+		return connectorTemplate->GetName() == connector->GetName();
+	});
+
+	return it != Outputs.end() ? *it : nullptr;
+
 }
 
 bool LXNodeTemplate::OnLoadChild(const TLoadContext& loadContext)
