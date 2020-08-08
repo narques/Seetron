@@ -44,7 +44,6 @@ public:
 	}
 
 	// Accessors
-	operator wchar_t*() const											{ return (wchar_t*)m_str.c_str();  }		// WARNING const ?
 	operator const wchar_t*() const										{ return m_str.c_str();  }
 
 	// Operators
@@ -79,10 +78,9 @@ public:
 	bool		IsEmpty( ) const 										{ return( GetLength() == 0 ); 	}
 	LXString&	MakeLower( )											{ transform(m_str.begin(), m_str.end(), m_str.begin(), ::tolower); return( *this ); }
 	LXString	ToLower( ) const 										{ LXString str = *this; return str.MakeLower(); }
-	wchar_t*	GetBuffer( ) const										{ return (wchar_t*)m_str.c_str(); } // WARNING const
+	const wchar_t*	GetBuffer( ) const									{ return m_str.c_str(); } // WARNING const
 	LXStringA   ToStringA( ) const;
 	
-	const wchar_t*	GetConstBuffer( ) const								{ return m_str.c_str(); }
 	void		SetString( const LXString& str )						{ m_str.assign(str); }
 	int			CompareNoCase( const wchar_t* str ) const						{ return compare(str); }
 
@@ -224,8 +222,7 @@ public:
 	int			GetLength() const { return (int)m_str.size(); }
 	bool		IsEmpty() const { return(GetLength() == 0); }
 	LXStringA	MakeLower() { transform(m_str.begin(), m_str.end(), m_str.begin(), ::tolower); return(*this); }
-	char*	GetBuffer() const { return (char*)m_str.c_str(); }   // WARNING
-	const char*	GetConstBuffer() const { return m_str.c_str(); }
+	const char*	GetBuffer() const { return m_str.c_str(); }
 	void		SetString(const LXStringA& str) { m_str.assign(str); }
 	int			CompareNoCase(char* str) const { return compare(str) == 0; }
 

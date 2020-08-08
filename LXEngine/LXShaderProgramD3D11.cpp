@@ -34,7 +34,7 @@ LXShaderProgramBasic::~LXShaderProgramBasic()
 	delete PixelShader;
 }
 
-bool LXShaderProgramBasic::CreateShaders(wchar_t* Filename, const D3D11_INPUT_ELEMENT_DESC* Layout, UINT NumElements)
+bool LXShaderProgramBasic::CreateShaders(const wchar_t* Filename, const D3D11_INPUT_ELEMENT_DESC* Layout, UINT NumElements)
 {
 	bool bRet = VertexShader->CreateVertexShader(Filename, Layout, NumElements);
 	bRet &= PixelShader->CreatePixelShader(Filename);

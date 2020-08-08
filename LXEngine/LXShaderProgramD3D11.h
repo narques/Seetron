@@ -52,7 +52,7 @@ public:
 	LXShaderProgramBasic();
 	~LXShaderProgramBasic();
 
-	bool CreateShaders(wchar_t* Filename, const D3D11_INPUT_ELEMENT_DESC* Layout, UINT NumElements);
+	bool CreateShaders(const wchar_t* Filename, const D3D11_INPUT_ELEMENT_DESC* Layout, UINT NumElements);
 	bool IsValid() const;
 	void Render(LXRenderCommandList* r) const;
 

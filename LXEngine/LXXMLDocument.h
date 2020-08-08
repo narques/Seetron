@@ -20,7 +20,7 @@ public:
 
 	LXXMLDocument();
 	~LXXMLDocument();
-	bool Load(wchar_t* fileName);
+	bool Load(const wchar_t* fileName);
 	LXMSXMLNode* GetRoot() const { return _pRoot; }
 
 private:

@@ -31,7 +31,7 @@ LXXMLDocument::~LXXMLDocument()
 	CoUninitialize();
 }
 
-bool LXXMLDocument::Load(wchar_t* fileName)
+bool LXXMLDocument::Load(const wchar_t* fileName)
 {
 	HRESULT hr = CoCreateInstance(__uuidof(DOMDocument60), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&_pXMLDom));
 	if (SUCCEEDED(hr))
