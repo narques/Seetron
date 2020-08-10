@@ -18,7 +18,7 @@ public:
 	LXLibrary();
 	~LXLibrary();
 
-	bool Load(wchar_t* fileName);
+	bool Load(const wchar_t* fileName);
 	void* GetFunction(const char* procName);
 	void Release();
 	

@@ -31,7 +31,7 @@ public:
 	const ListFileInfos& GetListFileNames() const { return _listFiles; }
 	bool Exist() const;
 	bool IsEmpty() const;
-	static bool Exists(wchar_t* folder);
+	static bool Exists(const wchar_t* folder);
 	
 	// Compares the cached LastWriteTime again the real value,
 	// returns the filenames when different.

@@ -18,7 +18,7 @@ LXLibrary::~LXLibrary()
 {
 }
 
-bool LXLibrary::Load(wchar_t* fileName)
+bool LXLibrary::Load(const wchar_t* fileName)
 {
 	_hModule = ::LoadLibrary(fileName);
 	return true;

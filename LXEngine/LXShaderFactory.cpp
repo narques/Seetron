@@ -221,7 +221,7 @@ LXStringA LXShaderFactory::ConstantBufferToHLSL(const LXConstantBuffer& Constant
 		case EHLSLType::HLSL_float3: TypeName = "float3"; break;
 		case EHLSLType::HLSL_float4: TypeName = "float4"; break;
 		case EHLSLType::HLSL_Matrix: TypeName = "matrix"; break;
-		default: CHK(0); return false;
+		default: CHK(0); return "";
 		}
 
 		HLSLDeclaration += "  " + TypeName + " " + VD.Name + ";\n";

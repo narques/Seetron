@@ -163,10 +163,7 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNode(const LXMaterialD3D11* mater
 
 	if (connector && !connectorTemplate)
 	{
-		const wchar_t* t1 = connector->GetName().GetBuffer();
-		const wchar_t* t2 = *connector->GetName();
-		
-		LogE(LXGraphMaterialToHLSLConverter, L"Failed to found a ConnectorTemplace for Material %s, Node %s, Connector %s.", *_material->GetFilepath(), *node->GetName(), *connector->GetName());
+		LogE(LXGraphMaterialToHLSLConverter, L"Failed to found a ConnectorTemplace for Material %s, Node %s, Connector %s.", _material->GetFilepath().GetBuffer(), node->GetName().GetBuffer(), connector->GetName().GetBuffer());
 		return "";
 	}
 		

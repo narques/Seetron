@@ -29,7 +29,7 @@ public:
 
 	char*	GetString	( char* str, int n );
 	
-	bool	Write		( void* pBuffer, size_t size, bool Flush = false);
+	bool	Write		( const void* pBuffer, size_t size, bool Flush = false);
 
 	void	Seek		( int nSeekMethod );
 	void	Rewind		( );

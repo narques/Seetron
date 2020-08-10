@@ -163,7 +163,7 @@ bool LXDirectory::IsEmpty() const
 	return false;
 }
 
-bool LXDirectory::Exists(wchar_t* folder)
+bool LXDirectory::Exists(const wchar_t* folder)
 {
 	DWORD dwAttrib = GetFileAttributes(folder); 
 	return (dwAttrib != INVALID_FILE_ATTRIBUTES && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));

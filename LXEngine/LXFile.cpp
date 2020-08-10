@@ -71,7 +71,7 @@ char* LXFile::GetString( char* str, int n )
 	return fgets(str, n, m_pFile);
 }
 
-bool LXFile::Write( void* pBuffer, size_t size , bool Flush)
+bool LXFile::Write( const void* pBuffer, size_t size , bool Flush)
 {
 	CHK(m_pFile);
 	if (!m_pFile)
