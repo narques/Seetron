@@ -162,12 +162,6 @@ void LXRenderCluster::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 		ValidConstantBufferMatrix = true;
 	}
 
-	if (ConstantBufferDataSpotLight)
-	{
-		LXActor* actor = const_cast<LXActor*>(RenderData->GetActor());
-		UpdateLightParameters(actor);
-	}
-
 	bool bHasShader = false;
 
 	// Vertex Shader
