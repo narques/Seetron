@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -10,11 +10,10 @@
 
 #include "LXObject.h"
 
-class LXScene;
 class LXActor;
 class LXActorMesh;
-class LXPrimitiveInstance;
-class LXMatrix;
+class LXComponentMesh;
+class LXScene;
 class LXWorldPrimitive;
 
 class LXCORE_API LXTraverser : public LXObject
@@ -22,8 +21,8 @@ class LXCORE_API LXTraverser : public LXObject
 
 public:
 
-	LXTraverser(void);
-	virtual ~LXTraverser(void);
+	LXTraverser();
+	virtual ~LXTraverser();
 
 	void			SetScene( LXScene* pScene ) { _Scene = pScene; }
 	virtual void	Apply( );
@@ -32,7 +31,8 @@ protected:
 
 	virtual void	OnActor( LXActor* pActor );
 	virtual void	OnMesh( LXActorMesh* pMesh );
-	virtual void	OnPrimitive(LXActorMesh* pMesh, LXWorldPrimitive* WorldPrimitive){};
+	virtual void	OnMesh( LXComponentMesh* pMesh );
+	virtual void	OnPrimitive(LXActorMesh* actorMesh, LXComponentMesh* componentMesh, LXWorldPrimitive* WorldPrimitive){};
 	
 protected:
 

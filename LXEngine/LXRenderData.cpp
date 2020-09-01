@@ -7,15 +7,17 @@
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
+#include "LXRenderData.h"
+
+// Seetron
 #include "LXActorMesh.h"
+#include "LXComponentMesh.h"
 #include "LXCore.h"
 #include "LXMesh.h"
 #include "LXPrimitive.h"
 #include "LXPrimitiveInstance.h"
 #include "LXRenderCluster.h"
 #include "LXRenderer.h"
-#include "LXRenderData.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXWorldPrimitive::LXWorldPrimitive(const shared_ptr<LXPrimitiveInstance>& primitiveInstance):
 	PrimitiveInstance(primitiveInstance)
@@ -66,6 +68,29 @@ LXRenderData::LXRenderData(LXActor* actor):
 	}
 }
 
+LXRenderData::LXRenderData(LXActor* actor, LXComponent* component):
+	_actor(actor),
+	_component(component),
+	_actorType(component->GetCID()),
+	_bboxWorld(component->GetBBoxWorld()),
+	_castShadows(component->GetCastShadows()),
+	_primitiveBBox(component->IsPrimitiveBBoxVisible()),
+	_actorBBox(component->IsBBoxVisible())
+{
+	LX_COUNTSCOPEINC(LXRenderData);
+
+	if (const LXComponentMesh* componentMesh = dynamic_cast<const LXComponentMesh*>(component))
+	{
+		_mesh = componentMesh->Get();
+		VectorPrimitiveInstances primitives;
+		componentMesh->Get()->GetAllPrimitives(primitives);
+		for (const shared_ptr<LXPrimitiveInstance>& primitiveInstance : primitives)
+		{
+			_worldPrimitives.push_back(new LXWorldPrimitive(primitiveInstance));
+		}
+	}
+}
+
 LXRenderData::~LXRenderData()
 {
 	LX_COUNTSCOPEDEC(LXRenderData);
@@ -78,10 +103,10 @@ LXRenderData::~LXRenderData()
 
 void LXRenderData::ComputePrimitiveWorldMatrices()
 {
-	_bboxWorld = _actor->GetBBoxWorld();
+	_bboxWorld = _component?_component->GetBBoxWorld():_actor->GetBBoxWorld();
 	CHK(_bboxWorld.IsValid());
 	
-	const LXMatrix& actorWorldMatrix = _actor->GetMatrixWCS();
+	const LXMatrix& actorWorldMatrix = _component ? _component->GetMatrixWCS():_actor->GetMatrixWCS();
 	for (LXWorldPrimitive* worldPrimitive : _worldPrimitives)
 	{
 		const LXMatrix* matrix = worldPrimitive->PrimitiveInstance->MatrixRCS;
@@ -92,7 +117,13 @@ void LXRenderData::ComputePrimitiveWorldMatrices()
 		worldPrimitive->BBoxWorld = BBoxWorld;
 	}
 
+	_validPrimitiveWorldMatrices = true;
+	_validPrimitiveWorldBounds = true;
+	
 	_actor->OnComputedPrimitivesWordBBoxes();
+
+	if (_component)
+		_component->PrimitiveWorldBoundsComputed.Invoke(_component);
 
 	LXTask* task = new LXTaskCallBack([this]()
 	{
@@ -132,7 +163,7 @@ void LXRenderData::ComputePrimitiveWorldMatrices()
 
 void LXRenderData::ComputePrimitiveWorldBounds()
 {
-	_bboxWorld = _actor->GetBBoxWorld();
+	_bboxWorld = _component?_component->GetBBoxWorld():_actor->GetBBoxWorld();
 	CHK(_bboxWorld.IsValid());
 
 	for (LXWorldPrimitive* worldPrimitive : _worldPrimitives)
@@ -142,7 +173,11 @@ void LXRenderData::ComputePrimitiveWorldBounds()
 		worldPrimitive->BBoxWorld = BBoxWorld;
 	}
 
+	_validPrimitiveWorldBounds = true;
 	_actor->OnComputedPrimitivesWordBBoxes();
+	
+	if (_component)
+		_component->PrimitiveWorldBoundsComputed.Invoke(_component);
 
 	LXTask* task = new LXTaskCallBack([this]()
 	{

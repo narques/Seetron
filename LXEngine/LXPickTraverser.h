@@ -11,16 +11,17 @@
 #include "LXTraverser.h"
 #include "LXAxis.h"
 
-class LXWorldTransformation;
-class LXPrimitive;
+class LXComponent;
 class LXMatrix;
+class LXPrimitive;
+class LXWorldTransformation;
 
 struct LXPOI // Point of intersection 
 {
-	LXPOI(){}
-	LXPOI(LXActor* n, LXPrimitive* p, const vec3f& v) :node(n), primitive(p), point(v){ }
-	LXActor* node;
-	LXPrimitive* primitive;
+	LXPOI() {};
+	LXPOI(const LXActor* n, const LXPrimitive* p, const vec3f& v) :node(n), primitive(p), point(v){ }
+	const LXActor* node;
+	const LXPrimitive* primitive;
 	vec3f point;
 };
 
@@ -35,11 +36,11 @@ public:
 	virtual ~LXPickTraverser(void);
 
 	// Overridden from LXTraverser
-	virtual void		Apply( ) override;
-	virtual void		OnActor( LXActor* pGroup ) override;
-	virtual void		OnPrimitive(LXActorMesh* pMesh, LXWorldPrimitive* WorldPrimitive) override;
+	virtual void Apply() override;
+	virtual void OnActor(LXActor* actor) override;
+	virtual void OnPrimitive(LXActorMesh* actorMesh, LXComponentMesh* componentMesh, LXWorldPrimitive* worldPrimitive) override;
 	
-	void				SetRay(LXAxis& ray);
+	void 				SetRay(const LXAxis& ray);
 	
 	uint				GetNumberOfIntersections	( ) { return (uint)m_mapIntersection.size(); }
 	
@@ -51,21 +52,21 @@ public:
 
 private:
 
-	void				PickPoints					(LXAxis& rayLCS, LXActor* pMesh, LXPrimitive* Primitive );
-	void				PickIndexedLineLoop			(LXAxis& rayLCS, LXActor* pMesh, LXPrimitive* Primitive );
-	void				PickLineLoop				(LXAxis& rayLCS, LXActor* pMesh, LXPrimitive* Primitive );
-	void				PickIndexedLines			(LXAxis& rayLCS, LXActor* pMesh, LXPrimitive* Primitive );
-	void				PickLines					(LXAxis& rayLCS, LXActor* pMesh, LXPrimitive* Primitive );
-	void				PickIndexedTriangles		(LXAxis& rayLCS, LXActor* pMesh, LXPrimitive* Primitive, LXMatrix* MatrixWCS);
-	void				PickTriangles				(LXAxis& rayLCS, LXActor* pMesh, LXPrimitive* Primitive, LXMatrix* MatrixWCS);
-	void				PickIndexedTriangleStrip	(LXAxis& rayLCS, LXActor* pMesh, LXPrimitive* Primitive, LXMatrix* MatrixWCS);
-	void				PickTriangleStrip			(LXAxis& rayLCS, LXActor* pMesh, LXPrimitive* Primitive, LXMatrix* MatrixWCS);
+	void PickPoints(const LXAxis& rayLCS, const LXActor* actor, const LXComponent* component, const LXPrimitive* primitive);
+	void PickIndexedLineLoop(const LXAxis& rayLCS, const LXActor* actor, const LXComponent* component, const LXPrimitive* primitive );
+	void PickLineLoop(const LXAxis& rayLCS, const LXActor* actor, const LXComponent* component, const LXPrimitive* primitive );
+	void PickIndexedLines(const LXAxis& rayLCS, const LXActor* actor, const LXComponent* component, const LXPrimitive* primitive );
+	void PickLines(const LXAxis& rayLCS, const LXActor* actor, const LXComponent* component, const LXPrimitive* Primitive );
+	void PickIndexedTriangles(const LXAxis& rayLCS, const LXActor* actor, const LXComponent* component, const LXPrimitive* primitive, const LXMatrix* matrixWCS);
+	void PickTriangles(const LXAxis& rayLCS, const LXActor* actor, const LXComponent* component, const LXPrimitive* primitive, const LXMatrix* matrixWCS);
+	void PickIndexedTriangleStrip(const LXAxis& rayLCS, const LXActor* actor, const LXComponent* component, const LXPrimitive* primitive, const LXMatrix* matrixWCS);
+	void PickTriangleStrip(const LXAxis& rayLCS, const LXActor* actor, const LXComponent* component, const LXPrimitive* primitive, const LXMatrix* matrixWCS);
 
 private:
 
-	void				PickPrimitive				(LXActor* Actor, LXPrimitive* Primitive, LXMatrix* MatrixWCS);
-	void				PickPrimitiveInstance		(LXActor* pMesh, LXPrimitive* pPrimitive, LXMatrix* MatrixWCS, LXAxis& rayLCS);
-	void				AddPointOfInterest			(float fDistance, LXActor* pMesh, LXPrimitive* Primitive, const vec3f& nearest, const wchar_t* Method);
+	void PickPrimitive(const LXActor* actor, const LXComponent* component, const LXPrimitive* primitive, const LXMatrix* matrixWCS);
+	void PickPrimitiveInstance(const LXActor* actor, const LXComponent* component, const LXPrimitive* primitive, const LXMatrix* matrixWCS, const LXAxis& rayLCS);
+	void AddPointOfInterest(float fDistance, const LXActor* actor, const LXComponent* component, const LXPrimitive* primitive, const vec3f& nearest, const wchar_t* method);
 
 public:
 

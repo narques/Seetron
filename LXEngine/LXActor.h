@@ -15,9 +15,10 @@
 #include "LXTransformation.h"
 #include "LXTree.h"
 
-class LXProject;
 class LXAnchor;
+class LXComponent;
 class LXPrimitive;
+class LXProject;
 class LXRenderData;
 
 typedef vector<LXAnchor*> ArrayAnchors;
@@ -49,6 +50,18 @@ public:
 	virtual void		MarkForDelete();
 	virtual bool		IsPickable( ) const { return _bPickable; }
 
+	// Components
+	void AddComponent(LXComponent* component);
+	void RemoveComponent(LXComponent* component) { _components.remove(component); }
+	const list<LXComponent*>& GetComponents() const { return _components; }
+
+	template<typename T>
+	T& CreateAndAddComponent()
+	{
+		T* component = new T(this);
+		AddComponent(component);
+		return *component;
+	}
 	// Rendering
 	void				InvalidateRenderState(LXFlagsRenderClusterRole renderStates = ERenderClusterRole::All);
 	void				CreateRenderData(LXFlagsRenderClusterRole renderStates);
@@ -70,8 +83,9 @@ public:
 #endif
 
 	// Transformation
+	LXTransformation& GetTransformation() { return _Transformation; }
 	const LXMatrix&		GetMatrix() { return _Transformation.GetMatrix(); }
-	const LXMatrix&		GetMatrixWCS();
+	const LXMatrix&		GetMatrixWCS() const;
 	void				SetMatrixWCS(const LXMatrix& matrix, bool ComputeLocalMatrix = false);
 	void				ValidateMatrixWCS() { _bValidMatrixWCS = true; }
 	
@@ -190,6 +204,8 @@ protected:
 #endif
 	
 private:
+
+	list<LXComponent*>  _components;
 
 	// Misc
 	EConstraint			_eConstraint = EConstraint::None;

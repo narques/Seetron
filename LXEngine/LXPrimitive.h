@@ -143,8 +143,12 @@ public:
 			return 0;
 	}
 
-	ArrayUint&			GetArrayIndices		( ) { return m_arrayIndices; }
-	ArrayVec3f&			GetArrayPositions	( ) { return m_arrayPositions; }
+	ArrayUint& GetArrayIndices() { return m_arrayIndices; }
+	const ArrayUint& GetArrayIndices() const { return m_arrayIndices; }
+
+	ArrayVec3f&	GetArrayPositions() { return m_arrayPositions; }
+	const ArrayVec3f& GetArrayPositions() const { return m_arrayPositions; }
+
 	ArrayVec4f&			GetArrayPositions4f	( ) { return m_arrayPositions4f; }
 	ArrayVec3f&			GetArrayNormals		( ) { return m_arrayNormals; }
 	ArrayVec3f&			GetArrayTangents	( ) { return m_arrayTangents; }

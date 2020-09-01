@@ -9,13 +9,13 @@
 #include "StdAfx.h"
 #include "LXActor.h"
 #include "LXActorFactory.h"
+#include "LXComponent.h"
 #include "LXCore.h"
 #include "LXMSXMLNode.h"
 #include "LXMath.h"
 #include "LXRenderData.h"
 #include "LXRenderer.h"
 #include "LXScene.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXActor::LXActor()
 {
@@ -41,6 +41,11 @@ LXActor::~LXActor(void)
 		delete child;
 
 	ReleaseRenderData(ERenderClusterRole::All);
+
+	for (LXComponent* component : _components)
+	{
+		delete component;
+	}
 }
 
 void LXActor::MarkForDelete()
@@ -48,6 +53,12 @@ void LXActor::MarkForDelete()
 	CHK(GetParent() == nullptr);
 	CHK(GetChildren().size() == 0);
 	GetCore().AddObjectForDestruction(this);
+}
+
+void LXActor::AddComponent(LXComponent* component)
+{
+	_components.push_back(component);
+	component->InvalidateRenderState();
 }
 
 void LXActor::DefineProperties() 
@@ -84,7 +95,7 @@ void LXActor::DefineProperties()
 	// --------------------------------------------------------------------------------------------------------------
 	
 	_Transformation.DefineProperties(this);
-	_Transformation.OnChange([this]()
+	_Transformation.OnChange.AttachMemberLambda([this]()
 	{
 		InvalidateMatrixWCS();
 	});
@@ -164,10 +175,10 @@ LXAnchor* LXActor::GetAnchor(uint position) const
 
 #endif
 
-const LXMatrix& LXActor::GetMatrixWCS()
+const LXMatrix& LXActor::GetMatrixWCS() const
 {
 	if (!_bValidMatrixWCS)
-		ComputeMatrixWCS();
+		const_cast<LXActor*>(this)->ComputeMatrixWCS();
 
 	return _MatrixWCS;
 }
@@ -312,6 +323,11 @@ void LXActor::ComputeBBoxLocal()
 
 	_BBoxLocal.Reset();
 
+	for (const LXComponent* component : _components)
+	{
+		_BBoxLocal.Add(component->GetBBoxLocal());
+	}
+
 	if (!_BBoxLocal.IsValid())
 	{
 		LogD(Actor, L"Set the default BBox size for %s", GetName().GetBuffer());
@@ -333,6 +349,11 @@ void LXActor::ComputeBBoxWorld()
 		{
 			_BBoxWorld.Add(Child->GetBBoxWorld());
 		}
+	}
+
+	for (LXComponent* component : _components)
+	{
+		_BBoxWorld.Add(component->GetBBoxWorld());
 	}
 	
 	GetMatrixWCS().LocalToParent(_BBoxWorld);
@@ -428,6 +449,11 @@ void LXActor::SetPrimitiveBBoxVisible(bool visible)
 		_bPrimitiveBBoxVisible = visible;
 		InvalidateRenderState(LXFlagsRenderClusterRole(ERenderClusterRole::Default) | LXFlagsRenderClusterRole(ERenderClusterRole::PrimitiveBBox));
 	}
+
+	for (LXComponent* component : _components)
+	{
+		component->SetPrimitiveBBoxVisible(visible);
+	}
 }
 
 void LXActor::Run(double frameTime)
@@ -435,6 +461,11 @@ void LXActor::Run(double frameTime)
 	for (LXActor* Child : _children)
 	{
 		Child->Run(frameTime);
+	}
+
+	for (LXComponent* component : _components)
+	{
+		component->Run(frameTime);
 	}
 }
 

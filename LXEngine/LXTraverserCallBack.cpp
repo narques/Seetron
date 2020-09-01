@@ -36,10 +36,10 @@ void LXTraverserLambda::OnMesh(LXActorMesh* pMesh)
 	LXTraverser::OnMesh(pMesh);
 }
 
-void LXTraverserLambda::OnPrimitive(LXActorMesh* pMesh, LXWorldPrimitive* WorldPrimitive)
+void LXTraverserLambda::OnPrimitive(LXActorMesh* pMesh, LXComponentMesh* componentMesh, LXWorldPrimitive* WorldPrimitive)
 {
 	if (_lambdaOnPrimitive)
 		_lambdaOnPrimitive(pMesh, WorldPrimitive);
 
-	LXTraverser::OnPrimitive(pMesh, WorldPrimitive);
+	LXTraverser::OnPrimitive(pMesh, componentMesh, WorldPrimitive);
 }

@@ -48,16 +48,10 @@ void LXTransformation::DefineProperties(LXSmartObject* SmartObject)
 	});
 }
 
-void LXTransformation::OnChange(std::function<void()> eval)
-{
-	_FuncOnChange = eval;
-}
-
 void LXTransformation::InvalidateMatrixLocal()
 {
 	_bValidMatrix = false;
-	if(_FuncOnChange)
-		_FuncOnChange();
+	OnChange.Invoke();
 }
 
 const LXMatrix& LXTransformation::GetMatrix()

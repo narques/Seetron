@@ -25,7 +25,7 @@ public:
 	// Overridden from LXTraverser
 	virtual void		Apply			( ) override;
 	virtual void		OnActor			( LXActor* pActor )override;
-	virtual void		OnPrimitive		( LXActorMesh* pMesh, LXWorldPrimitive* WorldPrimitive) override;
+	virtual void		OnPrimitive		( LXActorMesh* pMesh, LXComponentMesh* componentMesh, LXWorldPrimitive* WorldPrimitive) override;
 
 	void				SetRenderer		( LXRenderer* pRenderer ) { _Renderer = pRenderer; }
 	const SetActors&	GetNodes		( ) const { return _setActors; }

@@ -2,15 +2,19 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "StdAfx.h"
 #include "LXPickTraverser.h"
-#include "LXBBox.h"
+
+// Seetron
 #include "LXActor.h"
 #include "LXActorMesh.h"
+#include "LXBBox.h"
+#include "LXComponent.h"
+#include "LXComponentMesh.h"
 #include "LXPerformance.h"
 #include "LXCore.h"
 #include "LXActorLine.h"
@@ -25,7 +29,6 @@
 #include "LXPrimitive.h"
 #include "LXMaterial.h"
 #include "LXStatistic.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXPickTraverser::LXPickTraverser(void)
 {
@@ -146,7 +149,7 @@ float dist3D_Segment_to_Segment( const Segment& S1, const Segment& S2, vec3f& oC
 	return dP.Length();
 }
 
-bool IntersectRayTriangle(LXAxis& ray, const vec3f& p0, const vec3f& p1, const vec3f& p2, vec3f& pI)
+bool IntersectRayTriangle(const LXAxis& ray, const vec3f& p0, const vec3f& p1, const vec3f& p2, vec3f& pI)
 {
 	// Triangle edge vectors
 	vec3f u = p1 - p0;
@@ -203,7 +206,7 @@ bool IntersectRayTriangle(LXAxis& ray, const vec3f& p0, const vec3f& p1, const v
 	return true;
 }
 
-bool IntersectRayQuad(LXAxis& ray, vec3f& p0, vec3f& p1, vec3f& p2, vec3f& p3, vec3f& pI)
+bool IntersectRayQuad(const LXAxis& ray, const vec3f& p0, vec3f& p1, const vec3f& p2, const vec3f& p3, vec3f& pI)
 {
 	if (IntersectRayTriangle(ray, p0, p1, p2, pI))
 		return true;
@@ -211,7 +214,7 @@ bool IntersectRayQuad(LXAxis& ray, vec3f& p0, vec3f& p1, vec3f& p2, vec3f& p3, v
 		return IntersectRayTriangle(ray, p1, p2, p3, pI);
 }
 
-bool IntersectRayBox(LXAxis& ray, const LXBBox& box, vec3f& pI)
+bool IntersectRayBox(const LXAxis& ray, const LXBBox& box, vec3f& pI)
 {
 	// La B
 	if (box.IsPoint())
@@ -309,73 +312,81 @@ void LXPickTraverser::OnActor(LXActor* pGroup)
 	}
 }
 
-void LXPickTraverser::OnPrimitive(LXActorMesh* pMesh, LXWorldPrimitive* WorldPrimitive)
+void LXPickTraverser::OnPrimitive(LXActorMesh* actorMesh, LXComponentMesh* componentMesh, LXWorldPrimitive* worldPrimitive)
 {
-	LXPrimitive* Primitive = WorldPrimitive->PrimitiveInstance->Primitive.get();
-	LXMatrix* MatrixWCS = &WorldPrimitive->MatrixWorld;
+	LXPrimitive* primitive = worldPrimitive->PrimitiveInstance->Primitive.get();
+	LXMatrix* matrixWCS = &worldPrimitive->MatrixWorld;
 	
 	LXAxis rayLCS = m_ray;
 		
 	vec3f pI;
 	m_nTestedPrimitivesBoxes++;
-	if (IntersectRayBox(m_ray, WorldPrimitive->BBoxWorld, pI))
+	if (IntersectRayBox(m_ray, worldPrimitive->BBoxWorld, pI))
 	{
 		m_nHitPrimitivesBoxes++;
-		PickPrimitive(pMesh, Primitive, MatrixWCS);
+		const LXComponent* component = (const LXComponent*)componentMesh;
+
+		PickPrimitive(actorMesh ? actorMesh : component->GetActor(), component, primitive, matrixWCS);
 	}
 }
 
-void LXPickTraverser::SetRay(LXAxis& ray)
+void LXPickTraverser::SetRay(const LXAxis& ray)
 {
 	m_ray = ray; 
 }
 
-void LXPickTraverser::PickPrimitive(LXActor* pMesh, LXPrimitive* pPrimitive, LXMatrix* MatrixWCS)
+void LXPickTraverser::PickPrimitive(const LXActor* actor, const LXComponent* component, const LXPrimitive* primitive, const LXMatrix* matrixWCS)
 {
 #ifdef LX_DEBUG_PRIMITIVE_PROPVISIBLE
-	if (!pPrimitive->_bVisible)
+	if (!primitive->_bVisible)
 		return;
 #endif
 		
-	if (LXActorMesh* ActorMesh = dynamic_cast<LXActorMesh*>(pMesh))
+	if (const LXActorMesh* ActorMesh = dynamic_cast<const LXActorMesh*>(actor))
 	{
 		if (ActorMesh->GetArrayInstancePosition().size() > 0)
 		{
 			for (const vec3f& Position : ActorMesh->GetArrayInstancePosition())
 			{
-				LXMatrix LXMatrixInstanceWCS = *MatrixWCS;
+				LXMatrix LXMatrixInstanceWCS = *matrixWCS;
 				LXMatrixInstanceWCS.Translate(Position);
 				LXAxis rayLCS = m_ray;
 				LXMatrixInstanceWCS.ParentToLocal(rayLCS);
-				PickPrimitiveInstance(pMesh, pPrimitive, &LXMatrixInstanceWCS, rayLCS);
+				PickPrimitiveInstance(actor, component, primitive, &LXMatrixInstanceWCS, rayLCS);
 			}
 		}
 		else
 		{
 			LXAxis rayLCS = m_ray;
-			MatrixWCS->ParentToLocal(rayLCS);
-			PickPrimitiveInstance(pMesh, pPrimitive, MatrixWCS, rayLCS);
+			matrixWCS->ParentToLocal(rayLCS);
+			PickPrimitiveInstance(actor, component, primitive, matrixWCS, rayLCS);
 		}
+	}
+	else if (component)
+	{
+		LXAxis rayLCS = m_ray;
+		matrixWCS->ParentToLocal(rayLCS);
+		PickPrimitiveInstance(actor, component, primitive, matrixWCS, rayLCS);
 	}
 }
 
-void LXPickTraverser::PickPrimitiveInstance(LXActor* pMesh, LXPrimitive* pPrimitive, LXMatrix* MatrixWCS, LXAxis& rayLCS)
+void LXPickTraverser::PickPrimitiveInstance(const LXActor* actor, const LXComponent* component, const LXPrimitive* primitive, const LXMatrix* matrixWCS, const LXAxis& rayLCS)
 {
-	ArrayUint& arrayIndices = pPrimitive->GetArrayIndices();
+	const ArrayUint& arrayIndices = primitive->GetArrayIndices();
 
 	if (arrayIndices.size())
 	{
-		if (pPrimitive->GetTopology() == LX_LINE_LOOP)
+		if (primitive->GetTopology() == LX_LINE_LOOP)
 		{
-			PickIndexedLineLoop(rayLCS, pMesh, pPrimitive);
+			PickIndexedLineLoop(rayLCS, actor, component, primitive);
 		}
-		else if ((pPrimitive->GetTopology() == LX_TRIANGLES) || (pPrimitive->GetTopology() == LX_3_CONTROL_POINT_PATCH))
+		else if ((primitive->GetTopology() == LX_TRIANGLES) || (primitive->GetTopology() == LX_3_CONTROL_POINT_PATCH))
 		{
-			PickIndexedTriangles(rayLCS, pMesh, pPrimitive, MatrixWCS);
+			PickIndexedTriangles(rayLCS, actor, component, primitive, matrixWCS);
 		}
-		else if (pPrimitive->GetTopology() == LX_TRIANGLE_STRIP)
+		else if (primitive->GetTopology() == LX_TRIANGLE_STRIP)
 		{
-			PickIndexedTriangleStrip(rayLCS, pMesh, pPrimitive, MatrixWCS);
+			PickIndexedTriangleStrip(rayLCS, actor, component, primitive, matrixWCS);
 		}
 		else
 		{
@@ -384,25 +395,25 @@ void LXPickTraverser::PickPrimitiveInstance(LXActor* pMesh, LXPrimitive* pPrimit
 	}
 	else
 	{
-		if (pPrimitive->GetTopology() == LX_POINTS)
+		if (primitive->GetTopology() == LX_POINTS)
 		{
-			PickPoints(rayLCS, pMesh, pPrimitive);
+			PickPoints(rayLCS, actor, component, primitive);
 		}
-		else if (pPrimitive->GetTopology() == LX_LINE_LOOP)
+		else if (primitive->GetTopology() == LX_LINE_LOOP)
 		{
-			PickLineLoop(rayLCS, pMesh, pPrimitive);
+			PickLineLoop(rayLCS, actor, component, primitive);
 		}
-		else if (pPrimitive->GetTopology() == LX_TRIANGLE_STRIP)
+		else if (primitive->GetTopology() == LX_TRIANGLE_STRIP)
 		{
-			PickTriangleStrip(rayLCS, pMesh, pPrimitive, MatrixWCS);
+			PickTriangleStrip(rayLCS, actor, component, primitive, matrixWCS);
 		}
-		else if ((pPrimitive->GetTopology() == LX_TRIANGLES) || (pPrimitive->GetTopology() == LX_3_CONTROL_POINT_PATCH))
+		else if ((primitive->GetTopology() == LX_TRIANGLES) || (primitive->GetTopology() == LX_3_CONTROL_POINT_PATCH))
 		{
-			PickTriangles(rayLCS, pMesh, pPrimitive, MatrixWCS);
+			PickTriangles(rayLCS, actor, component, primitive, matrixWCS);
 		}
-		else if (pPrimitive->GetTopology() == LX_LINES)
+		else if (primitive->GetTopology() == LX_LINES)
 		{
-			PickLines(rayLCS, pMesh, pPrimitive);
+			PickLines(rayLCS, actor, component, primitive);
 		}
 		else
 		{
@@ -411,13 +422,13 @@ void LXPickTraverser::PickPrimitiveInstance(LXActor* pMesh, LXPrimitive* pPrimit
 	}
 }
 
-void LXPickTraverser::PickPoints(LXAxis& rayLCS, LXActor* pMesh, LXPrimitive* pPrimitive)
+void LXPickTraverser::PickPoints(const LXAxis& rayLCS, const LXActor* actor, const LXComponent* component, const LXPrimitive* primitive)
 {
-	 ArrayVec3f& arrayPosition = pPrimitive->GetArrayPositions();
+	 const ArrayVec3f& arrayPosition = primitive->GetArrayPositions();
 
 	for (int i = 0; i < (int)arrayPosition.size(); i++)
 	{
-		vec3f& p0 = arrayPosition[i];
+		const vec3f& p0 = arrayPosition[i];
 		vec3f nearest;
 		nearestPoint(Line(rayLCS.GetOrigin(), rayLCS.GetOrigin() + rayLCS.GetVector() * 50000.f), p0, nearest);
 
@@ -431,27 +442,27 @@ void LXPickTraverser::PickPoints(LXAxis& rayLCS, LXActor* pMesh, LXPrimitive* pP
 			if (dist < 10.f)
 			{
 				float fDistance = 0.f; //TODO Point Priority
-				pMesh->GetMatrixWCS().LocalToParentPoint(nearest);
-				AddPointOfInterest(fDistance, pMesh, pPrimitive, nearest, L"PickPoints");
+				actor->GetMatrixWCS().LocalToParentPoint(nearest);
+				AddPointOfInterest(fDistance, actor, component, primitive, nearest, L"PickPoints");
 			}
 		}
 	}
 }
 
-void LXPickTraverser::PickLineLoop(LXAxis& rayLCS, LXActor* pMesh, LXPrimitive* pPrimitive)
+void LXPickTraverser::PickLineLoop(const LXAxis& rayLCS, const LXActor* actor, const LXComponent* component, const LXPrimitive* primitive)
 {
-	ArrayVec3f& arrayPosition = pPrimitive->GetArrayPositions();
+	const ArrayVec3f& arrayPosition = primitive->GetArrayPositions();
 
 	for (int i = 0; i < (int)arrayPosition.size(); i++)
 	{
-		vec3f& p0 = arrayPosition[i];
+		const vec3f& p0 = arrayPosition[i];
 		int ip1 = i + 1;
 
 		// Close the loop
 		if (i == arrayPosition.size() - 1)
 			ip1 = 0;
 
-		vec3f& p1 = arrayPosition[ip1];
+		const vec3f& p1 = arrayPosition[ip1];
 
 		vec3f v = p1 - p0;
 		LXAxis edge;
@@ -472,37 +483,37 @@ void LXPickTraverser::PickLineLoop(LXAxis& rayLCS, LXActor* pMesh, LXPrimitive* 
 			{
 				//float fDistance = vb.Distance(rayLCS.GetOrigin()); 
 				float fDistance = 1.f; //Line Priority // 
-				pMesh->GetMatrixWCS().LocalToParentPoint(va);
-				AddPointOfInterest(fDistance, pMesh, pPrimitive, va, L"PickLineLoop");
+				actor->GetMatrixWCS().LocalToParentPoint(va);
+				AddPointOfInterest(fDistance, actor, component, primitive, va, L"PickLineLoop");
 				
 				// We save the picked segment ID for a future usage.
-				if (LXActorLine* pLine = dynamic_cast<LXActorLine*>(pMesh))
+				if (const LXActorLine* actorLine = dynamic_cast<const LXActorLine*>(actor))
 				{
-					pLine->SetPickedID(i, va);
+					const_cast<LXActorLine*>(actorLine)->SetPickedID(i, va);
 				}
 			}
 		}
 	}
 }
 
-void LXPickTraverser::PickIndexedLineLoop(LXAxis& rayLCS, LXActor* pMesh, LXPrimitive* )
+void LXPickTraverser::PickIndexedLineLoop(const LXAxis& rayLCS, const LXActor* , const LXComponent*, const LXPrimitive* )
 {
 	CHK(0);
 }
 
-void LXPickTraverser::PickIndexedLines(LXAxis& rayLCS, LXActor* pMesh, LXPrimitive* )
+void LXPickTraverser::PickIndexedLines(const LXAxis& rayLCS, const LXActor*, const LXComponent*, const LXPrimitive* )
 {
 	CHK(0);
 }
 
-void LXPickTraverser::PickLines(LXAxis& rayLCS, LXActor* pMesh, LXPrimitive* pPrimitive)
+void LXPickTraverser::PickLines(const LXAxis& rayLCS, const LXActor* actor, const LXComponent* component, const LXPrimitive* primitive)
 {
-	ArrayVec3f& arrayPosition = pPrimitive->GetArrayPositions();
+	const ArrayVec3f& arrayPosition = primitive->GetArrayPositions();
 
 	for (int i = 0; i < (int)arrayPosition.size(); i+=2)
 	{
-		vec3f& p0 = arrayPosition[i];
-		vec3f& p1 = arrayPosition[i+1];
+		const vec3f& p0 = arrayPosition[i];
+		const vec3f& p1 = arrayPosition[i+1];
 		
 		LXAxis edge;
 		edge.Set(p0, p1);
@@ -523,23 +534,23 @@ void LXPickTraverser::PickLines(LXAxis& rayLCS, LXActor* pMesh, LXPrimitive* pPr
 			{
 				//float fDistance = vb.Distance(rayLCS.GetOrigin()); 
 				float fDistance = 1.f; // Line Priority // 
-				pMesh->GetMatrixWCS().LocalToParentPoint(va);
-				AddPointOfInterest(fDistance, pMesh, pPrimitive, va, L"PickLines");
+				actor->GetMatrixWCS().LocalToParentPoint(va);
+				AddPointOfInterest(fDistance, actor, component, primitive, va, L"PickLines");
 
 				// We save the picked segment ID for a future usage.
-				if (LXActorLine* pLine = dynamic_cast<LXActorLine*>(pMesh))
+				if (const LXActorLine* actorLine = dynamic_cast<const LXActorLine*>(actor))
 				{
-					pLine->SetPickedID(i, va);
+					const_cast<LXActorLine*>(actorLine)->SetPickedID(i, va);
 				}
 			}
 		}
 	}
 }
 
-void LXPickTraverser::PickIndexedTriangles(LXAxis& rayLCS, LXActor* pMesh, LXPrimitive* pPrimitive, LXMatrix* MatrixWCS)
+void LXPickTraverser::PickIndexedTriangles(const LXAxis& rayLCS, const LXActor* actor, const LXComponent* component, const LXPrimitive* primitive, const LXMatrix* matrixWCS)
 {
-	const ArrayVec3f& arrayPosition = pPrimitive->GetArrayPositions();
-	const ArrayUint& arrayIndices = pPrimitive->GetArrayIndices();
+	const ArrayVec3f& arrayPosition = primitive->GetArrayPositions();
+	const ArrayUint& arrayIndices = primitive->GetArrayIndices();
 	
 	 
 	for (int i = 0; i < (int)arrayIndices.size(); i += 3)
@@ -552,24 +563,25 @@ void LXPickTraverser::PickIndexedTriangles(LXAxis& rayLCS, LXActor* pMesh, LXPri
 		const vec3f& v1 = arrayPosition[b];
 		const vec3f& v2 = arrayPosition[c];
 
-		if (LXActorTerrain* Terrain = dynamic_cast<LXActorTerrain*>(pMesh))
+
+		// ComponentMesh could own the 'Picking' itself
+		// useful when the component applies extra transformations or displacements. 
+		if (const LXComponentMesh* componentMesh = dynamic_cast<const LXComponentMesh*>(component))
 		{
 			vec3f w0, w1, w2;
 			w0 = v0;
 			w1 = v1;
 			w2 = v2;
-			
-			MatrixWCS->LocalToParentPoint(w0);
-			MatrixWCS->LocalToParentPoint(w1);
-			MatrixWCS->LocalToParentPoint(w2);
- 
-			w0.z = Terrain->GetHeightAt(w0.x, w0.y);
-			w1.z = Terrain->GetHeightAt(w1.x, w1.y);
-			w2.z = Terrain->GetHeightAt(w2.x, w2.y);
 
-			MatrixWCS->ParentToLocalPoint(w0);
-			MatrixWCS->ParentToLocalPoint(w1);
-			MatrixWCS->ParentToLocalPoint(w2);
+			matrixWCS->LocalToParentPoint(w0);
+			matrixWCS->LocalToParentPoint(w1);
+			matrixWCS->LocalToParentPoint(w2);
+
+			componentMesh->UpdateWorldPositionForPicking.Invoke(w0, w1, w2);
+
+			matrixWCS->ParentToLocalPoint(w0);
+			matrixWCS->ParentToLocalPoint(w1);
+			matrixWCS->ParentToLocalPoint(w2);
 
 			vec3f pI;
 			m_nTestedTriangles++;
@@ -577,10 +589,42 @@ void LXPickTraverser::PickIndexedTriangles(LXAxis& rayLCS, LXActor* pMesh, LXPri
 			if (IntersectRayTriangle(rayLCS, w0, w1, w2, pI))
 			{
 				m_nHitTriangles++;
-				MatrixWCS->LocalToParentPoint(pI);
+				matrixWCS->LocalToParentPoint(pI);
 				float fDistance = pI.Distance(m_ray.GetOrigin());
 				{
-					AddPointOfInterest(fDistance, pMesh, pPrimitive, pI, L"PickIndexedTriangles");
+					AddPointOfInterest(fDistance, actor, component, primitive, pI, L"PickIndexedTriangles");
+				}
+			}
+		}
+		else  if (const LXActorTerrain* actorTerrain = dynamic_cast<const LXActorTerrain*>(actor))
+		{
+			vec3f w0, w1, w2;
+			w0 = v0;
+			w1 = v1;
+			w2 = v2;
+			
+			matrixWCS->LocalToParentPoint(w0);
+			matrixWCS->LocalToParentPoint(w1);
+			matrixWCS->LocalToParentPoint(w2);
+ 
+			w0.z = actorTerrain->GetHeightAt(w0.x, w0.y);
+			w1.z = actorTerrain->GetHeightAt(w1.x, w1.y);
+			w2.z = actorTerrain->GetHeightAt(w2.x, w2.y);
+
+			matrixWCS->ParentToLocalPoint(w0);
+			matrixWCS->ParentToLocalPoint(w1);
+			matrixWCS->ParentToLocalPoint(w2);
+
+			vec3f pI;
+			m_nTestedTriangles++;
+
+			if (IntersectRayTriangle(rayLCS, w0, w1, w2, pI))
+			{
+				m_nHitTriangles++;
+				matrixWCS->LocalToParentPoint(pI);
+				float fDistance = pI.Distance(m_ray.GetOrigin());
+				{
+					AddPointOfInterest(fDistance, actor, component, primitive, pI, L"PickIndexedTriangles");
 				}
 			}
 		}
@@ -592,38 +636,38 @@ void LXPickTraverser::PickIndexedTriangles(LXAxis& rayLCS, LXActor* pMesh, LXPri
 			if (IntersectRayTriangle(rayLCS, v0, v1, v2, pI))
 			{
 				m_nHitTriangles++;
-				MatrixWCS->LocalToParentPoint(pI);
+				matrixWCS->LocalToParentPoint(pI);
 				float fDistance = pI.Distance(m_ray.GetOrigin());
-				AddPointOfInterest(fDistance, pMesh, pPrimitive, pI, L"PickIndexedTriangles");
+				AddPointOfInterest(fDistance, actor, component, primitive, pI, L"PickIndexedTriangles");
 			}
 		}
 	}
 }
 
-void LXPickTraverser::PickTriangles(LXAxis& rayLCS, LXActor* pMesh, LXPrimitive* pPrimitive, LXMatrix* MatrixWCS)
+void LXPickTraverser::PickTriangles(const LXAxis& rayLCS, const LXActor* actor, const LXComponent* component, const LXPrimitive* primitive, const LXMatrix* matrixWCS)
 {
-	ArrayVec3f& arrayPosition = pPrimitive->GetArrayPositions();
+	const ArrayVec3f& arrayPosition = primitive->GetArrayPositions();
 
 	for (int i = 0; i < (int)arrayPosition.size(); i += 3)
 	{
-		vec3f& v0 = arrayPosition[i];
-		vec3f& v1 = arrayPosition[i + 1];
-		vec3f& v2 = arrayPosition[i + 2];
+		const vec3f& v0 = arrayPosition[i];
+		const vec3f& v1 = arrayPosition[i + 1];
+		const vec3f& v2 = arrayPosition[i + 2];
 		vec3f pI;
 
 		if (IntersectRayTriangle(rayLCS, v0, v1, v2, pI))
 		{
-			MatrixWCS->LocalToParentPoint(pI);
+			matrixWCS->LocalToParentPoint(pI);
 			float fDistance = pI.Distance(m_ray.GetOrigin());
-			AddPointOfInterest(fDistance, pMesh, pPrimitive, pI, L"PickTriangles");
+			AddPointOfInterest(fDistance, actor, component, primitive, pI, L"PickTriangles");
 		}
 	}
 }
 
-void LXPickTraverser::PickIndexedTriangleStrip(LXAxis& rayLCS, LXActor* pMesh, LXPrimitive* pPrimitive, LXMatrix* MatrixWCS)
+void LXPickTraverser::PickIndexedTriangleStrip(const LXAxis& rayLCS, const LXActor* actor, const LXComponent* component, const LXPrimitive* primitive, const LXMatrix* matrixWCS)
 {
-	ArrayVec3f& arrayPosition = pPrimitive->GetArrayPositions();
-	ArrayUint& arrayIndices = pPrimitive->GetArrayIndices();
+	const ArrayVec3f& arrayPosition = primitive->GetArrayPositions();
+	const ArrayUint& arrayIndices = primitive->GetArrayIndices();
 
 	for (int i = 0; i < (int)arrayIndices.size() -2; i++)
 	{
@@ -631,9 +675,9 @@ void LXPickTraverser::PickIndexedTriangleStrip(LXAxis& rayLCS, LXActor* pMesh, L
 		uint b = arrayIndices[i + 1];
 		uint c = arrayIndices[i + 2];
 
-		vec3f& v0 = arrayPosition[a];
-		vec3f& v1 = arrayPosition[b];
-		vec3f& v2 = arrayPosition[c];
+		const vec3f& v0 = arrayPosition[a];
+		const vec3f& v1 = arrayPosition[b];
+		const vec3f& v2 = arrayPosition[c];
 
 		vec3f pI;
 		m_nTestedTriangles++;
@@ -641,29 +685,29 @@ void LXPickTraverser::PickIndexedTriangleStrip(LXAxis& rayLCS, LXActor* pMesh, L
 		if (IntersectRayTriangle(rayLCS, v0, v1, v2, pI))
 		{
 			m_nHitTriangles++;
-			MatrixWCS->LocalToParentPoint(pI);
+			matrixWCS->LocalToParentPoint(pI);
 			float fDistance = pI.Distance(m_ray.GetOrigin());
-			AddPointOfInterest(fDistance, pMesh, pPrimitive, pI, L"PickIndexedTriangleStrip");
+			AddPointOfInterest(fDistance, actor, component, primitive, pI, L"PickIndexedTriangleStrip");
 		}
 	}
 }
 
-void LXPickTraverser::PickTriangleStrip(LXAxis& rayLCS, LXActor* pMesh, LXPrimitive* pPrimitive, LXMatrix* MatrixWCS)
+void LXPickTraverser::PickTriangleStrip(const LXAxis& rayLCS, const LXActor* actor, const LXComponent* component, const LXPrimitive* primitive, const LXMatrix* matrixWCS)
 {
-	ArrayVec3f& arrayPosition = pPrimitive->GetArrayPositions();
+	const ArrayVec3f& arrayPosition = primitive->GetArrayPositions();
 
 	for (int i = 0; i < (int)arrayPosition.size() - 2; i++)
 	{
-		vec3f& v0 = arrayPosition[i];
-		vec3f& v1 = arrayPosition[i + 1];
-		vec3f& v2 = arrayPosition[i + 2];
+		const vec3f& v0 = arrayPosition[i];
+		const vec3f& v1 = arrayPosition[i + 1];
+		const vec3f& v2 = arrayPosition[i + 2];
 		vec3f pI;
 
 		if (IntersectRayTriangle(rayLCS, v0, v1, v2, pI))
 		{
-			MatrixWCS->LocalToParentPoint(pI);
+			matrixWCS->LocalToParentPoint(pI);
 			float fDistance = pI.Distance(m_ray.GetOrigin());
-			AddPointOfInterest(fDistance, pMesh, pPrimitive, pI, L"PickTriangleStrip");
+			AddPointOfInterest(fDistance, actor, component, primitive, pI, L"PickTriangleStrip");
 		}
 	}
 }
@@ -673,7 +717,7 @@ LXActor* LXPickTraverser::GetNearestNode( )
 	if (m_mapIntersection.size())
 	{
 		MapIntersection::iterator It = m_mapIntersection.begin();
-		return It->second.node;
+		return const_cast<LXActor*>(It->second.node);
 	}
 	else
 		return NULL;
@@ -684,7 +728,7 @@ LXPrimitive* LXPickTraverser::GetNearestPrimitive()
 	if (m_mapIntersection.size())
 	{
 		MapIntersection::iterator It = m_mapIntersection.begin();
-		return It->second.primitive;
+		return const_cast<LXPrimitive*>(It->second.primitive);
 	}
 	else
 		return NULL;
@@ -725,14 +769,14 @@ vec3f* LXPickTraverser::GetNearestPOIOnNode( LXActor* pNode )
 	return NULL;
 }
 
-void LXPickTraverser::AddPointOfInterest(float fDistance, LXActor* Actor, LXPrimitive* Primitive, const vec3f& nearest, const wchar_t* Method)
+void LXPickTraverser::AddPointOfInterest(float fDistance, const LXActor* actor, const LXComponent* component, const LXPrimitive* primitive, const vec3f& nearest, const wchar_t* method)
 {
 	// "Rescale" the Gizmo picked distances to make it a priority 
-	if (Actor->GetCID() & LX_NODETYPE_CS)
+	if (actor->GetCID() & LX_NODETYPE_CS)
 	{
 		fDistance = SmoothStep(fDistance, 0.f, 10.f);
 	}
 	
-	m_mapIntersection[fDistance] = LXPOI(Actor, Primitive, nearest);
+	m_mapIntersection[fDistance] = LXPOI(actor, primitive, nearest);
 	//LogD(PickTraverser, L"Picked %s distance %f (method %s)", Actor->GetName().GetBuffer(), fDistance, Method);
 }

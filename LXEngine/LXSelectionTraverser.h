@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -25,9 +25,8 @@ public:
 	LXSelectionTraverser(void);
 	virtual ~LXSelectionTraverser(void);
 
-	virtual void	OnMesh			( LXActorMesh* pMesh );
-
-	void			SetSetActors	( SetActors* pSetActors) { m_pSetActors = pSetActors; }
+	virtual void OnActor(LXActor* actor);
+	void SetSetActors(SetActors* pSetActors) { m_pSetActors = pSetActors; }
 
 private:
 

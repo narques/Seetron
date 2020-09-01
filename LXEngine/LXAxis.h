@@ -28,7 +28,7 @@ public:
 		return *this;
 	}
 
-	void Set( vec3f& vOrigin, vec3f& vVector )		{ _vOrigin = vOrigin; _vVector = vVector; }
+	void Set( const vec3f& vOrigin, const vec3f& vVector ) { _vOrigin = vOrigin; _vVector = vVector; }
 	void SetOrigin( const vec3f& v )				{ _vOrigin = v;}
 	void SetOrigin( float x, float y, float z )		{ _vOrigin.Set(x,y,z); }
 	const vec3f& GetOrigin( ) const					{ return _vOrigin; }

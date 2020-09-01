@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -19,13 +19,13 @@ LXSelectionTraverser::~LXSelectionTraverser(void)
 {
 }
 
-void LXSelectionTraverser::OnMesh( LXActorMesh* pMesh )
+void LXSelectionTraverser::OnActor(LXActor* actor)
 {
 	CHK(m_pSetActors);
 	if (m_pSetActors)
-		m_pSetActors->insert((LXActor*)pMesh);
+		m_pSetActors->insert(actor);
 
-	LXTraverser::OnMesh(pMesh);
+	LXTraverser::OnActor(actor);
 }
 
 LXSelectionTraverser2::LXSelectionTraverser2(void):

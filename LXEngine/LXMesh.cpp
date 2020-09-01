@@ -54,7 +54,7 @@ LXMesh::LXMesh(LXAssetMesh* InOwner):_Owner(InOwner)
 	// --------------------------------------------------------------------------------------------------------------
 
 	_Transformation.DefineProperties(this);
-	_Transformation.OnChange([this]()
+	_Transformation.OnChange.AttachMemberLambda2([this]()
 	{
 		if (_Owner != nullptr)
 		{

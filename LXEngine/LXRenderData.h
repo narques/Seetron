@@ -15,6 +15,7 @@
 #include "LXObject.h"
 #include "LXBBox.h"
 
+class LXComponent;
 class LXMaterialBase;
 class LXMesh;
 class LXPrimitiveInstance;
@@ -47,12 +48,23 @@ class LXRenderData : public LXObject
 public:
 
 	LXRenderData(LXActor* actor);
+	LXRenderData(LXActor* actor, LXComponent* component);
 	virtual ~LXRenderData();
 
 	const LXActor* GetActor() const { return _actor; }
 
 	// Common
 	const TWorldPrimitives& GetPrimitives() { return _worldPrimitives; }
+	bool IsValid() const { return _valid; }
+	void Validate() { _valid = true; }
+	void Invalidate() { _valid = false; }
+
+	bool AreValideWorldMatrices() const { return _validPrimitiveWorldMatrices; }
+	void InvalidateWorldMatrices() { _validPrimitiveWorldMatrices = false; }
+	
+	bool AreValideWorldBounds() const { return _validPrimitiveWorldBounds; }
+	void InvalidateWorldBounds() { _validPrimitiveWorldBounds = false;  }
+
 	void ComputePrimitiveWorldMatrices();
 	void ComputePrimitiveWorldBounds();
 
@@ -63,17 +75,27 @@ public:
 	bool ShowActorBBox() const { return _actorBBox; }
 	const LXBBox& GetBBoxWorld()const { return _bboxWorld; }
 
+	// Delegates & Events
+	// LXDelegate<> PrimitiveWorldBoundsComputed; // NOWAY :( RenderData is volatile...
+
 public:
 
 	// RenderThread only
 	list<LXRenderCluster*> RenderClusters;
 
 private:
+
+	bool _valid = false;
 	
-	LXActor* _actor;
+	LXActor* _actor = nullptr;
+	LXComponent* _component = nullptr;
 	LXBBox _bboxWorld;
 	shared_ptr<LXMesh> _mesh;
+	
 	TWorldPrimitives _worldPrimitives;
+	bool _validPrimitiveWorldMatrices = false;
+	bool _validPrimitiveWorldBounds = false;
+
 	int32 _actorType;
 	bool _castShadows;
 	bool _primitiveBBox;

@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "LXDelegate.h"
 #include "LXMatrix.h"
 
 class LXCORE_API LXTransformation
@@ -19,7 +20,6 @@ public:
 	~LXTransformation();
 
 	void DefineProperties(LXSmartObject* SmartObject);
-	void OnChange(std::function<void()> eval);
 	void InvalidateMatrixLocal();
 	const LXMatrix& GetMatrix();
 	void SetTranslation(const vec3f& v);
@@ -29,6 +29,8 @@ public:
 	const vec3f& GetTranslation() const { return _Translation; }
 	const vec3f& GetRotation() const { return _Rotation; }
 	const vec3f& GetScale() const { return _Scale; }
+
+	LXDelegate<> OnChange;
 
 private:
 
@@ -43,6 +45,5 @@ private:
 	LXMatrix _Matrix;
 	bool _bValidMatrix = false;
 
-	std::function<void()> _FuncOnChange;
 };
 

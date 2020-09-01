@@ -67,7 +67,7 @@ void LXRectangularSelectionTraverser::OnActor(LXActor* pGroup)
 	LXTraverser::OnActor(pGroup);
 }
 
-void LXRectangularSelectionTraverser::OnPrimitive(LXActorMesh* pMesh, LXWorldPrimitive* WorldPrimitive)
+void LXRectangularSelectionTraverser::OnPrimitive(LXActorMesh* pMesh, LXComponentMesh* componentMesh, LXWorldPrimitive* WorldPrimitive)
 {
 	LXPrimitive* pPrimitive = WorldPrimitive->PrimitiveInstance->Primitive.get();
 
@@ -84,5 +84,5 @@ void LXRectangularSelectionTraverser::OnPrimitive(LXActorMesh* pMesh, LXWorldPri
 		}
 	}
 
-	LXTraverserFrustumCulling::OnPrimitive(pMesh, WorldPrimitive);
+	LXTraverserFrustumCulling::OnPrimitive(pMesh, componentMesh, WorldPrimitive);
 }
