@@ -447,7 +447,8 @@ void LXActor::SetPrimitiveBBoxVisible(bool visible)
 	if (_bPrimitiveBBoxVisible != visible)
 	{
 		_bPrimitiveBBoxVisible = visible;
-		InvalidateRenderState(LXFlagsRenderClusterRole(ERenderClusterRole::Default) | LXFlagsRenderClusterRole(ERenderClusterRole::PrimitiveBBox));
+		if (_renderData)
+			_renderData->ShowPrimitiveBBox(_bPrimitiveBBoxVisible);
 	}
 
 	for (LXComponent* component : _components)

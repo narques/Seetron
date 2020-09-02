@@ -20,6 +20,7 @@
 #include "LXMaterial.h"
 #include "LXMaterialD3D11.h"
 #include "LXPrimitiveD3D11.h"
+#include "LXPrimitiveFactory.h"
 #include "LXPrimitiveInstance.h"
 #include "LXRenderClusterManager.h"
 #include "LXRenderCommandList.h"
@@ -116,6 +117,34 @@ bool LXRenderCluster::UpdateDeviceMaterialAndShaders(ERenderPass renderPass)
 #endif
 
 	return true;
+}
+
+bool LXRenderCluster::GetDeviceMaterialAndShaders(ERenderPass renderPass, const LXPrimitiveD3D11* primitive, const LXMaterialBase* material, LXShaderProgramD3D11& shaderProgram, shared_ptr<LXMaterialD3D11>& shaderResources)
+{
+	CHK(IsRenderThread());
+
+	LXRenderer* renderer = GetCore().GetRenderer();
+
+	// Resources
+	const shared_ptr<LXMaterialD3D11> materialD3D11 = renderer->GetDeviceResourceManager()->GetShaderResources(renderPass, material);
+	shaderResources = materialD3D11;
+
+	// Shaders
+	if (renderer->GetShaderManager()->GetShaders(renderPass, primitive, materialD3D11.get(), &shaderProgram))
+	{
+		shaderProgram.VertexShader = shaderProgram.VertexShader;
+		shaderProgram.HullShader = shaderProgram.HullShader;
+		shaderProgram.DomainShader = shaderProgram.DomainShader;
+		shaderProgram.GeometryShader = shaderProgram.GeometryShader;
+		shaderProgram.PixelShader = shaderProgram.PixelShader;
+
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+
 }
 
 void LXRenderCluster::SetPrimitive(shared_ptr<LXPrimitiveD3D11>& InPrimitiveD3D11)
@@ -221,6 +250,96 @@ void LXRenderCluster::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 
 		Primitive->Render(RCL);
 	}
+}
+
+void LXRenderCluster::RenderBounds(ERenderPass RenderPass, LXRenderCommandList* RCL)
+{
+	// GetRenderBBoxResources is unique 
+	CHK(RenderPass == ERenderPass::GBuffer);
+	LXRenderBBoxResources* rbr = GetRenderer()->GetRenderBBoxResources();
+	LXShaderProgramD3D11& shaderProgram = rbr->ShaderProgramD3D11;
+	bool result = GetDeviceMaterialAndShaders(RenderPass, rbr->WireframeCubeD3D11, rbr->WireframeCube->GetMaterial().get(), rbr->ShaderProgramD3D11, rbr->MaterialD3D11);
+
+	if (!result)
+	{
+		return;
+	}
+
+	LXMatrix MatrixScale, MatrixTranslation;
+	// Max/1.f to avoid a 0 scale value ( possible with the "flat" geometries )
+	MatrixScale.SetScale(max(BBoxWorld.GetSizeX(), 1.f), max(BBoxWorld.GetSizeY(), 1.f), max(BBoxWorld.GetSizeZ(), 1.f));
+	MatrixTranslation.SetTranslation(BBoxWorld.GetCenter());
+	LXMatrix matrixWCS = MatrixTranslation * MatrixScale;
+
+	if (1/*!ValidConstantBufferMatrix*/ && CBWorld)
+	{
+		//LXConstantBufferData1 cb1;
+		cb2.World = Transpose(matrixWCS);
+		cb2.Normal = Inverse(matrixWCS);
+		cb2.LocalPosition = LocalPosition;
+		RCL->UpdateSubresource4(CBWorld->D3D11Buffer, &cb2);
+		ValidConstantBufferMatrix = true;
+	}
+
+	bool bHasShader = false;
+
+	// Vertex Shader
+	if (shaderProgram.VertexShader)
+	{
+		RCL->IASetInputLayout(shaderProgram.VertexShader.get());
+		RCL->VSSetShader(shaderProgram.VertexShader.get());
+		bHasShader = true;
+
+		if (RCL->CBViewProjection)
+		{
+			RCL->VSSetConstantBuffers(0, 1, RCL->CBViewProjection);
+		}
+
+		if (CBWorld)
+		{
+			RCL->VSSetConstantBuffers(1, 1, CBWorld);
+		}
+	}
+
+	// Hull Shader
+	if (shaderProgram.HullShader)
+	{
+		RCL->HSSetShader(shaderProgram.HullShader.get());
+		bHasShader = true;
+	}
+
+	// Domain Shader
+	if (shaderProgram.DomainShader)
+	{
+		RCL->DSSetShader(shaderProgram.DomainShader.get());
+		bHasShader = true;
+	}
+
+	// Geometry Shader
+	if (shaderProgram.GeometryShader)
+	{
+		RCL->GSSetShader(shaderProgram.GeometryShader.get());
+		bHasShader = true;
+	}
+
+	// Pixel Shader	TODO why tested ?
+	if (shaderProgram.PixelShader)
+	{
+		RCL->PSSetShader(shaderProgram.PixelShader.get());
+		bHasShader = true;
+
+		if (CBWorld)
+		{
+			RCL->PSSetConstantBuffers(1, 1, CBWorld);
+		}
+	}
+
+	if (bHasShader)
+	{
+		rbr->MaterialD3D11->Render(RenderPass, RCL);
+		rbr->WireframeCubeD3D11->Render(RCL);
+	}
+
 }
 
 void LXRenderCluster::SetLightParameters(LXActor* Actor)

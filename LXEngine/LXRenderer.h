@@ -10,6 +10,7 @@
 
 #include "LXObject.h"
 #include "LXRenderClusterType.h"
+#include "LXShaderProgramD3D11.h"
 #include "LXSynchronisable.h"
 #include "LXTime.h"
 
@@ -46,6 +47,18 @@ struct ID3D11SamplerState;
 #define CONSOLE_MAX_LINE 20
 
 extern bool ShowWireframe;
+
+// Shared Resources to render the BBoxes
+class LXRenderBBoxResources
+{
+public:
+	LXRenderBBoxResources();
+	~LXRenderBBoxResources();
+	shared_ptr<LXPrimitive> WireframeCube;
+	LXPrimitiveD3D11* WireframeCubeD3D11 = nullptr;
+	LXShaderProgramD3D11 ShaderProgramD3D11;
+	shared_ptr<LXMaterialD3D11> MaterialD3D11;
+};
 
 class LXRenderer : public LXObject
 {
@@ -86,7 +99,8 @@ public:
 	void ReleaseDeviceMaterials(LXMaterialBase* material);
 	void UpdateDeviceMaterials(LXMaterialBase* material);
 
-	// Shared objects
+	// Shared objects & resources
+	LXRenderBBoxResources* GetRenderBBoxResources() const { return _renderBBoxResources; }
 	ID3D11RasterizerState* GetDefaultRasterizerState () const { return D3D11RasterizerState; }
 	ID3D11BlendState* GetBlendStateOpaque() const { return D3D11BlendStateNoBlend; }
 	ID3D11BlendState* GetBlendStateTransparent() const { return D3D11BlendStateBlend; }
@@ -164,7 +178,7 @@ private:
 
 	// Misc
 	LXPrimitiveD3D11* SSTriangle = nullptr;
-
+	
 	ID3D11RasterizerState* D3D11RasterizerState = nullptr;
 	ID3D11RasterizerState* D3D11RasterizerStateTwoSided = nullptr;
 	ID3D11RasterizerState* D3D11RasterizerStateWireframe = nullptr;
@@ -175,6 +189,7 @@ private:
 	ID3D11SamplerState* D3D11SamplerStateRenderTarget = nullptr;
 
 	// Resources
+	LXRenderBBoxResources* _renderBBoxResources = nullptr;
 	shared_ptr<LXTexture> _TextureNoise4x4;
 
 	// Scene & Document

@@ -188,6 +188,9 @@ void LXRenderPipelineDeferred::BuildRenderClusterLists()
 			else
 			{
 				_ListRenderClusterOpaques.push_back(RenderCluster);
+
+				if (RenderCluster->RenderData->ShowPrimitiveBBox())
+					_ListRenderClusterAuxiliary.push_back(RenderCluster);
 			}
 		}
 	}

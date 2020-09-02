@@ -10,7 +10,6 @@
 
 #include "LXRenderClusterType.h"
 
-class LXActorMesh;
 class LXMaterialBase;
 class LXPrimitive;
 class LXPrimitiveD3D11;

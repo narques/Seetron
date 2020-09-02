@@ -61,7 +61,10 @@ void LXRenderPassAux::Render(LXRenderCommandList* RCL)
 
 	for (LXRenderCluster* RenderCluster : renderPipelineDeferred->GetRenderClusterAuxiliary())
 	{
-		RenderCluster->Render(ERenderPass::GBuffer, RCL);
+		if (RenderCluster->Flags & ERenderClusterType::Surface)
+			RenderCluster->RenderBounds(ERenderPass::GBuffer, RCL);
+		else
+			RenderCluster->Render(ERenderPass::GBuffer, RCL);
 	}
 
 	RCL->VSSetShader(nullptr);

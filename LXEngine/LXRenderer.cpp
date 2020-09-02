@@ -17,6 +17,7 @@
 #include "LXMaterialBase.h"
 #include "LXMaterialD3D11.h"
 #include "LXPrimitiveD3D11.h"
+#include "LXPrimitiveFactory.h"
 #include "LXProject.h"
 #include "LXRenderClusterManager.h"
 #include "LXRenderCommandList.h"
@@ -372,7 +373,13 @@ void LXRenderer::Render()
 	if (_Project != _NewProject)
 	{
 		_Project = _NewProject;
+		LX_SAFE_DELETE(_renderBBoxResources);
 		Empty();
+		
+		if (_Project)
+		{
+			_renderBBoxResources = new LXRenderBBoxResources();
+		}
 	}
 
 	// Objects set to Update/Release/Delete/...
@@ -761,3 +768,16 @@ void LXRenderer::ReleaseRenderData_RT()
 
 	_toRelease.Out->clear();
 }
+
+LXRenderBBoxResources::LXRenderBBoxResources()
+{
+	WireframeCube = GetPrimitiveFactory()->GetWireframeCube();
+	WireframeCubeD3D11 = new LXPrimitiveD3D11();
+	WireframeCubeD3D11->Create(WireframeCube.get());
+}
+
+LXRenderBBoxResources::~LXRenderBBoxResources()
+{
+	delete WireframeCubeD3D11;
+}
+

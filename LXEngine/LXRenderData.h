@@ -68,10 +68,13 @@ public:
 	void ComputePrimitiveWorldMatrices();
 	void ComputePrimitiveWorldBounds();
 
+	void ShowPrimitiveBBox(bool show) { _primitiveBBox = show; }
+	bool ShowPrimitiveBBox() const { return _primitiveBBox; }
+
 	// RenderThread only
 	int32 GetActorType() const { return _actorType; }
 	bool GetCastShadows() const { return _castShadows; }
-	bool ShowPrimitiveBBox() const { return _primitiveBBox; }
+	
 	bool ShowActorBBox() const { return _actorBBox; }
 	const LXBBox& GetBBoxWorld()const { return _bboxWorld; }
 
@@ -84,6 +87,9 @@ public:
 	list<LXRenderCluster*> RenderClusters;
 
 private:
+
+	// Common
+	atomic<bool> _primitiveBBox = false;
 
 	bool _valid = false;
 	
@@ -98,7 +104,6 @@ private:
 
 	int32 _actorType;
 	bool _castShadows;
-	bool _primitiveBBox;
 	bool _actorBBox;
 };
 

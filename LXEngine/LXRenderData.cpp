@@ -134,14 +134,6 @@ void LXRenderData::ComputePrimitiveWorldMatrices()
 				renderCluster->SetMatrix(renderCluster->PrimitiveInstance->MatrixWorld);
 				renderCluster->SetBBoxWorld(renderCluster->PrimitiveInstance->BBoxWorld);
 			}
-			else if (renderCluster->Role == LXFlagsRenderClusterRole(ERenderClusterRole::PrimitiveBBox))
-			{
-				LXMatrix matrixScale, matrixTranslation;
-				matrixScale.SetScale(max(renderCluster->PrimitiveInstance->BBoxWorld.GetSizeX(), 1.f), max(renderCluster->PrimitiveInstance->BBoxWorld.GetSizeY(), 1.f), max(renderCluster->PrimitiveInstance->BBoxWorld.GetSizeZ(), 1.f));
-				matrixTranslation.SetTranslation(renderCluster->PrimitiveInstance->BBoxWorld.GetCenter());
-				renderCluster->SetMatrix(matrixTranslation * matrixScale);
-				renderCluster->SetBBoxWorld(renderCluster->PrimitiveInstance->BBoxWorld);
-			}
 			else if (renderCluster->Role == LXFlagsRenderClusterRole(ERenderClusterRole::ActorBBox))
 			{
 				const LXBBox& BBox = _bboxWorld;
@@ -184,10 +176,6 @@ void LXRenderData::ComputePrimitiveWorldBounds()
 		for (LXRenderCluster* renderCluster : RenderClusters)
 		{
 			if (renderCluster->Role == LXFlagsRenderClusterRole(ERenderClusterRole::Default))
-			{
-				renderCluster->SetBBoxWorld(renderCluster->PrimitiveInstance->BBoxWorld);
-			}
-			else if (renderCluster->Role == LXFlagsRenderClusterRole(ERenderClusterRole::PrimitiveBBox))
 			{
 				renderCluster->SetBBoxWorld(renderCluster->PrimitiveInstance->BBoxWorld);
 			}

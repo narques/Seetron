@@ -60,6 +60,7 @@ public:
 	bool IsTransparent() const;
 	
 	void Render(ERenderPass RenderPass, LXRenderCommandList* RCL);
+	void RenderBounds(ERenderPass RenderPass, LXRenderCommandList* RCL);
 
 	// Cluster Specialization according the type
 	void SetLightParameters(LXActor* actor);
@@ -71,6 +72,9 @@ private:
 
 	bool UpdateDeviceMaterialAndShaders(ERenderPass renderPass);
 
+
+	static bool GetDeviceMaterialAndShaders(ERenderPass renderPass, const LXPrimitiveD3D11* primitive, const LXMaterialBase* material, LXShaderProgramD3D11& shaderProgram, shared_ptr<LXMaterialD3D11>& shaderResources);
+
 public:
 
 	LXRenderData* RenderData = nullptr;
@@ -78,6 +82,7 @@ public:
 
 	LXConstantBufferD3D11* CBWorld = nullptr;
 	LXConstantBufferData1 cb1;
+	LXConstantBufferData1 cb2;
 
 	LXConstantBufferDataSpotLight* ConstantBufferDataSpotLight = nullptr;
 	LXConstantBufferData0* LightView = nullptr;

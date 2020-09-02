@@ -14,9 +14,8 @@
 enum class ERenderClusterRole
 {
 	Default = LX_BIT(0),
-	PrimitiveBBox = LX_BIT(1),
-	ActorBBox = LX_BIT(2),
-	All = Default | PrimitiveBBox | ActorBBox
+	ActorBBox = LX_BIT(1),
+	All = Default | ActorBBox
 };
 
 typedef LXFlags<ERenderClusterRole> LXFlagsRenderClusterRole;
