@@ -290,11 +290,10 @@ LXBBox& LXActor::GetBBoxWorld()
 
 void LXActor::InvalidateBounds(bool bPropagateToParent)
 {
-	if (_isLoading)
-		return;
-
 	_BBoxLocal.Invalidate();
-	InvalidateWorldBounds(true);
+	_BBoxWorld.Invalidate();
+	if (bPropagateToParent && _parent)
+		_parent->InvalidateBounds(bPropagateToParent);
 }
 
 void LXActor::InvalidateWorldBounds(bool bPropagateToParent)
@@ -468,5 +467,11 @@ void LXActor::Run(double frameTime)
 	{
 		component->Run(frameTime);
 	}
+
+	if (!_BBoxLocal.IsValid())
+		ComputeBBoxLocal();
+	
+	if (!_BBoxWorld.IsValid())
+		ComputeBBoxWorld();
 }
 
