@@ -1078,7 +1078,7 @@ int LXPrimitive::GetMask() const
 	return Mask;
 }
 
-void* LXPrimitive::CreateInterleavedVertexArray(const int Mask, const int VertexCount, int *OutVertexStructSize)
+void* LXPrimitive::CreateInterleavedVertexArray(const int Mask, const int VertexCount, int *OutVertexStructSize) const
 {
 	void* VertexStruct = nullptr;
 	int VertexStructSize = 0;

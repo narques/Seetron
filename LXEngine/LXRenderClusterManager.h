@@ -12,7 +12,6 @@
 
 class LXMaterialBase;
 class LXPrimitive;
-class LXPrimitiveD3D11;
 class LXRenderCluster;
 class LXRenderData;
 class LXWorldPrimitive;
@@ -39,7 +38,6 @@ public:
 	
 private:
 
-	shared_ptr<LXPrimitiveD3D11>& GetPrimitiveD3D11(LXPrimitive* Primitive, const ArrayVec3f* ArrayInstancePosition = nullptr);
 	LXRenderCluster* CreateRenderCluster(LXRenderData* renderData, LXWorldPrimitive* worldPrimitive, const LXMatrix& MatrixWCS, const LXMatrix& matrix, const LXBBox& BBoxWorld, LXPrimitive* Primitive, const LXMaterialBase* Material);
 
 	// Remove the RenderCluster from the Rendering (ListRendersClusters)
@@ -57,11 +55,5 @@ private:
 	//
 
 	map<LXRenderData*, list<LXRenderCluster*>> ActorRenderCluster;
-	
-	//
-	// D3D11 Shared Resources
-	//
-
-	map<pair<LXPrimitive*, uint>, shared_ptr<LXPrimitiveD3D11>> MapPrimitiveD3D11;
 };
 

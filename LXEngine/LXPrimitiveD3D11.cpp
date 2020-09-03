@@ -74,7 +74,7 @@ void LXPrimitiveD3D11::Render(LXRenderCommandList* RCL)
 	}
 }
 
-bool LXPrimitiveD3D11::Create(LXPrimitive* Primitive, const ArrayVec3f* ArrayInstancePosition/* = nullptr*/)
+bool LXPrimitiveD3D11::Create(const LXPrimitive* Primitive, const ArrayVec3f* ArrayInstancePosition/* = nullptr*/)
 {
 	CHK(Primitive);
 	CHK(!VertexBuffer);

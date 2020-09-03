@@ -13,6 +13,8 @@
 #include "LXCore.h"
 #include "LXMaterialBase.h"
 #include "LXMaterialD3D11.h"
+#include "LXPrimitive.h"
+#include "LXPrimitiveD3D11.h"
 
 template<class T>
 void hash_combine(std::size_t& seed, const T& data)
@@ -29,7 +31,7 @@ size_t BuildKey(ERenderPass renderPass, const LXMaterialBase* material)
 	return seed;
 }
 
-const shared_ptr<LXMaterialD3D11> LXDeviceResourceManager::GetShaderResources(ERenderPass renderPass, const LXMaterialBase* material)
+const shared_ptr<LXMaterialD3D11>& LXDeviceResourceManager::GetShaderResources(ERenderPass renderPass, const LXMaterialBase* material)
 {
 	size_t key = BuildKey(renderPass, material);
 
@@ -65,11 +67,28 @@ void LXDeviceResourceManager::UpdateShaderResources(const LXMaterialBase* materi
 	}
 }
 
+const std::shared_ptr<LXPrimitiveD3D11>& LXDeviceResourceManager::GetPrimitive(const LXPrimitive* primitive)
+{
+	auto It = _primitives.find(pair<const LXPrimitive*, uint>(primitive, /*ArrayInstancePosition ? (uint)ArrayInstancePosition->size() : */0));
+
+	if (It != _primitives.end())
+	{
+		return It->second;
+	}
+	else
+	{
+		const auto Key = pair<const LXPrimitive*, uint>(primitive, /*ArrayInstancePosition ? (uint)ArrayInstancePosition->size() : */(uint)0);
+		_primitives[Key] = make_shared<LXPrimitiveD3D11>();
+		_primitives[Key]->Create(primitive, /*ArrayInstancePosition*/ nullptr);
+		return _primitives[Key];
+	}
+}
+
 void LXDeviceResourceManager::Run()
 {
 	CHK(IsRenderThread());
+	DeleteUnusedPrimitives();
 	DeleteUnusedResources();
-
 }
 
 void LXDeviceResourceManager::DeleteUnusedResources()
@@ -79,6 +98,21 @@ void LXDeviceResourceManager::DeleteUnusedResources()
 		if (It->second.use_count() == 1)
 		{
 			It = _shaderResources.erase(It);
+		}
+		else
+		{
+			It++;
+		}
+	}
+}
+
+void LXDeviceResourceManager::DeleteUnusedPrimitives()
+{
+	for (auto It = _primitives.begin(); It != _primitives.end();)
+	{
+		if (It->second.use_count() == 1)
+		{
+			It = _primitives.erase(It);
 		}
 		else
 		{

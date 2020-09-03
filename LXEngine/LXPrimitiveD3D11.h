@@ -35,7 +35,7 @@ public:
 	/// Create the buffers
 	/// \param ArrayInstancePosition an optional per instance array of position
 	
-	bool Create(LXPrimitive* Primitive, const ArrayVec3f* ArrayInstancePosition = nullptr);
+	bool Create(const LXPrimitive* Primitive, const ArrayVec3f* ArrayInstancePosition = nullptr);
 	bool CreateSSTriangle();
 	bool CreateLine(const vec3f& v0, const vec3f& v1);
 

@@ -9,6 +9,7 @@
 #include "stdafx.h"
 #include "LXActorType.h"
 #include "LXCore.h"
+#include "LXDeviceResourceManager.h"
 #include "LXLogger.h"
 #include "LXMaterial.h"
 #include "LXPrimitive.h"
@@ -40,26 +41,10 @@ void LXRenderClusterManager::Empty()
 
 	ListRenderClusters.clear();
 	ActorRenderCluster.clear();
-	MapPrimitiveD3D11.clear();
-}
+	}
 
 void LXRenderClusterManager::Tick()
 {
-	auto it = MapPrimitiveD3D11.begin();
-	while (it != MapPrimitiveD3D11.end())
-	{
-		// Delete the PrimitiveD3D11 when referenced by the map only
-		if (it->second.use_count() == 1)
-		{
-			auto toErase = it;
-			++it;
-			MapPrimitiveD3D11.erase(toErase);
-		}
-		else
-		{
-			++it;
-		}
-	}
 }
 
 void LXRenderClusterManager::AddActor(LXRenderData* renderData, LXFlagsRenderClusterRole renderClusterRole)
@@ -196,25 +181,12 @@ void LXRenderClusterManager::RemoveActor(LXRenderData* renderData, LXFlagsRender
 	}
 }
 
-shared_ptr<LXPrimitiveD3D11>& LXRenderClusterManager::GetPrimitiveD3D11(LXPrimitive* Primitive, const ArrayVec3f* ArrayInstancePosition/* = nullptr*/)
-{
-	auto It = MapPrimitiveD3D11.find(pair<LXPrimitive*, uint>(Primitive, ArrayInstancePosition ? (uint)ArrayInstancePosition->size() : 0));
-
-	if (It != MapPrimitiveD3D11.end())
-	{
-		return It->second;
-	}
-	else
-	{
-		const auto Key = pair<LXPrimitive*, uint>(Primitive, ArrayInstancePosition ? (uint)ArrayInstancePosition->size() : 0);
-		MapPrimitiveD3D11[Key] = make_shared<LXPrimitiveD3D11>();
-		MapPrimitiveD3D11[Key]->Create(Primitive, ArrayInstancePosition);
-		return MapPrimitiveD3D11[Key];
-	}
-}
-
 LXRenderCluster* LXRenderClusterManager::CreateRenderCluster(LXRenderData* renderData, LXWorldPrimitive* worldPrimitive, const LXMatrix& MatrixWCS, const LXMatrix& matrix, const LXBBox& BBoxWorld, LXPrimitive* Primitive, const LXMaterialBase* Material)
 {
+	// Create or Retrieve the PrimitiiveD3D11 according the Primitive
+	LXRenderer* renderer = GetRenderer();
+	const shared_ptr<LXPrimitiveD3D11>& PrimitiveD3D11 = renderer->GetDeviceResourceManager()->GetPrimitive(Primitive);
+	
 	// Create the RenderCluster
 	LXRenderCluster* RenderCluster = new LXRenderCluster(this, renderData, MatrixWCS, matrix);
 	RenderCluster->SetBBoxWorld(BBoxWorld);
@@ -223,7 +195,7 @@ LXRenderCluster* LXRenderClusterManager::CreateRenderCluster(LXRenderData* rende
 	RenderCluster->PrimitiveInstance = worldPrimitive;
 
 	// Create or Retrieve the PrimitiiveD3D11 according the Primitive
-	shared_ptr<LXPrimitiveD3D11>& PrimitiveD3D11 = GetPrimitiveD3D11(Primitive, /*(actorMesh->GetInsanceCount()) > 0 ? &actorMesh->GetArrayInstancePosition() :*/ nullptr);
+	//shared_ptr<LXPrimitiveD3D11>& PrimitiveD3D11 = GetPrimitiveD3D11(Primitive, /*(actorMesh->GetInsanceCount()) > 0 ? &actorMesh->GetArrayInstancePosition() :*/ nullptr);
 	RenderCluster->SetPrimitive(PrimitiveD3D11);
 
 	if (Material == nullptr)

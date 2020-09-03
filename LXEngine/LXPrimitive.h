@@ -183,7 +183,7 @@ public:
 	// Return the composition mask
 	int					GetMask()			const;
 
-	void*				CreateInterleavedVertexArray(const int Mask, const int VertexCount, int *OutVertexStructSize);
+	void*				CreateInterleavedVertexArray(const int Mask, const int VertexCount, int *OutVertexStructSize) const;
 
 private:
 

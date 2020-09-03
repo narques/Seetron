@@ -52,7 +52,7 @@ public:
 	void ReleaseShaders();
 
 	void SetMaterial(const LXMaterialBase* material);
-	void SetPrimitive(shared_ptr<LXPrimitiveD3D11>& InPrimitiveD3D11);
+	void SetPrimitive(const shared_ptr<LXPrimitiveD3D11>& primitiveD3D11);
 			
 	void SetMatrix(const LXMatrix& InMatrix);
 	void SetBBoxWorld(const LXBBox& Box);

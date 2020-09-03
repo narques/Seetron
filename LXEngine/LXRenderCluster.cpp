@@ -147,10 +147,10 @@ bool LXRenderCluster::GetDeviceMaterialAndShaders(ERenderPass renderPass, const 
 
 }
 
-void LXRenderCluster::SetPrimitive(shared_ptr<LXPrimitiveD3D11>& InPrimitiveD3D11)
+void LXRenderCluster::SetPrimitive(const shared_ptr<LXPrimitiveD3D11>& primitiveD3D11)
 {
 	CHK(Primitive == nullptr);
-	Primitive = InPrimitiveD3D11;
+	Primitive = primitiveD3D11;
 }
 
 void LXRenderCluster::SetMatrix(const LXMatrix& InMatrix)
