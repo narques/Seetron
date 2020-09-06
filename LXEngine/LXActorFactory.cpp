@@ -26,6 +26,18 @@
 // Console commands
 //
 
+LXConsoleCommandNoArg CCCreateActor(L"Create.Actor", []()
+	{
+		if (LXProject* Project = GetProject())
+		{
+			LXActor* actor = new LXActor(Project);
+			Project->GetScene()->AddChild(actor);
+		}
+	}, []()
+	{
+		return GetCore().GetProject() != nullptr;
+	});
+
 LXConsoleCommandNoArg CCCreateCylinder(L"Create.Cylinder", []()
 {
 	if (LXProject* Project = GetProject())
