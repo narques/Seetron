@@ -63,7 +63,7 @@ LXRenderData::LXRenderData(LXActor* actor):
 		_mesh->GetAllPrimitives(primitives);
 		for (const shared_ptr<LXPrimitiveInstance>& primitiveInstance : primitives)
 		{
-			_worldPrimitives.push_back(new LXWorldPrimitive(primitiveInstance));
+			_worldPrimitives[0].push_back(new LXWorldPrimitive(primitiveInstance));
 		}
 	}
 }
@@ -82,22 +82,39 @@ LXRenderData::LXRenderData(LXActor* actor, LXComponent* component):
 	if (const LXComponentMesh* componentMesh = dynamic_cast<const LXComponentMesh*>(component))
 	{
 		_mesh = componentMesh->Get();
-		VectorPrimitiveInstances primitives;
-		componentMesh->Get()->GetAllPrimitives(primitives);
-		for (const shared_ptr<LXPrimitiveInstance>& primitiveInstance : primitives)
+
+		for (int i = 0; i < LX_MAX_LODS; i++)
 		{
-			_worldPrimitives.push_back(new LXWorldPrimitive(primitiveInstance));
+			VectorPrimitiveInstances primitives;
+			componentMesh->Get()->GetAllPrimitives(primitives, i);
+			for (const shared_ptr<LXPrimitiveInstance>& primitiveInstance : primitives)
+			{
+				_worldPrimitives[i].push_back(new LXWorldPrimitive(primitiveInstance));
+			}
 		}
 	}
+
+	if (LXComponentMesh* componentMesh = dynamic_cast<LXComponentMesh*>(component))
+	{
+		const float* LODData = componentMesh->GetLODData();
+		for (int i = 0; i < LX_MAX_LODS; i++)
+		{
+			_LODMaxDistance[i] = *LODData++;
+		}
+	}
+
 }
 
 LXRenderData::~LXRenderData()
 {
 	LX_COUNTSCOPEDEC(LXRenderData);
 
-	for (LXWorldPrimitive* worldPrimitive : _worldPrimitives)
+	for (int i = 0; i < LX_MAX_LODS; i++)
 	{
-		delete worldPrimitive;
+		for (LXWorldPrimitive* worldPrimitive : _worldPrimitives[i])
+		{
+			delete worldPrimitive;
+		}
 	}
 }
 
@@ -107,14 +124,18 @@ void LXRenderData::ComputePrimitiveWorldMatrices()
 	CHK(_bboxWorld.IsValid());
 	
 	const LXMatrix& actorWorldMatrix = _component ? _component->GetMatrixWCS():_actor->GetMatrixWCS();
-	for (LXWorldPrimitive* worldPrimitive : _worldPrimitives)
+
+	for (int i = 0; i < LX_MAX_LODS; i++)
 	{
-		const LXMatrix* matrix = worldPrimitive->PrimitiveInstance->MatrixRCS;
-		LXMatrix matrixMeshWCS = matrix ? actorWorldMatrix * *matrix : actorWorldMatrix;
-		LXBBox BBoxWorld = worldPrimitive->PrimitiveInstance->Primitive->GetBBoxLocal();
-		matrixMeshWCS.LocalToParent(BBoxWorld);
-		worldPrimitive->MatrixWorld = matrixMeshWCS;
-		worldPrimitive->BBoxWorld = BBoxWorld;
+		for (LXWorldPrimitive* worldPrimitive : _worldPrimitives[i])
+		{
+			const LXMatrix* matrix = worldPrimitive->PrimitiveInstance->MatrixRCS;
+			LXMatrix matrixMeshWCS = matrix ? actorWorldMatrix * *matrix : actorWorldMatrix;
+			LXBBox BBoxWorld = worldPrimitive->PrimitiveInstance->Primitive->GetBBoxLocal();
+			matrixMeshWCS.LocalToParent(BBoxWorld);
+			worldPrimitive->MatrixWorld = matrixMeshWCS;
+			worldPrimitive->BBoxWorld = BBoxWorld;
+		}
 	}
 
 	_validPrimitiveWorldMatrices = true;
@@ -131,8 +152,8 @@ void LXRenderData::ComputePrimitiveWorldMatrices()
 		{
 			if (renderCluster->Role == LXFlagsRenderClusterRole(ERenderClusterRole::Default))
 			{
-				renderCluster->SetMatrix(renderCluster->PrimitiveInstance->MatrixWorld);
-				renderCluster->SetBBoxWorld(renderCluster->PrimitiveInstance->BBoxWorld);
+				renderCluster->SetMatrix(renderCluster->PrimitiveInstance[0]->MatrixWorld);
+				renderCluster->SetBBoxWorld(renderCluster->PrimitiveInstance[0]->BBoxWorld);
 			}
 			else if (renderCluster->Role == LXFlagsRenderClusterRole(ERenderClusterRole::ActorBBox))
 			{
@@ -158,11 +179,14 @@ void LXRenderData::ComputePrimitiveWorldBounds()
 	_bboxWorld = _component?_component->GetBBoxWorld():_actor->GetBBoxWorld();
 	CHK(_bboxWorld.IsValid());
 
-	for (LXWorldPrimitive* worldPrimitive : _worldPrimitives)
+	for (int i = 0; i < LX_MAX_LODS; i++)
 	{
-		LXBBox BBoxWorld = worldPrimitive->PrimitiveInstance->Primitive->GetBBoxLocal();
-		worldPrimitive->MatrixWorld.LocalToParent(BBoxWorld);
-		worldPrimitive->BBoxWorld = BBoxWorld;
+		for (LXWorldPrimitive* worldPrimitive : _worldPrimitives[i])
+		{
+			LXBBox BBoxWorld = worldPrimitive->PrimitiveInstance->Primitive->GetBBoxLocal();
+			worldPrimitive->MatrixWorld.LocalToParent(BBoxWorld);
+			worldPrimitive->BBoxWorld = BBoxWorld;
+		}
 	}
 
 	_validPrimitiveWorldBounds = true;
@@ -177,7 +201,7 @@ void LXRenderData::ComputePrimitiveWorldBounds()
 		{
 			if (renderCluster->Role == LXFlagsRenderClusterRole(ERenderClusterRole::Default))
 			{
-				renderCluster->SetBBoxWorld(renderCluster->PrimitiveInstance->BBoxWorld);
+				renderCluster->SetBBoxWorld(renderCluster->PrimitiveInstance[0]->BBoxWorld);
 			}
 			else if (renderCluster->Role == LXFlagsRenderClusterRole(ERenderClusterRole::ActorBBox))
 			{

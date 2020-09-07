@@ -38,7 +38,7 @@ public:
 	
 private:
 
-	LXRenderCluster* CreateRenderCluster(LXRenderData* renderData, LXWorldPrimitive* worldPrimitive, const LXMatrix& MatrixWCS, const LXMatrix& matrix, const LXBBox& BBoxWorld, LXPrimitive* Primitive, const LXMaterialBase* Material);
+	LXRenderCluster* CreateRenderCluster(LXRenderData* renderData, const vector<LXWorldPrimitive*>& worldPrimitiveLODs, const LXMatrix& MatrixWCS, const LXMatrix& matrix, const LXBBox& BBoxWorld, const vector<LXPrimitive*>& primitiveLODs, const LXMaterialBase* Material);
 
 	// Remove the RenderCluster from the Rendering (ListRendersClusters)
 	// Plus the additional helper maps

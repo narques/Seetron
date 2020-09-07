@@ -17,7 +17,7 @@
 
 class LXComponent;
 class LXMaterialBase;
-class LXMesh;
+class LXMeshBase;
 class LXPrimitiveInstance;
 class LXRenderCluster;
 
@@ -42,6 +42,11 @@ public:
 
 typedef vector<LXWorldPrimitive*> TWorldPrimitives;
 
+struct LXLODData
+{
+	float MaxDistance;
+};
+
 class LXRenderData : public LXObject
 {
 
@@ -54,7 +59,7 @@ public:
 	const LXActor* GetActor() const { return _actor; }
 
 	// Common
-	const TWorldPrimitives& GetPrimitives() { return _worldPrimitives; }
+	const TWorldPrimitives& GetPrimitives(int LODIndex = 0) { return _worldPrimitives[LODIndex]; }
 	bool IsValid() const { return _valid; }
 	void Validate() { _valid = true; }
 	void Invalidate() { _valid = false; }
@@ -78,6 +83,8 @@ public:
 	bool ShowActorBBox() const { return _actorBBox; }
 	const LXBBox& GetBBoxWorld()const { return _bboxWorld; }
 
+	const float* GetLODDistances() const { return &_LODMaxDistance[0]; };
+
 	// Delegates & Events
 	// LXDelegate<> PrimitiveWorldBoundsComputed; // NOWAY :( RenderData is volatile...
 
@@ -96,9 +103,11 @@ private:
 	LXActor* _actor = nullptr;
 	LXComponent* _component = nullptr;
 	LXBBox _bboxWorld;
-	shared_ptr<LXMesh> _mesh;
+	shared_ptr<LXMeshBase> _mesh;
 	
-	TWorldPrimitives _worldPrimitives;
+	float _LODMaxDistance[LX_MAX_LODS];
+	TWorldPrimitives _worldPrimitives[LX_MAX_LODS];
+	
 	bool _validPrimitiveWorldMatrices = false;
 	bool _validPrimitiveWorldBounds = false;
 

@@ -31,8 +31,6 @@
 #include "LXRenderer.h"
 #include "LXViewState.h"
 #include "LXViewport.h"
-#include "LXMemory.h" // --- Must be the last included ---
-
 
 LXRenderPipelineDeferred::LXRenderPipelineDeferred(LXRenderer* Renderer):_Renderer(Renderer)
 {
@@ -187,6 +185,8 @@ void LXRenderPipelineDeferred::BuildRenderClusterLists()
 			}
 			else
 			{
+				RenderCluster->UpdateCurrentLOD(Camera->GetPosition());
+
 				_ListRenderClusterOpaques.push_back(RenderCluster);
 
 				if (RenderCluster->RenderData->ShowPrimitiveBBox())

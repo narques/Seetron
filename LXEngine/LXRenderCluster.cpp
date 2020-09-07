@@ -99,7 +99,9 @@ bool LXRenderCluster::UpdateDeviceMaterialAndShaders(ERenderPass renderPass)
 
 		// Shaders
 		LXShaderProgramD3D11 shaderProgram;
-		if (renderer->GetShaderManager()->GetShaders(renderPass, Primitive.get(), materialD3D11.get(), &shaderProgram))
+
+		// GetSahders for LOD0 only. That means all LODs must use the same material.
+		if (renderer->GetShaderManager()->GetShaders(renderPass, Primitive[0].get(), materialD3D11.get(), &shaderProgram))
 		{
 			LXShaderProgramD3D11* RenderClusterShaderProgram = &ShaderPrograms[(int)renderPass];
 			RenderClusterShaderProgram->VertexShader = shaderProgram.VertexShader;
@@ -147,10 +149,9 @@ bool LXRenderCluster::GetDeviceMaterialAndShaders(ERenderPass renderPass, const 
 
 }
 
-void LXRenderCluster::SetPrimitive(const shared_ptr<LXPrimitiveD3D11>& primitiveD3D11)
+void LXRenderCluster::SetPrimitive(const shared_ptr<LXPrimitiveD3D11>& primitiveD3D11, int LODIndex)
 {
-	CHK(Primitive == nullptr);
-	Primitive = primitiveD3D11;
+	Primitive[LODIndex] = primitiveD3D11;
 }
 
 void LXRenderCluster::SetMatrix(const LXMatrix& InMatrix)
@@ -248,7 +249,7 @@ void LXRenderCluster::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 	{
 		materialD3D11->Render(RenderPass, RCL);
 
-		Primitive->Render(RCL);
+		Primitive[CurrentLODIndex]->Render(RCL);
 	}
 }
 
@@ -428,6 +429,30 @@ ELightType LXRenderCluster::GetLightType() const
 	LXActorLight* actorLight = dynamic_cast<LXActorLight*>(actor);
 	CHK(actorLight);
 	return actorLight->GetType();
+}
+
+void LXRenderCluster::UpdateCurrentLOD(const vec3f& wordCameraPosition)
+{
+	CurrentLODIndex = 0;
+
+	// Select the LOD
+	if (LODCount > 1)
+	{
+		
+		float distance = BBoxWorld.GetCenter().Distance(wordCameraPosition);
+		const float* MAXDistance = RenderData->GetLODDistances();
+
+		for (int i = 0; i < LODCount; i++)
+		{
+			if (distance < *MAXDistance)
+			{
+				CurrentLODIndex = i;
+				return;
+			}
+					
+			MAXDistance++;
+		}
+	}
 }
 
 void LXRenderCluster::ReleaseShaders()

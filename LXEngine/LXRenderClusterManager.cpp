@@ -21,7 +21,6 @@
 #include "LXRenderData.h"
 #include "LXRenderer.h"
 #include "LXShaderManager.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXRenderClusterManager::LXRenderClusterManager()
 {
@@ -67,15 +66,15 @@ void LXRenderClusterManager::AddActor(LXRenderData* renderData, LXFlagsRenderClu
 		return;
 
 	{
-		const TWorldPrimitives& WorldPrimitives = renderData->GetPrimitives();
+		const TWorldPrimitives& WorldPrimitives0 = renderData->GetPrimitives(0);
 
-		for(auto &It:WorldPrimitives)
+		for (int i=0; i<WorldPrimitives0.size();i++)
 		{
-			LXPrimitiveInstance* PrimitiveInstance = It->PrimitiveInstance.get();
+			LXWorldPrimitive* worldPrimitive = WorldPrimitives0[i];
+			LXPrimitiveInstance* PrimitiveInstance = WorldPrimitives0[i]->PrimitiveInstance.get();
 						
 			if (PrimitiveInstance->Primitive->GetMask() != 0)
 			{
-				LXWorldPrimitive* worldPrimitive = const_cast<LXWorldPrimitive*>(It);
 				const LXMatrix& MatrixWCS = worldPrimitive->MatrixWorld;
 				const LXMatrix& matrix = PrimitiveInstance->MatrixRCS?*PrimitiveInstance->MatrixRCS: matrixIdentity;
 				const LXBBox& BBoxWorld = worldPrimitive->BBoxWorld;
@@ -85,10 +84,26 @@ void LXRenderClusterManager::AddActor(LXRenderData* renderData, LXFlagsRenderClu
 				// Creates the default RenderCluster 
 				if (renderClusterRole & ERenderClusterRole::Default)
 				{
-					LXRenderCluster* renderCluster = CreateRenderCluster(renderData, worldPrimitive, MatrixWCS, matrix, BBoxWorld, PrimitiveInstance->Primitive.get(), material);
+					vector<LXWorldPrimitive*> worldPrimitiveLODs;
+					vector<LXPrimitive*> primitiveLODs;
+
+					worldPrimitiveLODs.push_back(worldPrimitive);
+					primitiveLODs.push_back(PrimitiveInstance->Primitive.get());
+
+					for (int LODIndex = 1; LODIndex < LX_MAX_LODS; LODIndex++)
+					{
+						const TWorldPrimitives& worldPrimitives = renderData->GetPrimitives(LODIndex);
+						if (worldPrimitives.size())
+						{
+							worldPrimitiveLODs.push_back(worldPrimitives[i]);
+							primitiveLODs.push_back(worldPrimitives[i]->PrimitiveInstance->Primitive.get());
+						}
+					}
+					
+					LXRenderCluster* renderCluster = CreateRenderCluster(renderData, worldPrimitiveLODs, MatrixWCS, matrix, BBoxWorld, primitiveLODs, material);
 					renderCluster->Role = ERenderClusterRole::Default;
 					worldPrimitive->RenderCluster = renderCluster;
-					
+
 					// Cluster specialization
 					if (renderData->GetActorType() & LX_NODETYPE_LIGHT)
 					{
@@ -123,8 +138,11 @@ void LXRenderClusterManager::AddActor(LXRenderData* renderData, LXFlagsRenderClu
 			// Max/1.f to avoid a 0 scale value ( possible with the "flat" geometries )
 			MatrixScale.SetScale(max(BBoxWorld.GetSizeX(), 1.f), max(BBoxWorld.GetSizeY(), 1.f), max(BBoxWorld.GetSizeZ(), 1.f));
 			MatrixTranslation.SetTranslation(BBoxWorld.GetCenter());
-			LXPrimitive* Primitive = GetPrimitiveFactory()->GetWireframeCube().get();
-			LXRenderCluster* renderClusterBBox = CreateRenderCluster(renderData, nullptr, MatrixTranslation * MatrixScale, matrixIdentity, BBoxWorld, Primitive, Primitive->GetMaterial().get());
+			LXPrimitive* primitive = GetPrimitiveFactory()->GetWireframeCube().get();
+			vector<LXPrimitive*> primitiveLODs;
+			primitiveLODs.push_back(primitive);
+			vector<LXWorldPrimitive*> empty;
+			LXRenderCluster* renderClusterBBox = CreateRenderCluster(renderData, empty, MatrixTranslation * MatrixScale, matrixIdentity, BBoxWorld, primitiveLODs, primitive->GetMaterial().get());
 			renderClusterBBox->Flags = ERenderClusterType::Auxiliary;
 			renderClusterBBox->Role = ERenderClusterRole::ActorBBox;
 
@@ -181,23 +199,25 @@ void LXRenderClusterManager::RemoveActor(LXRenderData* renderData, LXFlagsRender
 	}
 }
 
-LXRenderCluster* LXRenderClusterManager::CreateRenderCluster(LXRenderData* renderData, LXWorldPrimitive* worldPrimitive, const LXMatrix& MatrixWCS, const LXMatrix& matrix, const LXBBox& BBoxWorld, LXPrimitive* Primitive, const LXMaterialBase* Material)
+LXRenderCluster* LXRenderClusterManager::CreateRenderCluster(LXRenderData* renderData, const vector<LXWorldPrimitive*>& worldPrimitiveLODs, const LXMatrix& MatrixWCS, const LXMatrix& matrix, const LXBBox& BBoxWorld, const vector<LXPrimitive*>& primitiveLODs, const LXMaterialBase* Material)
 {
-	// Create or Retrieve the PrimitiiveD3D11 according the Primitive
 	LXRenderer* renderer = GetRenderer();
-	const shared_ptr<LXPrimitiveD3D11>& PrimitiveD3D11 = renderer->GetDeviceResourceManager()->GetPrimitive(Primitive);
-	
+
 	// Create the RenderCluster
 	LXRenderCluster* RenderCluster = new LXRenderCluster(this, renderData, MatrixWCS, matrix);
 	RenderCluster->SetBBoxWorld(BBoxWorld);
+	RenderCluster->LODCount = (int)worldPrimitiveLODs.size();
 
-	// PrimitiveInstance 
-	RenderCluster->PrimitiveInstance = worldPrimitive;
+	for (int i = 0; i < worldPrimitiveLODs.size(); i++)
+	{
+		// Create or Retrieve the PrimitiiveD3D11 according the Primitive
+		const shared_ptr<LXPrimitiveD3D11>& PrimitiveD3D11 = renderer->GetDeviceResourceManager()->GetPrimitive(primitiveLODs[i]);
+		RenderCluster->SetPrimitive(PrimitiveD3D11, i);
 
-	// Create or Retrieve the PrimitiiveD3D11 according the Primitive
-	//shared_ptr<LXPrimitiveD3D11>& PrimitiveD3D11 = GetPrimitiveD3D11(Primitive, /*(actorMesh->GetInsanceCount()) > 0 ? &actorMesh->GetArrayInstancePosition() :*/ nullptr);
-	RenderCluster->SetPrimitive(PrimitiveD3D11);
-
+		// PrimitiveInstance 
+		RenderCluster->PrimitiveInstance[i] = worldPrimitiveLODs[i];
+	}
+	
 	if (Material == nullptr)
 	{
 		Material = GetCore().GetDefaultMaterial();

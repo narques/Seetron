@@ -13,6 +13,7 @@
 #include "LXAssetMesh.h"
 #include "LXCore.h"
 #include "LXMesh.h"
+#include "LXMeshBase.h"
 
 LXComponentMesh::LXComponentMesh(LXActor* actor) :
 	LXComponent(actor)
@@ -20,7 +21,7 @@ LXComponentMesh::LXComponentMesh(LXActor* actor) :
 	LX_COUNTSCOPEINC(LXComponentMesh);
 	_nCID |= LX_NODETYPE_MESH;
 	SetName(L"ComponentMesh");
-	_mesh = make_shared<LXMesh>();
+	_mesh = dynamic_pointer_cast<LXMeshBase>(make_shared<LXMesh2>());
 	DefineProperties();
 }
 
@@ -51,9 +52,11 @@ void LXComponentMesh::UpdateMesh()
 {
 	if (_assetMesh)
 	{
-		if (_mesh != _assetMesh->GetMesh())
+		shared_ptr<LXMeshBase> meshBase = static_pointer_cast<LXMeshBase>(_assetMesh->GetMesh());
+
+		if (_mesh != meshBase)
 		{
-			_mesh = _assetMesh->GetMesh();
+			_mesh = meshBase;
 		}
 	}
 }
@@ -95,7 +98,7 @@ void LXComponentMesh::OnPropertyChanged(LXProperty* property)
 	}
 }
 
-void LXComponentMesh::SetMesh(shared_ptr<LXMesh>& mesh)
+void LXComponentMesh::SetMesh(shared_ptr<LXMeshBase>& mesh)
 {
 	CHK(_mesh == nullptr);
 	_mesh = mesh;
@@ -135,25 +138,32 @@ void LXComponentMesh::ComputeBBoxLocal()
 	}
 }
 
-void LXComponentMesh::AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, const LXMatrix* InMatrix, const LXMaterialBase* InMaterial)
+void LXComponentMesh::AddPrimitive(const shared_ptr<LXPrimitive>& primitive, const LXMatrix* matrix, const LXMaterialBase* material, int LODIndex)
 {
 	// If no mesh create a new one : TODO in Constructor
 	if (!_mesh)
 	{
-		_mesh = make_shared<LXMesh>();
+		_mesh = dynamic_pointer_cast<LXMeshBase>(make_shared<LXMesh2>());
 	}
 
-	_mesh->AddPrimitive(Primitive, InMatrix, InMaterial);
+	_mesh->AddPrimitive(primitive, matrix, material, LODIndex);
 	InvalidateBounds();
 	InvalidateRenderState();
 }
 
 void LXComponentMesh::ReleaseAllPrimitives()
 {
-	_mesh->RemoveAllPrimitives();
+	shared_ptr<LXMesh> mesh = dynamic_pointer_cast<LXMesh>(_mesh);
+	if (mesh)
+		mesh->RemoveAllPrimitives();
 	InvalidateWorldPrimitives();
 	InvalidateBounds();
 	InvalidateRenderState();
+}
+
+void LXComponentMesh::SetLODData(int LODIndex, float maxDistance)
+{
+	_LODMaxDistance[LODIndex] = maxDistance;
 }
 
 void LXComponentMesh::InvalidateWorldPrimitives()

@@ -2,16 +2,14 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #pragma once
 
 #include "LXTraverserFrustumCulling.h"
-#include "LXActor.h"
 
-class LXFrustum;
 class LXRenderer;
 
 class LXCORE_API LXRectangularSelectionTraverser : public LXTraverserFrustumCulling
@@ -23,19 +21,19 @@ public:
 	virtual ~LXRectangularSelectionTraverser(void);
 
 	// Overridden from LXTraverser
-	virtual void		Apply			( ) override;
-	virtual void		OnActor			( LXActor* pActor )override;
-	virtual void		OnPrimitive		( LXActorMesh* pMesh, LXComponentMesh* componentMesh, LXWorldPrimitive* WorldPrimitive) override;
+	virtual void Apply() override;
+	virtual void OnActor(LXActor* actor)override;
+	virtual void OnPrimitive(LXActorMesh* actorMesh, LXComponentMesh* componentMesh, LXWorldPrimitive* worldPrimitive) override;
 
-	void				SetRenderer		( LXRenderer* pRenderer ) { _Renderer = pRenderer; }
-	const SetActors&	GetNodes		( ) const { return _setActors; }
+	void SetRenderer(LXRenderer* renderer) { _renderer = renderer; }
+	const SetActors& GetNodes() const { return _setActors; }
 
 private:
 
-	LXRenderer*			_Renderer = nullptr;
-	uint				_nTestedBoxes;
-	uint				_nTestedTriangles;
-	SetActors			_setActors;
+	LXRenderer*	_renderer = nullptr;
+	uint _testedBoxes;
+	uint _testedTriangles;
+	SetActors _setActors;
 	
 };
 

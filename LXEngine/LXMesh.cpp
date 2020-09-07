@@ -174,8 +174,11 @@ void LXMesh::AddChild(LXMesh* Mesh)
 	
 }
 
-void LXMesh::AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, const LXMatrix* InMatrix /*= nullptr*/, const LXMaterialBase* InMaterial /*= nullptr */)
+void LXMesh::AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, const LXMatrix* InMatrix /*= nullptr*/, const LXMaterialBase* InMaterial /*= nullptr */, int LODIndex /*= 0*/)
 {
+	// This type of Mesh does not support LOD.
+	CHK(LODIndex == 0);
+	
 	LX_CHK_RET(Primitive);
 	
 	_vectorPrimitives.push_back(make_unique<LXPrimitiveInstance>(Primitive, InMatrix, InMaterial));
@@ -202,8 +205,11 @@ void LXMesh::RemoveAllPrimitives()
 	_vectorPrimitives.clear();
 }
 
-void LXMesh::GetAllPrimitives(VectorPrimitiveInstances& primitives)
+void LXMesh::GetAllPrimitives(VectorPrimitiveInstances& primitives, int LODIndex /*=0*/)
 {
+	// This type of Mesh does not support LOD.
+	CHK(LODIndex == 0);
+
 	for (const shared_ptr<LXPrimitiveInstance>& it : _vectorPrimitives)
 	{
 		primitives.push_back(it);
@@ -244,26 +250,18 @@ void LXMesh::ComputeMatrixRCS(const LXMatrix* matrixParentRCS)
 	}
 }
 
-const LXBBox& LXMesh::GetBounds()
-{
-	if (!_BBox.IsValid())
-		ComputeBounds();
-
-	return _BBox;
-}
-
 void LXMesh::ComputeBounds()
 {
-	if (_BBox.IsValid())
+	if (_LocalBounds.IsValid())
 		return;
 
 	// Reset the BBox
-	_BBox.Reset();
+	_LocalBounds.Reset();
 	
 	// Add Children BBox
 	for (LXMesh* MeshChild : _Children)
 	{
-		_BBox.Add(MeshChild->GetBounds());
+		_LocalBounds.Add(MeshChild->GetBounds());
 	}
 
 	// Add with PrimitiveInstance
@@ -275,27 +273,27 @@ void LXMesh::ComputeBounds()
 		{
 			LXBBox BBoxPrimitiveInstance = PrimitiveInstance->Primitive->GetBBoxLocal();
 			PrimitiveInstance->Matrix->LocalToParent(BBoxPrimitiveInstance);
-			_BBox.Add(BBoxPrimitiveInstance);
+			_LocalBounds.Add(BBoxPrimitiveInstance);
 		}
 		else
 		{
-			_BBox.Add(pPrimitive->GetBBoxLocal());
+			_LocalBounds.Add(pPrimitive->GetBBoxLocal());
 		}
 	}
 
-	if (!_BBox.IsValid())
+	if (!_LocalBounds.IsValid())
 	{
 		// We cannot set arbitrary values (to create a default box of 1m)
 		// Because the scale matrix could modify it too much.
-		_BBox.Add(LX_VEC3F_NULL);
+		_LocalBounds.Add(LX_VEC3F_NULL);
 	}
 
-	GetMatrix().LocalToParent(_BBox);
+	GetMatrix().LocalToParent(_LocalBounds);
 }
 
 void LXMesh::InvalidateBounds()
 {
-	_BBox.Invalidate();
+	_LocalBounds.Invalidate();
 	if (_Parent)
 	{
 		_Parent->InvalidateBounds();

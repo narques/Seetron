@@ -9,6 +9,7 @@
 #pragma once
 
 #include "LXSmartObject.h"
+#include "LXMeshBase.h"
 
 // Seetron
 #include "LXBBox.h"
@@ -24,7 +25,7 @@ typedef list<LXMesh*> ListMeshes;
 class LXPrimitiveInstance;
 typedef vector <shared_ptr<LXPrimitiveInstance>> VectorPrimitiveInstances;
 
-class LXCORE_API LXMesh : public LXSmartObject
+class LXCORE_API LXMesh : public LXMeshBase
 {
 	friend class LXActorMesh;
 
@@ -47,17 +48,16 @@ public:
 	const ListMeshes& GetChild() const { return _Children; } // GetChildren already exists in SmartObjects
 
 	// Primitive management
-	void AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, const LXMatrix* Matrix = nullptr, const LXMaterialBase* Material = nullptr);
+	virtual void AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, const LXMatrix* Matrix = nullptr, const LXMaterialBase* Material = nullptr, int LODIndex = 0) override;
 	void RemovePrimitive(LXPrimitive* Primitive);
 	void RemoveAllPrimitives();
 	const VectorPrimitiveInstances& GetPrimitives() { return _vectorPrimitives; }
 
 	// Return the primitives, including child primitives
-	void GetAllPrimitives(VectorPrimitiveInstances& primitives);
+	virtual void GetAllPrimitives(VectorPrimitiveInstances& primitiveInstances, int LODIndex = 0) override;
 
 	//Bounds
-	const LXBBox& GetBounds();
-	void ComputeBounds();
+	virtual void ComputeBounds() override;
 	void InvalidateBounds();
 
 	// Local Transformation
@@ -77,9 +77,6 @@ private:
 	void ComputeMatrixRCS(const LXMatrix* matrixParentRCS);
 
 private:
-
-	// Bounds
-	LXBBox		_BBox;	// Local BBox
 
 	// Local Transformation
 	LXTransformation _Transformation;

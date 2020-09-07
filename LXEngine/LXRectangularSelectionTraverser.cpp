@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -10,10 +10,10 @@
 #include "LXRectangularSelectionTraverser.h"
 #include "LXActor.h"
 #include "LXActorMesh.h"
+#include "LXComponentMesh.h"
 #include "LXFrustum.h"
 #include "LXPrimitive.h"
 #include "LXPrimitiveInstance.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXRectangularSelectionTraverser::LXRectangularSelectionTraverser()
 {
@@ -67,7 +67,7 @@ void LXRectangularSelectionTraverser::OnActor(LXActor* pGroup)
 	LXTraverser::OnActor(pGroup);
 }
 
-void LXRectangularSelectionTraverser::OnPrimitive(LXActorMesh* pMesh, LXComponentMesh* componentMesh, LXWorldPrimitive* WorldPrimitive)
+void LXRectangularSelectionTraverser::OnPrimitive(LXActorMesh* actorMesh, LXComponentMesh* componentMesh, LXWorldPrimitive* WorldPrimitive)
 {
 	LXPrimitive* pPrimitive = WorldPrimitive->PrimitiveInstance->Primitive.get();
 
@@ -76,13 +76,21 @@ void LXRectangularSelectionTraverser::OnPrimitive(LXActorMesh* pMesh, LXComponen
 	for (uint i=0; i<arrayPosition.size(); i++)
 	{
 		vec3f v0 = arrayPosition[i];
-		pMesh->GetMatrixWCS().LocalToParentPoint(v0);
+
+		if (actorMesh)
+		{
+			actorMesh->GetMatrixWCS().LocalToParentPoint(v0);
+		}
+		else if (componentMesh)
+		{
+			componentMesh->GetMatrixWCS().LocalToParentPoint(v0);
+		}
 		if (_Frustum->IsPointIn(v0.x, v0.y, v0.z))
 		{
-			_setActors.insert(pMesh);
+			_setActors.insert(actorMesh);
 			break;
 		}
 	}
 
-	LXTraverserFrustumCulling::OnPrimitive(pMesh, componentMesh, WorldPrimitive);
+	LXTraverserFrustumCulling::OnPrimitive(actorMesh, componentMesh, WorldPrimitive);
 }

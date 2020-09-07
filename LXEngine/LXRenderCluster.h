@@ -52,7 +52,7 @@ public:
 	void ReleaseShaders();
 
 	void SetMaterial(const LXMaterialBase* material);
-	void SetPrimitive(const shared_ptr<LXPrimitiveD3D11>& primitiveD3D11);
+	void SetPrimitive(const shared_ptr<LXPrimitiveD3D11>& primitiveD3D11, int LODIndex);
 			
 	void SetMatrix(const LXMatrix& InMatrix);
 	void SetBBoxWorld(const LXBBox& Box);
@@ -68,17 +68,22 @@ public:
 	void UpdateLightParameters();
 	ELightType GetLightType() const;
 
+	// LOD Support
+	void UpdateCurrentLOD(const vec3f& wordCameraPosition);
+
 private:
 
 	bool UpdateDeviceMaterialAndShaders(ERenderPass renderPass);
-
 
 	static bool GetDeviceMaterialAndShaders(ERenderPass renderPass, const LXPrimitiveD3D11* primitive, const LXMaterialBase* material, LXShaderProgramD3D11& shaderProgram, shared_ptr<LXMaterialD3D11>& shaderResources);
 
 public:
 
+	int LODCount = 1;
+	int CurrentLODIndex = 0;
+
 	LXRenderData* RenderData = nullptr;
-	LXWorldPrimitive* PrimitiveInstance = nullptr;
+	LXWorldPrimitive* PrimitiveInstance[LX_MAX_LODS] = {};
 
 	LXConstantBufferD3D11* CBWorld = nullptr;
 	LXConstantBufferData1 cb1;
@@ -88,8 +93,8 @@ public:
 	LXConstantBufferData0* LightView = nullptr;
 		
 	const LXMaterialBase* Material = nullptr;
-	shared_ptr<LXPrimitiveD3D11> Primitive;
-		
+	shared_ptr<LXPrimitiveD3D11> Primitive[LX_MAX_LODS];
+				
 	LXBBox BBoxWorld;
 	
 	LXShaderProgramD3D11 ShaderPrograms[(int)ERenderPass::Last];
