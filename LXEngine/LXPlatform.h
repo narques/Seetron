@@ -28,4 +28,11 @@ public:
 	static std::wstring CreateUuid();
 	static bool IsDebuggerPresent();
 	static bool DeleteFile(const wchar_t* Filename);
+
+	//
+	// Seetron Helpers
+	//
+
+	static float GetFontSize();
+
 };

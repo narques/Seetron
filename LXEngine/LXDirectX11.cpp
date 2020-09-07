@@ -517,13 +517,15 @@ bool LXDirectX11::InitD3D11AndD2D1(HWND hWND)
 				LogError(hr);
 				return false;
 			}
+
+			float fontSize = LXPlatform::GetFontSize();
 			
 			hr = DWriteFactory->CreateTextFormat(L"Consolas",
 						NULL,
 						DWRITE_FONT_WEIGHT_NORMAL,
 						DWRITE_FONT_STYLE_NORMAL,
 						DWRITE_FONT_STRETCH_NORMAL,
-						LX_CONSOLE_FONT_SIZE,
+						fontSize,
 						L"", //locale
 						&_DWriteTextFormat);
 

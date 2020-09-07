@@ -34,11 +34,14 @@ private:
 private:
 	
 	ID2D1SolidColorBrush* pRedBrush = nullptr;
+	ID2D1SolidColorBrush* greenBrush = nullptr;
 	ID2D1SolidColorBrush* pWhiteBrush = nullptr;
 	ID2D1SolidColorBrush* pYellowBrush = nullptr;
 	ID2D1SolidColorBrush* pBlackBrush = nullptr;
 	ID2D1SolidColorBrush* pGrayBrush = nullptr;
 	ID2D1SolidColorBrush* pDarkBlue = nullptr;
+
+	ID2D1SolidColorBrush* statForegroundBrush = nullptr;
 	ID2D1SolidColorBrush* pConsoleBackgroundBrush = nullptr;
 };
 

@@ -1,19 +1,24 @@
-//------------------------------------------------------------------------------------------------------
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
 #include "LXPlatform.h"
+
+//  Seetron
 #include "LXWindow.h"
 #include "targetver.h"
+
+// Win32
 #include <windows.h>
+#include <shellscalingapi.h>
+
+// Misc
 #include <string>
 #include <Rpc.h>
-#include "LXMemory.h" // --- Must be the last included ---
 
 #pragma comment(lib, "Rpcrt4.lib") // For CreateUuid()
 
@@ -91,3 +96,18 @@ bool LXPlatform::DeleteFile(const wchar_t* Filename)
 {
 	return ::DeleteFile(Filename) == TRUE;
 }
+
+float LXPlatform::GetFontSize()
+{
+	static float fontSize = -1.0;
+	if (fontSize < 0.f)
+	{
+		NONCLIENTMETRICS ncm = {};
+		ncm.cbSize = sizeof(NONCLIENTMETRICS);
+		SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0);
+		fontSize = -ncm.lfMessageFont.lfHeight;
+	}
+	return fontSize;
+}
+
+

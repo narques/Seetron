@@ -21,8 +21,6 @@
 #include <D2d1_1.h>
 #endif
 
-#define LX_CONSOLE_FONT_SIZE 12
-
 extern LXCORE_API bool NoOverwriteConstantBuffer; // TODO under LX_USE_D3D11_1 ?
 
 class LXCORE_API LXDirectX11
