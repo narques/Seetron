@@ -45,7 +45,7 @@ const shared_ptr<LXMaterialD3D11>& LXDeviceResourceManager::GetShaderResources(E
 		shared_ptr<LXMaterialD3D11> materialD3D11 = LXMaterialD3D11::CreateFromMaterial(material);
 		_shaderResources[key] = materialD3D11;
 		GetCore().EnqueueInvokeDelegate(&material->Compiled);
-		return materialD3D11;
+		return _shaderResources[key];
 	}
 }
 
@@ -63,7 +63,11 @@ void LXDeviceResourceManager::UpdateShaderResources(const LXMaterialBase* materi
 	for (auto i = 0; i < (int)ERenderPass::Last; i++)
 	{
 		size_t key = BuildKey((ERenderPass)i, material);
-		_shaderResources[key]->Update(material);
+		map<size_t, shared_ptr<LXMaterialD3D11>>::iterator it = _shaderResources.find(key);
+		if (it != _shaderResources.end())
+		{
+			it->second->Update(material);
+		}
 	}
 }
 
