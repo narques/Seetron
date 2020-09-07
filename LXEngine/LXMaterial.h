@@ -54,6 +54,7 @@ public:
 	void SetTwoSided(bool b) { _bTwoSided = b; }
 	const LXPropertyAssetPtr* GetPropertyTextureByName(const LXString& textureName) const;
 	virtual bool GetFloatParameter(const LXString& textureName, float& outValue) const override;
+	virtual bool SetFloatParameter(const LXString& textureName, float value) const override;
 	EMaterialLightingModel GetLightingModel() const { return _LightingModel; }
 	virtual EMaterialType GetType() const override { return MaterialType; }
 

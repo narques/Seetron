@@ -35,6 +35,7 @@ public:
 
 	virtual bool IsTransparent() const = 0;
 	virtual bool GetFloatParameter(const LXString& textureName, float& outValue) const = 0;
+	virtual bool SetFloatParameter(const LXString& textureName, float value) const = 0;
 	virtual EMaterialType GetType() const = 0;
 
 public:

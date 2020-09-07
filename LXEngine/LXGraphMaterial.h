@@ -26,7 +26,8 @@ public:
 	virtual void RemoveNode(shared_ptr<LXNode>& node) override;
 
 	void GetChildProperties(ListProperties& UserProperties) const override;
-	bool GetFloatParameter(const LXString& textureName, float& outValue) const;
+	bool GetFloatParameter(const LXString& paramName, float& outValue) const;
+	bool SetFloatParameter(const LXString& paramName, float value) const;
 
 private:
 

@@ -70,6 +70,11 @@ bool LXMaterialInstance::GetFloatParameter(const LXString& textureName, float& o
 	return Parent->GetFloatParameter(textureName, outValue);
 }
 
+bool LXMaterialInstance::SetFloatParameter(const LXString& textureName, float value) const
+{
+	return Parent->SetFloatParameter(textureName, value);
+}
+
 EMaterialType LXMaterialInstance::GetType() const
 {
 	return Parent->GetType();

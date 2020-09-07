@@ -73,6 +73,35 @@ bool LXGraphMaterial::GetFloatParameter(const LXString& paramName, float& outVal
 	return false;
 }
 
+bool LXGraphMaterial::SetFloatParameter(const LXString& paramName, float value) const
+{
+
+	if (const LXNode* mainNode = GetMain())
+	{
+		if (const LXConnector* connector = mainNode->GetInputConnector(L"Displacement"))
+		{
+			if (const LXNode* node = connector->GetFirstConnectedNode(paramName))
+			{
+				LXProperty* property = node->GetProperty(L"Value");
+
+				if (!property)
+				{
+					property = node->GetProperty(paramName);
+				}
+
+				if (property && property->GetType() == EPropertyType::Float)
+				{
+					LXPropertyFloat* propertyFloat = (LXPropertyFloat*)property;
+					propertyFloat->SetValue(value);
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
 void LXGraphMaterial::OnLoaded()
 {
 	for (const shared_ptr<LXNode>& node : Nodes)

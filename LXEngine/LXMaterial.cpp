@@ -117,6 +117,18 @@ bool LXMaterial::GetFloatParameter(const LXString& textureName, float& outValue)
 	}
 }
 
+bool LXMaterial::SetFloatParameter(const LXString& textureName, float value) const
+{
+		if (LXGraphMaterial* graphMaterial = GetGraph())
+		{
+			return graphMaterial->SetFloatParameter(textureName, value);
+		}
+		else
+		{
+			return false;
+		}
+}
+
 LXGraphMaterial* LXMaterial::GetGraph() const
 {
 	if (!_isLoaded)
