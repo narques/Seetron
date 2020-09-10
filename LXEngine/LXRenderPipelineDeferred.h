@@ -57,6 +57,8 @@ public:
 
 	LXRenderPipelineDeferred(LXRenderer* Renderer);
 	virtual ~LXRenderPipelineDeferred();
+
+	virtual void Clear() override;
 	
 	void RebuildShaders() override;
 	void Resize(uint Width, uint Height) override;
@@ -121,5 +123,8 @@ private:
 	list<LXRenderCluster*> _ListRenderClusterAuxiliary;
 	list<LXRenderCluster*> _ListRenderClusterLights;
 	list<LXRenderCluster*> _listRenderClusterRenderToTextures;
+
+	// Batching
+	class LXRenderBatching* _batching = nullptr;
 };
 

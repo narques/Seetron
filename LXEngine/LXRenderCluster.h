@@ -71,6 +71,9 @@ public:
 	// LOD Support
 	void UpdateCurrentLOD(const vec3f& wordCameraPosition);
 
+	// Add a instances
+	void AddInstance(const vec3f& localPosition);
+
 private:
 
 	bool UpdateDeviceMaterialAndShaders(ERenderPass renderPass);
@@ -109,6 +112,10 @@ public:
 
 	LXFlagsRenderCluster Flags = ERenderClusterType::Surface;
 	LXFlagsRenderClusterRole Role = ERenderClusterRole::Default;
+
+	// Instance local positions.
+	ArrayVec3f Instances;
+	shared_ptr<LXPrimitiveD3D11> InstancedPrimitive;
 
 private:
 

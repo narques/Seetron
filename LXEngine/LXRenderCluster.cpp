@@ -100,8 +100,10 @@ bool LXRenderCluster::UpdateDeviceMaterialAndShaders(ERenderPass renderPass)
 		// Shaders
 		LXShaderProgramD3D11 shaderProgram;
 
+		LXPrimitiveD3D11* primitive = Instances.size() > 0 ? InstancedPrimitive.get() : Primitive[0].get();
+
 		// GetSahders for LOD0 only. That means all LODs must use the same material.
-		if (renderer->GetShaderManager()->GetShaders(renderPass, Primitive[0].get(), materialD3D11.get(), &shaderProgram))
+		if (renderer->GetShaderManager()->GetShaders(renderPass, primitive, materialD3D11.get(), &shaderProgram))
 		{
 			LXShaderProgramD3D11* RenderClusterShaderProgram = &ShaderPrograms[(int)renderPass];
 			RenderClusterShaderProgram->VertexShader = shaderProgram.VertexShader;
@@ -249,7 +251,10 @@ void LXRenderCluster::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 	{
 		materialD3D11->Render(RenderPass, RCL);
 
-		Primitive[CurrentLODIndex]->Render(RCL);
+		if (Instances.size() > 0)
+			InstancedPrimitive->Render(RCL);
+		else
+			Primitive[CurrentLODIndex]->Render(RCL);
 	}
 }
 
@@ -453,6 +458,11 @@ void LXRenderCluster::UpdateCurrentLOD(const vec3f& wordCameraPosition)
 			MAXDistance++;
 		}
 	}
+}
+
+void LXRenderCluster::AddInstance(const vec3f& localPosition)
+{
+	Instances.push_back(localPosition);
 }
 
 void LXRenderCluster::ReleaseShaders()

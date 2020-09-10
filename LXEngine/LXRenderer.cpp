@@ -523,6 +523,9 @@ const LXMatrix& LXRenderer::GetMatrixProjection() const
 
 void LXRenderer::Empty()
 {
+	if (_RenderPipeline)
+		_RenderPipeline->Clear();
+
 	if (RenderClusterManager)
 		RenderClusterManager->Empty();
 }

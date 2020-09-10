@@ -31,6 +31,13 @@ size_t BuildKey(ERenderPass renderPass, const LXMaterialBase* material)
 	return seed;
 }
 
+size_t BuildKey(const LXPrimitive* primitive)
+{
+	std::size_t seed = 0;
+	hash_combine(seed, (uint64)primitive);
+	return seed;
+}
+
 const shared_ptr<LXMaterialD3D11>& LXDeviceResourceManager::GetShaderResources(ERenderPass renderPass, const LXMaterialBase* material)
 {
 	size_t key = BuildKey(renderPass, material);
@@ -73,18 +80,18 @@ void LXDeviceResourceManager::UpdateShaderResources(const LXMaterialBase* materi
 
 const std::shared_ptr<LXPrimitiveD3D11>& LXDeviceResourceManager::GetPrimitive(const LXPrimitive* primitive)
 {
-	auto It = _primitives.find(pair<const LXPrimitive*, uint>(primitive, /*ArrayInstancePosition ? (uint)ArrayInstancePosition->size() : */0));
+	size_t key = BuildKey(primitive);
 
-	if (It != _primitives.end())
+	map<size_t, shared_ptr<LXPrimitiveD3D11>>::iterator it = _primitives.find(key);
+	if (it != _primitives.end())
 	{
-		return It->second;
+		return it->second;
 	}
 	else
 	{
-		const auto Key = pair<const LXPrimitive*, uint>(primitive, /*ArrayInstancePosition ? (uint)ArrayInstancePosition->size() : */(uint)0);
-		_primitives[Key] = make_shared<LXPrimitiveD3D11>();
-		_primitives[Key]->Create(primitive, /*ArrayInstancePosition*/ nullptr);
-		return _primitives[Key];
+		shared_ptr<LXPrimitiveD3D11> primitiveD3D11 = LXPrimitiveD3D11::CreateFromPrimitive(primitive);
+		_primitives[key] = primitiveD3D11;
+		return _primitives[key];
 	}
 }
 

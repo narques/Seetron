@@ -37,6 +37,7 @@ public:
 
 	LXRenderPipeline();
 	virtual ~LXRenderPipeline();
+	virtual void Clear() {};
 	virtual void RebuildShaders() = 0;
 	virtual void Resize(uint Width, uint Height) = 0;
 	virtual void Render(LXRenderCommandList* RenderCommandList);

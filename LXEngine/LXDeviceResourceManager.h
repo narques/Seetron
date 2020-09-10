@@ -47,7 +47,7 @@ private:
 private:
 
 	map<size_t, shared_ptr<LXMaterialD3D11>> _shaderResources;
-	map<pair<const LXPrimitive*, uint>, shared_ptr<LXPrimitiveD3D11>> _primitives;
+	map<size_t, shared_ptr<LXPrimitiveD3D11>> _primitives;
 
 };
 

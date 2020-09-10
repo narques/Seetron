@@ -2,16 +2,19 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
 #include "LXRenderPipelineDeferred.h"
+
+// Seetron
 #include "LXActorCamera.h"
 #include "LXActorSceneCapture.h"
 #include "LXFrustum.h"
 #include "LXProject.h"
+#include "LXRenderBatching.h"
 #include "LXRenderCluster.h"
 #include "LXRenderClusterManager.h"
 #include "LXRenderCommandList.h"
@@ -32,6 +35,11 @@
 #include "LXViewState.h"
 #include "LXViewport.h"
 
+namespace
+{
+	LXConsoleCommandT<bool> Batching(L"Engine.ini", L"Renderer", L"Batching", L"true");
+}
+
 LXRenderPipelineDeferred::LXRenderPipelineDeferred(LXRenderer* Renderer):_Renderer(Renderer)
 {
 	_Renderer->_RenderPipeline = this;
@@ -40,7 +48,7 @@ LXRenderPipelineDeferred::LXRenderPipelineDeferred(LXRenderer* Renderer):_Render
 	_CBViewProjection = new LXConstantBufferD3D11();
 	LXConstantBufferData0 Foo;
 	_CBViewProjection->CreateConstantBuffer(&Foo, sizeof(LXConstantBufferData0));
-	
+
 	// Passes
 	//RenderPassAA = new LXRenderPassAA(Renderer);
 	RenderPassShadow = new LXRenderPassShadow(Renderer);
@@ -98,7 +106,14 @@ LXRenderPipelineDeferred::~LXRenderPipelineDeferred()
 	LX_SAFE_DELETE(RenderPassUI);
 	//LX_SAFE_DELETE(RenderPassAA);
 	LX_SAFE_DELETE(RenderPassSSAO);
+	LX_SAFE_DELETE(_batching);
 	LX_SAFE_DELETE(_CBViewProjection);
+}
+
+void LXRenderPipelineDeferred::Clear()
+{
+	if (_batching)
+		_batching->Clear();
 }
 
 void LXRenderPipelineDeferred::RebuildShaders()
@@ -195,6 +210,21 @@ void LXRenderPipelineDeferred::BuildRenderClusterLists()
 		}
 	}
 
+	if (Batching.GetValue())
+	{
+		if (!_batching)
+			_batching = new LXRenderBatching();
+		_batching->Do(_ListRenderClusterOpaques);
+	}
+	else
+	{
+		if (_batching)
+		{
+			_batching->Clear();
+			LX_SAFE_DELETE(_batching);
+		}
+	}
+	
 	//
 	// Prepare ConstantBuffer Data
 	// 

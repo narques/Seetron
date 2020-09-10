@@ -181,6 +181,13 @@ bool LXPrimitiveD3D11::CreateLine(const vec3f& v0, const vec3f& v1)
 	return true;
 }
 
+shared_ptr<LXPrimitiveD3D11> LXPrimitiveD3D11::CreateFromPrimitive(const LXPrimitive* primitive)
+{
+	shared_ptr<LXPrimitiveD3D11> primitiveD3D11 = make_shared<LXPrimitiveD3D11>();
+	primitiveD3D11->Create(primitive);
+	return primitiveD3D11;
+}
+
 #ifdef INDEXTYPE_USHORT
 bool LXPrimitiveD3D11::CreateIndexBuffer(unsigned short* Indices,  UINT InIndexCount)
 #else
