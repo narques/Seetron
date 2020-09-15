@@ -43,7 +43,7 @@ public:
 	LXString GetRelativeFilename() const;
 	virtual LXString GetFileExtension() = 0;
 
-	virtual const ListProperties& GetProperties() const override;
+	virtual ListProperties GetProperties() const override;
 		
 protected:
 

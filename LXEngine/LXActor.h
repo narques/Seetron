@@ -62,6 +62,10 @@ public:
 		AddComponent(component);
 		return *component;
 	}
+
+	// Misc
+	virtual ListProperties GetProperties() const override;
+
 	// Rendering
 	void				InvalidateRenderState(LXFlagsRenderClusterRole renderStates = ERenderClusterRole::All);
 	void				CreateRenderData(LXFlagsRenderClusterRole renderStates);

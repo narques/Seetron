@@ -66,7 +66,7 @@ LXSmartObject::~LXSmartObject(void)
 	LX_SAFE_DELETE(_pUID);
 }
 
-const ListProperties& LXSmartObject::GetProperties() const
+ListProperties LXSmartObject::GetProperties() const
 {
 	return _listProperties;
 }

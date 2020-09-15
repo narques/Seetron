@@ -80,9 +80,10 @@ LXString LXAsset::GetRelativeFilename() const
 	}
 }
 
-const ListProperties& LXAsset::GetProperties() const
+ListProperties LXAsset::GetProperties() const
 {
-	const ListProperties& listProperties =  __super::GetProperties();
+	ListProperties listProperties =  __super::GetProperties();
+	
 	if (State == EResourceState::LXResourceState_Unloaded)
 	{
 		(const_cast<LXAsset*>(this))->Load();
@@ -92,7 +93,7 @@ const ListProperties& LXAsset::GetProperties() const
 	if (State == EResourceState::LXResourceState_Unloaded)
 	{
 		LogE(Asset, L"Failed to retrieve properties: Asset %s not loaded", _filepath.GetBuffer());
-		static ListProperties EmptyListProperties;
+		ListProperties EmptyListProperties;
 		return EmptyListProperties;
 	}
 

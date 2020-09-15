@@ -110,6 +110,17 @@ void LXActor::DefineProperties()
 	}
 }
 
+ListProperties LXActor::GetProperties() const
+{
+	ListProperties listProperties = __super::GetProperties();
+	for (const LXComponent* component : _components)
+	{
+		ListProperties componentProperties = component->GetProperties();
+		listProperties.insert(listProperties.end(), componentProperties.begin(), componentProperties.end());
+	}
+	return listProperties;
+}
+
 void LXActor::InvalidateRenderState(LXFlagsRenderClusterRole renderStates)
 {
 	if (_isLoading)

@@ -72,7 +72,7 @@ public:
 	virtual void					OnRecycled() {};
 
 	// Properties
-	virtual const ListProperties&	GetProperties() const;
+	virtual ListProperties			GetProperties() const;
 	ListProperties					GetBranchProperties() const;
 	virtual void					GetChildProperties(ListProperties& listProperties) const;
 
