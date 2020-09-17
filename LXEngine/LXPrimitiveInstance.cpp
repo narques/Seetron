@@ -15,7 +15,7 @@
 #include "LXStatistic.h"
 #include "LXActorMesh.h"
 
-LXPrimitiveInstance::LXPrimitiveInstance(const shared_ptr<LXPrimitive>& InPrimitive, const LXMatrix* InMatrix, const LXMaterialBase* InMaterial)
+LXPrimitiveInstance::LXPrimitiveInstance(const shared_ptr<LXPrimitive>& InPrimitive, const LXMatrix* InMatrix, const shared_ptr<LXMaterialBase>& InMaterial)
 {
 	LX_COUNTSCOPEINC(LXPrimitiveInstance)
 	Primitive = InPrimitive;

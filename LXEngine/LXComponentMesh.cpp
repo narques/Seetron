@@ -138,7 +138,7 @@ void LXComponentMesh::ComputeBBoxLocal()
 	}
 }
 
-void LXComponentMesh::AddPrimitive(const shared_ptr<LXPrimitive>& primitive, const LXMatrix* matrix, const LXMaterialBase* material, int LODIndex)
+void LXComponentMesh::AddPrimitive(const shared_ptr<LXPrimitive>& primitive, const LXMatrix* matrix, const shared_ptr<LXMaterialBase>& material, int LODIndex)
 {
 	// If no mesh create a new one : TODO in Constructor
 	if (!_mesh)

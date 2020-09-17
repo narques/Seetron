@@ -79,7 +79,7 @@ void LXRenderClusterManager::AddActor(LXRenderData* renderData, LXFlagsRenderClu
 				const LXMatrix& matrix = PrimitiveInstance->MatrixRCS?*PrimitiveInstance->MatrixRCS: matrixIdentity;
 				const LXBBox& BBoxWorld = worldPrimitive->BBoxWorld;
 
-				const LXMaterialBase* material = PrimitiveInstance->Material ? PrimitiveInstance->Material : PrimitiveInstance->Primitive->GetMaterial().get();
+				const LXMaterialBase* material = PrimitiveInstance->Material ? PrimitiveInstance->Material.get() : PrimitiveInstance->Primitive->GetMaterial().get();
 				
 				// Creates the default RenderCluster 
 				if (renderClusterRole & ERenderClusterRole::Default)

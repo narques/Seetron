@@ -34,7 +34,7 @@ public:
 	const TWorldPrimitives& GetAllPrimitives();
 
 	// Add a primitive to mesh
-	void AddPrimitive(const shared_ptr<LXPrimitive>& primitive, const LXMatrix* matrix = nullptr, const LXMaterialBase* material = nullptr, int LODIndex = 0);
+	void AddPrimitive(const shared_ptr<LXPrimitive>& primitive, const LXMatrix* matrix = nullptr, const shared_ptr<LXMaterialBase>& material = nullptr, int LODIndex = 0);
 	void ReleaseAllPrimitives();
 
 	// LOD Support

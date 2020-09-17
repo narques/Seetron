@@ -23,7 +23,7 @@ class LXPrimitiveInstance
 
 public:
 
-	LXPrimitiveInstance(const shared_ptr<LXPrimitive>& InPrimitive, const LXMatrix* InMatrix, const LXMaterialBase* InMaterial);
+	LXPrimitiveInstance(const shared_ptr<LXPrimitive>& InPrimitive, const LXMatrix* InMatrix, const shared_ptr<LXMaterialBase>& InMaterial);
 	~LXPrimitiveInstance();
 
 	// Set the material to the Primitive itself (not the instance)
@@ -44,7 +44,7 @@ public:
 	const LXMatrix* MatrixRCS = nullptr;
 
 	// Material (Optional)
-	const LXMaterialBase* Material = nullptr;
+	shared_ptr<LXMaterialBase> Material;
 };
 
 

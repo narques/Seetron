@@ -174,7 +174,7 @@ void LXMesh::AddChild(LXMesh* Mesh)
 	
 }
 
-void LXMesh::AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, const LXMatrix* InMatrix /*= nullptr*/, const LXMaterialBase* InMaterial /*= nullptr */, int LODIndex /*= 0*/)
+void LXMesh::AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, const LXMatrix* InMatrix /*= nullptr*/, const shared_ptr<LXMaterialBase>& InMaterial /*= nullptr */, int LODIndex /*= 0*/)
 {
 	// This type of Mesh does not support LOD.
 	CHK(LODIndex == 0);
