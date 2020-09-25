@@ -50,7 +50,7 @@ public:
 	virtual bool GetCastShadows() const { return _castShadows; }
 
 	// Delegates & Events
-	LXDelegate<vec3f&, vec3f&, vec3f&> UpdateWorldPositionForPicking;
+	LXDelegate<LXComponentMesh*, vec3f&, vec3f&, vec3f&> UpdateWorldPositionForPicking;
 
 private:
 

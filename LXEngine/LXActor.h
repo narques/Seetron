@@ -63,6 +63,19 @@ public:
 		return *component;
 	}
 
+	// Return the first component of the given type
+	template<typename T>
+	T* GetComponent() const
+	{
+		for (LXComponent* component : _components)
+		{
+			if (T* typedComponent = dynamic_cast<T*>(component))
+				return typedComponent;
+		}
+
+		return nullptr;
+	}
+
 	// Misc
 	virtual ListProperties GetProperties() const override;
 

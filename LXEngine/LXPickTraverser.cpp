@@ -19,7 +19,6 @@
 #include "LXCore.h"
 #include "LXActorLine.h"
 #include "LXScene.h"
-#include "LXTerrain.h"
 #include "LXActorLight.h"
 #include "LXActorCamera.h"
 #include "LXAnchor.h"
@@ -577,39 +576,7 @@ void LXPickTraverser::PickIndexedTriangles(const LXAxis& rayLCS, const LXActor* 
 			matrixWCS->LocalToParentPoint(w1);
 			matrixWCS->LocalToParentPoint(w2);
 
-			componentMesh->UpdateWorldPositionForPicking.Invoke(w0, w1, w2);
-
-			matrixWCS->ParentToLocalPoint(w0);
-			matrixWCS->ParentToLocalPoint(w1);
-			matrixWCS->ParentToLocalPoint(w2);
-
-			vec3f pI;
-			m_nTestedTriangles++;
-
-			if (IntersectRayTriangle(rayLCS, w0, w1, w2, pI))
-			{
-				m_nHitTriangles++;
-				matrixWCS->LocalToParentPoint(pI);
-				float fDistance = pI.Distance(m_ray.GetOrigin());
-				{
-					AddPointOfInterest(fDistance, actor, component, primitive, pI, L"PickIndexedTriangles");
-				}
-			}
-		}
-		else  if (const LXActorTerrain* actorTerrain = dynamic_cast<const LXActorTerrain*>(actor))
-		{
-			vec3f w0, w1, w2;
-			w0 = v0;
-			w1 = v1;
-			w2 = v2;
-			
-			matrixWCS->LocalToParentPoint(w0);
-			matrixWCS->LocalToParentPoint(w1);
-			matrixWCS->LocalToParentPoint(w2);
- 
-			w0.z = actorTerrain->GetHeightAt(w0.x, w0.y);
-			w1.z = actorTerrain->GetHeightAt(w1.x, w1.y);
-			w2.z = actorTerrain->GetHeightAt(w2.x, w2.y);
+			componentMesh->UpdateWorldPositionForPicking.Invoke(const_cast<LXComponentMesh*>(componentMesh), w0, w1, w2);
 
 			matrixWCS->ParentToLocalPoint(w0);
 			matrixWCS->ParentToLocalPoint(w1);
