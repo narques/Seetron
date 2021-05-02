@@ -84,8 +84,8 @@ void LXRenderClusterManager::AddActor(LXRenderData* renderData, LXFlagsRenderClu
 				// Creates the default RenderCluster 
 				if (renderClusterRole & ERenderClusterRole::Default)
 				{
-					vector<LXWorldPrimitive*> worldPrimitiveLODs;
-					vector<LXPrimitive*> primitiveLODs;
+					std::vector<LXWorldPrimitive*> worldPrimitiveLODs;
+					std::vector<LXPrimitive*> primitiveLODs;
 
 					worldPrimitiveLODs.push_back(worldPrimitive);
 					primitiveLODs.push_back(PrimitiveInstance->Primitive.get());
@@ -136,12 +136,12 @@ void LXRenderClusterManager::AddActor(LXRenderData* renderData, LXFlagsRenderClu
 
 			LXMatrix MatrixScale, MatrixTranslation;
 			// Max/1.f to avoid a 0 scale value ( possible with the "flat" geometries )
-			MatrixScale.SetScale(max(BBoxWorld.GetSizeX(), 1.f), max(BBoxWorld.GetSizeY(), 1.f), max(BBoxWorld.GetSizeZ(), 1.f));
+			MatrixScale.SetScale(std::max(BBoxWorld.GetSizeX(), 1.f), std::max(BBoxWorld.GetSizeY(), 1.f), std::max(BBoxWorld.GetSizeZ(), 1.f));
 			MatrixTranslation.SetTranslation(BBoxWorld.GetCenter());
 			LXPrimitive* primitive = GetPrimitiveFactory()->GetWireframeCube().get();
-			vector<LXPrimitive*> primitiveLODs;
+			std::vector<LXPrimitive*> primitiveLODs;
 			primitiveLODs.push_back(primitive);
-			vector<LXWorldPrimitive*> empty;
+			std::vector<LXWorldPrimitive*> empty;
 			LXRenderCluster* renderClusterBBox = CreateRenderCluster(renderData, empty, MatrixTranslation * MatrixScale, matrixIdentity, BBoxWorld, primitiveLODs, primitive->GetMaterial().get());
 			renderClusterBBox->Flags = ERenderClusterType::Auxiliary;
 			renderClusterBBox->Role = ERenderClusterRole::ActorBBox;
@@ -166,7 +166,7 @@ void LXRenderClusterManager::UpdateActor(LXRenderData* renderData, LXFlagsRender
 void LXRenderClusterManager::RemoveActor(LXRenderData* renderData, LXFlagsRenderClusterRole renderClusterRole)
 {
 
-	list<LXRenderCluster*> renderClustersToRemove;
+	std::list<LXRenderCluster*> renderClustersToRemove;
 
 	//
 	// Remove from helper maps
@@ -199,7 +199,7 @@ void LXRenderClusterManager::RemoveActor(LXRenderData* renderData, LXFlagsRender
 	}
 }
 
-LXRenderCluster* LXRenderClusterManager::CreateRenderCluster(LXRenderData* renderData, const vector<LXWorldPrimitive*>& worldPrimitiveLODs, const LXMatrix& MatrixWCS, const LXMatrix& matrix, const LXBBox& BBoxWorld, const vector<LXPrimitive*>& primitiveLODs, const LXMaterialBase* Material)
+LXRenderCluster* LXRenderClusterManager::CreateRenderCluster(LXRenderData* renderData, const std::vector<LXWorldPrimitive*>& worldPrimitiveLODs, const LXMatrix& MatrixWCS, const LXMatrix& matrix, const LXBBox& BBoxWorld, const std::vector<LXPrimitive*>& primitiveLODs, const LXMaterialBase* Material)
 {
 	LXRenderer* renderer = GetRenderer();
 
@@ -211,7 +211,7 @@ LXRenderCluster* LXRenderClusterManager::CreateRenderCluster(LXRenderData* rende
 	for (int i = 0; i < worldPrimitiveLODs.size(); i++)
 	{
 		// Create or Retrieve the PrimitiiveD3D11 according the Primitive
-		const shared_ptr<LXPrimitiveD3D11>& PrimitiveD3D11 = renderer->GetDeviceResourceManager()->GetPrimitive(primitiveLODs[i]);
+		const std::shared_ptr<LXPrimitiveD3D11>& PrimitiveD3D11 = renderer->GetDeviceResourceManager()->GetPrimitive(primitiveLODs[i]);
 		RenderCluster->SetPrimitive(PrimitiveD3D11, i);
 
 		// PrimitiveInstance 

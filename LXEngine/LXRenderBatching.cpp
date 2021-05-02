@@ -36,7 +36,7 @@ void LXRenderBatching::Clear()
 	_batchedRenderCusterOpaques.clear();
 }
 
-void LXRenderBatching::Do(list<LXRenderCluster*>& renderClusters)
+void LXRenderBatching::Do(std::list<LXRenderCluster*>& renderClusters)
 {
 	LX_PERFOSCOPE(Batching);
 
@@ -86,7 +86,7 @@ void LXRenderBatching::Do(list<LXRenderCluster*>& renderClusters)
 		if (batchedRenderCluster->Instances.size() > 0)
 		{
 			// TODO: store the LXPrimitiveD3D11 in the PrmitiveManager
-			shared_ptr<LXPrimitiveD3D11> primitive = make_shared<LXPrimitiveD3D11>();
+			std::shared_ptr<LXPrimitiveD3D11> primitive = std::make_shared<LXPrimitiveD3D11>();
 			primitive->Create(batchedRenderCluster->PrimitiveInstance[batchedRenderCluster->CurrentLODIndex]->PrimitiveInstance->Primitive.get(), &batchedRenderCluster->Instances);
 			batchedRenderCluster->InstancedPrimitive = primitive;
 		}

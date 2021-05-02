@@ -38,7 +38,7 @@ class LXThread;
 class LXViewport;
 class LXViewportManager;
 
-typedef vector<LXCounter*> ArrayCounters;
+typedef std::vector<LXCounter*> ArrayCounters;
 
 enum class ECreateProjectResult
 {
@@ -182,7 +182,7 @@ private:
 	// Plugins management 
 	//
 
-	typedef map<LXString, LXFilepath> MapExtension2Plugin;
+	typedef std::map<LXString, LXFilepath> MapExtension2Plugin;
 	MapExtension2Plugin	 m_mapExtension2Plugin;
 
 	#ifdef LX_COUNTERS

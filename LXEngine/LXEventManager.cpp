@@ -32,14 +32,14 @@ void LXEventManager::RegisterEvent(EEventType Event, LXActor* Actor)
 
 void LXEventManager::RegisterEventFunc(EEventType Event, void* Owner, std::function<void(LXEvent*)> Func)
 {
-	_eventTypeFunctions[Event].push_back(pair<void*, std::function<void(LXEvent*)>>(Owner, Func));
+	_eventTypeFunctions[Event].push_back(std::pair<void*, std::function<void(LXEvent*)>>(Owner, Func));
 }
 
 
 void LXEventManager::RegisterEventFunc(const LXString& eventName, void* Owner, std::function<void(LXEvent*)> function)
 {
 	GetCurrentThreadId();
-	_eventNameFunctions[eventName].push_back(pair<void*, std::function<void(LXEvent*)>>(Owner, function));
+	_eventNameFunctions[eventName].push_back(std::pair<void*, std::function<void(LXEvent*)>>(Owner, function));
 }
 
 void LXEventManager::UnregisterEvent(EEventType EventType, LXActor* Actor)

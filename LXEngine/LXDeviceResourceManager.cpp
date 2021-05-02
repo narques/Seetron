@@ -38,18 +38,18 @@ size_t BuildKey(const LXPrimitive* primitive)
 	return seed;
 }
 
-const shared_ptr<LXMaterialD3D11>& LXDeviceResourceManager::GetShaderResources(ERenderPass renderPass, const LXMaterialBase* material)
+const std::shared_ptr<LXMaterialD3D11>& LXDeviceResourceManager::GetShaderResources(ERenderPass renderPass, const LXMaterialBase* material)
 {
 	size_t key = BuildKey(renderPass, material);
 
-	map<size_t, shared_ptr<LXMaterialD3D11>>::iterator it = _shaderResources.find(key);
+	std::map<size_t, std::shared_ptr<LXMaterialD3D11>>::iterator it = _shaderResources.find(key);
 	if (it != _shaderResources.end())
 	{
 		return it->second;
 	}
 	else
 	{
-		shared_ptr<LXMaterialD3D11> materialD3D11 = LXMaterialD3D11::CreateFromMaterial(material);
+		std::shared_ptr<LXMaterialD3D11> materialD3D11 = LXMaterialD3D11::CreateFromMaterial(material);
 		_shaderResources[key] = materialD3D11;
 		GetCore().EnqueueInvokeDelegate(&material->Compiled);
 		return _shaderResources[key];
@@ -70,7 +70,7 @@ void LXDeviceResourceManager::UpdateShaderResources(const LXMaterialBase* materi
 	for (auto i = 0; i < (int)ERenderPass::Last; i++)
 	{
 		size_t key = BuildKey((ERenderPass)i, material);
-		map<size_t, shared_ptr<LXMaterialD3D11>>::iterator it = _shaderResources.find(key);
+		std::map<size_t, std::shared_ptr<LXMaterialD3D11>>::iterator it = _shaderResources.find(key);
 		if (it != _shaderResources.end())
 		{
 			it->second->Update(material);
@@ -82,14 +82,14 @@ const std::shared_ptr<LXPrimitiveD3D11>& LXDeviceResourceManager::GetPrimitive(c
 {
 	size_t key = BuildKey(primitive);
 
-	map<size_t, shared_ptr<LXPrimitiveD3D11>>::iterator it = _primitives.find(key);
+	std::map<size_t, std::shared_ptr<LXPrimitiveD3D11>>::iterator it = _primitives.find(key);
 	if (it != _primitives.end())
 	{
 		return it->second;
 	}
 	else
 	{
-		shared_ptr<LXPrimitiveD3D11> primitiveD3D11 = LXPrimitiveD3D11::CreateFromPrimitive(primitive);
+		std::shared_ptr<LXPrimitiveD3D11> primitiveD3D11 = LXPrimitiveD3D11::CreateFromPrimitive(primitive);
 		_primitives[key] = primitiveD3D11;
 		return _primitives[key];
 	}

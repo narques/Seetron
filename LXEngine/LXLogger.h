@@ -53,11 +53,11 @@ public:
 
 private:
 
-	map<void*, std::function<void(ELogType, const wchar_t*)>> MapCallbacks;
+	std::map<void*, std::function<void(ELogType, const wchar_t*)>> MapCallbacks;
 	ELogMode LogModes;
 	LXMutex* Mutex;
 	LXFile* _file = nullptr;
-	list<LXString> _logs;
+	std::list<LXString> _logs;
 
 };
 

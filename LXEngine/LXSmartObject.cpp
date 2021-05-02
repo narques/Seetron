@@ -22,10 +22,10 @@
 #include "LXPropertyType.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
-typedef list<LXSmartObject*> ListSmartObjects;
-typedef set<LXSmartObject*> SetSmartObjects;
+typedef std::list<LXSmartObject*> ListSmartObjects;
+typedef std::set<LXSmartObject*> SetSmartObjects;
 
-map<LXObject*, std::function<void(LXSmartObject*, LXProperty*)>> LXSmartObject::_MapCBOnPropertiesChanged;
+std::map<LXObject*, std::function<void(LXSmartObject*, LXProperty*)>> LXSmartObject::_MapCBOnPropertiesChanged;
 
 LXSmartObject::LXSmartObject()
 {
@@ -246,7 +246,7 @@ bool LXSmartObject::Load(const TLoadContext& loadContext, LXString* pName)
 {
 	_isLoading = true;
 
-	// Create the map XMLName to Property
+	// Create the std::map XMLName to Property
 	TMapStringProperty mapProperties;
 	
 	for (ListProperties::const_iterator It = _listProperties.begin(); It!= _listProperties.end(); It++)
@@ -681,7 +681,7 @@ LXPropertyMatrix* LXSmartObject::DefinePropertyMatrix(const LXString& label, con
 	return DefineProperty(label, PID, pMatrix);
 }
 
-LXPropertyAssetPtr* LXSmartObject::DefinePropertyAsset(const LXString& label, const LXPropertyID& PID, shared_ptr<LXAsset>* pAsset)
+LXPropertyAssetPtr* LXSmartObject::DefinePropertyAsset(const LXString& label, const LXPropertyID& PID, std::shared_ptr<LXAsset>* pAsset)
 {
 	return DefineProperty(label, PID, pAsset);
 }
@@ -731,7 +731,7 @@ bool LXSmartObject::AddProperty(LXProperty* pProperty)
 
 	if (!xmlName.IsEmpty() && propID == LXPropertyID::Undefined)
 	{
-		static map<LXString, uint> mapXMLNameID;
+		static std::map<LXString, uint> mapXMLNameID;
 		static uint ID = int(LXPropertyID::LASTID) + 1000; // +1000 Sinon risque de doublon d'ID avec ceux generes par la macro LX_PROPERTYID_AUTO
 		
 		auto It = mapXMLNameID.find(xmlName);
@@ -899,7 +899,7 @@ template LXCORE_API LXPropertyListSmartObjects* LXSmartObject::DefineProperty(co
 template LXCORE_API LXPropertyListSharedObjects* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, ListSharedObjects* pListSmartObjects);
 template LXCORE_API LXPropertyAssetPtr* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXAssetPtr* pMaterialInput);
 template LXCORE_API LXPropertySmartObject* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXSmartObject* smartObject);
-template LXCORE_API LXPropertySharedObject* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, shared_ptr<LXSmartObject>* smartObject);
+template LXCORE_API LXPropertySharedObject* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, std::shared_ptr<LXSmartObject>* smartObject);
 template LXCORE_API LXPropertyReferenceObject* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXReference<LXSmartObject>* smartObject);
 
 template LXCORE_API LXPropertyInt* LXSmartObject::CreateUserProperty(const LXString& name, const int& var);

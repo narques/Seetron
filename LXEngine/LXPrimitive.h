@@ -168,9 +168,9 @@ public:
 	int					GetId				( );
 	
 	bool				Save				(  const TSaveContext& saveContext  );
-	void				SetMaterial			( shared_ptr<LXMaterialBase>& pMaterial );
+	void				SetMaterial			( std::shared_ptr<LXMaterialBase>& pMaterial );
 	void				SetMaterial			( const LXString& Filename );
-	const shared_ptr<LXMaterialBase>& GetMaterial() const { return m_pMaterial; }
+	const std::shared_ptr<LXMaterialBase>& GetMaterial() const { return m_pMaterial; }
 	
 	// Draw Options
 	LXPrimitiveTopology	GetTopology			( ) const { return _Topology; }
@@ -188,7 +188,7 @@ public:
 private:
 
 	template<class T, class U>
-	void				ComputeTangents2	( vector<U>& arrayPositions, vector<T>& arrayTexCoords ); // And BiNormals
+	void				ComputeTangents2	( std::vector<U>& arrayPositions, std::vector<T>& arrayTexCoords ); // And BiNormals
 	void				MergeIndices		( ArrayUint& dest, const ArrayUint& src );
 	void				ComputeBBoxLocal	( );
 	
@@ -218,7 +218,7 @@ public :
 
 	// Misc
 	LXPrimitiveTopology	_Topology;
-	shared_ptr<LXMaterialBase> m_pMaterial;
+	std::shared_ptr<LXMaterialBase> m_pMaterial;
 	int				m_nId;
 	bool			m_bValid;
 	LXBBox			m_bboxLocal;
@@ -230,6 +230,6 @@ public :
 	#endif
 };
 
-typedef list<shared_ptr<LXPrimitive>> ListPrimitives;
-typedef vector<LXPrimitive*> ArrayPrimitives;
-typedef set<LXPrimitive*> SetPrimitives;
+typedef std::list<std::shared_ptr<LXPrimitive>> ListPrimitives;
+typedef std::vector<LXPrimitive*> ArrayPrimitives;
+typedef std::set<LXPrimitive*> SetPrimitives;

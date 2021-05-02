@@ -24,9 +24,9 @@ LXMaterialInstance::~LXMaterialInstance()
 	Parent->Instances.remove(this);
 }
 
-shared_ptr<LXMaterialInstance> LXMaterialInstance::Create(const shared_ptr<LXMaterial>& material)
+std::shared_ptr<LXMaterialInstance> LXMaterialInstance::Create(const std::shared_ptr<LXMaterial>& material)
 {
-	shared_ptr<LXMaterialInstance> materialInstance = make_shared<LXMaterialInstance>();
+	std::shared_ptr<LXMaterialInstance> materialInstance = std::make_shared<LXMaterialInstance>();
 	materialInstance->Parent = material;
 	materialInstance->InstanceID = material->Instances.size();
 	material->Instances.push_back(materialInstance.get());
@@ -80,7 +80,7 @@ EMaterialType LXMaterialInstance::GetType() const
 	return Parent->GetType();
 }
 
-bool LXMaterialInstance::SetPropertyTextureByName(const LXString& textureName, const shared_ptr<LXTexture>& texture)
+bool LXMaterialInstance::SetPropertyTextureByName(const LXString& textureName, const std::shared_ptr<LXTexture>& texture)
 {
 	const LXMaterial* material = Parent.get();
 

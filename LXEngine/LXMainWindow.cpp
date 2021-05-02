@@ -199,7 +199,7 @@ bool LXCoreWindow::OnCommand(UINT CommandID)
 	if (It != _MenuCommands.end())
 	{
 		LXConsoleCommand* ConsoleCommand = It->second;
-		vector<LXString> Args;
+		std::vector<LXString> Args;
 		ConsoleCommand->Execute(Args);
 	}
 	else
@@ -266,7 +266,7 @@ void  LXCoreWindow::AppendMenu(HMENU hMenu, const wchar_t* Caption, LXProperty* 
 {
 	static uint i = PropertyStartID;
 	::AppendMenu(hMenu, MF_ENABLED | MF_STRING, i, Caption);
-	_MenuProperties[i] = pair<LXProperty*,uint>(Property, UserData);
+	_MenuProperties[i] = std::pair<LXProperty*,uint>(Property, UserData);
 	i++;
 }
 

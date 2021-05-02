@@ -99,8 +99,8 @@ public:
 typedef vec3<float>		vec3f;
 typedef vec3<double>	vec3d;
 
-typedef vector<vec3f>	ArrayVec3f;
-typedef vector<vec3d>	ArrayVec3d;
+typedef std::vector<vec3f>	ArrayVec3f;
+typedef std::vector<vec3d>	ArrayVec3d;
 
 // Specialization
 // Functions & Operators

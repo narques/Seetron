@@ -71,7 +71,7 @@ const LXString LXPropertyManager::GetPropertyLabel(LXPropertyID id)
 	case LXPropertyID::MATERIAL_HEIGHTMAPBIAS: return L"Bias";
 	case LXPropertyID::MATERIAL_HEIGHTMAPSCALE: return L"Scale";
 	case LXPropertyID::MATERIAL_LIGHTING: return L"Lighting";
-	case LXPropertyID::MATERIAL_NORMALMAPSPACE: return L"Normal map space";
+	case LXPropertyID::MATERIAL_NORMALMAPSPACE: return L"Normal std::map space";
 	case LXPropertyID::MATERIAL_OPACITY: return L"Opacity";
 	case LXPropertyID::MATERIAL_SHADER: return L"Shader";
 	case LXPropertyID::MATERIAL_SPECULAR: return L"Specular";
@@ -102,7 +102,7 @@ void LXPropertyManager::GetProperties(const SetActors& setActor, const LXPropert
 	}
 }
 
-typedef map<LXString, int> MapStringID;
+typedef std::map<LXString, int> MapStringID;
 
 int LXPropertyManager::CreatePropertyID(const LXString& label)
 {

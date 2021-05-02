@@ -50,7 +50,7 @@ public:
 	LXRenderTarget* RenderTargetSpecular = nullptr;
 	LXRenderTarget* RenderTargetCompose = nullptr;
 
-	list<LXRenderCluster*>* _ListRenderClusterLights = nullptr;
+	std::list<LXRenderCluster*>* _ListRenderClusterLights = nullptr;
 
 	// Test: texture reflection
 	LXConstantBufferD3D11* ConstantBufferIBL = nullptr;
@@ -68,11 +68,11 @@ private:
 	// Project Ref.
 	const LXTextureD3D11* TextureIBL = nullptr;
 
-	unique_ptr<LXShaderProgramBasic> _shaderProgramIBLLight;
-	unique_ptr<LXShaderProgramBasic> _shaderProgramSpotLight;
-	unique_ptr<LXShaderProgramBasic> _shaderProgramDirectionalLight;
-	unique_ptr<LXShaderProgramBasic> _shaderProgramPointLight;
-	unique_ptr<LXShaderProgramBasic> _shaderProgramComposeLight;
-	unique_ptr<LXShaderProgramBasic> _shaderProgramComposeLightNoSSAO;
+	std::unique_ptr<LXShaderProgramBasic> _shaderProgramIBLLight;
+	std::unique_ptr<LXShaderProgramBasic> _shaderProgramSpotLight;
+	std::unique_ptr<LXShaderProgramBasic> _shaderProgramDirectionalLight;
+	std::unique_ptr<LXShaderProgramBasic> _shaderProgramPointLight;
+	std::unique_ptr<LXShaderProgramBasic> _shaderProgramComposeLight;
+	std::unique_ptr<LXShaderProgramBasic> _shaderProgramComposeLightNoSSAO;
 };
 

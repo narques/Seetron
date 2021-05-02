@@ -46,6 +46,6 @@ private:
 	
 	SetActors			_setSceneObjectToUpdate;
 
-	typedef map<LXActor*, LXMatrix> MapMatrices;
+	typedef std::map<LXActor*, LXMatrix> MapMatrices;
 	MapMatrices			_mapMatrices;
 };

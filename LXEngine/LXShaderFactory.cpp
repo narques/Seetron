@@ -246,7 +246,7 @@ LXStringA LXShaderFactory::ConstantBufferToHLSL(const LXConstantBuffer& Constant
 	return HLSLDeclaration;
 }
 
-LXStringA LXShaderFactory::ListTexturesToHLSL(const list<LXTexture*>& listTextures, EShader shader)
+LXStringA LXShaderFactory::ListTexturesToHLSL(const std::list<LXTexture*>& listTextures, EShader shader)
 {
 	LXStringA HLSLDeclaration;
 

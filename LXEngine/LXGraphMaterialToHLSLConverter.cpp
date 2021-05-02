@@ -136,7 +136,7 @@ bool LXGraphMaterialToHLSLConverter::GenerateConstanBuffer(const LXGraph* graph,
 	return ParseNodeCB(*nodeRoot, outConstantBuffer);
 }
 
-void LXGraphMaterialToHLSLConverter::GatherTextures(const LXGraph* graph, EShader shader, list<LXTexture*>& outTextures)
+void LXGraphMaterialToHLSLConverter::GatherTextures(const LXGraph* graph, EShader shader, std::list<LXTexture*>& outTextures)
 {
 	_shader = shader;
 
@@ -308,7 +308,7 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNode(const LXMaterialD3D11* mater
 		if (i == -1)
 			i = code.Find(connectorUID);
 		
-		int j = string::npos;
+		int j = std::string::npos;
 		if (variableDeclaration)
 		{
 			j = variableDeclaration->Find(connectorName);
@@ -317,7 +317,7 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNode(const LXMaterialD3D11* mater
 		}
 		
 		
-		if (i == string::npos && j == string::npos)
+		if (i == std::string::npos && j == std::string::npos)
 		{
 			// The connector is not used at all.
 			continue;
@@ -450,7 +450,7 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNode(const LXMaterialD3D11* mater
 
 		int i = code.Find(macroVariableName);
 
-		if (i == string::npos)
+		if (i == std::string::npos)
 		{
 			// The connector is not used.
 			continue;
@@ -568,7 +568,7 @@ bool LXGraphMaterialToHLSLConverter::ParseNodeCB(const LXNode& node, LXConstantB
 	return res;
 }
 
-void LXGraphMaterialToHLSLConverter::ParseNodeTexture(const LXNode& node, list<LXTexture*>& outTextures)
+void LXGraphMaterialToHLSLConverter::ParseNodeTexture(const LXNode& node, std::list<LXTexture*>& outTextures)
 {
 
 	//
@@ -703,13 +703,13 @@ LXStringA LXGraphMaterialToHLSLConverter::ParseNodeVariable(const LXMaterialD3D1
 
 		if (texture)
 		{
-			list<LXTexture*>* listTextures = nullptr;
+			std::list<LXTexture*>* listTextures = nullptr;
 			switch (_shader)
 			{
 			case EShader::VertexShader:
-				listTextures = const_cast<list<LXTexture*>*>(&materialD3D11->GetTexturesVS()); break;
+				listTextures = const_cast<std::list<LXTexture*>*>(&materialD3D11->GetTexturesVS()); break;
 			case EShader::PixelShader:
-				listTextures = const_cast<list<LXTexture*>*>(&materialD3D11->GetTexturesPS()); break;
+				listTextures = const_cast<std::list<LXTexture*>*>(&materialD3D11->GetTexturesPS()); break;
 			default: CHK(0);
 			}
 

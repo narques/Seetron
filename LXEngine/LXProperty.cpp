@@ -111,12 +111,12 @@ LX_DECLARE_GETTEMPLATETYPE(LXString, EPropertyType::String)
 LX_DECLARE_GETTEMPLATETYPE(LXFilepath, EPropertyType::Filepath)
 LX_DECLARE_GETTEMPLATETYPE(LXAssetPtr, EPropertyType::AssetPtr)
 LX_DECLARE_GETTEMPLATETYPE(LXColor4f, EPropertyType::Color)
-LX_DECLARE_GETTEMPLATETYPE(vector<LXSmartObject*>, EPropertyType::ArraySmartObject)
-LX_DECLARE_GETTEMPLATETYPE(list<LXSmartObject*>, EPropertyType::ListSmartObject)
+LX_DECLARE_GETTEMPLATETYPE(std::vector<LXSmartObject*>, EPropertyType::ArraySmartObject)
+LX_DECLARE_GETTEMPLATETYPE(std::list<LXSmartObject*>, EPropertyType::ListSmartObject)
 LX_DECLARE_GETTEMPLATETYPE(ListSharedObjects, EPropertyType::ListSmartObject)
-LX_DECLARE_GETTEMPLATETYPE(vector<vec3f>, EPropertyType::ArrayFloat3f)
+LX_DECLARE_GETTEMPLATETYPE(std::vector<vec3f>, EPropertyType::ArrayFloat3f)
 LX_DECLARE_GETTEMPLATETYPE(LXSmartObject, EPropertyType::SmartObject)
-LX_DECLARE_GETTEMPLATETYPE(shared_ptr<LXSmartObject>, EPropertyType::SharedObject)
+LX_DECLARE_GETTEMPLATETYPE(std::shared_ptr<LXSmartObject>, EPropertyType::SharedObject)
 LX_DECLARE_GETTEMPLATETYPE(LXReference<LXSmartObject>, EPropertyType::ReferenceObject)
 
 //--------------------------------------------------------------------------
@@ -393,7 +393,7 @@ template class LXCORE_API LXPropertyT<ArraySmartObjects>;
 template class LXCORE_API LXPropertyT<ListSmartObjects>;
 template class LXCORE_API LXPropertyT<ArrayVec3f>;
 template class LXCORE_API LXPropertyT<LXSmartObject>;
-template class LXCORE_API LXPropertyT<shared_ptr<LXSmartObject>>;
+template class LXCORE_API LXPropertyT<std::shared_ptr<LXSmartObject>>;
 template class LXCORE_API LXPropertyT<LXReference<LXSmartObject>>;
 template class LXCORE_API LXPropertyT<ListSharedObjects>;
 
@@ -725,7 +725,7 @@ void LXPropertyT<LXAssetPtr>::LoadValue(const LXAssetPtr& value)
 // --- LXAssetPtr ---
 //
 
-map<LXString, int> groupPositions;
+std::map<LXString, int> groupPositions;
 
 int LXProperty::GetGroupPosition(const LXString& strGroup)
 {
@@ -915,7 +915,7 @@ void LXPropertyListSharedObjects::GetValueFromXML2(const TLoadContext& LoadConte
 
 	for (LXMSXMLNode e = node.begin(); e != node.end(); e++)
 	{
-		shared_ptr<LXSmartObject> smartObject = LXObjectFactory::CreateSharedObject(e.name(), _Owner/*LoadContext.pOwner*/);
+		std::shared_ptr<LXSmartObject> smartObject = LXObjectFactory::CreateSharedObject(e.name(), _Owner/*LoadContext.pOwner*/);
 		
 		if (smartObject)
 		{
@@ -942,7 +942,7 @@ void LXPropertyListSharedObjects::SaveXML2(const TSaveContext& saveContext, cons
 		fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 		fwprintf(saveContext.pXMLFile, L"<%s>\n", strXMLName.GetBuffer());
 		saveContext.Indent++;
-		for (const shared_ptr<LXSmartObject>& SmartObject : v)
+		for (const std::shared_ptr<LXSmartObject>& SmartObject : v)
 		{
 			SmartObject->Save(saveContext);
 		}
@@ -1037,15 +1037,15 @@ void LXPropertyT<LXSmartObject>::SaveXML2(const TSaveContext& saveContext, const
 }
 
 //
-// --- shared_ptr<LXSmartObject> ---
+// --- std::shared_ptr<LXSmartObject> ---
 //
 
 template<>
-void LXPropertyT<shared_ptr<LXSmartObject>>::GetValueFromXML2(const TLoadContext& LoadContext)
+void LXPropertyT<std::shared_ptr<LXSmartObject>>::GetValueFromXML2(const TLoadContext& LoadContext)
 {
 	const LXMSXMLNode& node = LoadContext.node;
 	LXString value = node.attr(L"Value");
-	shared_ptr<LXSmartObject> smartObject = LoadContext.pOwner->GetObject(value);
+	std::shared_ptr<LXSmartObject> smartObject = LoadContext.pOwner->GetObject(value);
 
 	if (smartObject == nullptr)
 	{
@@ -1056,7 +1056,7 @@ void LXPropertyT<shared_ptr<LXSmartObject>>::GetValueFromXML2(const TLoadContext
 }
 
 template<>
-void LXPropertyT<shared_ptr<LXSmartObject>>::SaveXML2(const TSaveContext& saveContext, const LXString& strXMLName, const shared_ptr<LXSmartObject>& v)
+void LXPropertyT<std::shared_ptr<LXSmartObject>>::SaveXML2(const TSaveContext& saveContext, const LXString& strXMLName, const std::shared_ptr<LXSmartObject>& v)
 {
 	LXString* pUID = nullptr;
 	if (v)

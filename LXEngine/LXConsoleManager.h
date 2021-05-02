@@ -22,12 +22,12 @@ public:
 	static void DeleteSingleton();
 
 	bool TryToExecute(const LXString& CommandLine);
-	void GetNearestCommand(const LXString& Str, vector<LXString>& ListSuggestion);
+	void GetNearestCommand(const LXString& Str, std::vector<LXString>& ListSuggestion);
 	
 	void AddCommand(LXConsoleCommand* command);
 	void RemoveCommand(LXConsoleCommand* command);
 
-	list<LXConsoleCommand*> ListCommands;
+	std::list<LXConsoleCommand*> ListCommands;
 };
 
 LXCORE_API LXConsoleManager& GetConsoleManager();
@@ -44,7 +44,7 @@ public:
 	LXConsoleCommand(const LXString& name);
 	virtual ~LXConsoleCommand();
 
-	virtual void Execute(const vector<LXString>& Arguments) = 0;
+	virtual void Execute(const std::vector<LXString>& Arguments) = 0;
 	virtual bool CanExecute() { return true; }
 
 public:
@@ -67,7 +67,7 @@ public:
 	virtual ~LXConsoleCommandT();
 
 	const T& GetValue();
-	void Execute(const vector<LXString>& Arguments) override;
+	void Execute(const std::vector<LXString>& Arguments) override;
 
 private:
 
@@ -104,7 +104,7 @@ public:
 	LXConsoleCommandCall2(const LXString& InName, std::function<FunctionSignature> InFunction);
 	LXConsoleCommandCall2(const LXString& InName, std::function<FunctionSignature> InFunction, std::function<bool()> InOnCanExecute);
 
-	void Execute(const vector<LXString>& Arguments) override;
+	void Execute(const std::vector<LXString>& Arguments) override;
 	bool CanExecute() override;
 
 	std::function<FunctionSignature> Function;

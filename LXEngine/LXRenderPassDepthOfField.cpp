@@ -29,10 +29,10 @@ namespace
 
 LXRenderPassDepthOfField::LXRenderPassDepthOfField(LXRenderer* renderer) : LXRenderPass(renderer)
 {
-	_shaderDOFX = make_unique<LXShaderProgramBasic>();
+	_shaderDOFX = std::make_unique<LXShaderProgramBasic>();
 	_shaderDOFX->PixelShader->AddMacro("DIRX", "1");
-	_shaderDOFY = make_unique<LXShaderProgramBasic>();
-	_renderTarget = make_unique<LXRenderTarget>(renderer->Width, renderer->Height, kFormat);
+	_shaderDOFY = std::make_unique<LXShaderProgramBasic>();
+	_renderTarget = std::make_unique<LXRenderTarget>(renderer->Width, renderer->Height, kFormat);
 	RebuildShaders();
 }
 

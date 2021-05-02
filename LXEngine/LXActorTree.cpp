@@ -23,7 +23,7 @@ LXActorTree::LXActorTree()
 // 	DefineProperty("Stacks", &Stacks, 1, 64);
 
 	// Trunk
-	const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCylinder(TrunkRadius, TrunkHeight);
+	const std::shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCylinder(TrunkRadius, TrunkHeight);
 	Primitive->SetPersistent(false);
 	Primitive->ComputeTangents();
 	AddPrimitive(Primitive);
@@ -67,7 +67,7 @@ LXTreeElement::LXTreeElement()
 {
 	LXProperty::SetCurrentGroup(L"Branch"); // Or tree
 
-	const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCylinder(10.f, 200.f);
+	const std::shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCylinder(10.f, 200.f);
 	Primitive->SetPersistent(false);
 	Primitive->ComputeTangents();
 	AddPrimitive(Primitive);

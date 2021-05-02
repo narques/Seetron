@@ -13,7 +13,7 @@
 
 LXMessageManager::LXMessageManager()
 {
-	_mutex = make_unique<LXMutex>();
+	_mutex = std::make_unique<LXMutex>();
 }
 
 LXMessageManager::~LXMessageManager()
@@ -46,9 +46,9 @@ void LXMessageManager::Run()
 	_mutex->Lock();
 	for (const LXChannel* channel : _sent)
 	{
- 		const LXObject* sender = channel->Sender;
- 		const LXString& messageID = channel->MessageID;
- 		const LXObject* receiver = channel->Receiver;
+		const LXObject* sender = channel->Sender;
+		const LXString& messageID = channel->MessageID;
+		const LXObject* receiver = channel->Receiver;
 		channel->Callback();
 	}
 	_sent.clear();

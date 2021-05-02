@@ -40,7 +40,7 @@ void LXGraph::Clear()
 	OnGraphChanged.Invoke();
 }
 
-void LXGraph::AddNode(shared_ptr<LXNode>& node)
+void LXGraph::AddNode(std::shared_ptr<LXNode>& node)
 {
 	if (node->Main && _main)
 	{
@@ -57,7 +57,7 @@ void LXGraph::AddNode(shared_ptr<LXNode>& node)
 	OnGraphChanged.Invoke();
 }
 
-void LXGraph::RemoveNode(shared_ptr<LXNode>& node)
+void LXGraph::RemoveNode(std::shared_ptr<LXNode>& node)
 {
 	// Delete the Connections.
 	for (LXConnector* connector : node->Inputs)
@@ -137,7 +137,7 @@ const LXNode* LXGraph::GetMain() const
 void LXGraph::OnLoaded()
 {
 	// Remove broken and duplicated connections
-	for (list<LXConnection*>::iterator it = Connections.begin(); it != Connections.end();)
+	for (std::list<LXConnection*>::iterator it = Connections.begin(); it != Connections.end();)
 	{
 		if ((*it)->Source == nullptr || (*it)->Destination == nullptr)
 		{
@@ -156,7 +156,7 @@ void LXGraph::OnLoaded()
 	}
 
 	// Search for the main node
-	for (const shared_ptr<LXNode>& node : Nodes)
+	for (const std::shared_ptr<LXNode>& node : Nodes)
 	{
 		if (node->Main)
 		{

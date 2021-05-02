@@ -11,18 +11,18 @@
 #include <windows.h>
 #include "LXMemory.h" // --- Must be the last included ---
 
-wstring GetFolderFromPartialFilepath(const wstring& partialFilepath)
+std::wstring GetFolderFromPartialFilepath(const std::wstring& partialFilepath)
 {
-	if ((partialFilepath.find(L'*') != string::npos) ||
-		(partialFilepath.find(L'?') != string::npos))
+	if ((partialFilepath.find(L'*') != std::string::npos) ||
+		(partialFilepath.find(L'?') != std::string::npos))
 	{
 		size_t pos = partialFilepath.rfind(L"\\");
-		if (pos == wstring::npos)
+		if (pos == std::wstring::npos)
 		{
 			pos = partialFilepath.rfind(L"/");
 		}
 
-		if (pos != wstring::npos)
+		if (pos != std::wstring::npos)
 		{
 			return partialFilepath.substr(0, pos + 1);
 		}
@@ -42,18 +42,18 @@ LXDirectory::LXDirectory(const wchar_t* path)
 {
 	std::wstring stdFolder = path;
 	
-	if ((stdFolder.find(L'*') != string::npos) ||
-		(stdFolder.find(L'?') != string::npos))
+	if ((stdFolder.find(L'*') != std::string::npos) ||
+		(stdFolder.find(L'?') != std::string::npos))
 	{
 		_searchRegExpression = path;
 
 		size_t pos =  _searchRegExpression.rfind(L"\\");
-		if (pos == wstring::npos)
+		if (pos == std::wstring::npos)
 		{
 			pos = _searchRegExpression.rfind(L"/");
 		}
 		
-		if (pos != wstring::npos)
+		if (pos != std::wstring::npos)
 		{
 			_baseFolder = _searchRegExpression.substr(0, pos + 1);
 		}
@@ -87,7 +87,7 @@ LXDirectory::~LXDirectory()
 	_listFiles.clear();
 }
 
-void LXDirectory::ScanFolder(const std::wstring& folder, bool update, list<std::wstring>* outAddedFiles)
+void LXDirectory::ScanFolder(const std::wstring& folder, bool update, std::list<std::wstring>* outAddedFiles)
 {
 	WIN32_FIND_DATA fd;
 	HANDLE hFind = FindFirstFile(folder.c_str(), &fd);
@@ -121,9 +121,9 @@ void LXDirectory::ScanFolder(const std::wstring& folder, bool update, list<std::
 	}
 }
 
-void LXDirectory::AddFillInfo(const std::wstring& folder, const WIN32_FIND_DATA& findData, bool update, list<std::wstring>* outAddedFiles)
+void LXDirectory::AddFillInfo(const std::wstring& folder, const WIN32_FIND_DATA& findData, bool update, std::list<std::wstring>* outAddedFiles)
 {
-	wstring absoluteFolder = GetFolderFromPartialFilepath(folder);
+	std::wstring absoluteFolder = GetFolderFromPartialFilepath(folder);
 	   
 	LXFileInfo fi;
 	fi.FileName = findData.cFileName;
@@ -169,7 +169,7 @@ bool LXDirectory::Exists(const wchar_t* folder)
 	return (dwAttrib != INVALID_FILE_ATTRIBUTES && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 }
 
-void LXDirectory::GetChangedLastWriteFiles(list<std::wstring>& addedFiles, list<std::wstring>& removedFiles, list<std::wstring>& updatedFiles, bool update /*=true*/)
+void LXDirectory::GetChangedLastWriteFiles(std::list<std::wstring>& addedFiles, std::list<std::wstring>& removedFiles, std::list<std::wstring>& updatedFiles, bool update /*=true*/)
 {
 	for (LXFileInfo& fileInfo : _listFiles)
 	{

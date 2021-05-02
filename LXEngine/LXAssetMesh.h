@@ -12,7 +12,7 @@
 class LXMesh;
 class LXPrimitive;
 
-typedef map<int, shared_ptr<LXPrimitive>> MapGeometries;
+typedef std::map<int, std::shared_ptr<LXPrimitive>> MapGeometries;
 
 class LXAssetMesh : public LXAsset
 {
@@ -22,7 +22,7 @@ class LXAssetMesh : public LXAsset
 public:
 
 	LXAssetMesh();
-	LXAssetMesh(shared_ptr<LXMesh>& mesh);
+	LXAssetMesh(std::shared_ptr<LXMesh>& mesh);
 	virtual ~LXAssetMesh();
 	
 	//
@@ -32,7 +32,7 @@ public:
 	bool Load() override;
 	LXString GetFileExtension() override { return LX_MESH_EXT; }
 
-	shared_ptr<LXMesh>& GetMesh();
+	std::shared_ptr<LXMesh>& GetMesh();
 
 private:
 
@@ -56,7 +56,7 @@ private:
 
 private:
 
-	shared_ptr<LXMesh> _Root;
+	std::shared_ptr<LXMesh> _Root;
 	MapGeometries _mapGeometries; 
 
 };

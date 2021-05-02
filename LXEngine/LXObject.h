@@ -26,7 +26,7 @@ public:
 
 };
 
-typedef list<LXObject*> ListObjects;
-typedef vector<LXObject*> VectorObjects;
-typedef set<LXObject*> SetObjects;
-typedef map<LXString, int> MapObjects;
+typedef std::list<LXObject*> ListObjects;
+typedef std::vector<LXObject*> VectorObjects;
+typedef std::set<LXObject*> SetObjects;
+typedef std::map<LXString, int> MapObjects;

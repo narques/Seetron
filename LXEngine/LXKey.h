@@ -38,4 +38,4 @@ protected:
 
 };
 
-typedef map <int, LXKey*> MapKeys;
+typedef std::map <int, LXKey*> MapKeys;

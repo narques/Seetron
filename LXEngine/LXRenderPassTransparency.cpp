@@ -26,7 +26,7 @@ LXRenderPassTransparency::LXRenderPassTransparency(LXRenderer* Renderer):LXRende
 	CreateBuffers(Renderer->Width, Renderer->Height);
 
 	CBImageBaseLightingData.Intensity = 1.f;
-	CBImageBaseLighting = make_unique<LXConstantBufferD3D11>(&CBImageBaseLightingData, (int)sizeof(CBImageBaseLightingData));
+	CBImageBaseLighting = std::make_unique<LXConstantBufferD3D11>(&CBImageBaseLightingData, (int)sizeof(CBImageBaseLightingData));
 }
 
 LXRenderPassTransparency::~LXRenderPassTransparency()

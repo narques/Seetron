@@ -9,6 +9,7 @@
 #pragma once
 
 #include "LXObject.h"
+#include "LXTypes.h"
 #include "LXVec3.h"
 #include "LXVec4.h"
 
@@ -41,8 +42,8 @@ public:
 	const vec3f&		GetCenter() const		{ CHK(m_bValid); return (vec3f&)m_ptCenter; }
 	const vec3f&		GetMin() const			{ CHK(m_bValid); return (vec3f&)m_ptMin; }
 	const vec3f&		GetMax() const			{ CHK(m_bValid); return (vec3f&)m_ptMax; }
-	float				GetMinSize() const		{ return min(min(m_ptMin.x, m_ptMin.y), m_ptMin.z); }
-	float				GetMaxSize() const		{ return max(max(m_ptMax.x, m_ptMax.y), m_ptMax.z); }
+	float				GetMinSize() const		{ return (std::min)((std::min)(m_ptMin.x, m_ptMin.y), m_ptMin.z); }
+	float				GetMaxSize() const		{ return (std::max)((std::max)(m_ptMax.x, m_ptMax.y), m_ptMax.z); }
 	void				GetPoints(vec3f* pPoints) const ;
 	float	            GetDiag() const			{ CHK(m_bValid); return m_fDiag; }			
 	float				GetSizeX() const		{ CHK(m_bValid); return m_ptMax.x - m_ptMin.x; }

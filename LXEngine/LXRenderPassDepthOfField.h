@@ -31,8 +31,8 @@ private:
 
 private:
 
-	unique_ptr<LXRenderTarget> _renderTarget;
-	unique_ptr<LXShaderProgramBasic> _shaderDOFX;
-	unique_ptr<LXShaderProgramBasic> _shaderDOFY;
+	std::unique_ptr<LXRenderTarget> _renderTarget;
+	std::unique_ptr<LXShaderProgramBasic> _shaderDOFX;
+	std::unique_ptr<LXShaderProgramBasic> _shaderDOFY;
 
 };

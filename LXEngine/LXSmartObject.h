@@ -31,9 +31,9 @@ class LXSmartObject;
 	public: LX_INLINE void Set##funcname(type* v) { var = v; }				\
 	protected: type* var = def;
 
-typedef map<LXString, LXProperty*> TMapStringProperty; 
-typedef map<LXString, std::function<void(LXSmartObject*)>> TMapFunctions;
-typedef map<LXSmartObject*, TMapFunctions> TMapFunctionListeners;
+typedef std::map<LXString, LXProperty*> TMapStringProperty; 
+typedef std::map<LXString, std::function<void(LXSmartObject*)>> TMapFunctions;
+typedef std::map<LXSmartObject*, TMapFunctions> TMapFunctionListeners;
 
 struct TSaveContext
 {
@@ -109,7 +109,7 @@ public:
 	//------------------------------------------------------------------------------------------------------
 
 	// For UI, returns choices/options to determine the object to create as the a list item.
-	virtual void					GetNewListItemChoices(const LXPropertyListSmartObjects* property, list<LXString>& outStrings) { }
+	virtual void					GetNewListItemChoices(const LXPropertyListSmartObjects* property, std::list<LXString>& outStrings) { }
 
 	// For UI, Create and add a new list item according the previous choice.
 	virtual LXSmartObject*			AddItemToPropertyList(const LXPropertyListSmartObjects* property, const LXString& id) { CHK(0); return nullptr; };
@@ -141,7 +141,7 @@ public:
 	const uint64&					GetUserData() const { return _nUserData; }
 
 	// Local references
-	shared_ptr<LXSmartObject>		GetObject(const LXString& uid);
+	std::shared_ptr<LXSmartObject>		GetObject(const LXString& uid);
 	LXReference<LXSmartObject>		GetObjectAsRef(const LXString& uid);
 	void							AddObject(const LXString& uid, LXSmartObject* smartObject);
 	void							RemoveObject(const LXString& uid, LXSmartObject* smartObject);
@@ -189,7 +189,7 @@ protected:
 	LXPropertyVec4f*				DefinePropertyVec4f(const LXString& name, const LXPropertyID& PID, vec4f* pVec4f);
 	LXPropertyLXColor4f*			DefinePropertyColor4f(const LXString& name, const LXPropertyID& PID, LXColor4f* pLXColor4f);
 	LXPropertyMatrix*				DefinePropertyMatrix(const LXString& name, const LXPropertyID& PID, LXMatrix* pMatrix);
-	LXPropertyAssetPtr*				DefinePropertyAsset(const LXString& name, const LXPropertyID& PID, shared_ptr<LXAsset>* pAsset);
+	LXPropertyAssetPtr*				DefinePropertyAsset(const LXString& name, const LXPropertyID& PID, std::shared_ptr<LXAsset>* pAsset);
 	LXPropertyBool*					DefinePropertyBool(const LXString& name, const LXPropertyID& PID, bool* pBool);
 	LXPropertyBool*					DefinePropertyBool(const LXString& name, const LXString& strID, const LXPropertyID& PID, bool* pBool);
 	LXPropertyEnum*					DefinePropertyEnum(const LXString& name, uint* pEnum);
@@ -226,14 +226,14 @@ private:
 
 	mutable LXString*				_pUID = nullptr;
 	ListProperties					_listProperties;		// Engine defined properties
-	list<LXVariant*>				_listVariants;			// User defined variables
+	std::list<LXVariant*>				_listVariants;			// User defined variables
 
 	//
 	// Listeners / Callback
 	//
 
-	map<void*, std::function<void(LXSmartObject*, LXProperty*)>> _MapCBOnPropertyChanged;
-	static map<LXObject*, std::function<void(LXSmartObject*, LXProperty*)>> _MapCBOnPropertiesChanged;
+	std::map<void*, std::function<void(LXSmartObject*, LXProperty*)>> _MapCBOnPropertyChanged;
+	static std::map<LXObject*, std::function<void(LXSmartObject*, LXProperty*)>> _MapCBOnPropertiesChanged;
 	TMapFunctionListeners _MapGenericCB;
 
 	//
@@ -243,7 +243,7 @@ private:
 	// ex: Duplicate a material asset file.
 	//
 
-	map<LXString, LXSmartObject*> _objects;
+	std::map<LXString, LXSmartObject*> _objects;
 
 };
 

@@ -72,7 +72,7 @@ public:
 
 typedef vec2<float>		vec2f;
 typedef vec2<double>	vec2d;
-typedef vector<vec2f>	ArrayVec2f;
+typedef std::vector<vec2f>	ArrayVec2f;
 
 // Functions & Operators
 __forceinline static vec2f	operator*(float num, const vec2f& v) { return vec2f(num * v.x, num * v.y); }

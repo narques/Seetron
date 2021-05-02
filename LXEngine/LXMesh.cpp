@@ -77,7 +77,7 @@ LXMesh::~LXMesh()
 {
 	LX_COUNTSCOPEDEC(LXMesh)
 
-	for (const shared_ptr<LXPrimitiveInstance>& PrimitiveInstance : _vectorPrimitives)
+	for (const std::shared_ptr<LXPrimitiveInstance>& PrimitiveInstance : _vectorPrimitives)
 	{
 		CHK(PrimitiveInstance->Owners.size() == 0);
 	}
@@ -93,7 +93,7 @@ LXMesh::~LXMesh()
 bool LXMesh::OnSaveChild(const TSaveContext& saveContext) const
 {
 	// Save primitives
-	for (const shared_ptr<LXPrimitiveInstance>& PrimitiveInstance : _vectorPrimitives)
+	for (const std::shared_ptr<LXPrimitiveInstance>& PrimitiveInstance : _vectorPrimitives)
 	{
 		if (PrimitiveInstance->Primitive->GetPersistent())
 		{
@@ -141,7 +141,7 @@ bool LXMesh::OnLoadChild(const TLoadContext& loadContext)
 			MapGeometries::const_iterator It = pMapGeometries.find(nGeoId);
 			if (It != pMapGeometries.end())
 			{
-				const shared_ptr<LXPrimitive>& Primitive = It->second;
+				const std::shared_ptr<LXPrimitive>& Primitive = It->second;
 
 				if (Primitive->GetArrayPositions().size())
 				{
@@ -174,14 +174,14 @@ void LXMesh::AddChild(LXMesh* Mesh)
 	
 }
 
-void LXMesh::AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, const LXMatrix* InMatrix /*= nullptr*/, const shared_ptr<LXMaterialBase>& InMaterial /*= nullptr */, int LODIndex /*= 0*/)
+void LXMesh::AddPrimitive(const std::shared_ptr<LXPrimitive>& Primitive, const LXMatrix* InMatrix /*= nullptr*/, const std::shared_ptr<LXMaterialBase>& InMaterial /*= nullptr */, int LODIndex /*= 0*/)
 {
 	// This type of Mesh does not support LOD.
 	CHK(LODIndex == 0);
 	
 	LX_CHK_RET(Primitive);
 	
-	_vectorPrimitives.push_back(make_unique<LXPrimitiveInstance>(Primitive, InMatrix, InMaterial));
+	_vectorPrimitives.push_back(std::make_unique<LXPrimitiveInstance>(Primitive, InMatrix, InMaterial));
 	
 	InvalidateBounds();
 	ComputeMatrixRCS();
@@ -210,7 +210,7 @@ void LXMesh::GetAllPrimitives(VectorPrimitiveInstances& primitives, int LODIndex
 	// This type of Mesh does not support LOD.
 	CHK(LODIndex == 0);
 
-	for (const shared_ptr<LXPrimitiveInstance>& it : _vectorPrimitives)
+	for (const std::shared_ptr<LXPrimitiveInstance>& it : _vectorPrimitives)
 	{
 		primitives.push_back(it);
 	}
@@ -265,7 +265,7 @@ void LXMesh::ComputeBounds()
 	}
 
 	// Add with PrimitiveInstance
-	for (const shared_ptr<LXPrimitiveInstance>& PrimitiveInstance : _vectorPrimitives)
+	for (const std::shared_ptr<LXPrimitiveInstance>& PrimitiveInstance : _vectorPrimitives)
 	{
 		LXPrimitive* pPrimitive = PrimitiveInstance->Primitive.get();
 
@@ -308,13 +308,13 @@ void LXMesh::InvalidateBounds()
 void LXMesh::SetMaterial(const LXString& key)
 {
 	LXAssetManager& rm = GetCore().GetProject()->GetAssetManager();
-	shared_ptr<LXMaterialBase> Material = rm.GetMaterial(key);
+	std::shared_ptr<LXMaterialBase> Material = rm.GetMaterial(key);
 	SetMaterial(Material);
 }
 
-void LXMesh::SetMaterial(shared_ptr<LXMaterialBase>& material)
+void LXMesh::SetMaterial(std::shared_ptr<LXMaterialBase>& material)
 {
-	for (const shared_ptr<LXPrimitiveInstance>& PrimitiveInstance : _vectorPrimitives)
+	for (const std::shared_ptr<LXPrimitiveInstance>& PrimitiveInstance : _vectorPrimitives)
 	{
 		PrimitiveInstance->SetMaterial(material);
 	}

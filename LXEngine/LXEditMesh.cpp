@@ -243,7 +243,7 @@ LXPrimitive* LXEditMesh::CreateMonoIndexedVertexArray()
 	uint nFaces = m_PositionIndices.size();
 	
 	CFace3* pFaces = new CFace3[nFaces];
-	vector<CIndexVTN*> arrayIndexedVectors;
+	std::vector<CIndexVTN*> arrayIndexedVectors;
 
 	for(uint i=0; i<nFaces; i++)
 	{
@@ -260,7 +260,7 @@ LXPrimitive* LXEditMesh::CreateMonoIndexedVertexArray()
 			bool bFind = false;
 			int nPos = 0;
 
-			for (vector<CIndexVTN*>::iterator It=arrayIndexedVectors.begin(); It!=arrayIndexedVectors.end(); It++)
+			for (std::vector<CIndexVTN*>::iterator It=arrayIndexedVectors.begin(); It!=arrayIndexedVectors.end(); It++)
 			{
 				CIndexVTN* p = *It;
 				if (p->v == v)
@@ -388,7 +388,7 @@ LXPrimitive* LXEditMesh::CreateMonoIndexedVertexArray()
 }
 
 
-uint FindVertexIndice(uint v, uint n, uint t, vector<CIndexVTN>& arrayIndexedVectors )
+uint FindVertexIndice(uint v, uint n, uint t, std::vector<CIndexVTN>& arrayIndexedVectors )
 {
 	bool bFind = false;
 
@@ -403,7 +403,7 @@ uint FindVertexIndice(uint v, uint n, uint t, vector<CIndexVTN>& arrayIndexedVec
 	return (uint)arrayIndexedVectors.size() - 1;
 }
 
-bool LXEditMesh::FinalizeGeometry(LXPrimitive* pGeometry, vector<CIndexVTN>& arrayIndexedVectors )
+bool LXEditMesh::FinalizeGeometry(LXPrimitive* pGeometry, std::vector<CIndexVTN>& arrayIndexedVectors )
 {
 	ArrayVec3f& arrayPositions = const_cast<ArrayVec3f&>(pGeometry->GetArrayPositions());
 	ArrayVec3f& arrayNormals = const_cast<ArrayVec3f&>(pGeometry->GetArrayNormals());
@@ -436,8 +436,8 @@ bool LXEditMesh::FinalizeGeometry(LXPrimitive* pGeometry, vector<CIndexVTN>& arr
 bool LXEditMesh::CreateMonoIndexedVertexArray2(ListPrimitives& listGeometries)
 {
 	LXPrimitive* pGeometry = NULL;
-	shared_ptr<LXMaterial> pMaterial;
-	vector<CIndexVTN> arrayIndexedVectors;
+	std::shared_ptr<LXMaterial> pMaterial;
+	std::vector<CIndexVTN> arrayIndexedVectors;
 
 	uint nFaces = (uint)m_PositionIndices.size();
 		
@@ -454,12 +454,12 @@ bool LXEditMesh::CreateMonoIndexedVertexArray2(ListPrimitives& listGeometries)
 		{
 			if (pGeometry)
 			{
-				shared_ptr<LXMaterialBase> materialBase = static_pointer_cast<LXMaterialBase>(pMaterial);
+				std::shared_ptr<LXMaterialBase> materialBase = std::static_pointer_cast<LXMaterialBase>(pMaterial);
 				pGeometry->SetMaterial(materialBase);
 				FinalizeGeometry(pGeometry, arrayIndexedVectors);
 			}
 
-			listGeometries.push_back(make_shared<LXPrimitive>());
+			listGeometries.push_back(std::make_shared<LXPrimitive>());
 			pGeometry = listGeometries.back().get();
 
 			arrayIndexedVectors.clear();
@@ -489,7 +489,7 @@ bool LXEditMesh::CreateMonoIndexedVertexArray2(ListPrimitives& listGeometries)
 	CHK(pGeometry);
 	if (pGeometry)
 	{
-		shared_ptr<LXMaterialBase> materialBase = static_pointer_cast<LXMaterialBase>(pMaterial);
+		std::shared_ptr<LXMaterialBase> materialBase = std::static_pointer_cast<LXMaterialBase>(pMaterial);
 		pGeometry->SetMaterial(materialBase);
 		FinalizeGeometry(pGeometry, arrayIndexedVectors);
 	}

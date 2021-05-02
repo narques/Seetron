@@ -19,7 +19,7 @@ public:
 
 	LXGraphTemplate();
 	virtual ~LXGraphTemplate();
-	vector<LXNodeTemplate*> NodeTemplates;
+	std::vector<LXNodeTemplate*> NodeTemplates;
 
 	const LXNodeTemplate* GetNodeTemplate(const LXString& templateID) const;
 

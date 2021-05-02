@@ -165,4 +165,4 @@ __forceinline vec3f LXMax(vec3f x, float y) { 	return vec3f(LXMax(x.x, y), LXMax
 __forceinline vec3f fract(const vec3f& v) { float intpart; return vec3f(modf(v.x, &intpart), modf(v.y, &intpart), modf(v.z, &intpart)); }
 
 // Generate normalized vectors
-void GenerateRandomVectors(int Count, vector<vec3f>& Vectors);
+void GenerateRandomVectors(int Count, std::vector<vec3f>& Vectors);

@@ -19,6 +19,6 @@ public:
 	void Render(LXRenderCommandList* rcl) override;
 
 	// Object list
-	list<LXRenderCluster*>* RenderClusters = nullptr;
+	std::list<LXRenderCluster*>* RenderClusters = nullptr;
 };
 

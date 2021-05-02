@@ -10,7 +10,7 @@
 
 #include "LXSmartObject.h"
 
-typedef list<LXString> ListUID;
+typedef std::list<LXString> ListUID;
 
 class LXCORE_API LXSelection : public LXSmartObject
 {
@@ -39,4 +39,4 @@ protected:
 
 };
 
-typedef list<LXSelection*> ListSelections;
+typedef std::list<LXSelection*> ListSelections;

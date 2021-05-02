@@ -34,7 +34,7 @@ public:
 	virtual void RebuildShaders() { };
 	virtual void Resize(uint Width, uint Height) { };
 	virtual const LXTextureD3D11* GetOutputTexture() const { CHK(0); return nullptr; }
-	virtual const bool GetOutputTextures(vector<const LXTextureD3D11*>& outTextures) { CHK(0); return false; }
+	virtual const bool GetOutputTextures(std::vector<const LXTextureD3D11*>& outTextures) { CHK(0); return false; }
 		
 protected:
 

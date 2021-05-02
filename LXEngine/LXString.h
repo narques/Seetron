@@ -17,7 +17,7 @@
 #include <iosfwd>
 #include <sstream>
 
-typedef vector<char> ArrayChar;
+typedef std::vector<char> ArrayChar;
 
 // A max number of char
 // Buffers used for conversions
@@ -33,7 +33,7 @@ public:
 	// Constructors
 	LXString(void)														{ }
 	LXString(const LXString& sz):m_str(sz.m_str.c_str())				{ }
-	LXString(const wstring& sz):m_str(sz)								{ }
+	LXString(const std::wstring& sz):m_str(sz)								{ }
 	LXString(const wchar_t* sz)											{ if (sz) m_str = sz; }
 	LXString(const char* sz)											
 	{ 
@@ -117,11 +117,11 @@ public:
 		return *this;
 	}
 
-	void Split(vector<LXString>& ArrayString) const
+	void Split(std::vector<LXString>& ArrayString) const
 	{
-		wstringstream ss;
+		std::wstringstream ss;
 		ss.str(m_str);
-		wstring s;
+		std::wstring s;
 		while (std::getline(ss, s, L' '))
 			ArrayString.push_back(LXString(s));
 	}
@@ -173,11 +173,11 @@ public:
 	}
 	float ToFloat();
 
-	wstring m_str;
+	std::wstring m_str;
 };
 
 //Explicit class Instantiation
-template class basic_string < wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> > ;
+template class std::basic_string < wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> > ;
 
 class LXCORE_API LXStringA
 {
@@ -187,7 +187,7 @@ public:
 	// Constructors
 	LXStringA(void) { }
 	LXStringA(const LXStringA& sz) :m_str(sz.m_str.c_str()) { }
-	LXStringA(const string& sz) :m_str(sz) { }
+	LXStringA(const std::string& sz) :m_str(sz) { }
 	LXStringA(const char* sz) { if (sz) m_str = sz; }
 
 	// Accessors
@@ -296,7 +296,7 @@ public:
 	}
 
 	//basic_string<T> m_str;
-	string m_str;
+	std::string m_str;
 };
 
 
@@ -362,5 +362,5 @@ static LXString Number(int i)
  // Return a tab string "\t\t\t..."
  LXString GetTab(int Count);
  
- typedef vector<LXString> ArrayStrings;
- typedef list<LXString> ListStrings;
+ typedef std::vector<LXString> ArrayStrings;
+ typedef std::list<LXString> ListStrings;

@@ -58,8 +58,8 @@ protected:
 private:
 		
 	HMENU _hMenuViewBuffer = 0;
-	map<uint, LXConsoleCommand*> _MenuCommands;
-	map<uint, pair<LXProperty*, uint>> _MenuProperties;
+	std::map<uint, LXConsoleCommand*> _MenuCommands;
+	std::map<uint, std::pair<LXProperty*, uint>> _MenuProperties;
 };
 
 class LXCORE_API LXMainWindow : public LXCoreWindow

@@ -75,5 +75,5 @@ private:
 
 };
 
-typedef list<LXActorLight*> ListLights;
+typedef std::list<LXActorLight*> ListLights;
 

@@ -68,14 +68,14 @@ public:
 
 public:
 
-	list<class LXMaterialInstance*> Instances;
+	std::list<class LXMaterialInstance*> Instances;
 
 private:
 
 	EMaterialType MaterialType;
 
 	// Graph 
-	unique_ptr<LXGraphMaterial> GraphMaterial;
+	std::unique_ptr<LXGraphMaterial> GraphMaterial;
 
 	EMaterialLightingModel _LightingModel = EMaterialLightingModel::Lit;
 	bool  _bTwoSided = false;

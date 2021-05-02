@@ -34,14 +34,14 @@ if (objectClassName == L#name)								\
 }															\
 
 #define CREATE_SHARED_OBJECT(name) \
-if (objectClassName == L#name) return make_shared<name>();
+if (objectClassName == L#name) return std::make_shared<name>();
 
 #define CREATE_SHARED_OWNED_OBJECT(name, OwnerClass)						\
 if (objectClassName == L#name)								\
 {															\
 	OwnerClass* dcOwner = dynamic_cast<OwnerClass*>(owner); \
 	CHK(dcOwner);											\
-	return make_shared<name>(dcOwner);						\
+	return std::make_shared<name>(dcOwner);						\
 }															\
 
 
@@ -58,7 +58,7 @@ LXSmartObject* LXObjectFactory::CreateObject(const LXString& objectClassName, LX
 	return nullptr;
 }
 
-shared_ptr<LXSmartObject> LXObjectFactory::CreateSharedObject(const LXString& objectClassName, LXSmartObject* owner)
+std::shared_ptr<LXSmartObject> LXObjectFactory::CreateSharedObject(const LXString& objectClassName, LXSmartObject* owner)
 {
 	CREATE_SHARED_OBJECT(LXConnection);
 	CREATE_SHARED_OBJECT(LXNodeTemplate);

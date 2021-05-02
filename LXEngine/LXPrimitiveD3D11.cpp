@@ -181,9 +181,9 @@ bool LXPrimitiveD3D11::CreateLine(const vec3f& v0, const vec3f& v1)
 	return true;
 }
 
-shared_ptr<LXPrimitiveD3D11> LXPrimitiveD3D11::CreateFromPrimitive(const LXPrimitive* primitive)
+std::shared_ptr<LXPrimitiveD3D11> LXPrimitiveD3D11::CreateFromPrimitive(const LXPrimitive* primitive)
 {
-	shared_ptr<LXPrimitiveD3D11> primitiveD3D11 = make_shared<LXPrimitiveD3D11>();
+	std::shared_ptr<LXPrimitiveD3D11> primitiveD3D11 = std::make_shared<LXPrimitiveD3D11>();
 	primitiveD3D11->Create(primitive);
 	return primitiveD3D11;
 }

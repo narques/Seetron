@@ -37,12 +37,12 @@ public:
 	// returns the filenames when different.
 	// updates the cached value.
 
-	void GetChangedLastWriteFiles(list<std::wstring>& addedFiles, list<std::wstring>& removedFiles, list<std::wstring>& updatedFiles, bool update = true);
+	void GetChangedLastWriteFiles(std::list<std::wstring>& addedFiles, std::list<std::wstring>& removedFiles, std::list<std::wstring>& updatedFiles, bool update = true);
 
 private:
 
-	void ScanFolder(const std::wstring& folder, bool update, list<std::wstring>* outAddedFiles);
-	void AddFillInfo(const std::wstring& folder, const WIN32_FIND_DATA& fd, bool update, list<std::wstring>* outAddedFiles);
+	void ScanFolder(const std::wstring& folder, bool update, std::list<std::wstring>* outAddedFiles);
+	void AddFillInfo(const std::wstring& folder, const WIN32_FIND_DATA& fd, bool update, std::list<std::wstring>* outAddedFiles);
 	
 private:
 

@@ -10,7 +10,7 @@
 
 #include "LXActor.h"
 
-typedef vector<class LXActorLight*> ArrayLights;
+typedef std::vector<class LXActorLight*> ArrayLights;
 class LXActorCamera;
 class LXEvent;
 
@@ -48,5 +48,5 @@ private:
 	LXActorCamera* _actorCamera = nullptr;
 
 	// 'Flat' access to all actors.
-	list<LXActor*> _actors;
+	std::list<LXActor*> _actors;
 };

@@ -29,7 +29,7 @@ enum class ETextureSource // !DataModel
 	TextureSourceMaterial
 };
 
-class LXCORE_API LXTexture : public LXAsset, public enable_shared_from_this<LXTexture>
+class LXCORE_API LXTexture : public LXAsset, public std::enable_shared_from_this<LXTexture>
 {
 
 public:
@@ -42,7 +42,7 @@ public:
 	virtual ~LXTexture(void);
 
 	// Create a Texture and its RenderDevice
-	static shared_ptr<LXTexture> Create(uint width, uint height, ETextureFormat format);
+	static std::shared_ptr<LXTexture> Create(uint width, uint height, ETextureFormat format);
 
 	int				GetWidth			( ) const { return _nWidth; }
 	int				GetHeight			( ) const { return _nHeight; }
@@ -93,7 +93,7 @@ public:
 	LXDelegate<>			BitmapChanged;
 
 	// Rendering Task Status
-	atomic<bool>			CopyDeviceToBitmapEnqueued = false;
+	std::atomic<bool>			CopyDeviceToBitmapEnqueued = false;
 
 protected:
 

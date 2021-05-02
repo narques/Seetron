@@ -104,4 +104,4 @@ private:
 };
 
 
-typedef list<LXVariant2*> ListVariants;
+typedef std::list<LXVariant2*> ListVariants;

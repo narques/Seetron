@@ -23,19 +23,19 @@ class LXPrimitiveInstance
 
 public:
 
-	LXPrimitiveInstance(const shared_ptr<LXPrimitive>& InPrimitive, const LXMatrix* InMatrix, const shared_ptr<LXMaterialBase>& InMaterial);
+	LXPrimitiveInstance(const std::shared_ptr<LXPrimitive>& InPrimitive, const LXMatrix* InMatrix, const std::shared_ptr<LXMaterialBase>& InMaterial);
 	~LXPrimitiveInstance();
 
 	// Set the material to the Primitive itself (not the instance)
-	void SetMaterial(shared_ptr<LXMaterialBase>& material);
+	void SetMaterial(std::shared_ptr<LXMaterialBase>& material);
 
 public:
 
 	// Ref
-	shared_ptr<LXPrimitive> Primitive;
+	std::shared_ptr<LXPrimitive> Primitive;
 
 	// Owners
-	list<LXWorldPrimitive*> Owners;
+	std::list<LXWorldPrimitive*> Owners;
 
 	// Local matrix (Optional)
 	const LXMatrix* Matrix = nullptr;
@@ -44,7 +44,7 @@ public:
 	const LXMatrix* MatrixRCS = nullptr;
 
 	// Material (Optional)
-	shared_ptr<LXMaterialBase> Material;
+	std::shared_ptr<LXMaterialBase> Material;
 };
 
 

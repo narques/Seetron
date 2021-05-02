@@ -31,7 +31,7 @@ public:
 	double _val;
 };
 
-typedef vector<LXCounter*> ArrayCounters;
+typedef std::vector<LXCounter*> ArrayCounters;
 
 #define LX_COUNT(expression, value) { static LXCounter counter(expression); counter._val = value; }
 
@@ -47,7 +47,7 @@ public:
 
 private:
 
-	wstring _name;
+	std::wstring _name;
 };
 
 class LXCORE_API LXPerformanceScope : protected LXPerformance
@@ -61,7 +61,7 @@ public:
 
 private:
 		
-	wstring _name;
+	std::wstring _name;
 
 };
 

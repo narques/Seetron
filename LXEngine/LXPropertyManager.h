@@ -12,7 +12,7 @@
 #include "LXProperty.h"
 
 class LXProperty;
-typedef list<LXProperty*>	ListProperties;
+typedef std::list<LXProperty*>	ListProperties;
 
 class LXCORE_API LXPropertyManager : public LXObject
 {

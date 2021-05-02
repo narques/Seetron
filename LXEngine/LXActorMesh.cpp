@@ -58,7 +58,7 @@ void LXActorMesh::DefineProperties( )
 	DefinePropertyBool(L"CastShadows", GetAutomaticPropertyID(), &_bCastShadows);
 
 	//Asset
-	auto PropAssetMesh = DefineProperty(L"AssetMesh", (shared_ptr<LXAsset>*)&_AssetMesh);
+	auto PropAssetMesh = DefineProperty(L"AssetMesh", (std::shared_ptr<LXAsset>*)&_AssetMesh);
 	PropAssetMesh->SetLambdaOnChange([this](LXPropertyAssetPtr* Property)
 	{
 		UpdateAssetMeshCallbacks();
@@ -122,14 +122,14 @@ void LXActorMesh::OnPropertyChanged(LXProperty* Property)
 	}
 }
 
-void LXActorMesh::SetMesh(shared_ptr<LXMesh>& mesh)
+void LXActorMesh::SetMesh(std::shared_ptr<LXMesh>& mesh)
 {
 	CHK(Mesh == nullptr);
 	Mesh = mesh;
 	InvalidateBounds(true);
 }
 
-void LXActorMesh::SetAssetMesh(shared_ptr<LXAssetMesh>& AssetMesh)
+void LXActorMesh::SetAssetMesh(std::shared_ptr<LXAssetMesh>& AssetMesh)
 {
 	CHK(_AssetMesh == nullptr);
 	_AssetMesh = AssetMesh;
@@ -162,7 +162,7 @@ void LXActorMesh::ComputeBBoxLocal()
 	}
 }
 
-void LXActorMesh::AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, const LXMatrix* InMatrix, const shared_ptr<LXMaterialBase>& InMaterial)
+void LXActorMesh::AddPrimitive(const std::shared_ptr<LXPrimitive>& Primitive, const LXMatrix* InMatrix, const std::shared_ptr<LXMaterialBase>& InMaterial)
 {	
 	Mesh->AddPrimitive(Primitive, InMatrix, InMaterial);
 	InvalidateBounds(true);

@@ -155,13 +155,13 @@ class LXCORE_API LXComponentSharedPtr : public LXComponent
 
 public:
 
-	LXComponentSharedPtr(LXActor* actor) :LXComponent(actor) { _object = make_shared<T>(); }
+	LXComponentSharedPtr(LXActor* actor) :LXComponent(actor) { _object = std::make_shared<T>(); }
 	virtual ~LXComponentSharedPtr() {};
 
-	const shared_ptr<T>& Get() const { return _object; }
-	const shared_ptr<T>& operator->() const { return _object; }
+	const std::shared_ptr<T>& Get() const { return _object; }
+	const std::shared_ptr<T>& operator->() const { return _object; }
 
 private:
 
-	shared_ptr<T> _object;
+	std::shared_ptr<T> _object;
 };

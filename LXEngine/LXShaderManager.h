@@ -106,11 +106,11 @@ struct CmpLXPSSignature {
 	}
 };
 
-typedef map<LXVSSignature, shared_ptr<LXShaderD3D11>, CmpLXVSSignature> MapVertexShaders;
-typedef map<LXHSSignature, shared_ptr<LXShaderD3D11>, CmpLXHSSignature> MapHullShaders;
-typedef map<LXDSSignature, shared_ptr<LXShaderD3D11>, CmpLXDSSignature> MapDomainShaders;
-typedef map<LXGSSignature, shared_ptr<LXShaderD3D11>, CmpLXGSSignature> MapGeometryShaders;
-typedef map<LXPSSignature, shared_ptr<LXShaderD3D11>, CmpLXPSSignature> MapPixelShaders;
+typedef std::map<LXVSSignature, std::shared_ptr<LXShaderD3D11>, CmpLXVSSignature> MapVertexShaders;
+typedef std::map<LXHSSignature, std::shared_ptr<LXShaderD3D11>, CmpLXHSSignature> MapHullShaders;
+typedef std::map<LXDSSignature, std::shared_ptr<LXShaderD3D11>, CmpLXDSSignature> MapDomainShaders;
+typedef std::map<LXGSSignature, std::shared_ptr<LXShaderD3D11>, CmpLXGSSignature> MapGeometryShaders;
+typedef std::map<LXPSSignature, std::shared_ptr<LXShaderD3D11>, CmpLXPSSignature> MapPixelShaders;
 
 class LXShaderManager : public LXObject
 {
@@ -138,14 +138,14 @@ public:
 
 	// Add a shader file to the monitoring feature,
 	// the modified shaders will ne automatically reloaded and rebuilt.
-	void AddMonitoredShaderFile(const wstring& filename, LXShaderD3D11* shaderD3D11);
+	void AddMonitoredShaderFile(const std::wstring& filename, LXShaderD3D11* shaderD3D11);
 
 	void Run();
 
 private:
 
 	template<typename T, typename M>
-	shared_ptr<LXShaderD3D11> FindOrCreate(T& Signature, M& Shaders);
+	std::shared_ptr<LXShaderD3D11> FindOrCreate(T& Signature, M& Shaders);
 
 	template<typename M>
 	void DeleteUnusedShaders(M& mapShaders, bool keepErroneous);
@@ -172,8 +172,8 @@ public:
 
 private:
 
-	unique_ptr<LXFileWatcher> _engineFileWatcher;
-	map<std::wstring, list<LXShaderD3D11*>> _monitoredShaderFiles;
-	set< LXShaderD3D11*> _shaderToRebuild;
+	std::unique_ptr<LXFileWatcher> _engineFileWatcher;
+	std::map<std::wstring, std::list<LXShaderD3D11*>> _monitoredShaderFiles;
+	std::set< LXShaderD3D11*> _shaderToRebuild;
 };
 

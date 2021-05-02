@@ -50,15 +50,15 @@ private:
 	LXMutex* _mutex;
 
 	// Predefined Actor Callbacks. See LXActor.h
-	map < EEventType, set<LXActor*>> EventActors;
+	std::map < EEventType, std::set<LXActor*>> EventActors;
 
 	// Simple callbacks.
-	map < EEventType, list<pair<void*, std::function<void(LXEvent*)>>>> _eventTypeFunctions;
-	map < LXString, list<pair<void*, std::function<void(LXEvent*)>>>> _eventNameFunctions;
+	std::map < EEventType, std::list<std::pair<void*, std::function<void(LXEvent*)>>>> _eventTypeFunctions;
+	std::map < LXString, std::list<std::pair<void*, std::function<void(LXEvent*)>>>> _eventNameFunctions;
 
 	// 
-	set < LXEvent* > EventDeferred; 
-	set < LXString > eventNameDeferred;
+	std::set < LXEvent* > EventDeferred; 
+	std::set < LXString > eventNameDeferred;
 	
 };
 

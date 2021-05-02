@@ -414,8 +414,8 @@ void LXRenderer::Render()
 	// Resize if needed
 	if (Width != Viewport->GetWidth() || Height != Viewport->GetHeight())
 	{
-		Width = max(Viewport->GetWidth(), (uint)32);
-		Height = max(Viewport->GetHeight(), (uint)32);
+		Width = std::max(Viewport->GetWidth(), (uint)32);
+		Height = std::max(Viewport->GetHeight(), (uint)32);
 
 		DirectX11->Resize(Width, Height);
 						
@@ -550,16 +550,16 @@ const LXTextureD3D11* LXRenderer::GetTextureNoise4x4() const
 void LXRenderer::UpdateActor(LXRenderData* renderData, LXFlagsRenderClusterRole renderStates)
 {
 	CHK(IsMainThread());
-	_actorsToUpdate.In->insert(pair<LXRenderData*, LXFlagsRenderClusterRole>(renderData, renderStates));
+	_actorsToUpdate.In->insert(std::pair<LXRenderData*, LXFlagsRenderClusterRole>(renderData, renderStates));
 }
 
 void LXRenderer::ReleaseRenderData(LXRenderData* renderData, LXFlagsRenderClusterRole renderStates)
 {
 	CHK(IsMainThread());
-	_toRelease.In->insert(pair<LXRenderData*, LXFlagsRenderClusterRole>(renderData, renderStates));
+	_toRelease.In->insert(std::pair<LXRenderData*, LXFlagsRenderClusterRole>(renderData, renderStates));
 }
 
-void LXRenderer::CreateDeviceTexture(shared_ptr<LXTexture> texture)
+void LXRenderer::CreateDeviceTexture(std::shared_ptr<LXTexture> texture)
 {
 	if (IsRenderThread())
 	{
@@ -746,7 +746,7 @@ void LXRenderer::UpdateDeviceMaterials(LXMaterialBase* material)
 
 void LXRenderer::UpdateActors_RT()
 {
-	for(pair<LXRenderData*, LXFlagsRenderClusterRole> it : *_actorsToUpdate.Out)
+	for(std::pair<LXRenderData*, LXFlagsRenderClusterRole> it : *_actorsToUpdate.Out)
 	{
 		LXRenderData* renderData = it.first;
 		RenderClusterManager->UpdateActor(renderData, it.second);
@@ -757,7 +757,7 @@ void LXRenderer::UpdateActors_RT()
 
 void LXRenderer::ReleaseRenderData_RT()
 {
-	for (pair<LXRenderData*, LXFlagsRenderClusterRole>it : *_toRelease.Out)
+	for (std::pair<LXRenderData*, LXFlagsRenderClusterRole>it : *_toRelease.Out)
 	{
 		LXRenderData* renderData = it.first;
 

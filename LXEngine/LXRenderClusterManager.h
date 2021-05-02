@@ -34,11 +34,11 @@ public:
 	void RemoveActor(LXRenderData* renderData, LXFlagsRenderClusterRole renderClusterRole);
 
 	// Misc
-	const map<LXRenderData*, list<LXRenderCluster*>>& GetActors() { return ActorRenderCluster; }
+	const std::map<LXRenderData*, std::list<LXRenderCluster*>>& GetActors() { return ActorRenderCluster; }
 	
 private:
 
-	LXRenderCluster* CreateRenderCluster(LXRenderData* renderData, const vector<LXWorldPrimitive*>& worldPrimitiveLODs, const LXMatrix& MatrixWCS, const LXMatrix& matrix, const LXBBox& BBoxWorld, const vector<LXPrimitive*>& primitiveLODs, const LXMaterialBase* Material);
+	LXRenderCluster* CreateRenderCluster(LXRenderData* renderData, const std::vector<LXWorldPrimitive*>& worldPrimitiveLODs, const LXMatrix& MatrixWCS, const LXMatrix& matrix, const LXBBox& BBoxWorld, const std::vector<LXPrimitive*>& primitiveLODs, const LXMaterialBase* Material);
 
 	// Remove the RenderCluster from the Rendering (ListRendersClusters)
 	// Plus the additional helper maps
@@ -46,7 +46,7 @@ private:
 
 public:
 
-	list<LXRenderCluster*> ListRenderClusters;
+	std::list<LXRenderCluster*> ListRenderClusters;
 		
 private:
 
@@ -54,6 +54,6 @@ private:
 	// Helper maps to simplify data access
 	//
 
-	map<LXRenderData*, list<LXRenderCluster*>> ActorRenderCluster;
+	std::map<LXRenderData*, std::list<LXRenderCluster*>> ActorRenderCluster;
 };
 

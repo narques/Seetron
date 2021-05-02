@@ -54,10 +54,10 @@ class LXRenderBBoxResources
 public:
 	LXRenderBBoxResources();
 	~LXRenderBBoxResources();
-	shared_ptr<LXPrimitive> WireframeCube;
+	std::shared_ptr<LXPrimitive> WireframeCube;
 	LXPrimitiveD3D11* WireframeCubeD3D11 = nullptr;
 	LXShaderProgramD3D11 ShaderProgramD3D11;
-	shared_ptr<LXMaterialD3D11> MaterialD3D11;
+	std::shared_ptr<LXMaterialD3D11> MaterialD3D11;
 };
 
 class LXRenderer : public LXObject
@@ -92,7 +92,7 @@ public:
 	void UpdateActor(LXRenderData* renderData, LXFlagsRenderClusterRole renderStates);
 	void ReleaseRenderData(LXRenderData* actor, LXFlagsRenderClusterRole renderStates);
 		
-	void CreateDeviceTexture(shared_ptr<LXTexture> texture);
+	void CreateDeviceTexture(std::shared_ptr<LXTexture> texture);
 	void ReleaseDeviceTexture(LXTexture* texture);
 	void CopyDeviceTexture(LXTexture* texture);
 	
@@ -119,7 +119,7 @@ public:
 	void ResetShaders();
 	void Render_MainThread();
 	void DrawScreenSpacePrimitive(LXRenderCommandList* RCL);
-	const list<LXString>& GetConsoleBuffer() const { return ConsoleBuffer; }
+	const std::list<LXString>& GetConsoleBuffer() const { return ConsoleBuffer; }
 	const LXViewport* GetViewport() const {	return Viewport; }
 	void Sync();
 			
@@ -190,7 +190,7 @@ private:
 
 	// Resources
 	LXRenderBBoxResources* _renderBBoxResources = nullptr;
-	shared_ptr<LXTexture> _TextureNoise4x4;
+	std::shared_ptr<LXTexture> _TextureNoise4x4;
 
 	// Scene & Document
 	LXProject* _Project = nullptr;
@@ -198,7 +198,7 @@ private:
 	LXViewport* Viewport = nullptr;
 
 	// Console
-	list<LXString> ConsoleBuffer;
+	std::list<LXString> ConsoleBuffer;
 	
 	// Managers
 	LXShaderManager* ShaderManager = nullptr;
@@ -211,15 +211,15 @@ private:
 	//
 
 	// RenderData to Update or Release at the frame beginning.
-	LXSynchronisableSet<pair<LXRenderData*, LXFlagsRenderClusterRole>> _actorsToUpdate;
-	LXSynchronisableSet<pair<LXRenderData*, LXFlagsRenderClusterRole>> _toRelease;
+	LXSynchronisableSet<std::pair<LXRenderData*, LXFlagsRenderClusterRole>> _actorsToUpdate;
+	LXSynchronisableSet<std::pair<LXRenderData*, LXFlagsRenderClusterRole>> _toRelease;
 
 	// RenderThread tasks run at the frame beginning.
 	std::unique_ptr<LXTaskManager> _mainTasks;
 
 	// Enqueued Textures for device creation. Set by the MainThread.
 	// Avoid early texture destruction.
-	map <LXTexture*, shared_ptr<LXTexture>> _enqueuedTexture;
-	map <LXMaterialBase*, shared_ptr<LXMaterialBase>> _enqueuedMaterials;
+	std::map <LXTexture*, std::shared_ptr<LXTexture>> _enqueuedTexture;
+	std::map <LXMaterialBase*, std::shared_ptr<LXMaterialBase>> _enqueuedMaterials;
 };
 

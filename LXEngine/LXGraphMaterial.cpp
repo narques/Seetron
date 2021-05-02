@@ -24,13 +24,13 @@ LXGraphMaterial::~LXGraphMaterial()
 {
 }
 
-void LXGraphMaterial::AddNode(shared_ptr<LXNode>& node)
+void LXGraphMaterial::AddNode(std::shared_ptr<LXNode>& node)
 {
 	Register(node);
 	__super::AddNode(node);
 }
 
-void LXGraphMaterial::RemoveNode(shared_ptr<LXNode>& node)
+void LXGraphMaterial::RemoveNode(std::shared_ptr<LXNode>& node)
 {
 	Unregister(node);
 	__super::RemoveNode(node);
@@ -38,7 +38,7 @@ void LXGraphMaterial::RemoveNode(shared_ptr<LXNode>& node)
 
 void LXGraphMaterial::GetChildProperties(ListProperties& listProperties) const
 {
-	for (const shared_ptr<LXNode>& node : Nodes)
+	for (const std::shared_ptr<LXNode>& node : Nodes)
 	{
 		node->GetUserProperties(listProperties);
 	}
@@ -104,7 +104,7 @@ bool LXGraphMaterial::SetFloatParameter(const LXString& paramName, float value) 
 
 void LXGraphMaterial::OnLoaded()
 {
-	for (const shared_ptr<LXNode>& node : Nodes)
+	for (const std::shared_ptr<LXNode>& node : Nodes)
 	{
 		Register(node);
 	}
@@ -117,7 +117,7 @@ void LXGraphMaterial::OnPropertyChanged(LXProperty* property)
 	Material->OnPropertyChanged(property);
 }
 
-void LXGraphMaterial::Register(const shared_ptr<LXNode>& node)
+void LXGraphMaterial::Register(const std::shared_ptr<LXNode>& node)
 {
 	if (const LXProperty* property = node->GetProperty(L"Value"))
 	{
@@ -128,7 +128,7 @@ void LXGraphMaterial::Register(const shared_ptr<LXNode>& node)
 	}
 }
 
-void LXGraphMaterial::Unregister(const shared_ptr<LXNode>& node)
+void LXGraphMaterial::Unregister(const std::shared_ptr<LXNode>& node)
 {
 	if (const LXProperty* property = node->GetProperty(L"Value"))
 	{

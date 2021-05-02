@@ -39,8 +39,8 @@ LXShaderManager::LXShaderManager()
 {
 	if (CSet_EngineShaderDevMode.GetValue())
 	{
-		_engineFileWatcher = make_unique<LXFileWatcher>(GetSettings().GetShadersFolder(), true);
-		_engineFileWatcher->OnFileChanded([this](const wstring& filepath)
+		_engineFileWatcher = std::make_unique<LXFileWatcher>(GetSettings().GetShadersFolder(), true);
+		_engineFileWatcher->OnFileChanded([this](const std::wstring& filepath)
 		{
 			wchar_t buffer[MAX_PATH];
 			wchar_t* filename = nullptr;
@@ -242,7 +242,7 @@ LXShaderD3D11* LXShaderManager::GetTextureShader(const LXString& ShaderFilename)
 	return nullptr;
 }
 
-void LXShaderManager::AddMonitoredShaderFile(const wstring& filename, LXShaderD3D11* shaderD3D11)
+void LXShaderManager::AddMonitoredShaderFile(const std::wstring& filename, LXShaderD3D11* shaderD3D11)
 {
 	CHK(IsRenderThread());
 	_monitoredShaderFiles[filename].push_back(shaderD3D11);
@@ -264,7 +264,7 @@ void LXShaderManager::Run()
 }
 
 template<typename T, typename M>
-shared_ptr<LXShaderD3D11> LXShaderManager::FindOrCreate(T& Signature, M& Shaders)
+std::shared_ptr<LXShaderD3D11> LXShaderManager::FindOrCreate(T& Signature, M& Shaders)
 {
 	auto it = Shaders.find(Signature);
 	if (it != Shaders.end())
@@ -273,7 +273,7 @@ shared_ptr<LXShaderD3D11> LXShaderManager::FindOrCreate(T& Signature, M& Shaders
 	}
 	else
 	{
-		shared_ptr<LXShaderD3D11> Shader = make_shared<LXShaderD3D11>();
+		std::shared_ptr<LXShaderD3D11> Shader = std::make_shared<LXShaderD3D11>();
 		CreateShader(Signature, Shader.get());
 		Shaders[Signature] = Shader;
 		return Shader;

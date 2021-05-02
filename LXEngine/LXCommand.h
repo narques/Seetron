@@ -30,4 +30,4 @@ private:
 	LXString _Description;
 };
 
-typedef list<LXCommand*> ListCommands;
+typedef std::list<LXCommand*> ListCommands;

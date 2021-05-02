@@ -21,7 +21,7 @@ class LXPrimitive;
 class LXProject;
 class LXRenderData;
 
-typedef vector<LXAnchor*> ArrayAnchors;
+typedef std::vector<LXAnchor*> ArrayAnchors;
 
 enum class EConstraint
 {
@@ -53,7 +53,7 @@ public:
 	// Components
 	void AddComponent(LXComponent* component);
 	void RemoveComponent(LXComponent* component) { _components.remove(component); }
-	const list<LXComponent*>& GetComponents() const { return _components; }
+	const std::list<LXComponent*>& GetComponents() const { return _components; }
 
 	template<typename T>
 	T& CreateAndAddComponent()
@@ -222,7 +222,7 @@ protected:
 	
 private:
 
-	list<LXComponent*>  _components;
+	std::list<LXComponent*>  _components;
 
 	// Misc
 	EConstraint			_eConstraint = EConstraint::None;

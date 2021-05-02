@@ -87,8 +87,8 @@ public:
 
 	const LXTextureD3D11* GetOutput() const override;
 	void GetTextureCoordinatesInAtlas(LXRenderCluster* RenderCluster, vec4f& outTextureCoordinates);
-	const list<LXRenderCluster*>& GetRenderClusterAuxiliary() const { return _ListRenderClusterAuxiliary; }
-	const list<LXRenderCluster*>& GetRenderClusterRenderToTextures() const { return _listRenderClusterRenderToTextures; }
+	const std::list<LXRenderCluster*>& GetRenderClusterAuxiliary() const { return _ListRenderClusterAuxiliary; }
+	const std::list<LXRenderCluster*>& GetRenderClusterRenderToTextures() const { return _listRenderClusterRenderToTextures; }
 
 private:
 
@@ -111,18 +111,18 @@ private:
 	LXRenderPassUI* RenderPassUI = nullptr;
 	LXRenderPassSSAO* RenderPassSSAO = nullptr;
 	LXRenderPassAA* RenderPassAA = nullptr;
-	unique_ptr<LXRenderPassDepthOfField> _renderPassDOF;
+	std::unique_ptr<LXRenderPassDepthOfField> _renderPassDOF;
 		
 	// View ConstantBuffer
 	LXConstantBufferD3D11* _CBViewProjection = nullptr;
 	LXConstantBufferData0 _CBViewProjectionData;
 
 	// Visible clusters in the main view frustum
-	list<LXRenderCluster*> _ListRenderClusterOpaques;
-	list<LXRenderCluster*> _ListRenderClusterTransparents;
-	list<LXRenderCluster*> _ListRenderClusterAuxiliary;
-	list<LXRenderCluster*> _ListRenderClusterLights;
-	list<LXRenderCluster*> _listRenderClusterRenderToTextures;
+	std::list<LXRenderCluster*> _ListRenderClusterOpaques;
+	std::list<LXRenderCluster*> _ListRenderClusterTransparents;
+	std::list<LXRenderCluster*> _ListRenderClusterAuxiliary;
+	std::list<LXRenderCluster*> _ListRenderClusterLights;
+	std::list<LXRenderCluster*> _listRenderClusterRenderToTextures;
 
 	// Batching
 	class LXRenderBatching* _batching = nullptr;

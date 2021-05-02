@@ -49,13 +49,13 @@ public:
 	const TWorldPrimitives&			GetAllPrimitives();
 
 	// Add a primitive to the root mesh
-	void							AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, const LXMatrix* Matrix = nullptr, const shared_ptr<LXMaterialBase>& Material = nullptr);
+	void							AddPrimitive(const std::shared_ptr<LXPrimitive>& Primitive, const LXMatrix* Matrix = nullptr, const std::shared_ptr<LXMaterialBase>& Material = nullptr);
 	void							ReleaseAllPrimitives();
 		
 	// Misc
-	void							SetMesh(shared_ptr<LXMesh>& Mesh);
-	shared_ptr<LXMesh>&				GetMesh() { return Mesh; }
-	void							SetAssetMesh(shared_ptr<LXAssetMesh>& AssetMesh);
+	void							SetMesh(std::shared_ptr<LXMesh>& Mesh);
+	std::shared_ptr<LXMesh>&				GetMesh() { return Mesh; }
+	void							SetAssetMesh(std::shared_ptr<LXAssetMesh>& AssetMesh);
 	void							InvalidateWorldPrimitives();
 	virtual bool					GetCastShadows() const override { return _bCastShadows; }
 
@@ -71,8 +71,8 @@ private:
 			
 protected:
 
-	shared_ptr<LXMesh> Mesh;
-	shared_ptr<LXAssetMesh> _AssetMesh;
+	std::shared_ptr<LXMesh> Mesh;
+	std::shared_ptr<LXAssetMesh> _AssetMesh;
 	bool _bCastShadows = true;
 
 private:
@@ -84,6 +84,6 @@ private:
 	
 };
 
-typedef list<LXActorMesh*> ListMeshs;
-typedef set<LXActorMesh*> SetMeshs;
-typedef vector<LXActorMesh*> ArrayMeshs;
+typedef std::list<LXActorMesh*> ListMeshs;
+typedef std::set<LXActorMesh*> SetMeshs;
+typedef std::vector<LXActorMesh*> ArrayMeshs;

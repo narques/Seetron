@@ -34,7 +34,7 @@ public:
 	bool GenerateConstanBuffer(const LXGraph* graph, EShader Shader, LXConstantBuffer& outConstantBuffer);
 
 	// Parse the GraphMaterial to gather the Textures
-	void GatherTextures(const LXGraph* graph, EShader shader, list<LXTexture*>& outTextures);
+	void GatherTextures(const LXGraph* graph, EShader shader, std::list<LXTexture*>& outTextures);
 
 private:
 
@@ -51,7 +51,7 @@ private:
 	bool IsConnectorUsableInContext(const LXConnector* connector);
 
 	bool ParseNodeCB(const LXNode& node, LXConstantBuffer& outConstantBuffer);
-	void ParseNodeTexture(const LXNode& node, list<LXTexture*>& outTextures);
+	void ParseNodeTexture(const LXNode& node, std::list<LXTexture*>& outTextures);
 
 	LXStringA GenerateHeaderComment() const;
 
@@ -67,10 +67,10 @@ private:
 	ERenderPass _renderPass;
 	EShader _shader;
 
-	set<LXStringA> _includes;
-	set<const LXNode*> _addedNode;
+	std::set<LXStringA> _includes;
+	std::set<const LXNode*> _addedNode;
 	
-	list<LXStringA> _variableDeclarations;
+	std::list<LXStringA> _variableDeclarations;
 
 	int _HLSLVSTextureIndex = 0;
 	int _HLSLPSTextureIndex = 0;

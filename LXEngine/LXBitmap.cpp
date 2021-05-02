@@ -262,8 +262,8 @@ uint LXBitmap::GetNumMipLevels(uint width, uint height)
 	UINT numLevels = 1;
 	while (width > 1 && height > 1)
 	{
-		width = max<unsigned int>(width / 2, 1);
-		height = max<unsigned int>(height / 2, 1);
+		width = std::max<unsigned int>(width / 2, 1);
+		height = std::max<unsigned int>(height / 2, 1);
 		++numLevels;
 	}
 	return numLevels;

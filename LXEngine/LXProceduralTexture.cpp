@@ -43,7 +43,7 @@ LXProceduralTexture::~LXProceduralTexture()
 // 	Node0->LinkTo(Node1);
 // }
 // 
-// const set<LXGraphNodeOutput*>& LXGraphTexture::GetOutput2() const
+// const std::set<LXGraphNodeOutput*>& LXGraphTexture::GetOutput2() const
 // {
 // 	return Outputs;
 // }

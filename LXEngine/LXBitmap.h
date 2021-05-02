@@ -98,7 +98,7 @@ public:
 
 public:
 
-	atomic<bool>			Busy = false;
+	std::atomic<bool>			Busy = false;
 
 private:
 		

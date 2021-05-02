@@ -22,8 +22,8 @@ public:
 
 typedef ivec3<uint>				vec3ui;
 typedef vec3ui					CFace3;
-typedef vector<vec3ui>			ArrayVec3ui;
-typedef list<CFace3*>			ListFaces;
+typedef std::vector<vec3ui>		ArrayVec3ui;
+typedef std::list<CFace3*>		ListFaces;
 
 // Explicit class Instantiation
 

@@ -70,7 +70,7 @@ private:
 	// Generate the Textures and SamplerStates declaration
 	//
 
-	static LXStringA ListTexturesToHLSL(const list<LXTexture*>& listTextures, EShader shader);
+	static LXStringA ListTexturesToHLSL(const std::list<LXTexture*>& listTextures, EShader shader);
 	
 	//
 	// Generate all Shaders for the given material

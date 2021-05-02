@@ -47,14 +47,14 @@ public:
 
 private:
 
-	bool					FinalizeGeometry( LXPrimitive* pGeometry, vector<CIndexVTN>& arrayIndexedVectors );
+	bool					FinalizeGeometry( LXPrimitive* pGeometry, std::vector<CIndexVTN>& arrayIndexedVectors );
 
 public:
 
 	ArrayVec3ui				m_PositionIndices;		
 	CFace3*                 m_pTFaces;				// TexCoords indices
 	CFace3*                 m_pNFaces;				// Normals indices
-	shared_ptr<LXMaterial>* m_ppMaterials;
+	std::shared_ptr<LXMaterial>* m_ppMaterials;
 
 	ArrayVec3f              m_arrayPositions;
 	ArrayVec2f 				m_arrayTexCoords;
@@ -80,7 +80,7 @@ public:
 
 };
 
-typedef vector<LXPrimitive2> ArrayPrimitives;
+typedef std::vector<LXPrimitive2> ArrayPrimitives;
 
 class LXEditMesh2 : public LXObject
 {

@@ -35,9 +35,9 @@ private:
 	HANDLE _handle = 0;
 	//HANDLE _event = 0;
 
-	set<std::wstring> _fileChanged;
-	set<std::wstring> _fileAdded;
-	set<std::wstring> _fileRemoved;
+	std::set<std::wstring> _fileChanged;
+	std::set<std::wstring> _fileAdded;
+	std::set<std::wstring> _fileRemoved;
 
 	std::thread* _thread;
 	bool _run = true;
@@ -50,7 +50,7 @@ private:
 	const LXChannel* _channelOnFileAdded;
 	const LXChannel* _channelOnFileRemoved;
 	
-	unique_ptr<LXDirectory> _directory;
-	unique_ptr<LXMutex> _mutex;
+	std::unique_ptr<LXDirectory> _directory;
+	std::unique_ptr<LXMutex> _mutex;
 };
 

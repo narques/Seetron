@@ -59,4 +59,4 @@ public:
 
 };
 
-typedef list<LXAsset*> ListResources;
+typedef std::list<LXAsset*> ListResources;

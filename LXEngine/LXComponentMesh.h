@@ -34,7 +34,7 @@ public:
 	const TWorldPrimitives& GetAllPrimitives();
 
 	// Add a primitive to mesh
-	void AddPrimitive(const shared_ptr<LXPrimitive>& primitive, const LXMatrix* matrix = nullptr, const shared_ptr<LXMaterialBase>& material = nullptr, int LODIndex = 0);
+	void AddPrimitive(const std::shared_ptr<LXPrimitive>& primitive, const LXMatrix* matrix = nullptr, const std::shared_ptr<LXMaterialBase>& material = nullptr, int LODIndex = 0);
 	void ReleaseAllPrimitives();
 
 	// LOD Support
@@ -42,10 +42,10 @@ public:
 	const float* GetLODData() const { return &_LODMaxDistance[0]; }
 
 	// Misc
-	void SetMesh(shared_ptr<LXMeshBase>& mesh);
-	shared_ptr<LXMeshBase>& GetMesh() { return _mesh; }
-	const shared_ptr<LXMeshBase>& Get() const { return _mesh; }
-	void SetAssetMesh(shared_ptr<LXAssetMesh>& assetMesh);
+	void SetMesh(std::shared_ptr<LXMeshBase>& mesh);
+	std::shared_ptr<LXMeshBase>& GetMesh() { return _mesh; }
+	const std::shared_ptr<LXMeshBase>& Get() const { return _mesh; }
+	void SetAssetMesh(std::shared_ptr<LXAssetMesh>& assetMesh);
 	void InvalidateWorldPrimitives();
 	virtual bool GetCastShadows() const { return _castShadows; }
 
@@ -64,8 +64,8 @@ private:
 
 protected:
 
-	shared_ptr<LXMeshBase> _mesh;
-	shared_ptr<LXAssetMesh> _assetMesh;
+	std::shared_ptr<LXMeshBase> _mesh;
+	std::shared_ptr<LXAssetMesh> _assetMesh;
 	bool _castShadows = true;
 	float _LODMaxDistance[LX_MAX_LODS] = {};
 };

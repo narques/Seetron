@@ -29,6 +29,6 @@ public:
 private:
 
 	LXMutex* _mutex;
-	list<LXTask*> _tasks;
+	std::list<LXTask*> _tasks;
 
  };

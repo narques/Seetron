@@ -52,7 +52,7 @@ public:
 	void ReleaseShaders();
 
 	void SetMaterial(const LXMaterialBase* material);
-	void SetPrimitive(const shared_ptr<LXPrimitiveD3D11>& primitiveD3D11, int LODIndex);
+	void SetPrimitive(const std::shared_ptr<LXPrimitiveD3D11>& primitiveD3D11, int LODIndex);
 			
 	void SetMatrix(const LXMatrix& InMatrix);
 	void SetBBoxWorld(const LXBBox& Box);
@@ -78,7 +78,7 @@ private:
 
 	bool UpdateDeviceMaterialAndShaders(ERenderPass renderPass);
 
-	static bool GetDeviceMaterialAndShaders(ERenderPass renderPass, const LXPrimitiveD3D11* primitive, const LXMaterialBase* material, LXShaderProgramD3D11& shaderProgram, shared_ptr<LXMaterialD3D11>& shaderResources);
+	static bool GetDeviceMaterialAndShaders(ERenderPass renderPass, const LXPrimitiveD3D11* primitive, const LXMaterialBase* material, LXShaderProgramD3D11& shaderProgram, std::shared_ptr<LXMaterialD3D11>& shaderResources);
 
 public:
 
@@ -96,12 +96,12 @@ public:
 	LXConstantBufferData0* LightView = nullptr;
 		
 	const LXMaterialBase* Material = nullptr;
-	shared_ptr<LXPrimitiveD3D11> Primitive[LX_MAX_LODS];
+	std::shared_ptr<LXPrimitiveD3D11> Primitive[LX_MAX_LODS];
 				
 	LXBBox BBoxWorld;
 	
 	LXShaderProgramD3D11 ShaderPrograms[(int)ERenderPass::Last];
-	shared_ptr<LXMaterialD3D11> ShaderResources[(int)ERenderPass::Last];
+	std::shared_ptr<LXMaterialD3D11> ShaderResources[(int)ERenderPass::Last];
 		
 	// Cache
 	LXMatrix MatrixWCS;
@@ -115,7 +115,7 @@ public:
 
 	// Instance local positions.
 	ArrayVec3f Instances;
-	shared_ptr<LXPrimitiveD3D11> InstancedPrimitive;
+	std::shared_ptr<LXPrimitiveD3D11> InstancedPrimitive;
 
 private:
 

@@ -69,7 +69,7 @@ public:
 // 	LXGraphNode* From = nullptr;
 // 
 // 	// Outputs
-// 	set<LXGraphNode*> To;
+// 	std::set<LXGraphNode*> To;
 // 
 // 	// Parameters
 // 	int Iteration = 1;
@@ -84,8 +84,8 @@ public:
 // 	LXGraphNode* From = nullptr;
 // 	
 // 	// Outputs
-// 	set<LXGraphNode*> Body; 
-// 	set<LXGraphNode*> Completed;
+// 	std::set<LXGraphNode*> Body; 
+// 	std::set<LXGraphNode*> Completed;
 // 
 // 	// Parameters
 // 	int start = 0;
@@ -112,10 +112,10 @@ public:
 // 
 // 	virtual void AddLink(LXGraphNode* Node0, LXGraphNode* Node1) override;
 // 	void AddOutputNode(LXGraphNodeOutput* Node) { Outputs.insert(Node); AddNode(Node); }
-// 	const set<LXGraphNodeOutput*>& GetOutput2() const;
+// 	const std::set<LXGraphNodeOutput*>& GetOutput2() const;
 // 
 // private:
 // 
-// 	set<LXGraphNodeOutput*> Outputs;
+// 	std::set<LXGraphNodeOutput*> Outputs;
 // };
 // 

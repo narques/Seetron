@@ -35,7 +35,7 @@ void LXStatManager::Reset()
 	}
 }
 
-void LXStatManager::UpdateCounter(const wstring& Name, int Value)
+void LXStatManager::UpdateCounter(const std::wstring& Name, int Value)
 {
 	_mutex.Lock();
 	_Counters[Name] += Value;
@@ -43,7 +43,7 @@ void LXStatManager::UpdateCounter(const wstring& Name, int Value)
 	_mutex.Unlock();
 }
 
-void LXStatManager::OpenStat(const wstring& Name)
+void LXStatManager::OpenStat(const std::wstring& Name)
 {
 	LXStat& Stat = _Stats[Name];
 	Stat.Name = Name;
@@ -66,7 +66,7 @@ void LXStatManager::OpenStat(const wstring& Name)
 	
 }
 
-void LXStatManager::UpdateAndCloseStat(const wstring& Name, double Value)
+void LXStatManager::UpdateAndCloseStat(const std::wstring& Name, double Value)
 {
 	LXStat& Stat = _Stats[Name];
 	Stat.Time+= Value;

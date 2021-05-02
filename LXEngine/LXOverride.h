@@ -55,7 +55,7 @@ public:
 
 public:
 
-	shared_ptr<T> Parent;
+	std::shared_ptr<T> Parent;
 
 };
 

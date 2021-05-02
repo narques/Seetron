@@ -21,14 +21,14 @@ public:
 	virtual ~LXRenderBatching();
 
 	// Updates the given CustomRenderList adding InstancedRenderClusters.
-	void Do(list<LXRenderCluster*>& renderClusters);
+	void Do(std::list<LXRenderCluster*>& renderClusters);
 
 	void Clear();
 
 private:
 
-	typedef pair<const class LXPrimitiveD3D11*, const class LXMaterialBase*> Key;
-	typedef map<Key, LXRenderCluster*> Map;
+	typedef std::pair<const class LXPrimitiveD3D11*, const class LXMaterialBase*> Key;
+	typedef std::map<Key, LXRenderCluster*> Map;
 	Map _batchedRenderCusterOpaques;
 };
 

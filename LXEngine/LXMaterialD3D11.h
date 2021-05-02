@@ -37,11 +37,11 @@ public:
 
 	const LXConstantBuffer& GetConstantBufferPS() const { return ConstantBufferPS; }
 	const LXConstantBuffer& GetConstantBufferVS() const { return ConstantBufferVS; }
-	const list<LXTexture*>& GetTexturesVS() const { return ListVSTextures; }
-	const list<LXTexture*>& GetTexturesPS() const { return ListPSTextures; }
+	const std::list<LXTexture*>& GetTexturesVS() const { return ListVSTextures; }
+	const std::list<LXTexture*>& GetTexturesPS() const { return ListPSTextures; }
 
 	// Helpers
-	static shared_ptr<LXMaterialD3D11> CreateFromMaterial(const LXMaterialBase* material);
+	static std::shared_ptr<LXMaterialD3D11> CreateFromMaterial(const LXMaterialBase* material);
 			
 private:
 
@@ -51,8 +51,8 @@ private:
 private:
 
 	// List of texture to bind to the corresponding shader
-	list<LXTexture*> ListVSTextures;
-	list<LXTexture*> ListPSTextures;
+	std::list<LXTexture*> ListVSTextures;
+	std::list<LXTexture*> ListPSTextures;
 
 	// States
 	uint TwoSided : 1;

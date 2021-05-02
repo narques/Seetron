@@ -41,7 +41,7 @@ LXFileWatcher::LXFileWatcher(const wchar_t* pathName, bool watchSubtree)
 	_directory = make_unique<LXDirectory>(pathName);
 #endif
 
-	_mutex = make_unique<LXMutex>();
+	_mutex = std::make_unique<LXMutex>();
 
 	_channelOnFileChanged = GetMessageManager()->Connect(this, kFileModifiedEvent, this, [this]()
 	{
@@ -132,9 +132,9 @@ void LXFileWatcher::Process()
 
 	// WatcherThread
 
-	list<std::wstring> addedFiles;
-	list<std::wstring> removedFiles;
-	list<std::wstring> modifiedFiles;
+	std::list<std::wstring> addedFiles;
+	std::list<std::wstring> removedFiles;
+	std::list<std::wstring> modifiedFiles;
 	
 	_directory->GetChangedLastWriteFiles(addedFiles, removedFiles, modifiedFiles, true);
 
@@ -208,7 +208,7 @@ void LXFileWatcher::Run(LXFileWatcher* fw, const wchar_t* pathName)
 			{
 
 				const int strLength = fineNotifyInformation->FileNameLength / 2;
-				wstring filename = wstring(fineNotifyInformation->FileName, strLength);
+				std::wstring filename = std::wstring(fineNotifyInformation->FileName, strLength);
 
 				switch (fineNotifyInformation->Action)
 				{

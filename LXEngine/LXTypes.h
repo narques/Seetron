@@ -11,7 +11,6 @@
 #include <vector>
 #include <list>
 #include <set>
-using namespace std;
 
 // 8-Bits
 typedef char				int8;
@@ -31,21 +30,21 @@ typedef __int64				int64;
 typedef unsigned __int64	uint64;
 
 // Misc
-typedef vector<int32>			ArrayInt;
-typedef vector<uint32>			ArrayUint;
+typedef std::vector<int32>			ArrayInt;
+typedef std::vector<uint32>			ArrayUint;
 
 class LXSmartObject;
-typedef list<LXSmartObject*>	ListSmartObjects;
-typedef set<LXSmartObject*>		SetSmartObjects;
-typedef vector<LXSmartObject*>	ArraySmartObjects;
+typedef std::list<LXSmartObject*>	ListSmartObjects;
+typedef std::set<LXSmartObject*>		SetSmartObjects;
+typedef std::vector<LXSmartObject*>	ArraySmartObjects;
 
 class LXActor;
-typedef list<LXActor*>			ListActors;
-typedef set<LXActor*>			SetActors;
-typedef vector<LXActor*>		ArrayActors;
+typedef std::list<LXActor*>			ListActors;
+typedef std::set<LXActor*>			SetActors;
+typedef std::vector<LXActor*>		ArrayActors;
 
 class LXMaterial;
-typedef set<LXMaterial*>		SetMaterials;
+typedef std::set<LXMaterial*>		SetMaterials;
 
 class LXKey;
-typedef set<LXKey*>				SetKeys;
+typedef std::set<LXKey*>				SetKeys;

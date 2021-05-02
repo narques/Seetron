@@ -31,7 +31,7 @@ private:
 	
 public:
 
-	list<LXRenderCluster*>* _ListRenderClusterTransparents = nullptr;
+	std::list<LXRenderCluster*>* _ListRenderClusterTransparents = nullptr;
 
 #if LX_DEDICATED_TRANSPARENCY_BUFFER
 
@@ -40,7 +40,7 @@ public:
 
 #endif
 
-	unique_ptr<LXConstantBufferD3D11> CBImageBaseLighting;
+	std::unique_ptr<LXConstantBufferD3D11> CBImageBaseLighting;
 	
 	struct
 	{

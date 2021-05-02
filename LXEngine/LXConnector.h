@@ -44,7 +44,7 @@ public:
 	EConnectorRole Role = EConnectorRole::Undefined;
 	EConnectorType Type = EConnectorType::Undefined;
 	
-	list<LXConnection*> Connections;
+	std::list<LXConnection*> Connections;
 
 private:
 

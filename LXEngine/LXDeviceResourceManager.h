@@ -25,7 +25,7 @@ class LXDeviceResourceManager : public LXObject
 public:
 
 	// Returns the ShaderResources for the given RenderPass & Material.
-	const shared_ptr<LXMaterialD3D11>& GetShaderResources(ERenderPass renderPass, const LXMaterialBase* material);
+	const std::shared_ptr<LXMaterialD3D11>& GetShaderResources(ERenderPass renderPass, const LXMaterialBase* material);
 
 	// Remove & destroy the ShaderResources, regardless of the ref count.
 	void RemoveShaderResources(const LXMaterialBase* material);
@@ -34,7 +34,7 @@ public:
 	void UpdateShaderResources(const LXMaterialBase* material);
 
 	// Return the DevicePrimitive for the Give Primitive
-	const shared_ptr<LXPrimitiveD3D11>& GetPrimitive(const LXPrimitive* primitive);
+	const std::shared_ptr<LXPrimitiveD3D11>& GetPrimitive(const LXPrimitive* primitive);
 		   
 	// Update
 	void Run();
@@ -46,8 +46,8 @@ private:
 
 private:
 
-	map<size_t, shared_ptr<LXMaterialD3D11>> _shaderResources;
-	map<size_t, shared_ptr<LXPrimitiveD3D11>> _primitives;
+	std::map<size_t, std::shared_ptr<LXMaterialD3D11>> _shaderResources;
+	std::map<size_t, std::shared_ptr<LXPrimitiveD3D11>> _primitives;
 
 };
 

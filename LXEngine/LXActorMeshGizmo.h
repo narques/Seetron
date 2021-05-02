@@ -34,7 +34,7 @@ private:
 private:
 
 	bool _UpdateActorTransform = true;
-	map<LXPrimitive*, EConstraint> _primitiveConstraints;
+	std::map<LXPrimitive*, EConstraint> _primitiveConstraints;
 	
 };
 

@@ -175,7 +175,7 @@ bool LXProject::LoadFile( const LXFilepath& strFilepath )
 		// Not a project file. Try to open it in a volatile viewer usage.
 		//
 
-		if (shared_ptr<LXAssetMesh> AssetMesh = dynamic_pointer_cast<LXAssetMesh>(GetAssetManager().Import(strFilepath, L"", true)))
+		if (std::shared_ptr<LXAssetMesh> AssetMesh = std::dynamic_pointer_cast<LXAssetMesh>(GetAssetManager().Import(strFilepath, L"", true)))
 		{
 			// Set the project as Volatile and Viewer
 			SetPersistent(false);

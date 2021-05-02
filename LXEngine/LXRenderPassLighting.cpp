@@ -47,13 +47,13 @@ LXRenderPassLighting::LXRenderPassLighting(LXRenderer* InRenderer) :LXRenderPass
 	// Textures and Samplers
 	CreateBuffers(Renderer->Width, Renderer->Height);
 
-	_shaderProgramIBLLight = make_unique<LXShaderProgramBasic>();
-	_shaderProgramSpotLight = make_unique<LXShaderProgramBasic>();
-	_shaderProgramDirectionalLight = make_unique<LXShaderProgramBasic>();
-	_shaderProgramPointLight = make_unique<LXShaderProgramBasic>();
-	_shaderProgramComposeLight = make_unique<LXShaderProgramBasic>();
+	_shaderProgramIBLLight = std::make_unique<LXShaderProgramBasic>();
+	_shaderProgramSpotLight = std::make_unique<LXShaderProgramBasic>();
+	_shaderProgramDirectionalLight = std::make_unique<LXShaderProgramBasic>();
+	_shaderProgramPointLight = std::make_unique<LXShaderProgramBasic>();
+	_shaderProgramComposeLight = std::make_unique<LXShaderProgramBasic>();
 	_shaderProgramComposeLight->PixelShader->AddMacro("LX_SSAO", "1");
-	_shaderProgramComposeLightNoSSAO = make_unique<LXShaderProgramBasic>();
+	_shaderProgramComposeLightNoSSAO = std::make_unique<LXShaderProgramBasic>();
 	
 	ConstantBufferDataIBL = new LXConstantBufferDataIBL();
 	ConstantBufferIBL = new LXConstantBufferD3D11(ConstantBufferDataIBL, sizeof(LXConstantBufferDataIBL));

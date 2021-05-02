@@ -29,11 +29,11 @@ class LXTextureManager;
 class LXViewState;
 class LXViewStateManager;
 
-typedef list<LXString> ListUID;
-typedef map<LXFilepath, LXActor*> MapFilepathGroup;
-typedef vector<LXActorLight*> ArrayLights;
-typedef set<LXActorMesh*> SetMeshs;
-typedef vector<LXActorMesh*> ArrayMeshs;
+typedef std::list<LXString> ListUID;
+typedef std::map<LXFilepath, LXActor*> MapFilepathGroup;
+typedef std::vector<LXActorLight*> ArrayLights;
+typedef std::set<LXActorMesh*> SetMeshs;
+typedef std::vector<LXActorMesh*> ArrayMeshs;
 
 enum class ELoadingStatus
 {

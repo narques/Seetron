@@ -74,9 +74,9 @@ public:
 	
 	void					DropFile		( const class LXFilepath& Filename );
 	void					OnDragObject	( LXObject* pObject, LXPoint pntWnd);
-	bool					DropAsset		( shared_ptr<LXAsset>& Asset, LXPoint pntWnd );
-	bool					DropMaterial	( shared_ptr<LXMaterial>& pMaterial, LXPoint pntWnd );
-	bool					DropAssetMesh	( shared_ptr<LXAssetMesh>& AssetMesh, LXPoint pntWnd );
+	bool					DropAsset		( std::shared_ptr<LXAsset>& Asset, LXPoint pntWnd );
+	bool					DropMaterial	( std::shared_ptr<LXMaterial>& pMaterial, LXPoint pntWnd );
+	bool					DropAssetMesh	( std::shared_ptr<LXAssetMesh>& AssetMesh, LXPoint pntWnd );
 
 	// Misc
 
@@ -165,10 +165,10 @@ private:
 
 	LXWorldTransformation WorldTransformation;
 	bool ConsoleEnabled = false;
-	deque<LXString> ConsoleHistory;
+	std::deque<LXString> ConsoleHistory;
 	int ConsoleHistorySeek;
 	LXString ConsoleString;
-	vector<LXString> ConsoleNearestCommand;
+	std::vector<LXString> ConsoleNearestCommand;
 	int ConsoleSuggestionSeek;
 
 	private:
@@ -182,4 +182,4 @@ private:
 	bool _showPrimitiveBBoxes = false;
 };
 
-typedef list<LXViewport*> ListViewports;
+typedef std::list<LXViewport*> ListViewports;

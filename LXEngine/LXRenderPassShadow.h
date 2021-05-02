@@ -21,10 +21,10 @@ public:
 	void Render(LXRenderCommandList* RCL) override;
 	void Resize(uint Width, uint Height) override;
 	
-	unique_ptr<LXTextureD3D11> TextureDepth;
-	unique_ptr<LXDepthStencilViewD3D11> DepthStencilView;
+	std::unique_ptr<LXTextureD3D11> TextureDepth;
+	std::unique_ptr<LXDepthStencilViewD3D11> DepthStencilView;
 
 	// SpotLight
-	unique_ptr<LXConstantBufferD3D11> ConstantBufferSpotLight;
+	std::unique_ptr<LXConstantBufferD3D11> ConstantBufferSpotLight;
 };
 

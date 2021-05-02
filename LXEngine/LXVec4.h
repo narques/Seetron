@@ -74,7 +74,7 @@ public:
 };
 
 typedef vec4<float>		vec4f;
-typedef vector<vec4f>	ArrayVec4f;
+typedef std::vector<vec4f>	ArrayVec4f;
 
 // Functions & Operators
 LX_INLINE static vec4f	operator*		( float num, const vec4f& v )	{ return vec4f(v.x * num, v.y * num, v.z * num, v.w * num); }

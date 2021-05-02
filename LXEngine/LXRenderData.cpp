@@ -19,13 +19,13 @@
 #include "LXRenderCluster.h"
 #include "LXRenderer.h"
 
-LXWorldPrimitive::LXWorldPrimitive(const shared_ptr<LXPrimitiveInstance>& primitiveInstance):
+LXWorldPrimitive::LXWorldPrimitive(const std::shared_ptr<LXPrimitiveInstance>& primitiveInstance):
 	PrimitiveInstance(primitiveInstance)
 {
 	PrimitiveInstance->Owners.push_back(this);
 }
 
-LXWorldPrimitive::LXWorldPrimitive(const shared_ptr<LXPrimitiveInstance>& primitiveInstance, const LXMatrix& Matrix, const LXBBox& BBox) :
+LXWorldPrimitive::LXWorldPrimitive(const std::shared_ptr<LXPrimitiveInstance>& primitiveInstance, const LXMatrix& Matrix, const LXBBox& BBox) :
 	PrimitiveInstance(primitiveInstance),
 	MatrixWorld(Matrix),
 	BBoxWorld(BBox)
@@ -61,7 +61,7 @@ LXRenderData::LXRenderData(LXActor* actor):
 		_mesh = actorMesh->GetMesh();
 		VectorPrimitiveInstances primitives;
 		_mesh->GetAllPrimitives(primitives);
-		for (const shared_ptr<LXPrimitiveInstance>& primitiveInstance : primitives)
+		for (const std::shared_ptr<LXPrimitiveInstance>& primitiveInstance : primitives)
 		{
 			_worldPrimitives[0].push_back(new LXWorldPrimitive(primitiveInstance));
 		}
@@ -87,7 +87,7 @@ LXRenderData::LXRenderData(LXActor* actor, LXComponent* component):
 		{
 			VectorPrimitiveInstances primitives;
 			componentMesh->Get()->GetAllPrimitives(primitives, i);
-			for (const shared_ptr<LXPrimitiveInstance>& primitiveInstance : primitives)
+			for (const std::shared_ptr<LXPrimitiveInstance>& primitiveInstance : primitives)
 			{
 				_worldPrimitives[i].push_back(new LXWorldPrimitive(primitiveInstance));
 			}
@@ -159,7 +159,7 @@ void LXRenderData::ComputePrimitiveWorldMatrices()
 			{
 				const LXBBox& BBox = _bboxWorld;
 				LXMatrix matrixScale, matrixTranslation;
-				matrixScale.SetScale(max(BBox.GetSizeX(), 1.f), max(BBox.GetSizeY(), 1.f), max(BBox.GetSizeZ(), 1.f));
+				matrixScale.SetScale(std::max(BBox.GetSizeX(), 1.f), std::max(BBox.GetSizeY(), 1.f), std::max(BBox.GetSizeZ(), 1.f));
 				matrixTranslation.SetTranslation(BBox.GetCenter());
 				renderCluster->SetMatrix(matrixTranslation * matrixScale);
 				renderCluster->SetBBoxWorld(BBox);

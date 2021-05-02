@@ -21,7 +21,7 @@ LXComponentMesh::LXComponentMesh(LXActor* actor) :
 	LX_COUNTSCOPEINC(LXComponentMesh);
 	_nCID |= LX_NODETYPE_MESH;
 	SetName(L"ComponentMesh");
-	_mesh = dynamic_pointer_cast<LXMeshBase>(make_shared<LXMesh2>());
+	_mesh = std::dynamic_pointer_cast<LXMeshBase>(std::make_shared<LXMesh2>());
 	DefineProperties();
 }
 
@@ -40,7 +40,7 @@ void LXComponentMesh::DefineProperties()
 	DefinePropertyBool(L"CastShadows", GetAutomaticPropertyID(), &_castShadows);
 
 	//Asset
-	auto PropAssetMesh = DefineProperty(L"AssetMesh", (shared_ptr<LXAsset>*) & _assetMesh);
+	auto PropAssetMesh = DefineProperty(L"AssetMesh", (std::shared_ptr<LXAsset>*) & _assetMesh);
 	PropAssetMesh->SetLambdaOnChange([this](LXPropertyAssetPtr* Property)
 	{
 		UpdateAssetMeshCallbacks();
@@ -52,7 +52,7 @@ void LXComponentMesh::UpdateMesh()
 {
 	if (_assetMesh)
 	{
-		shared_ptr<LXMeshBase> meshBase = static_pointer_cast<LXMeshBase>(_assetMesh->GetMesh());
+		std::shared_ptr<LXMeshBase> meshBase = std::static_pointer_cast<LXMeshBase>(_assetMesh->GetMesh());
 
 		if (_mesh != meshBase)
 		{
@@ -98,14 +98,14 @@ void LXComponentMesh::OnPropertyChanged(LXProperty* property)
 	}
 }
 
-void LXComponentMesh::SetMesh(shared_ptr<LXMeshBase>& mesh)
+void LXComponentMesh::SetMesh(std::shared_ptr<LXMeshBase>& mesh)
 {
 	CHK(_mesh == nullptr);
 	_mesh = mesh;
 	InvalidateBounds();
 }
 
-void LXComponentMesh::SetAssetMesh(shared_ptr<LXAssetMesh>& assetMesh)
+void LXComponentMesh::SetAssetMesh(std::shared_ptr<LXAssetMesh>& assetMesh)
 {
 	CHK(_assetMesh == nullptr);
 	_assetMesh = assetMesh;
@@ -138,12 +138,12 @@ void LXComponentMesh::ComputeBBoxLocal()
 	}
 }
 
-void LXComponentMesh::AddPrimitive(const shared_ptr<LXPrimitive>& primitive, const LXMatrix* matrix, const shared_ptr<LXMaterialBase>& material, int LODIndex)
+void LXComponentMesh::AddPrimitive(const std::shared_ptr<LXPrimitive>& primitive, const LXMatrix* matrix, const std::shared_ptr<LXMaterialBase>& material, int LODIndex)
 {
 	// If no mesh create a new one : TODO in Constructor
 	if (!_mesh)
 	{
-		_mesh = dynamic_pointer_cast<LXMeshBase>(make_shared<LXMesh2>());
+		_mesh = std::dynamic_pointer_cast<LXMeshBase>(std::make_shared<LXMesh2>());
 	}
 
 	_mesh->AddPrimitive(primitive, matrix, material, LODIndex);
@@ -153,7 +153,7 @@ void LXComponentMesh::AddPrimitive(const shared_ptr<LXPrimitive>& primitive, con
 
 void LXComponentMesh::ReleaseAllPrimitives()
 {
-	shared_ptr<LXMesh> mesh = dynamic_pointer_cast<LXMesh>(_mesh);
+	std::shared_ptr<LXMesh> mesh = std::dynamic_pointer_cast<LXMesh>(_mesh);
 	if (mesh)
 		mesh->RemoveAllPrimitives();
 	InvalidateWorldPrimitives();

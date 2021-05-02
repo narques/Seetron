@@ -94,7 +94,7 @@ bool LXRenderCluster::UpdateDeviceMaterialAndShaders(ERenderPass renderPass)
 #endif
 
 		// Resources
-		const shared_ptr<LXMaterialD3D11> materialD3D11 = renderer->GetDeviceResourceManager()->GetShaderResources(renderPass, Material);
+		const std::shared_ptr<LXMaterialD3D11> materialD3D11 = renderer->GetDeviceResourceManager()->GetShaderResources(renderPass, Material);
 		ShaderResources[(int)renderPass] = materialD3D11;
 
 		// Shaders
@@ -123,14 +123,14 @@ bool LXRenderCluster::UpdateDeviceMaterialAndShaders(ERenderPass renderPass)
 	return true;
 }
 
-bool LXRenderCluster::GetDeviceMaterialAndShaders(ERenderPass renderPass, const LXPrimitiveD3D11* primitive, const LXMaterialBase* material, LXShaderProgramD3D11& shaderProgram, shared_ptr<LXMaterialD3D11>& shaderResources)
+bool LXRenderCluster::GetDeviceMaterialAndShaders(ERenderPass renderPass, const LXPrimitiveD3D11* primitive, const LXMaterialBase* material, LXShaderProgramD3D11& shaderProgram, std::shared_ptr<LXMaterialD3D11>& shaderResources)
 {
 	CHK(IsRenderThread());
 
 	LXRenderer* renderer = GetCore().GetRenderer();
 
 	// Resources
-	const shared_ptr<LXMaterialD3D11> materialD3D11 = renderer->GetDeviceResourceManager()->GetShaderResources(renderPass, material);
+	const std::shared_ptr<LXMaterialD3D11> materialD3D11 = renderer->GetDeviceResourceManager()->GetShaderResources(renderPass, material);
 	shaderResources = materialD3D11;
 
 	// Shaders
@@ -151,7 +151,7 @@ bool LXRenderCluster::GetDeviceMaterialAndShaders(ERenderPass renderPass, const 
 
 }
 
-void LXRenderCluster::SetPrimitive(const shared_ptr<LXPrimitiveD3D11>& primitiveD3D11, int LODIndex)
+void LXRenderCluster::SetPrimitive(const std::shared_ptr<LXPrimitiveD3D11>& primitiveD3D11, int LODIndex)
 {
 	Primitive[LODIndex] = primitiveD3D11;
 }
@@ -182,7 +182,7 @@ void LXRenderCluster::Render(ERenderPass RenderPass, LXRenderCommandList* RCL)
 	}
 	
 	const LXShaderProgramD3D11* ShaderProgram = &ShaderPrograms[(int)RenderPass];
-	const shared_ptr<LXMaterialD3D11>& materialD3D11 = ShaderResources[(int)RenderPass];
+	const std::shared_ptr<LXMaterialD3D11>& materialD3D11 = ShaderResources[(int)RenderPass];
 
 	if (1/*!ValidConstantBufferMatrix*/ && CBWorld)
 	{
@@ -273,7 +273,7 @@ void LXRenderCluster::RenderBounds(ERenderPass RenderPass, LXRenderCommandList* 
 
 	LXMatrix MatrixScale, MatrixTranslation;
 	// Max/1.f to avoid a 0 scale value ( possible with the "flat" geometries )
-	MatrixScale.SetScale(max(BBoxWorld.GetSizeX(), 1.f), max(BBoxWorld.GetSizeY(), 1.f), max(BBoxWorld.GetSizeZ(), 1.f));
+	MatrixScale.SetScale(std::max(BBoxWorld.GetSizeX(), 1.f), std::max(BBoxWorld.GetSizeY(), 1.f), std::max(BBoxWorld.GetSizeZ(), 1.f));
 	MatrixTranslation.SetTranslation(BBoxWorld.GetCenter());
 	LXMatrix matrixWCS = MatrixTranslation * MatrixScale;
 

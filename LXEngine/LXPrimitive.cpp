@@ -163,7 +163,7 @@ void LXPrimitive::DefineProperties( )
 	pPropBool->SetReadOnly(true);
 	pPropBool->SetLambdaOnGet([this] { return HasBiNormals(); });
 	
-	LXPropertyAssetPtr* pPropMaterial = DefinePropertyAsset(L"Material", LXPropertyID::PRIMITIVE_MATERIAL, (shared_ptr<LXAsset>*)&m_pMaterial);
+	LXPropertyAssetPtr* pPropMaterial = DefinePropertyAsset(L"Material", LXPropertyID::PRIMITIVE_MATERIAL, (std::shared_ptr<LXAsset>*)&m_pMaterial);
 	pPropMaterial->SetName(L"Material");
 	pPropMaterial->SetUserData((int64)EAssetType::Material);
 	pPropMaterial->SetPersistent(false);
@@ -310,7 +310,7 @@ int LXPrimitive::GetId()
 	return m_nId;
 }
 
-void LXPrimitive::SetMaterial( shared_ptr<LXMaterialBase>& pMaterial )
+void LXPrimitive::SetMaterial( std::shared_ptr<LXMaterialBase>& pMaterial )
 { 
 	m_pMaterial = pMaterial;
 }
@@ -318,8 +318,8 @@ void LXPrimitive::SetMaterial( shared_ptr<LXMaterialBase>& pMaterial )
 void LXPrimitive::SetMaterial(const LXString& Filename)
 {
 	LXAssetManager& rm = GetCore().GetProject()->GetAssetManager();
-	shared_ptr<LXMaterial> material = rm.GetMaterial(Filename);
-	shared_ptr<LXMaterialBase> materialBase = static_pointer_cast<LXMaterialBase>(material);
+	std::shared_ptr<LXMaterial> material = rm.GetMaterial(Filename);
+	std::shared_ptr<LXMaterialBase> materialBase = std::static_pointer_cast<LXMaterialBase>(material);
 	SetMaterial(materialBase);
 }
 
@@ -450,7 +450,7 @@ void LXPrimitive::ComputeTangents()
 }
 
 template<class T, class U>
-void LXPrimitive::ComputeTangents2(vector<U>& arrayPositions, vector<T>& arrayTexCoords)
+void LXPrimitive::ComputeTangents2(std::vector<U>& arrayPositions, std::vector<T>& arrayTexCoords)
 {
 	
 	int nVertices = (int)arrayPositions.size();

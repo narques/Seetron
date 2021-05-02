@@ -37,7 +37,7 @@ LXTexture::LXTexture(uint width, uint height, ETextureFormat format):
 
 std::shared_ptr<LXTexture> LXTexture::Create(uint width, uint height, ETextureFormat format)
 {
-	shared_ptr<LXTexture> texture = make_shared<LXTexture>(width, height, format);
+	std::shared_ptr<LXTexture> texture = std::make_shared<LXTexture>(width, height, format);
 	texture->CreateDeviceTexture();
 	return texture;
 }

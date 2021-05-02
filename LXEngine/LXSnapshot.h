@@ -37,4 +37,4 @@ private:
 
 };
 
-typedef list<LXSnapshot*> ListSnapshots;
+typedef std::list<LXSnapshot*> ListSnapshots;

@@ -26,7 +26,7 @@ private:
 
 private:
 
-	shared_ptr<LXMaterial> _material;
+	std::shared_ptr<LXMaterial> _material;
 	int Slices = 64;
 	int Stacks = 64;
 	
@@ -48,7 +48,7 @@ private:
 
 private:
 
-	shared_ptr<LXMaterial> _material;
+	std::shared_ptr<LXMaterial> _material;
 	int Slices = 64;
 	int Stacks = 64;
 
@@ -70,7 +70,7 @@ private:
 
 private:
 
-	shared_ptr<LXMaterial> _material;
+	std::shared_ptr<LXMaterial> _material;
 	int Slices = 64;
 	int Stacks = 64;
 

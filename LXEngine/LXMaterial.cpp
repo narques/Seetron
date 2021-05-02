@@ -23,7 +23,7 @@
 LXMaterial::LXMaterial(EMaterialType InMaterialType):MaterialType(InMaterialType)
 {
 	SetName(L"Material");
-	GraphMaterial = make_unique<LXGraphMaterial>(this);
+	GraphMaterial = std::make_unique<LXGraphMaterial>(this);
 	DefineProperties();
 }
 

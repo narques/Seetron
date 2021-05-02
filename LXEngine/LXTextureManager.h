@@ -21,14 +21,14 @@ public:
 	LXTextureManager();
 	virtual ~LXTextureManager();
 
-	const shared_ptr<LXTextureD3D11>& GetTexture(LXTexture* Texture);
+	const std::shared_ptr<LXTextureD3D11>& GetTexture(LXTexture* Texture);
 
 private:
 
-	shared_ptr<LXTextureD3D11> CreateTexture(const LXTexture* Texture);
+	std::shared_ptr<LXTextureD3D11> CreateTexture(const LXTexture* Texture);
 	
 private:
 
-	map<const LXTexture*, shared_ptr<LXTextureD3D11>> _MapTextureD3D11;
+	std::map<const LXTexture*, std::shared_ptr<LXTextureD3D11>> _MapTextureD3D11;
 };
 

@@ -38,7 +38,7 @@ void LXMSXMLNode::get()
   }
 }
 
-wstring LXMSXMLNode::name() const
+std::wstring LXMSXMLNode::name() const
 {
   if (!elem) 
 	  return _T("");
@@ -46,10 +46,10 @@ wstring LXMSXMLNode::name() const
   CComBSTR bn; 
   elem->get_tagName(&bn);
 
-  return wstring(bn);
+  return std::wstring(bn);
 }
 
-wstring LXMSXMLNode::attr(const wstring& name) const
+std::wstring LXMSXMLNode::attr(const std::wstring& name) const
 { 
   if (!elem) 
 	  return _T("");
@@ -57,14 +57,14 @@ wstring LXMSXMLNode::attr(const wstring& name) const
   CComVariant val(VT_EMPTY);
   elem->getAttribute(bname,&val);
   if (val.vt==VT_BSTR) 
-	return wstring(val.bstrVal);
+	return std::wstring(val.bstrVal);
   else 
 	return _T(""); 
 }
 
-bool LXMSXMLNode::attrBool(const wstring& name, bool def) const
+bool LXMSXMLNode::attrBool(const std::wstring& name, bool def) const
 { 
-  wstring a = attr(name);
+  std::wstring a = attr(name);
   if (a==_T("true") || a==_T("TRUE")) 
 	  return true; // TODO CompareNoCase
   else if (a==_T("false") || a==_T("FALSE")) 
@@ -76,9 +76,9 @@ bool LXMSXMLNode::attrBool(const wstring& name, bool def) const
   }
 }
 
-int LXMSXMLNode::attrInt(const wstring& name, int def) const
+int LXMSXMLNode::attrInt(const std::wstring& name, int def) const
 { 
-  wstring a = attr(name);
+  std::wstring a = attr(name);
   int i, res=swscanf_s(a.c_str(),_T("%i"), &i);
   if (res==1) 
 	  return i; 
@@ -86,9 +86,9 @@ int LXMSXMLNode::attrInt(const wstring& name, int def) const
 	  return def; 
 }
 
-unsigned int LXMSXMLNode::attrUint(const wstring& name, unsigned int def) const
+unsigned int LXMSXMLNode::attrUint(const std::wstring& name, unsigned int def) const
 { 
-	wstring a = attr(name);
+	std::wstring a = attr(name);
 	unsigned int i, res = swscanf_s(a.c_str(), _T("%u"), &i);
 	if (res==1) 
 		return i; 
@@ -99,34 +99,34 @@ unsigned int LXMSXMLNode::attrUint(const wstring& name, unsigned int def) const
 	}
 }
 
-float LXMSXMLNode::attrFloat(const wstring& name, float def) const
+float LXMSXMLNode::attrFloat(const std::wstring& name, float def) const
 { 
-  wstring a = attr(name);
+  std::wstring a = attr(name);
   float f;
   int res = swscanf_s(a.c_str(), _T("%f"), &f);
   if (res==1) return f; 
   else { _ASSERT(0); return def; }
 }
 
-double LXMSXMLNode::attrDouble(const wstring& name, double def) const
+double LXMSXMLNode::attrDouble(const std::wstring& name, double def) const
 {
-	wstring a = attr(name);
+	std::wstring a = attr(name);
 	float f;
 	int res = swscanf_s(a.c_str(), _T("%f"), &f);
 	if (res == 1) return f;
 	else { _ASSERT(0); return def; }
 }
 
-wstring LXMSXMLNode::val() const
+std::wstring LXMSXMLNode::val() const
 { 
   if (!elem) return _T("");
   CComVariant val(VT_EMPTY);
   elem->get_nodeTypedValue(&val);
-  if (val.vt==VT_BSTR) return wstring(val.bstrVal);
+  if (val.vt==VT_BSTR) return std::wstring(val.bstrVal);
   return _T("");
 }
 
-string LXMSXMLNode::valA() const
+std::string LXMSXMLNode::valA() const
 { 
 	if (!elem) return "";
 	CComVariant val(VT_EMPTY);
@@ -146,7 +146,7 @@ string LXMSXMLNode::valA() const
 		wcstombs_s( &sizeConverted, toto2, size, val.bstrVal, size );
 		*/
 		
-		return string(toto);
+		return std::string(toto);
 	}
 	return "";
 }
@@ -158,7 +158,7 @@ float LXMSXMLNode::valf() const
 	elem->get_nodeTypedValue(&val);
 	if (val.vt==VT_BSTR) 
 	{
-		wstring a = val.bstrVal;
+		std::wstring a = val.bstrVal;
 		float f;
 		int res = swscanf_s(a.c_str(), _T("%f"), &f);
 		if (res==1) 
@@ -170,7 +170,7 @@ float LXMSXMLNode::valf() const
 	return 0.0f;
 }
 
-LXMSXMLNode LXMSXMLNode::subnode(const wstring& name) const
+LXMSXMLNode LXMSXMLNode::subnode(const std::wstring& name) const
 { 
   if (!elem) return LXMSXMLNode();
   for (LXMSXMLNode c=begin(); c!=end(); c++)
@@ -180,7 +180,7 @@ LXMSXMLNode LXMSXMLNode::subnode(const wstring& name) const
   return LXMSXMLNode();
 }
 
-wstring LXMSXMLNode::subval(const wstring& name) const
+std::wstring LXMSXMLNode::subval(const std::wstring& name) const
 {
   if (!elem) return _T("");
   LXMSXMLNode c=subnode(name);

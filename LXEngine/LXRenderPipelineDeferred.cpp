@@ -62,7 +62,7 @@ LXRenderPipelineDeferred::LXRenderPipelineDeferred(LXRenderer* Renderer):_Render
 	RenderPassDownsample = new LXRenderPassDownsample(Renderer, EDownsampleFunction::Downsample_ToOne);
 	RenderPassUI = new LXRenderPassUI(Renderer);
 	RenderPassSSAO = new LXRenderPassSSAO(Renderer);
-	_renderPassDOF = make_unique<LXRenderPassDepthOfField>(Renderer);
+	_renderPassDOF = std::make_unique<LXRenderPassDepthOfField>(Renderer);
 	   
 	_RenderPasses.push_back(RenderPassDynamicTexture);
 	_RenderPasses.push_back(RenderPassShadow);
@@ -179,7 +179,7 @@ void LXRenderPipelineDeferred::BuildRenderClusterLists()
 				_ListRenderClusterLights.push_back(RenderCluster);
 				if (RenderCluster->ConstantBufferDataSpotLight->CastShadow)
 				{
-					// Define the Shadow map position in the shadowAtlas
+					// Define the Shadow std::map position in the shadowAtlas
 					GetTextureCoordinatesInAtlas(RenderCluster, RenderCluster->ConstantBufferDataSpotLight->ShadowMapCoords);
 				}
 
@@ -313,7 +313,7 @@ const LXTextureD3D11* LXRenderPipelineDeferred::GetOutput() const
 
 void LXRenderPipelineDeferred::GetTextureCoordinatesInAtlas(LXRenderCluster* RenderCluster, vec4f& outTextureCoordinates)
 {
-	static map < LXActor*, uint> mapActors;
+	static std::map < LXActor*, uint> mapActors;
 	static bool IndexStatus[16] = { true };
 	int static indices = 0;
 	int index;

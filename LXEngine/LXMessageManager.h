@@ -15,7 +15,7 @@ struct LXChannel
 	const LXObject* Sender;
 	const LXString MessageID;
 	const LXObject* Receiver;
-	function<void()> Callback;
+	std::function<void()> Callback;
 };
 
 class LXCORE_API LXMessageManager : public LXObject
@@ -33,9 +33,9 @@ public:
 
 private:
 
-	unique_ptr<LXMutex> _mutex;
-	list<const LXChannel*> _channels;
-	list<const LXChannel*> _sent;
+	std::unique_ptr<LXMutex> _mutex;
+	std::list<const LXChannel*> _channels;
+	std::list<const LXChannel*> _sent;
 };
 
 

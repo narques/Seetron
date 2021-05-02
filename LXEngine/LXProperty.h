@@ -17,19 +17,19 @@
 #include "LXVec3.h"
 #include "LXVec4.h"
 
-typedef list<LXPropertyID> ListPropertyID;
-typedef pair<LXPropertyID, LXVariant*> PairPropetyIDVariant;
+typedef std::list<LXPropertyID> ListPropertyID;
+typedef std::pair<LXPropertyID, LXVariant*> PairPropetyIDVariant;
 
 class LXProperty;
 class LXAsset;
 class LXFilepath;
 class LXMatrix;
-typedef shared_ptr<LXAsset> LXAssetPtr;
+typedef std::shared_ptr<LXAsset> LXAssetPtr;
 
 struct TSaveContext;
 struct TLoadContext;
 
-typedef list<LXProperty*>	ListProperties;
+typedef std::list<LXProperty*>	ListProperties;
 
 //--------------------------------------------------------------------------
 // LXPropertyInfo
@@ -298,7 +298,7 @@ private:
 	
 };
 
-typedef list<shared_ptr<LXSmartObject>>			ListSharedObjects;
+typedef std::list<std::shared_ptr<LXSmartObject>>			ListSharedObjects;
 
 typedef LXPropertyT<bool>						LXPropertyBool;
 typedef LXPropertyT<int>						LXPropertyInt;
@@ -312,11 +312,11 @@ typedef LXPropertyT<LXColor4f>					LXPropertyLXColor4f;
 typedef LXPropertyT<LXString>					LXPropertyString;
 typedef LXPropertyT<LXFilepath>					LXPropertyFilepath;
 typedef LXPropertyT<LXMatrix>					LXPropertyMatrix;
-typedef LXPropertyT<shared_ptr<LXAsset>>		LXPropertyAssetPtr;
+typedef LXPropertyT<std::shared_ptr<LXAsset>>		LXPropertyAssetPtr;
 typedef LXPropertyT<ArraySmartObjects>			LXPropertyArraySmartObjects;
 typedef LXPropertyT<ListSmartObjects>			LXPropertyListSmartObjects;
 typedef LXPropertyT<ArrayVec3f>					LXPropertyArrayVec3f;	
 typedef LXPropertyT<LXSmartObject>				LXPropertySmartObject;
-typedef LXPropertyT<shared_ptr<LXSmartObject>>	LXPropertySharedObject;
+typedef LXPropertyT<std::shared_ptr<LXSmartObject>>	LXPropertySharedObject;
 typedef LXPropertyT<LXReference<LXSmartObject>>	LXPropertyReferenceObject;
 typedef LXPropertyT<ListSharedObjects>			LXPropertyListSharedObjects;

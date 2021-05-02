@@ -15,7 +15,7 @@
 #include "LXStatistic.h"
 #include "LXActorMesh.h"
 
-LXPrimitiveInstance::LXPrimitiveInstance(const shared_ptr<LXPrimitive>& InPrimitive, const LXMatrix* InMatrix, const shared_ptr<LXMaterialBase>& InMaterial)
+LXPrimitiveInstance::LXPrimitiveInstance(const std::shared_ptr<LXPrimitive>& InPrimitive, const LXMatrix* InMatrix, const std::shared_ptr<LXMaterialBase>& InMaterial)
 {
 	LX_COUNTSCOPEINC(LXPrimitiveInstance)
 	Primitive = InPrimitive;
@@ -33,7 +33,7 @@ LXPrimitiveInstance::~LXPrimitiveInstance()
 	LX_SAFE_DELETE(MatrixRCS);
 }
 
-void LXPrimitiveInstance::SetMaterial(shared_ptr<LXMaterialBase>& material)
+void LXPrimitiveInstance::SetMaterial(std::shared_ptr<LXMaterialBase>& material)
 {
 	// If a PerInstance material exists, we should not set the primitive material (no effect).
 	CHK(!Material);
@@ -41,7 +41,7 @@ void LXPrimitiveInstance::SetMaterial(shared_ptr<LXMaterialBase>& material)
 	Primitive->SetMaterial(material);
 	for (LXWorldPrimitive* worldPrimitive : Owners)
 	{
-		shared_ptr<LXMaterialBase> materialBase = dynamic_pointer_cast<LXMaterialBase>(material);
+		std::shared_ptr<LXMaterialBase> materialBase = std::dynamic_pointer_cast<LXMaterialBase>(material);
 		worldPrimitive->SetMaterial(materialBase.get());
 	}
 }

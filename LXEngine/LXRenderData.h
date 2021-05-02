@@ -26,13 +26,13 @@ class LXWorldPrimitive
 
 public:
 
-	LXWorldPrimitive(const shared_ptr<LXPrimitiveInstance>& primitiveInstance);
-	LXWorldPrimitive(const shared_ptr<LXPrimitiveInstance>& primitiveInstance, const LXMatrix& matrix, const LXBBox& box);
+	LXWorldPrimitive(const std::shared_ptr<LXPrimitiveInstance>& primitiveInstance);
+	LXWorldPrimitive(const std::shared_ptr<LXPrimitiveInstance>& primitiveInstance, const LXMatrix& matrix, const LXBBox& box);
 	~LXWorldPrimitive();
 
 	void SetMaterial(const LXMaterialBase* material);
 	
-	shared_ptr<LXPrimitiveInstance> PrimitiveInstance;
+	std::shared_ptr<LXPrimitiveInstance> PrimitiveInstance;
 	LXMatrix MatrixWorld;
 	LXBBox BBoxWorld;
 
@@ -40,7 +40,7 @@ public:
 	LXRenderCluster* RenderCluster = nullptr;
 };
 
-typedef vector<LXWorldPrimitive*> TWorldPrimitives;
+typedef std::vector<LXWorldPrimitive*> TWorldPrimitives;
 
 struct LXLODData
 {
@@ -91,19 +91,19 @@ public:
 public:
 
 	// RenderThread only
-	list<LXRenderCluster*> RenderClusters;
+	std::list<LXRenderCluster*> RenderClusters;
 
 private:
 
 	// Common
-	atomic<bool> _primitiveBBox = false;
+	std::atomic<bool> _primitiveBBox = false;
 
 	bool _valid = false;
 	
 	LXActor* _actor = nullptr;
 	LXComponent* _component = nullptr;
 	LXBBox _bboxWorld;
-	shared_ptr<LXMeshBase> _mesh;
+	std::shared_ptr<LXMeshBase> _mesh;
 	
 	float _LODMaxDistance[LX_MAX_LODS];
 	TWorldPrimitives _worldPrimitives[LX_MAX_LODS];

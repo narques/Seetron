@@ -25,7 +25,7 @@ LXAssetMesh::LXAssetMesh()
 	LX_COUNTSCOPEINC(LXAssetMesh)
 }
 
-LXAssetMesh::LXAssetMesh(shared_ptr<LXMesh>& mesh) :_Root(mesh)
+LXAssetMesh::LXAssetMesh(std::shared_ptr<LXMesh>& mesh) :_Root(mesh)
 {
 	LX_COUNTSCOPEINC(LXAssetMesh)
 }
@@ -54,7 +54,7 @@ bool LXAssetMesh::Load()
 	return false;
 }
 
-shared_ptr<LXMesh>& LXAssetMesh::GetMesh()
+std::shared_ptr<LXMesh>& LXAssetMesh::GetMesh()
 {
 	return _Root;
 }
@@ -74,9 +74,9 @@ bool LXAssetMesh::LoadGeometries(const LXFilepath& strFilename, MapGeometries& m
 	{
 		if (fileTag.nId != -1)
 		{
-			shared_ptr<LXPrimitive>& PrimitivePtr = mapGeometries[fileTag.nId];
+			std::shared_ptr<LXPrimitive>& PrimitivePtr = mapGeometries[fileTag.nId];
 			CHK(PrimitivePtr.get() == nullptr);
-			PrimitivePtr = make_shared<LXPrimitive>();
+			PrimitivePtr = std::make_shared<LXPrimitive>();
 			Primitive = PrimitivePtr.get();
 			Primitive->SetTopology(fileTag.eMode);
 		}
@@ -192,7 +192,7 @@ bool LXAssetMesh::OnLoadChild(const TLoadContext& loadContext)
 	if (name == L"LXMesh")
 	{
 		CHK(_Root == nullptr);
-		shared_ptr<LXMesh> mesh = make_shared<LXMesh>(this);
+		std::shared_ptr<LXMesh> mesh = std::make_shared<LXMesh>(this);
 		mesh->Load(loadContext);
 		_Root = mesh;
 		bRet = true;

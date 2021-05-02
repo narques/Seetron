@@ -29,5 +29,5 @@ private:
 
 private:
 
-	list<LXRenderData*> _onDemandRenderData;
+	std::list<LXRenderData*> _onDemandRenderData;
 };

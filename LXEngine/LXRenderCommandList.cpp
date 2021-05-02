@@ -307,9 +307,9 @@ EXECUTE(IASetVertexBuffer)
 
 	UINT NumBuffers = 1;
 
-	vector<ID3D11Buffer*> Buffers;
-	vector<UINT> Strides;
-	vector<UINT> Offsets;
+	std::vector<ID3D11Buffer*> Buffers;
+	std::vector<UINT> Strides;
+	std::vector<UINT> Offsets;
 
 	Buffers.push_back(Primitive->VertexBuffer);
 	Strides.push_back(Primitive->VertexStride);

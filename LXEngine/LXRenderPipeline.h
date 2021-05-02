@@ -28,7 +28,7 @@ struct TVisualizableBuffer
 	LXConsoleCommandNoArg* ConsoleCommand;
 };
 
-typedef vector<TVisualizableBuffer> TDebuggableTextures;
+typedef std::vector<TVisualizableBuffer> TDebuggableTextures;
 
 class LXRenderPipeline 
 {
@@ -52,7 +52,7 @@ public:
 
 protected:
 
-	vector<LXRenderPass*> _RenderPasses;
+	std::vector<LXRenderPass*> _RenderPasses;
 	LXRenderPass* _PreviousRenderPass = nullptr;
 	TDebuggableTextures _DebugTextures;
 	const TVisualizableBuffer* _debugTexture = nullptr;

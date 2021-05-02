@@ -12,11 +12,11 @@
 
 struct LXStat
 {
-	wstring Name;
+	std::wstring Name;
 	double Time = 0.0;
 	uint64 Hits = 0;
 	LXStat* Parent = nullptr;
-	set<LXStat*> Children;
+	std::set<LXStat*> Children;
 };
 
 class LXStatManager
@@ -30,9 +30,9 @@ public:
 	
 	// Counters
 
-	void UpdateCounter(const wstring& Name, int Value);
+	void UpdateCounter(const std::wstring& Name, int Value);
 
-	const map<wstring, int>& GetCounters() const
+	const std::map<std::wstring, int>& GetCounters() const
 	{
 		return _Counters;
 	}
@@ -41,15 +41,15 @@ public:
 
 	void Reset();
 	
-	void OpenStat(const wstring& Name);
-	void UpdateAndCloseStat(const wstring& Name, double Value);
+	void OpenStat(const std::wstring& Name);
+	void UpdateAndCloseStat(const std::wstring& Name, double Value);
 	
-	const map<wstring, LXStat>& GetPerfomances() const
+	const std::map<std::wstring, LXStat>& GetPerfomances() const
 	{
 		return _Stats;
 	}
 
-	const map<DWORD, LXStat*>& GetPerformanceByThread() const
+	const std::map<DWORD, LXStat*>& GetPerformanceByThread() const
 	{
 		return _StatRoots;
 	}
@@ -58,13 +58,13 @@ private:
 
 
 	// All stats
-	map<wstring, LXStat> _Stats;
+	std::map<std::wstring, LXStat> _Stats;
 
 	// Stats hierarchy
-	map<DWORD, LXStat*> _StatRoots;
-	map<DWORD, LXStat*> _StatCurrents;
+	std::map<DWORD, LXStat*> _StatRoots;
+	std::map<DWORD, LXStat*> _StatCurrents;
 
 	// Counters
 	LXMutex _mutex;
-	map<wstring, int> _Counters;
+	std::map<std::wstring, int> _Counters;
 };

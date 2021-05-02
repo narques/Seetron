@@ -20,29 +20,29 @@ public:
 	LXMeshFactory();
 	virtual ~LXMeshFactory();
 
-	const shared_ptr<LXMesh> CreateEmptyMesh();
+	const std::shared_ptr<LXMesh> CreateEmptyMesh();
 
 	// Create a Cube with UVs, Normals, Tangents and BiNormals
-	const shared_ptr<LXMesh> CreateCube(float sizeX, float sizeY, float sizeZ, bool centered = true);
+	const std::shared_ptr<LXMesh> CreateCube(float sizeX, float sizeY, float sizeZ, bool centered = true);
 
 	// Create a Quad with UVs, Normals, Tangents and BiNormals
-	const shared_ptr<LXMesh> CreateQuadXY(float sizeX, float sizeY, bool centered = true);
+	const std::shared_ptr<LXMesh> CreateQuadXY(float sizeX, float sizeY, bool centered = true);
 
 	// Creates a Sphere with UVs, Normals, Tangents and BiNormals
-	const shared_ptr<LXMesh> CreateSphere(float radius);
+	const std::shared_ptr<LXMesh> CreateSphere(float radius);
 
 	// Create a Cylinder with UVs, Normals, Tangents and BiNormals
-	const shared_ptr<LXMesh> CreateCylinder(float radius, float height);
+	const std::shared_ptr<LXMesh> CreateCylinder(float radius, float height);
 
 	// Create a Cone with UVs, Normals, Tangents and BiNormals
-	const shared_ptr<LXMesh> CreateCone(float radius, float height);
+	const std::shared_ptr<LXMesh> CreateCone(float radius, float height);
 
 	// Create a "ScreenSpace" Triangle with UVs
-	const shared_ptr<LXMesh> CreateSSTriangle();
+	const std::shared_ptr<LXMesh> CreateSSTriangle();
 	   
 private:
 
-	list<shared_ptr<LXMesh>> _meshes;
+	std::list<std::shared_ptr<LXMesh>> _meshes;
 
 };
 

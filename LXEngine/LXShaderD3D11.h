@@ -11,7 +11,7 @@
 #include "LXObject.h"
 #include "LXDirectX11.h"
 
-typedef pair<std::string, std::string> LXShaderMacro;
+typedef std::pair<std::string, std::string> LXShaderMacro;
 
 enum class EShaderD3D11State
 {
@@ -69,7 +69,7 @@ public:
 
 private:
 
-	vector<LXShaderMacro> ShaderMacros;
+	std::vector<LXShaderMacro> ShaderMacros;
 	EShaderD3D11State State = EShaderD3D11State::Unknown;
 	EShaderType Type = EShaderType::Undefined;
 	std::wstring _filename;

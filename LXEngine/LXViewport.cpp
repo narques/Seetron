@@ -616,21 +616,21 @@ void LXViewport::OnDragObject( LXObject* pObject, LXPoint pntWnd)
 // 	}
 }
 
-bool LXViewport::DropAsset(shared_ptr<LXAsset>& Asset, LXPoint pntWnd)
+bool LXViewport::DropAsset(std::shared_ptr<LXAsset>& Asset, LXPoint pntWnd)
 {
 	CHK(Asset);
 	
-	if (shared_ptr<LXMaterial> pMaterial = dynamic_pointer_cast<LXMaterial>(Asset))
+	if (std::shared_ptr<LXMaterial> pMaterial = std::dynamic_pointer_cast<LXMaterial>(Asset))
 		return DropMaterial(pMaterial, pntWnd);
 
-	if (shared_ptr<LXAssetMesh> AssetMesh = dynamic_pointer_cast<LXAssetMesh>(Asset))
+	if (std::shared_ptr<LXAssetMesh> AssetMesh = std::dynamic_pointer_cast<LXAssetMesh>(Asset))
 		return DropAssetMesh(AssetMesh, pntWnd);
 
 
 	return false;
 }
 
-bool LXViewport::DropMaterial( shared_ptr<LXMaterial>& pMaterial, LXPoint pntWnd )
+bool LXViewport::DropMaterial( std::shared_ptr<LXMaterial>& pMaterial, LXPoint pntWnd )
 {
 	CHK(pMaterial);
 	if (!pMaterial)
@@ -652,7 +652,7 @@ bool LXViewport::DropMaterial( shared_ptr<LXMaterial>& pMaterial, LXPoint pntWnd
 	return false;
 }
 
-bool LXViewport::DropAssetMesh(shared_ptr<LXAssetMesh>& AssetMesh, LXPoint pntWnd)
+bool LXViewport::DropAssetMesh(std::shared_ptr<LXAssetMesh>& AssetMesh, LXPoint pntWnd)
 {
 	LXActorMesh* ActorMesh = new LXActorMesh();
 	ActorMesh->SetMesh(AssetMesh->GetMesh());

@@ -9,7 +9,6 @@
 #pragma once
 
 #include <list>
-using namespace std;
 
 template <class T>
 class LXTreeNode
@@ -40,11 +39,11 @@ public:
 	void SetParent(T* parent) { _parent = parent; };
 	T* GetParent() const { return _parent; }
 	T* GetPreviousParent() const { return _lastKnownParent; }
-	list<T*>& GetChildren() { return _children; }
+	std::list<T*>& GetChildren() { return _children; }
 
 protected:
 	
 	T* _parent = nullptr;
 	T* _lastKnownParent = nullptr;
-	list<T*> _children;
+	std::list<T*> _children;
 };

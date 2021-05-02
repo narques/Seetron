@@ -41,7 +41,7 @@ protected:
 
 private:
 
-	vector<LXPropertyID> _arrayProperties;
-	set<LXPropertyID> _setProperties;
+	std::vector<LXPropertyID> _arrayProperties;
+	std::set<LXPropertyID> _setProperties;
 	
 };

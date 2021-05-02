@@ -20,10 +20,10 @@ class LXMaterialBase;
 class LXMesh;
 class LXPrimitive;
 
-typedef list<LXMesh*> ListMeshes;
+typedef std::list<LXMesh*> ListMeshes;
 
 class LXPrimitiveInstance;
-typedef vector <shared_ptr<LXPrimitiveInstance>> VectorPrimitiveInstances;
+typedef std::vector <std::shared_ptr<LXPrimitiveInstance>> VectorPrimitiveInstances;
 
 class LXCORE_API LXMesh : public LXMeshBase
 {
@@ -48,7 +48,7 @@ public:
 	const ListMeshes& GetChild() const { return _Children; } // GetChildren already exists in SmartObjects
 
 	// Primitive management
-	virtual void AddPrimitive(const shared_ptr<LXPrimitive>& Primitive, const LXMatrix* Matrix = nullptr, const shared_ptr<LXMaterialBase>& Material = nullptr, int LODIndex = 0) override;
+	virtual void AddPrimitive(const std::shared_ptr<LXPrimitive>& Primitive, const LXMatrix* Matrix = nullptr, const std::shared_ptr<LXMaterialBase>& Material = nullptr, int LODIndex = 0) override;
 	void RemovePrimitive(LXPrimitive* Primitive);
 	void RemoveAllPrimitives();
 	const VectorPrimitiveInstances& GetPrimitives() { return _vectorPrimitives; }
@@ -68,7 +68,7 @@ public:
 
 	// Misc
 	void SetMaterial(const LXString& Key);
-	void SetMaterial(shared_ptr<LXMaterialBase>& material);
+	void SetMaterial(std::shared_ptr<LXMaterialBase>& material);
 
 	bool Visible() const { return _visible; }
 

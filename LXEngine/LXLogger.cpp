@@ -87,7 +87,7 @@ void LXLogger::Tick()
 #endif
 
 			//if (LogModes & ELogMode::LogMode_OSConsole)
-			wcout << logEntry.GetBuffer() << endl;
+			std::wcout << logEntry.GetBuffer() << std::endl;
 
 			if (LogModes & ELogMode::LogMode_CoreConsole)
 			{
@@ -215,7 +215,7 @@ void Output(ELogType LogType, const wchar_t* section, const wchar_t* Format, ...
 	logEntry += L":" + LXString::Format(L"%02d", st.wSecond);
 	logEntry += L"." + LXString::Format(L"%03d", st.wMilliseconds) + L"]" + msg;
 
-	wcout << logEntry.GetBuffer() << endl;
+	std::wcout << logEntry.GetBuffer() << std::endl;
 
 	if (IsDebuggerPresent())
 	{

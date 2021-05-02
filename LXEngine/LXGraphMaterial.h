@@ -22,8 +22,8 @@ public:
 	LXGraphMaterial(LXMaterial* material);
 	virtual ~LXGraphMaterial();
 
-	virtual void AddNode(shared_ptr<LXNode>& node) override;
-	virtual void RemoveNode(shared_ptr<LXNode>& node) override;
+	virtual void AddNode(std::shared_ptr<LXNode>& node) override;
+	virtual void RemoveNode(std::shared_ptr<LXNode>& node) override;
 
 	void GetChildProperties(ListProperties& UserProperties) const override;
 	bool GetFloatParameter(const LXString& paramName, float& outValue) const;
@@ -35,8 +35,8 @@ private:
 	void OnPropertyChanged(LXProperty* property) override;
 
 	// Create a transient property to simplify the node property access and allows overrides.
-	void Register(const shared_ptr<LXNode>& node);
-	void Unregister(const shared_ptr<LXNode>& node);
+	void Register(const std::shared_ptr<LXNode>& node);
+	void Unregister(const std::shared_ptr<LXNode>& node);
 
 public:
 

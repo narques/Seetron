@@ -25,7 +25,7 @@ struct LXPOI // Point of intersection
 	vec3f point;
 };
 
-typedef map<float, LXPOI> MapIntersection;
+typedef std::map<float, LXPOI> MapIntersection;
 
 class LXCORE_API LXPickTraverser : public LXTraverser
 {

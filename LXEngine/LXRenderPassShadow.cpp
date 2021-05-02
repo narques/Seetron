@@ -38,10 +38,10 @@ namespace
 
 LXRenderPassShadow::LXRenderPassShadow(LXRenderer* InRenderer):LXRenderPass(InRenderer)
 {
-	TextureDepth = make_unique<LXTextureD3D11>(kAtlasShadowMapWidth, kAtlasShadowMapHeight, DXGI_FORMAT_R24G8_TYPELESS);
-	DepthStencilView = make_unique<LXDepthStencilViewD3D11>(TextureDepth.get());
+	TextureDepth = std::make_unique<LXTextureD3D11>(kAtlasShadowMapWidth, kAtlasShadowMapHeight, DXGI_FORMAT_R24G8_TYPELESS);
+	DepthStencilView = std::make_unique<LXDepthStencilViewD3D11>(TextureDepth.get());
 	LXConstantBufferDataSpotLight ConstantBufferDataSpotLight;
-	ConstantBufferSpotLight = make_unique<LXConstantBufferD3D11>(&ConstantBufferDataSpotLight, static_cast<int>(sizeof(LXConstantBufferDataSpotLight)));
+	ConstantBufferSpotLight = std::make_unique<LXConstantBufferD3D11>(&ConstantBufferDataSpotLight, static_cast<int>(sizeof(LXConstantBufferDataSpotLight)));
 	LXRenderPipeline* RenderPipeline = Renderer->GetRenderPipeline();
 	RenderPipeline->AddToViewDebugger(L"View.ShadowMaps", TextureDepth.get(), ETextureChannel::ChannelR);
 }
@@ -102,7 +102,7 @@ void LXRenderPassShadow::Render(LXRenderCommandList* RCL)
 		LXFrustum Frustum;
 		Frustum.Update(MatrixVP);
 
-		list<LXRenderCluster*> ListRenderClusterOpaques;
+		std::list<LXRenderCluster*> ListRenderClusterOpaques;
 
 		for (LXRenderCluster* RenderCluster : Renderer->RenderClusterManager->ListRenderClusters)
 		{

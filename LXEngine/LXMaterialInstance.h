@@ -22,7 +22,7 @@ public:
 	~LXMaterialInstance();
 	
 	// Helper
-	static shared_ptr<LXMaterialInstance> Create(const shared_ptr<LXMaterial>& material);
+	static std::shared_ptr<LXMaterialInstance> Create(const std::shared_ptr<LXMaterial>& material);
 
 	// Overridden from LXAsset
 	virtual bool Load();
@@ -37,7 +37,7 @@ public:
 	virtual EMaterialType GetType() const override;
 		
 	// Create and set an override
-	bool SetPropertyTextureByName(const LXString& textureName, const shared_ptr<LXTexture>& texture);
+	bool SetPropertyTextureByName(const LXString& textureName, const std::shared_ptr<LXTexture>& texture);
 
 private:
 

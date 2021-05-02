@@ -40,7 +40,7 @@ public:
 	bool CreateLine(const vec3f& v0, const vec3f& v1);
 
 	// Helpers
-	static shared_ptr<LXPrimitiveD3D11> CreateFromPrimitive(const LXPrimitive* primitive);
+	static std::shared_ptr<LXPrimitiveD3D11> CreateFromPrimitive(const LXPrimitive* primitive);
 
 private:
 

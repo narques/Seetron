@@ -38,7 +38,7 @@ void LXConsoleManager::DeleteSingleton()
 bool LXConsoleManager::TryToExecute(const LXString& CommandLine)
 {
 	LogI(ConsoleManager, L">%s", CommandLine.GetBuffer());
-	vector<LXString> ArrayStrings;
+	std::vector<LXString> ArrayStrings;
 	CommandLine.Split(ArrayStrings);
 	for (auto Command : ListCommands)
 	{
@@ -53,7 +53,7 @@ bool LXConsoleManager::TryToExecute(const LXString& CommandLine)
 	return false;
 }
 
-void LXConsoleManager::GetNearestCommand(const LXString& Str, vector<LXString>& ListSuggestion)
+void LXConsoleManager::GetNearestCommand(const LXString& Str, std::vector<LXString>& ListSuggestion)
 {
 	ListSuggestion.clear();
 	
@@ -174,7 +174,7 @@ void LXConsoleCommandT<bool>::SetValueFromString(const LXString& Value)
 
 // Specialization
 template<>
-void LXConsoleCommandT<bool>::Execute(const vector<LXString>& Arguments)
+void LXConsoleCommandT<bool>::Execute(const std::vector<LXString>& Arguments)
 {
 	*Var = !*Var;
 }
@@ -206,7 +206,7 @@ LXConsoleCommandCall2<FunctionSignature>::LXConsoleCommandCall2(const LXString& 
 }
 
 // Tools
-const LXString& GetArg(const vector<LXString>& Arguments, int Index)
+const LXString& GetArg(const std::vector<LXString>& Arguments, int Index)
 {
 	static LXString EmptyString;
 	if (Index < Arguments.size())
@@ -217,7 +217,7 @@ const LXString& GetArg(const vector<LXString>& Arguments, int Index)
 
 // Specializations
 template<>
-void LXConsoleCommandCall2<void()>::Execute(const vector<LXString>& Arguments)
+void LXConsoleCommandCall2<void()>::Execute(const std::vector<LXString>& Arguments)
 {
 	Function();
 }
@@ -232,19 +232,19 @@ bool LXConsoleCommandCall2<FunctionSignature>::CanExecute()
 }
 
 template<>
-void LXConsoleCommandCall2<void(const LXString&)>::Execute(const vector<LXString>& Arguments)
+void LXConsoleCommandCall2<void(const LXString&)>::Execute(const std::vector<LXString>& Arguments)
 {
 	Function(GetArg(Arguments, 1));
 }
 
 template<>
-void LXConsoleCommandCall2<void(const LXString&, const LXString&)>::Execute(const vector<LXString>& Arguments)
+void LXConsoleCommandCall2<void(const LXString&, const LXString&)>::Execute(const std::vector<LXString>& Arguments)
 {
 	Function(GetArg(Arguments,1), GetArg(Arguments,2));
 }
 
 template<>
-void LXConsoleCommandCall2<void(const LXString&, const LXString&, const LXString&)>::Execute(const vector<LXString>& Arguments)
+void LXConsoleCommandCall2<void(const LXString&, const LXString&, const LXString&)>::Execute(const std::vector<LXString>& Arguments)
 {
 	Function(GetArg(Arguments, 1), GetArg(Arguments, 2), GetArg(Arguments, 3));
 }

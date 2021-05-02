@@ -15,7 +15,7 @@ class LXProject;
 class LXMesh;
 
 #define LX_DECLARE_IMPORTER_METHODS \
-	virtual shared_ptr<LXMesh>& Load ( const LXFilepath& strFilename ) override; \
+	virtual std::shared_ptr<LXMesh>& Load ( const LXFilepath& strFilename ) override; \
 	virtual void GetExtensions( ListStrings& listExtensions ) override; \
 
 class LXCORE_API LXImporter : public LXObject
@@ -30,7 +30,7 @@ public:
 	virtual ~LXImporter(void);
 
 	// Misc
-	virtual shared_ptr<LXMesh>& Load			( const LXFilepath& strFilename ) = 0;
+	virtual std::shared_ptr<LXMesh>& Load			( const LXFilepath& strFilename ) = 0;
 	virtual void		GetExtensions	( ListStrings& listExtensions ) = 0;
 
 	LXProject*			GetDocument		( )	{ return _Project; }

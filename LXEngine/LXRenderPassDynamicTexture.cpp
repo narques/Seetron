@@ -54,11 +54,11 @@ void LXRenderPassDynamicTexture::Render(LXRenderCommandList* RCL)
 	auto itRenderData = _onDemandRenderData.begin();
 	while(itRenderData != _onDemandRenderData.end())
 	{
-		const map<LXRenderData*, list<LXRenderCluster*>>& renderClusters = Renderer->RenderClusterManager->GetActors();
+		const std::map<LXRenderData*, std::list<LXRenderCluster*>>& renderClusters = Renderer->RenderClusterManager->GetActors();
 		const auto itRenderCluser = renderClusters.find(*itRenderData);
 		if (itRenderCluser != renderClusters.end())
 		{
-			const list<LXRenderCluster*> rdrc = itRenderCluser->second;
+			const std::list<LXRenderCluster*> rdrc = itRenderCluser->second;
 			for (LXRenderCluster* rendercluster : rdrc)
 			{
 				Render(RCL, rendercluster);

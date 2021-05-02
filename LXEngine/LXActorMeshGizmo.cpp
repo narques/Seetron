@@ -33,7 +33,7 @@ LXActorMeshGizmo::LXActorMeshGizmo()
 	// Register Events.
 	GetEventManager()->RegisterEvent(EEventType::SelectionChanged, this);
 
-	Mesh = make_shared<LXMesh>(nullptr);
+	Mesh = std::make_shared<LXMesh>(nullptr);
 
 	// Translations Lines 
 	const float LineWidth = 0.075f;
@@ -45,7 +45,7 @@ LXActorMeshGizmo::LXActorMeshGizmo()
 	
 	// Translate X
 	{
-		const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCube(LineLenght, LineWidth, LineWidth, false);
+		const std::shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCube(LineLenght, LineWidth, LineWidth, false);
 		Primitive->SetMaterial(L"Materials/M_UIRed.smat");
 		Primitive->ComputeNormals();
 		Primitive->ComputeTangents();
@@ -55,7 +55,7 @@ LXActorMeshGizmo::LXActorMeshGizmo()
 
 	// Translate Y
 	{
-		const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCube(LineWidth, LineLenght, LineWidth, false);
+		const std::shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCube(LineWidth, LineLenght, LineWidth, false);
 		Primitive->SetMaterial(L"Materials/M_UIGreen.smat");
 		Primitive->ComputeNormals();
 		Primitive->ComputeTangents();
@@ -65,7 +65,7 @@ LXActorMeshGizmo::LXActorMeshGizmo()
 
 	// Translate Z
 	{
-		const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCube(LineWidth, LineWidth, LineLenght, false);
+		const std::shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCube(LineWidth, LineWidth, LineLenght, false);
 		Primitive->SetMaterial(L"Materials/M_UIBlue.smat");
 		Primitive->ComputeNormals();
 		Primitive->ComputeTangents();
@@ -75,7 +75,7 @@ LXActorMeshGizmo::LXActorMeshGizmo()
 
 	// Translate XY
 	{
-		const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCube(SquareSize, SquareSize, SquareTickness, false);
+		const std::shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCube(SquareSize, SquareSize, SquareTickness, false);
 		Primitive->SetMaterial(L"Materials/M_UIYellow.smat");
 		Primitive->ComputeNormals();
 		Primitive->ComputeTangents();
@@ -85,7 +85,7 @@ LXActorMeshGizmo::LXActorMeshGizmo()
 
 	//XZ (Mauve)
 	{
-		const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCube(SquareSize, SquareTickness, SquareSize, false);
+		const std::shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCube(SquareSize, SquareTickness, SquareSize, false);
 		Primitive->SetMaterial(L"Materials/M_UIYellow.smat");
 		Primitive->ComputeNormals();
 		Primitive->ComputeTangents();
@@ -95,7 +95,7 @@ LXActorMeshGizmo::LXActorMeshGizmo()
 
 	//YZ (Turquoise)
 	{
-		const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCube(SquareTickness, SquareSize, SquareSize, false);
+		const std::shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateCube(SquareTickness, SquareSize, SquareSize, false);
 		Primitive->SetMaterial(L"Materials/M_UIYellow.smat");
 		Primitive->ComputeNormals();
 		Primitive->ComputeTangents();
@@ -109,7 +109,7 @@ LXActorMeshGizmo::LXActorMeshGizmo()
 	{
 		LXMatrix Matrix;
 		Matrix.SetRotation(LX_DEGTORAD(90.f), 0.f, 1.f, 0.f);
-		const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateTube(0.85f, 1.f, &Matrix);
+		const std::shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateTube(0.85f, 1.f, &Matrix);
 		Primitive->SetMaterial(L"Materials/M_UIRed.smat");
 		_primitiveConstraints[Primitive.get()] = EConstraint::Local_Rotate_X;
 		AddPrimitive(Primitive);
@@ -117,7 +117,7 @@ LXActorMeshGizmo::LXActorMeshGizmo()
 
 	// Rotation z
 	{
-		const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateTube(0.85f, 1.f);
+		const std::shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateTube(0.85f, 1.f);
 		Primitive->SetMaterial(L"Materials/M_UIBlue.smat");
 		_primitiveConstraints[Primitive.get()] = EConstraint::Local_Rotate_Z;
 		AddPrimitive(Primitive);
@@ -127,7 +127,7 @@ LXActorMeshGizmo::LXActorMeshGizmo()
 	{
 		LXMatrix Matrix;
 		Matrix.SetRotation(LX_DEGTORAD(90.f), 1.f, 0.f, 0.f);
-		const shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateTube(0.85f, 1.f, &Matrix);
+		const std::shared_ptr<LXPrimitive>& Primitive = GetPrimitiveFactory()->CreateTube(0.85f, 1.f, &Matrix);
 		Primitive->SetMaterial(L"Materials/M_UIGreen.smat");
 		_primitiveConstraints[Primitive.get()] = EConstraint::Local_Rotate_Y;
 		AddPrimitive(Primitive);

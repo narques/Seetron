@@ -111,6 +111,6 @@ public:
 protected:
 	
 	T               m_newValue;
-	list<T>			m_oldValues;
+	std::list<T>			m_oldValues;
 
 };

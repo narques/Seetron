@@ -10,7 +10,7 @@
 #include "LXPrimitive.h"
 #include <d3d11.h>
 
-typedef vector<D3D11_INPUT_ELEMENT_DESC> LXArrayInputElementDesc;
+typedef std::vector<D3D11_INPUT_ELEMENT_DESC> LXArrayInputElementDesc;
 
 enum class EPrimitiveLayout
 {
@@ -35,7 +35,7 @@ public:
 
 private:
 
-	map<int, LXArrayInputElementDesc> MapElements;
+	std::map<int, LXArrayInputElementDesc> MapElements;
 
 };
 

@@ -25,14 +25,14 @@ LXMeshFactory::~LXMeshFactory()
 
 const std::shared_ptr<LXMesh> LXMeshFactory::CreateEmptyMesh()
 {
-	shared_ptr<LXMesh> mesh = make_shared<LXMesh>();
+	std::shared_ptr<LXMesh> mesh = std::make_shared<LXMesh>();
 	return mesh;
 }
 
 const std::shared_ptr<LXMesh> LXMeshFactory::CreateCube(float sizeX, float sizeY, float sizeZ, bool centered /*= true*/)
 {
-	shared_ptr<LXMesh> mesh = make_shared<LXMesh>();
-	const shared_ptr<LXPrimitive>& primitive = GetPrimitiveFactory()->CreateCube(sizeX, sizeY, sizeZ, centered);
+	std::shared_ptr<LXMesh> mesh = std::make_shared<LXMesh>();
+	const std::shared_ptr<LXPrimitive>& primitive = GetPrimitiveFactory()->CreateCube(sizeX, sizeY, sizeZ, centered);
 	primitive->SetPersistent(false);
 	primitive->ComputeNormals();
 	primitive->ComputeTangents();
@@ -42,8 +42,8 @@ const std::shared_ptr<LXMesh> LXMeshFactory::CreateCube(float sizeX, float sizeY
 
 const std::shared_ptr<LXMesh> LXMeshFactory::CreateQuadXY(float sizeX, float sizeY, bool centered /*= true*/)
 {
-	shared_ptr<LXMesh> mesh = make_shared<LXMesh>();
-	const shared_ptr<LXPrimitive>& primitive = GetPrimitiveFactory()->CreateQuadXY(sizeX, sizeY, centered);
+	std::shared_ptr<LXMesh> mesh = std::make_shared<LXMesh>();
+	const std::shared_ptr<LXPrimitive>& primitive = GetPrimitiveFactory()->CreateQuadXY(sizeX, sizeY, centered);
 	primitive->SetPersistent(false);
 	primitive->ComputeTangents();
 	mesh->AddPrimitive(primitive);
@@ -52,8 +52,8 @@ const std::shared_ptr<LXMesh> LXMeshFactory::CreateQuadXY(float sizeX, float siz
 
 const std::shared_ptr<LXMesh> LXMeshFactory::CreateSphere(float radius)
 {
-	shared_ptr<LXMesh> mesh = make_shared<LXMesh>();
-	const shared_ptr<LXPrimitive>& primitive = GetPrimitiveFactory()->CreateSphere(radius);
+	std::shared_ptr<LXMesh> mesh = std::make_shared<LXMesh>();
+	const std::shared_ptr<LXPrimitive>& primitive = GetPrimitiveFactory()->CreateSphere(radius);
 	primitive->SetPersistent(false);
 	primitive->ComputeTangents();
 	mesh->AddPrimitive(primitive);
@@ -63,8 +63,8 @@ const std::shared_ptr<LXMesh> LXMeshFactory::CreateSphere(float radius)
 
 const std::shared_ptr<LXMesh> LXMeshFactory::CreateCylinder(float radius, float height)
 {
-	shared_ptr<LXMesh> mesh = make_shared<LXMesh>();
-	const shared_ptr<LXPrimitive>& primitive = GetPrimitiveFactory()->CreateCylinder(radius, height);
+	std::shared_ptr<LXMesh> mesh = std::make_shared<LXMesh>();
+	const std::shared_ptr<LXPrimitive>& primitive = GetPrimitiveFactory()->CreateCylinder(radius, height);
 	primitive->SetPersistent(false);
 	primitive->ComputeTangents();
 	mesh->AddPrimitive(primitive);
@@ -73,8 +73,8 @@ const std::shared_ptr<LXMesh> LXMeshFactory::CreateCylinder(float radius, float 
 
 const std::shared_ptr<LXMesh> LXMeshFactory::CreateCone(float radius, float height)
 {
-	shared_ptr<LXMesh> mesh = make_shared<LXMesh>();
-	const shared_ptr<LXPrimitive>& primitive = GetPrimitiveFactory()->CreateCone(radius, height);
+	std::shared_ptr<LXMesh> mesh = std::make_shared<LXMesh>();
+	const std::shared_ptr<LXPrimitive>& primitive = GetPrimitiveFactory()->CreateCone(radius, height);
 	primitive->SetPersistent(false);
 	primitive->ComputeTangents();
 	mesh->AddPrimitive(primitive);
@@ -83,8 +83,8 @@ const std::shared_ptr<LXMesh> LXMeshFactory::CreateCone(float radius, float heig
 
 const std::shared_ptr<LXMesh> LXMeshFactory::CreateSSTriangle()
 {
-	shared_ptr<LXMesh> mesh = make_shared<LXMesh>();
-	const shared_ptr<LXPrimitive>& primitive = GetPrimitiveFactory()->CreateSSTriangle();
+	std::shared_ptr<LXMesh> mesh = std::make_shared<LXMesh>();
+	const std::shared_ptr<LXPrimitive>& primitive = GetPrimitiveFactory()->CreateSSTriangle();
 	primitive->SetPersistent(false);
 	mesh->AddPrimitive(primitive);
 	return mesh;

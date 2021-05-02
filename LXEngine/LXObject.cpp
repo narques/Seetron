@@ -38,7 +38,7 @@ namespace
 	void RemoveInstance(LXObject* pObject)
 	{
 		GetMutex().Lock();
-		set<LXObject*>::iterator It = GetObjects().find(pObject);
+		std::set<LXObject*>::iterator It = GetObjects().find(pObject);
 		if (It != GetObjects().end())
 			GetObjects().erase(pObject);
 		else
@@ -78,7 +78,7 @@ void LXObject::TraceAll()
 {
 	MapObjects mapObjects;
 	MapObjects::iterator It2;
-	set<LXObject*>::iterator It;
+	std::set<LXObject*>::iterator It;
 
 	SetObjects& setObjects = GetObjects();
 

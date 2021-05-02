@@ -18,7 +18,7 @@ int UpperPO2(int a)
 	return rval;
 }
 
-void GenerateRandomVectors(int Count, vector<vec3f>& Vectors)
+void GenerateRandomVectors(int Count, std::vector<vec3f>& Vectors)
 {
 	CHK(Count > 0);
 	CHK(Vectors.size() == 0);

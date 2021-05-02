@@ -24,7 +24,7 @@ private:
 
 private:
 
-	shared_ptr<LXMaterial> _Material;
+	std::shared_ptr<LXMaterial> _Material;
 
 };
 

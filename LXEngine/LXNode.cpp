@@ -228,7 +228,7 @@ void LXNode::Update(const LXString& templateID)
 	}
 }
 
-void LXNode::GetNewListItemChoices(const LXPropertyListSmartObjects* property, list<LXString>& outStrings)
+void LXNode::GetNewListItemChoices(const LXPropertyListSmartObjects* property, std::list<LXString>& outStrings)
 {
 	outStrings.push_back(L"Float");
 	outStrings.push_back(L"Float2");

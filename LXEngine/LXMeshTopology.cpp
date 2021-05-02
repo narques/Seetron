@@ -93,7 +93,7 @@ void CreateNormalIndexation(const vec3f* pNormals, uint nFaces, CFace3** ppNFace
 	// Fill indexed vector array, needed to sort vectors
 	//
 
-	vector<CIndexedVector*> arrayVectors;
+	std::vector<CIndexedVector*> arrayVectors;
 	arrayVectors.reserve(nNormals);
 	for (uint i=0; i<nNormals; i++)
 	{
@@ -111,7 +111,7 @@ void CreateNormalIndexation(const vec3f* pNormals, uint nFaces, CFace3** ppNFace
 
 	uint cpt = 0;
 	CIndexedVector* pPrev = NULL;
-	vector<CIndexedVector*>::iterator It;
+	std::vector<CIndexedVector*>::iterator It;
 	for (It=arrayVectors.begin(); It<arrayVectors.end(); It++)
 	{
 		if (pPrev)

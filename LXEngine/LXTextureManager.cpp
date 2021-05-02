@@ -23,7 +23,7 @@ LXTextureManager::~LXTextureManager()
 	_MapTextureD3D11.clear();
 }
 
-const shared_ptr<LXTextureD3D11>& LXTextureManager::GetTexture(LXTexture* Texture)
+const std::shared_ptr<LXTextureD3D11>& LXTextureManager::GetTexture(LXTexture* Texture)
 {
 	auto It = _MapTextureD3D11.find(Texture);
 
@@ -33,13 +33,13 @@ const shared_ptr<LXTextureD3D11>& LXTextureManager::GetTexture(LXTexture* Textur
 	}
 	else
 	{
-		shared_ptr<LXTextureD3D11> TextureD3D11 = CreateTexture(Texture);
+		std::shared_ptr<LXTextureD3D11> TextureD3D11 = CreateTexture(Texture);
 		_MapTextureD3D11[Texture] = TextureD3D11;
 		return _MapTextureD3D11[Texture];
 	}
 }
 
-shared_ptr<LXTextureD3D11> LXTextureManager::CreateTexture(const LXTexture* Texture)
+std::shared_ptr<LXTextureD3D11> LXTextureManager::CreateTexture(const LXTexture* Texture)
 {
 	if (!Texture)
 	{
@@ -49,14 +49,14 @@ shared_ptr<LXTextureD3D11> LXTextureManager::CreateTexture(const LXTexture* Text
 
 	const LXFilepath& Filepath = Texture->GetFilepath();
 
-	shared_ptr<LXTextureD3D11> TextureD3D11;
+	std::shared_ptr<LXTextureD3D11> TextureD3D11;
 
 	if (Texture->TextureSource == ETextureSource::TextureSourceBitmap)
 	{
 		if (LXBitmap* Bitmap = Texture->GetBitmap(0))
 		{
 			DXGI_FORMAT Format = LXTextureD3D11::GetDXGIFormat(Bitmap->GetInternalFormat());
-			TextureD3D11 = make_shared<LXTextureD3D11>(Bitmap->GetWidth(), Bitmap->GetHeight(), Format, Bitmap->GetPixels(), Bitmap->GetPixelSize(), 0, D3D11_FILTER_MIN_MAG_MIP_POINT);
+			TextureD3D11 = std::make_shared<LXTextureD3D11>(Bitmap->GetWidth(), Bitmap->GetHeight(), Format, Bitmap->GetPixels(), Bitmap->GetPixelSize(), 0, D3D11_FILTER_MIN_MAG_MIP_POINT);
 		}
 		else
 		{

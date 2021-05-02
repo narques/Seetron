@@ -16,7 +16,7 @@ class LXFilepath;
 class LXWindow;
 class LXThread;
 
-typedef stack<LXFilepath> StackFilepath;
+typedef std::stack<LXFilepath> StackFilepath;
 
 class LXCORE_API LXDocumentManager : public LXObject
 {

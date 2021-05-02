@@ -47,7 +47,7 @@ public:
 	bool AddFloat4(const LXString& Name, const vec4f& Value);
 	bool AddMatrix(const LXString& Name, const LXMatrix& Value);
 
-	const list<LXVariableDeclaration>&  GetVariables() const { return VariableDeclarations; }
+	const std::list<LXVariableDeclaration>&  GetVariables() const { return VariableDeclarations; }
 	const void* GetData() const { return &*Buffer.begin(); }
 	bool HasData() const;
 
@@ -77,7 +77,7 @@ public:
 
 private:
 
-	list<LXVariableDeclaration> VariableDeclarations;
+	std::list<LXVariableDeclaration> VariableDeclarations;
 	std::vector<unsigned char> Buffer;
 	uint _PadSize = 0;
 };

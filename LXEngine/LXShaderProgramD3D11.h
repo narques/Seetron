@@ -33,11 +33,11 @@ public:
 	
 public:
 
-	shared_ptr<LXShaderD3D11> HullShader;
-	shared_ptr<LXShaderD3D11> DomainShader;
-	shared_ptr<LXShaderD3D11> GeometryShader;
-	shared_ptr<LXShaderD3D11> VertexShader;
-	shared_ptr<LXShaderD3D11> PixelShader;
+	std::shared_ptr<LXShaderD3D11> HullShader;
+	std::shared_ptr<LXShaderD3D11> DomainShader;
+	std::shared_ptr<LXShaderD3D11> GeometryShader;
+	std::shared_ptr<LXShaderD3D11> VertexShader;
+	std::shared_ptr<LXShaderD3D11> PixelShader;
 };
 
 //------------------------------------------------------------------------------------------------------

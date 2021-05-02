@@ -36,7 +36,7 @@ public:
 		
 	int GetOuputConnectorIndex(const LXConnector* connector);
 
-	void GetNewListItemChoices(const LXPropertyListSmartObjects* property, list<LXString>& outStrings) override;
+	void GetNewListItemChoices(const LXPropertyListSmartObjects* property, std::list<LXString>& outStrings) override;
 
 	LXSmartObject* AddItemToPropertyList(const LXPropertyListSmartObjects* property, const LXString& id) override;
 
@@ -64,8 +64,8 @@ public:
 	bool EditableInputs = false;
 
 	// Connector
-	list<LXConnector*> Inputs;
-	list<LXConnector*> Outputs;
+	std::list<LXConnector*> Inputs;
+	std::list<LXConnector*> Outputs;
 
 
 };
@@ -96,8 +96,8 @@ public:
 	bool Main = false;
 			
 	// Connector template
-	vector<LXConnectorTemplate*> Inputs;
-	vector<LXConnectorTemplate*> Outputs;
-	vector<LXVariableTemplate> Variables;
+	std::vector<LXConnectorTemplate*> Inputs;
+	std::vector<LXConnectorTemplate*> Outputs;
+	std::vector<LXVariableTemplate> Variables;
 
 };

@@ -12,7 +12,7 @@
 #include "LXTrack.h"
 #include "LXProperty.h"
 
-typedef map<LXProperty*, LXTrack*> MapPropertyTrack;
+typedef std::map<LXProperty*, LXTrack*> MapPropertyTrack;
 
 class LXCORE_API LXAnimation : public LXAsset
 {
@@ -85,5 +85,5 @@ protected:
 	MapPropertyTrack _tracks;
 };
 
-typedef list<LXAnimation*> ListAnimations;
-typedef vector<LXAnimation*> ArrayAnimations;
+typedef std::list<LXAnimation*> ListAnimations;
+typedef std::vector<LXAnimation*> ArrayAnimations;
