@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -15,7 +15,7 @@ class LXProject;
 class LXMesh;
 
 #define LX_DECLARE_IMPORTER_METHODS \
-	virtual std::shared_ptr<LXMesh>& Load ( const LXFilepath& strFilename ) override; \
+	virtual std::shared_ptr<LXMesh> Load ( const LXFilepath& strFilename ) override; \
 	virtual void GetExtensions( ListStrings& listExtensions ) override; \
 
 class LXCORE_API LXImporter : public LXObject
@@ -30,14 +30,14 @@ public:
 	virtual ~LXImporter(void);
 
 	// Misc
-	virtual std::shared_ptr<LXMesh>& Load			( const LXFilepath& strFilename ) = 0;
-	virtual void		GetExtensions	( ListStrings& listExtensions ) = 0;
+	virtual std::shared_ptr<LXMesh> Load(const LXFilepath& strFilename) = 0;
+	virtual void GetExtensions(ListStrings& listExtensions) = 0;
 
-	LXProject*			GetDocument		( )	{ return _Project; }
-	void				SetDocument		( LXProject* Project ) { _Project = Project; }
+	LXProject* GetDocument() { return _Project; }
+	void SetDocument(LXProject* Project) { _Project = Project; }
 
 protected:
 
-	LXProject*			_Project;
+	LXProject* _Project;
 
 };
