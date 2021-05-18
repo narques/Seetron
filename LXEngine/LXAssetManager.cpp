@@ -496,7 +496,8 @@ const std::shared_ptr<LXAsset> LXAssetManager::Import(const LXFilepath& Filepath
 	else if (LXImporter* Importer = GetCore().GetPlugin(_pDocument, Extension))
 	{
 		std::shared_ptr<LXAssetMesh> AssetMesh;
-		std::shared_ptr<LXMesh>& Mesh = Importer->Load(Filepath);
+		std::shared_ptr<LXMesh> Mesh = Importer->Load(Filepath);
+
 				
 		if (Mesh)
 		{
