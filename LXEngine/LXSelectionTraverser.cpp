@@ -6,9 +6,8 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXSelectionTraverser.h"
-#include "LXMemory.h" // --- Must be the last included --- 
 
 LXSelectionTraverser::LXSelectionTraverser(void):
 m_pSetActors(NULL)

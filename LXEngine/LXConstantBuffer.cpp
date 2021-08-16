@@ -2,13 +2,13 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
 #include "LXConstantBuffer.h"
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXLogger.h"
 
 LXConstantBuffer::LXConstantBuffer()
 {

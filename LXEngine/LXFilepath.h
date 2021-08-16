@@ -9,7 +9,6 @@
 #pragma once
 
 #include "LXString.h"
-#include <stack>
 
 class LXCORE_API LXFilepath : public LXString
 {

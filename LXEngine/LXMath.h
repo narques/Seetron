@@ -58,7 +58,7 @@ __forceinline bool IsEven(int i)
 }
 
 // Is power of two
-__forceinline bool IsPOT(uint i)
+__forceinline bool IsPOT(unsigned int i)
 {
 	return !((i - 1) & i);
 }
@@ -151,7 +151,7 @@ __forceinline double Dot(const vec2d& v0, const vec2d& v1) { return v0.x*v1.x + 
 __forceinline vec2f sin(vec2f f) { return vec2f(sin(f.x), sin(f.y)); }
 __forceinline float Dot(vec2f x, float y) { return Dot(x, vec2f(y)); }
 
-__forceinline vec2f fract(const vec2f& v) { float intpart; return vec2f(modf(v.x, &intpart), modf(v.y, &intpart)); }
+__forceinline vec2f fract(const vec2f& v) { float intpart; return vec2f(modff(v.x, &intpart), modff(v.y, &intpart)); }
 __forceinline vec2d fract(const vec2d& v) { double intpart; return vec2d(modf(v.x, &intpart), modf(v.y, &intpart)); }
 
 __forceinline vec2f floor(const vec2f& v) { 	return vec2f(floor(v.x), floor(v.y)); }
@@ -162,7 +162,7 @@ __forceinline vec2d floor(const vec2d& v) { 	return vec2d(floor(v.x), floor(v.y)
 //------------------------------------------------------------------------------------------------------
 
 __forceinline vec3f LXMax(vec3f x, float y) { 	return vec3f(LXMax(x.x, y), LXMax(x.y, y), LXMax(x.z, y));  }
-__forceinline vec3f fract(const vec3f& v) { float intpart; return vec3f(modf(v.x, &intpart), modf(v.y, &intpart), modf(v.z, &intpart)); }
+__forceinline vec3f fract(const vec3f& v) { float intpart; return vec3f(modff(v.x, &intpart), modff(v.y, &intpart), modff(v.z, &intpart)); }
 
 // Generate normalized vectors
 void GenerateRandomVectors(int Count, std::vector<vec3f>& Vectors);

@@ -14,6 +14,7 @@
 #include "LXConstantBufferD3D11.h"
 #include "LXCore.h"
 #include "LXDeviceResourceManager.h"
+#include "LXLogger.h"
 #include "LXMaterialBase.h"
 #include "LXMaterialD3D11.h"
 #include "LXPrimitiveD3D11.h"
@@ -35,8 +36,9 @@
 #include "LXTimeD3D11.h"
 #include "LXViewport.h"
 #include "LXStatManager.h"
+#include "LXStatistic.h"
 #include "LXTaskManager.h"
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXThreadManager.h"
 
 //------------------------------------------------------------------------------------------------------
 // Console commands and Settings

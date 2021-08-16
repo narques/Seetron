@@ -10,9 +10,9 @@
 #include "LXObjectFactory.h"
 #include "LXConnection.h"
 #include "LXConnector.h"
+#include "LXLogger.h"
 #include "LXNode.h"
 #include "LXGraph.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXObjectFactory::LXObjectFactory()
 {

@@ -16,7 +16,6 @@
 #include "LXShaderManager.h"
 #include "LXStatistic.h"
 #include <d3dcompiler.h>
-#include "LXMemory.h" // --- Must be the last included ---
 
 #pragma comment(lib, "d3dcompiler.lib")
 

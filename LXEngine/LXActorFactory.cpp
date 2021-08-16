@@ -8,19 +8,19 @@
 
 #include "stdafx.h"
 #include "LXActorFactory.h"
-#include "LXActorMeshSphere.h"
+#include "LXActorCamera.h"
+#include "LXActorForest.h"
+#include "LXActorLight.h"
 #include "LXActorMeshCube.h"
 #include "LXActorMeshPlane.h"
-#include "LXActorCamera.h"
-#include "LXActorLight.h"
+#include "LXActorMeshSphere.h"
 #include "LXActorRenderToTexture.h"
-#include "LXScene.h"
-#include "LXTerrain.h"
-#include "LXProject.h"
 #include "LXActorSceneCapture.h"
 #include "LXConsoleManager.h"
-#include "LXActorForest.h"
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXLogger.h"
+#include "LXProject.h"
+#include "LXScene.h"
+#include "LXTerrain.h"
 
 //
 // Console commands

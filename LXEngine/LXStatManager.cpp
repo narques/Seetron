@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "LXStatManager.h"
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXLogger.h"
 
 LXStatManager::LXStatManager()
 {

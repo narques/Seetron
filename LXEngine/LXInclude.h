@@ -11,11 +11,12 @@
 #include "LXConfig.h"
 
 //
-// STL
+// STD
 //
 
 #include <algorithm>
 #include <atomic>
+#include <functional>
 #include <list>
 #include <map>
 #include <memory>
@@ -28,6 +29,11 @@
 // Misc 
 //
 
+#include <assert.h>
+#include <iosfwd>
+#include <iostream>
+#include <sstream>
+#include <string>
 #include <windows.h>
 #include <wchar.h>
 
@@ -46,9 +52,6 @@
 #include "LXVec3.h"
 #include "LXVec4.h"
 #include "LXMatrix.h"
-#include "LXLogger.h"
-#include "LXStatistic.h"
-#include "LXThreadManager.h"
 
 //
 // Misc

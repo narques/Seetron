@@ -8,10 +8,6 @@
 
 #pragma once
 
-#include <vector>
-#include <list>
-#include <set>
-
 // 8-Bits
 typedef char				int8;
 typedef unsigned char       uint8;

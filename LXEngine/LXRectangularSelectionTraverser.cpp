@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXRectangularSelectionTraverser.h"
 #include "LXActor.h"
 #include "LXActorMesh.h"

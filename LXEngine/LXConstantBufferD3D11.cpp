@@ -10,7 +10,7 @@
 #include "LXConstantBufferD3D11.h"
 #include "LXDirectX11.h"
 #include "LXStatistic.h"
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXThreadManager.h"
 
 LXConstantBufferD3D11::LXConstantBufferD3D11()
 {

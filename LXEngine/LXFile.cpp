@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXFile.h"
 #include <fstream>
 #include <string>

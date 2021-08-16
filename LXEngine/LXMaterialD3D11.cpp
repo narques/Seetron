@@ -10,6 +10,7 @@
 #include "LXMaterialD3D11.h"
 #include "LXConstantBufferD3D11.h"
 #include "LXGraphMaterialToHLSLConverter.h"
+#include "LXLogger.h"
 #include "LXMaterial.h"
 #include "LXMaterialInstance.h"
 #include "LXMaterialUtility.h"
@@ -18,8 +19,9 @@
 #include "LXRenderPassTransparency.h"
 #include "LXRenderPipelineDeferred.h"
 #include "LXRenderer.h"
+#include "LXStatistic.h"
 #include "LXTexture.h"
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXThreadManager.h"
 
 LXMaterialD3D11::LXMaterialD3D11()
 {

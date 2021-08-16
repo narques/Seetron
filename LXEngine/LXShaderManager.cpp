@@ -25,7 +25,7 @@
 #include "LXShaderD3D11.h"
 #include "LXShaderFactory.h"
 #include "LXShaderProgramD3D11.h"
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXThreadManager.h"
 
 #define DEFAULT_SHADER L"Default.hlsl"
 #define DRAWTOBACKBUFFER_SHADER L"DrawToBackBuffer.hlsl"

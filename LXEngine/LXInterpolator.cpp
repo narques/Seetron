@@ -17,7 +17,6 @@
 #include "LXVariant.h"
 #include "LXVec3.h"
 #include "LXVec4.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXInterpolator::LXInterpolator()
 {

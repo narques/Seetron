@@ -14,7 +14,7 @@
 #include "LXRenderTargetViewD3D11.h"
 #include "LXRenderer.h"
 #include "LXTextureD3D11.h"
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXStatistic.h"
 
 LXRenderPassGBuffer::LXRenderPassGBuffer(LXRenderer* InRenderer):LXRenderPass(InRenderer)
 {

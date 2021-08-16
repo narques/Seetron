@@ -8,6 +8,10 @@
 
 #pragma once
 
+#include "LXExports.h"
+
+#include <stdlib.h>
+
 class LXStringA;
 
 enum LXColor

@@ -6,10 +6,8 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXString.h"
-#include <stdarg.h>
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXStringA LXStringA::Number(int i)
 {

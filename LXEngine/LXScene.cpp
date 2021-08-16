@@ -6,14 +6,13 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXScene.h"
 #include "LXActorCamera.h"
 #include "LXCore.h"
 #include "LXEvent.h"
 #include "LXEventManager.h"
 #include "LXTraverserCallBack.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXScene::LXScene(LXProject* pDocument):
 LXActor(pDocument)

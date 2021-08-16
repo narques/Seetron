@@ -9,8 +9,6 @@
 #include "stdafx.h"
 #include "LXInputElementDescD3D11Factory.h"
 #include "LXPrimitive.h"
-#include <d3d11.h>
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXInputElementDescD3D11Factory::LXInputElementDescD3D11Factory()
 {

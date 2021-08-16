@@ -9,7 +9,6 @@
 #include "stdafx.h"
 #include "LXRenderPass.h"
 #include "LXRenderer.h"
-#include "LXMemory.h"
 
 LXRenderPass::LXRenderPass(LXRenderer* InRenderer):Renderer(InRenderer)
 {

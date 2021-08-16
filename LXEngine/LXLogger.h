@@ -9,8 +9,6 @@
 #pragma once
 
 #include "LXObject.h"
-#include <functional>
-#include <map>
 
 class LXMutex;
 class LXFile;
@@ -67,5 +65,8 @@ LXCORE_API void Log2(ELogType LogType, const wchar_t* section, const wchar_t* Fo
 LXCORE_API void Log2(ELogType LogType, const wchar_t* section, const char* Format, ...);
 LXCORE_API void Output(ELogType LogType, const wchar_t* section, const wchar_t* Format, ...);
 
-
-
+#define LogI(section, message, ...) Log2(ELogType::LogType_Info, L#section, message, __VA_ARGS__);
+#define LogW(section, message, ...) Log2(ELogType::LogType_Warning, L#section, message, __VA_ARGS__);
+#define LogE(section, message, ...) Log2(ELogType::LogType_Error, L#section, message, __VA_ARGS__);
+#define LogD(section, message, ...) Log2(ELogType::LogType_Debug, L#section, message, __VA_ARGS__);
+#define Trace(section, message, ...) Output(ELogType::LogType_Debug, L#section, message, __VA_ARGS__);

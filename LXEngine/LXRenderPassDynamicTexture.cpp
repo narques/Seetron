@@ -10,6 +10,7 @@
 #include "LXRenderPassDynamicTexture.h"
 #include "LXActorRenderToTexture.h"
 #include "LXMaterial.h"
+#include "LXLogger.h"
 #include "LXRenderer.h"
 #include "LXRenderCluster.h"
 #include "LXRenderClusterManager.h"
@@ -17,7 +18,7 @@
 #include "LXRenderPipelineDeferred.h"
 #include "LXTexture.h"
 #include "LXTextureD3D11.h"
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXThreadManager.h"
 
 LXRenderPassDynamicTexture::LXRenderPassDynamicTexture(LXRenderer* InRenderer) :LXRenderPass(InRenderer)
 {

@@ -2,13 +2,15 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
 #include "LXDirectX11.h"
 #include "LXConsoleManager.h"
+#include "LXLogger.h"
+#include "LXThreadManager.h"
 
 // Direct2D
 #if LX_D2D1

@@ -8,7 +8,6 @@
 
 #include "stdafx.h"
 #include "LXEvent.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXEvent::LXEvent(EEventType EventType) : EventType(EventType)
 {

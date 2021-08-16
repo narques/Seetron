@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -18,7 +18,7 @@
 #include "LXProject.h"
 #include "LXMaterial.h"
 #include "LXShader.h"
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXStatistic.h"
 
 LXAssetMesh::LXAssetMesh()
 {

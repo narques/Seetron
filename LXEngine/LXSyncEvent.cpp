@@ -8,7 +8,6 @@
 
 #include "stdafx.h"
 #include "LXSyncEvent.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXSyncEvent::LXSyncEvent(bool initialState)
 {

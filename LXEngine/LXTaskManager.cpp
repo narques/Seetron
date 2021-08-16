@@ -8,9 +8,9 @@
 
 #include "stdafx.h"
 #include "LXMutex.h"
+#include "LXPerformance.h"
 #include "LXTaskManager.h"
 #include "LXTask.h"
-#include "LXMemory.h" // --- Must be the last included ---
  
 LXTaskManager::LXTaskManager()
 {

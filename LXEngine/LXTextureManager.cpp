@@ -2,17 +2,17 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
 #include "LXTextureManager.h"
 #include "LXFilepath.h"
+#include "LXLogger.h"
 #include "LXTexture.h"
 #include "LXTextureD3D11.h"
 #include "LXBitmap.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXTextureManager::LXTextureManager()
 {

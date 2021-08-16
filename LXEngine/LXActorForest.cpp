@@ -83,22 +83,22 @@ void LXActorForest::Generate()
 // 	}
 	
 	// MultiInstance
-	if (1)
-	{
-		LXActorMeshCube* Tree = new LXActorMeshCube(GetProject());
-		Tree->SetInstanceCount(Instances);
-		float x, y, z;
-		for (int i = 0; i < Instances; i++)
-		{
-			x = RandomFloat() * MaxDistance;
-			y = RandomFloat() * MaxDistance;
-			z = Terrain->GetHeightAt(x, y);
-			Tree->SetInstancePosition(i, vec3f(x, y, z));
-		}
-		
-		AddChild(Tree);
-		//Tree->SetOrigin(vec3f(x, y, z));
-	}
+// 	if (1)
+// 	{
+// 		LXActorMeshCube* Tree = new LXActorMeshCube(GetProject());
+// 		Tree->SetInstanceCount(Instances);
+// 		float x, y, z;
+// 		for (int i = 0; i < Instances; i++)
+// 		{
+// 			x = RandomFloat() * MaxDistance;
+// 			y = RandomFloat() * MaxDistance;
+// 			z = Terrain->GetHeightAt(x, y);
+// 			Tree->SetInstancePosition(i, vec3f(x, y, z));
+// 		}
+// 		
+// 		AddChild(Tree);
+// 		//Tree->SetOrigin(vec3f(x, y, z));
+// 	}
 
 }
 

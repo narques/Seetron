@@ -13,13 +13,13 @@
 #include "LXRenderPass.h"
 #include "LXPlatform.h"
 #include "LXFile.h"
+#include "LXLogger.h"
 #include "LXMaterial.h"
 #include "LXMaterialD3D11.h"
 #include "LXTexture.h"
 #include "LXTextureD3D11.h"
 #include "LXGraphMaterialToHLSLConverter.h"
 #include "LXShader.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 namespace
 {

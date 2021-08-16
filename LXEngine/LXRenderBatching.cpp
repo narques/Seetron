@@ -14,6 +14,7 @@
 #include "LXRenderCluster.h"
 #include "LXRenderData.h"
 #include "LXPrimitiveInstance.h"
+#include "LXStatistic.h"
 
 LXRenderBatching::LXRenderBatching()
 {

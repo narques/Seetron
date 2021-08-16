@@ -29,6 +29,7 @@
 #include "LXShaderManager.h"
 #include "LXShaderProgramD3D11.h"
 #include "LXStatistic.h"
+#include "LXThreadManager.h"
 #include "LXWorldTransformation.h"
 
 LXRenderCluster::LXRenderCluster(LXRenderClusterManager* renderClusterManager, LXRenderData* renderData, const LXMatrix& matrixWCS, const LXMatrix& matrix):

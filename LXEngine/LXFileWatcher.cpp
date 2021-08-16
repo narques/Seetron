@@ -12,7 +12,6 @@
 #include "LXDirectory.h"
 #include "LXMessageManager.h"
 #include "LXMutex.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 // Use the ReadDirectoryChanges function instead of FindFirstChangeNotification/FindNextChangeNotification 
 #define LX_USE_RDC 1

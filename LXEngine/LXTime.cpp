@@ -8,7 +8,6 @@
 
 #include "stdafx.h"
 #include "LXTime.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXTime::LXTime()
 {

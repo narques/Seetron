@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXSelectionmanager.h"
 #include "LXEventManager.h"
 #include "LXActorMesh.h"
@@ -19,7 +19,6 @@
 #include "LXCore.h"
 #include "LXProject.h"
 #include "LXScene.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXSelectionManager::LXSelectionManager(const LXProject* pDocument):
 m_eSelectionLevel(LX_SELECTION_LEVEL_ENTITY)

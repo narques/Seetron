@@ -8,7 +8,6 @@
 
 #include "stdafx.h"
 #include "LXLibrary.h"
-#include <windows.h>
 
 LXLibrary::LXLibrary()
 {

@@ -6,11 +6,10 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXQueryManager.h"
 #include "LXQueryTransform.h"
 #include "LXProject.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXQueryManager::LXQueryManager(const LXProject* pDocument):
 LXManager(pDocument)

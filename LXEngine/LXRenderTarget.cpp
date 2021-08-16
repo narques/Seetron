@@ -10,7 +10,6 @@
 #include "LXRenderTarget.h"
 #include "LXTextureD3D11.h"
 #include "LXRenderTargetViewD3D11.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXRenderTarget::LXRenderTarget(uint width, uint height, DXGI_FORMAT Format):Width(width), Height(height)
 {

@@ -12,6 +12,7 @@
 #include "LXCommandManager.h"
 #include "LXCore.h"
 #include "LXEventManager.h"
+#include "LXLogger.h"
 #include "LXMesh.h"
 #include "LXPrimitive.h"
 #include "LXPrimitiveFactory.h"

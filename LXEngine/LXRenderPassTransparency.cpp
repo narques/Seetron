@@ -18,7 +18,6 @@
 #include "LXRenderPassLighting.h"
 #include "LXRenderPipelineDeferred.h"
 #include "LXRenderTarget.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXRenderPassTransparency::LXRenderPassTransparency(LXRenderer* Renderer):LXRenderPass(Renderer)
 {

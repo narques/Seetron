@@ -8,6 +8,11 @@
 
 #pragma once
 
+#include "LXExports.h"
+#include "LXMacros.h"
+#include "LXVec3.h"
+#include "LXVec4.h"
+
 class LXAxis;
 class LXBBox;
 

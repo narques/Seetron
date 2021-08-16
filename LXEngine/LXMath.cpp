@@ -6,9 +6,8 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXMath.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 int UpperPO2(int a)
 {

@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXCore.h"
 #include "LXActorFactory.h"
 #include "LXAnimationManager.h"
@@ -35,10 +35,10 @@
 #include "LXStatistic.h"
 #include "LXSyncEvent.h"
 #include "LXThread.h"
+#include "LXThreadManager.h"
 #include "LXViewport.h"
 #include "LXViewportManager.h"
 #include "LXWindow.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 //------------------------------------------------------------------------------------------------------
 // Console commands

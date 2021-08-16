@@ -14,6 +14,7 @@
 
 struct LXChannel;
 class LXDirectory;
+class LXMutex;
 
 class LXCORE_API LXFileWatcher : public LXObject
 {

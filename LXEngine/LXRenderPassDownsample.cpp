@@ -20,7 +20,6 @@
 #include "LXSettings.h"
 #include "LXRenderPipelineDeferred.h"
 #include "LXRenderPassLighting.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 namespace
 {

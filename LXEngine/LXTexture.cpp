@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXTexture.h"
 #include "LXBitmap.h"
 #include "LXLogger.h"
@@ -14,8 +14,8 @@
 #include "LXProject.h"
 #include "LXRenderer.h"
 #include "LXSettings.h"
+#include "LXStatistic.h"
 #include "LXXMLDocument.h"
-#include "LXMemory.h" // --- Must be the last included
 
 LXTexture::LXTexture()
 {

@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -10,7 +10,6 @@
 #include "LXTransformation.h"
 #include "LXSmartObject.h"
 #include "LXMath.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXTransformation::LXTransformation()
 {

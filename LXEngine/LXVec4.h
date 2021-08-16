@@ -10,6 +10,7 @@
 #pragma once
 
 #include "LXColor.h"
+#include "LXMacros.h"
 #include "LXVec3.h"
 
 template<class T>

@@ -10,6 +10,8 @@
 
 #include "LXVec3.h"
 
+class LXObject;
+
 enum class EEventType			// Known emitters
 {
 	// Event

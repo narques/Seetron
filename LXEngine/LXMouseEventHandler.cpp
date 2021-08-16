@@ -6,9 +6,8 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXMouseEventHandler.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXMouseEventHandler::LXMouseEventHandler(void)
 {

@@ -6,10 +6,9 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXPlane.h"
 #include "LXCore.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXPlane::LXPlane(void)
 {

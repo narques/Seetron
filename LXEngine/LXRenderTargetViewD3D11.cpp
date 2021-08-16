@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -11,7 +11,7 @@
 #include "LXTextureD3D11.h"
 #include "LXDirectX11.h"
 #include "LXStatistic.h"
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXThreadManager.h"
 
 LXRenderTargetViewD3D11::LXRenderTargetViewD3D11(LXTextureD3D11* Texture)
 {

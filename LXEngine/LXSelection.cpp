@@ -12,7 +12,6 @@
 #include "LXCore.h"
 #include "LXProject.h"
 #include "LXMSXMLNode.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXSelection::LXSelection()
 {

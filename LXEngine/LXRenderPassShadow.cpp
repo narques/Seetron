@@ -26,7 +26,6 @@
 #include "LXTextureD3D11.h"
 #include "LXViewport.h"
 #include "LXWorldTransformation.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 namespace
 {

@@ -13,7 +13,7 @@
 #include "LXShaderD3D11.h"
 #include "LXStatistic.h"
 #include "LXInputElementDescD3D11Factory.h"
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXThreadManager.h"
 
 LXPrimitiveD3D11::LXPrimitiveD3D11()
 {

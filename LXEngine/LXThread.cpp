@@ -9,8 +9,6 @@
 #include "stdafx.h"
 #include "LXThread.h"
 #include "targetver.h"
-#include <windows.h>
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXThread::LXThread() 
 {

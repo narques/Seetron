@@ -11,6 +11,8 @@
 #include "LXDelegate.h"
 #include "LXMatrix.h"
 
+class LXSmartObject;
+
 class LXCORE_API LXTransformation
 {
 

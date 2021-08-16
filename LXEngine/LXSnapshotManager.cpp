@@ -11,7 +11,6 @@
 #include "LXSnapshot.h"
 #include "LXSmartObject.h"
 #include "LXMSXMLNode.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXSnapshotManager::LXSnapshotManager(const LXProject* pDocument)
 {

@@ -11,7 +11,6 @@
 #include "LXLogger.h"
 #include "LXPlatform.h"
 #include "LXFile.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXShader::LXShader()
 {

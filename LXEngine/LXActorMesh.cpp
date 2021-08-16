@@ -10,8 +10,9 @@
 #include "LXActorMesh.h"
 #include "LXAssetMesh.h"
 #include "LXCore.h"
+#include "LXLogger.h"
 #include "LXMesh.h"
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXStatistic.h"
 
 LXActorMesh::LXActorMesh():
 LXActor(GetCore().GetProject())

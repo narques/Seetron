@@ -10,8 +10,6 @@
 #include "LXProceduralTexture.h"
 #include "LXGraph.h"
 
-#include "LXMemory.h" // --- Must be the last included ---
-
 LXProceduralTexture::LXProceduralTexture()
 {
 }

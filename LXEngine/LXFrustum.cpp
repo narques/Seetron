@@ -6,12 +6,11 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXFrustum.h"
 #include "LXCore.h"
 #include "LXMatrix.h"
 #include "LXTexture.h" // LEFT RIGHT ...
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXFrustum::LXFrustum(void)
 {

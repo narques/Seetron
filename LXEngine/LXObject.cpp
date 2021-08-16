@@ -6,11 +6,10 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXObject.h"
 #include "LXMutex.h"
-#include <typeinfo>
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXLogger.h"
 
 #if LX_TRACE_OBJECTS
 

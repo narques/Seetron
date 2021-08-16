@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXQueryTransform.h"
 #include "LXQueryManager.h"
 #include "LXProject.h"
@@ -20,7 +20,6 @@
 #include "LXAnchor.h"
 #include "LXViewState.h"
 #include "LXViewport.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXQueryTransform::LXQueryTransform() :
 _StartPosition(0.f, 0.f),

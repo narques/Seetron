@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -10,12 +10,7 @@
 
 #pragma warning( disable : 4251 )  
 
-#include <string>
-#include <list>
-#include <algorithm>
-#include <iostream>
-#include <iosfwd>
-#include <sstream>
+#include "LXMacros.h"
 
 typedef std::vector<char> ArrayChar;
 
@@ -255,12 +250,12 @@ public:
 		m_str.assign(str);
 	}
 
-	void Erase(uint Pos, uint Len)
+	void Erase(unsigned int Pos, unsigned int Len)
 	{
 		m_str.erase(Pos, Len);
 	}
 	
-	void Insert(uint Pos, const char* Str)
+	void Insert(unsigned int Pos, const char* Str)
 	{
 		m_str.insert(Pos, Str);
 	}

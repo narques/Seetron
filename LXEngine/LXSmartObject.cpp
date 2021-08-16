@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXSmartObject.h"
 #include "LXSettings.h"
 #include "LXProperty.h"
@@ -20,7 +20,7 @@
 #include "LXVariant.h"
 #include "LXAssetMesh.h"
 #include "LXPropertyType.h"
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXThreadManager.h"
 
 typedef std::list<LXSmartObject*> ListSmartObjects;
 typedef std::set<LXSmartObject*> SetSmartObjects;

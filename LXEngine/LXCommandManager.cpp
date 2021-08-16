@@ -14,7 +14,7 @@
 #include "LXQueryManager.h"
 #include "LXAnimationManager.h"
 #include "LXCommandModifyHierarchy.h"
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXLogger.h"
 
 LXCommandManager::LXCommandManager()
 {

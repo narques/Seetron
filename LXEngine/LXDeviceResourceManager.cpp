@@ -15,6 +15,7 @@
 #include "LXMaterialD3D11.h"
 #include "LXPrimitive.h"
 #include "LXPrimitiveD3D11.h"
+#include "LXThreadManager.h"
 
 template<class T>
 void hash_combine(std::size_t& seed, const T& data)

@@ -12,8 +12,10 @@
 // Seetron
 #include "LXAssetMesh.h"
 #include "LXCore.h"
+#include "LXLogger.h"
 #include "LXMesh.h"
 #include "LXMeshBase.h"
+#include "LXStatistic.h"
 
 LXComponentMesh::LXComponentMesh(LXActor* actor) :
 	LXComponent(actor)

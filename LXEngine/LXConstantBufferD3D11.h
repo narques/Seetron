@@ -8,8 +8,6 @@
 
 #pragma once
 
-#include "LXMatrix.h"
-
 struct ID3D11Buffer;
 
 struct LXConstantBufferDataSpotLight

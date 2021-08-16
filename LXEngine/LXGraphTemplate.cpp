@@ -9,7 +9,6 @@
 #include "stdafx.h"
 #include "LXGraphTemplate.h"
 #include "LXNode.h"
-#include "LXMemory.h" // --- Must be the last included --- 
 
 LXGraphTemplate::LXGraphTemplate()
 {

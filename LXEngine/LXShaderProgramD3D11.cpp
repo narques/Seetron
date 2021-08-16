@@ -10,7 +10,6 @@
 #include "LXShaderProgramD3D11.h"
 #include "LXRenderCommandList.h"
 #include "LXShaderD3D11.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXShaderProgramD3D11::LXShaderProgramD3D11()
 {

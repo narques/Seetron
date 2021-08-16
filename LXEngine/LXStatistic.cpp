@@ -6,11 +6,11 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXStatistic.h"
 #include "LXCore.h"
+#include "LXLogger.h"
 #include "LXStatManager.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 #ifdef LX_COUNTERS
 

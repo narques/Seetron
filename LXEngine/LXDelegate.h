@@ -9,8 +9,6 @@
 #pragma once
 
 #include "LXFunction.h"
-#include <assert.h>
-#include <vector>
 
 typedef unsigned long long LXDelegateHandle;
 

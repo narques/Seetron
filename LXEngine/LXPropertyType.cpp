@@ -2,12 +2,14 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXPropertyType.h"
+#include "LXLogger.h"
+#include "LXMacros.h"
 
 #define CMP_PTYPE(type) if (wcscmp(typeName, L#type) == 0) return EPropertyType::type;
 #define CMP_CTYPE(type) if (wcscmp(typeName, L#type) == 0) return EConnectorType::type;

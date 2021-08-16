@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXPrimitive.h"
 #include "LXActorMesh.h"
 #include "LXCore.h"
@@ -18,7 +18,6 @@
 #include "LXAssetMesh.h"
 #include "LXMaterial.h"
 #include "LXStatistic.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 int LXPrimitive::m_snPrimitives = 0;
 int LXPrimitive::m_snPoints = 0;

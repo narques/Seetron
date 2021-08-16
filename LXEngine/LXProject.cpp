@@ -6,9 +6,12 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
+#include "LXProject.h"
 #include "LXActorCamera.h"
+#include "LXActorLight.h"
 #include "LXActorMeshCube.h"
+#include "LXActorMeshGizmo.h"
 #include "LXActorMeshPlane.h"
 #include "LXActorMeshSphere.h"
 #include "LXAnimationManager.h"
@@ -16,15 +19,13 @@
 #include "LXAssetMesh.h"
 #include "LXCommandManager.h"
 #include "LXDocumentManager.h"
-#include "LXActorMeshGizmo.h"
-#include "LXActorLight.h"
+#include "LXLogger.h"
+#include "LXMSXMLNode.h"
 #include "LXMesh.h"
 #include "LXMeshFactory.h"
-#include "LXMSXMLNode.h"
 #include "LXPerformance.h"
 #include "LXPrimitive.h"
 #include "LXPrimitiveFactory.h"
-#include "LXProject.h"
 #include "LXQueryManager.h"
 #include "LXQueryTransform.h"
 #include "LXScene.h"
@@ -35,7 +36,6 @@
 #include "LXStatistic.h"
 #include "LXTerrain.h"
 #include "LXViewStateManager.h"
-#include "LXMemory.h" // --- Must be the last included --- 
 
 namespace
 {

@@ -24,7 +24,7 @@
 #include "LXSettings.h"
 #include "LXShader.h"
 #include "LXTexture.h"
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXThreadManager.h"
 
 const wchar_t kDefaultMaterial[] = L"Materials/DefaultGrid.smat";
 const wchar_t kDefaultTexture[] = L"Textures/grid.stex";
@@ -508,7 +508,7 @@ const std::shared_ptr<LXAsset> LXAssetManager::Import(const LXFilepath& Filepath
 			LXFilepath RelativeAssetFilepath = AssetFolderpath.GetRelativeFilepath(AssetFilepath);
 			
 			// Resource
-			std::shared_ptr<LXAssetMesh> AssetMesh = std::make_shared<LXAssetMesh>(Mesh);
+			AssetMesh = std::make_shared<LXAssetMesh>(Mesh);
 			AssetMesh->SetPersistent(!Transient);
 			AssetMesh->Owner = EResourceOwner::LXResourceOwner_Project;
 			AssetMesh->SetFilepath(AssetFilepath);

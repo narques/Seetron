@@ -7,8 +7,10 @@
 //------------------------------------------------------------------------------------------------------
 
 #pragma once
+
 #include "LXAsset.h"
 
+class LXFile;
 class LXMesh;
 class LXPrimitive;
 

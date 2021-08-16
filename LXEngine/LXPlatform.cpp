@@ -12,14 +12,6 @@
 #include "LXWindow.h"
 #include "targetver.h"
 
-// Win32
-#include <windows.h>
-#include <shellscalingapi.h>
-
-// Misc
-#include <string>
-#include <Rpc.h>
-
 #pragma comment(lib, "Rpcrt4.lib") // For CreateUuid()
 
 LXPlatform::LXPlatform()

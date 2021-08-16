@@ -6,17 +6,14 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXLogger.h"
 #include "LXCore.h"
 #include "LXConsoleManager.h"
-#include "LXPlatform.h"
 #include "LXFile.h"
 #include "LXMutex.h"
-#include <sstream>
-#include <fstream>
-#include <stdarg.h>
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXPerformance.h"
+#include "LXPlatform.h"
 
 namespace
 {

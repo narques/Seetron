@@ -6,12 +6,11 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXAxis.h"
 #include "LXBBox.h"
 #include "LXMath.h"
 #include "LXMatrix.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 bool IsValid(const LXMatrix& m)
 {

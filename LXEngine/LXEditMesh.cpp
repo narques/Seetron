@@ -6,12 +6,11 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXEditMesh.h"
 #include "LXMeshTopology.h"
 #include "LXCore.h"
 #include "LXMath.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXEditMesh::LXEditMesh(void):
 m_pTFaces(NULL),

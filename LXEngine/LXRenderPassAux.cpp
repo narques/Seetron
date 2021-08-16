@@ -21,7 +21,6 @@
 #include "LXRenderTargetViewD3D11.h"
 #include "LXRenderer.h"
 #include "LXViewport.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXRenderPassAux::LXRenderPassAux(LXRenderer* InRenderer) :LXRenderPass(InRenderer)
 {

@@ -19,7 +19,6 @@
 #include "LXSettings.h"
 #include "LXShaderD3D11.h"
 #include "LXShaderProgramD3D11.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 namespace
 {

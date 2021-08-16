@@ -12,7 +12,6 @@
 #include "LXFile.h"
 #include "LXSettings.h"
 #include "LXLogger.h"
-#include "LXMemory.h" // --- Must be the last included --- 
 
 LXDocumentBase::LXDocumentBase()
 {

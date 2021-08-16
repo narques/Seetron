@@ -6,9 +6,8 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXPlugin.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXPlugin::LXPlugin(void)
 {

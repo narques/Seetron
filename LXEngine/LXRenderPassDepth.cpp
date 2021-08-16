@@ -12,7 +12,8 @@
 #include "LXRenderCommandList.h"
 #include "LXRenderer.h"
 #include "LXRenderPipelineDeferred.h"
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXStatistic.h"
+#include "LXThreadManager.h"
 
 LXConsoleCommandT<bool> CSet_UseDepthPass(L"Engine.ini", L"Renderer", L"DepthPass", L"false");
 

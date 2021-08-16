@@ -9,7 +9,7 @@
 #include "stdafx.h"
 #include "LXConnection.h"
 #include "LXConnector.h"
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXLogger.h"
 
 LXConnection::LXConnection()
 {

@@ -18,6 +18,7 @@
 #include "LXPrimitiveInstance.h"
 #include "LXRenderCluster.h"
 #include "LXRenderer.h"
+#include "LXStatistic.h"
 
 LXWorldPrimitive::LXWorldPrimitive(const std::shared_ptr<LXPrimitiveInstance>& primitiveInstance):
 	PrimitiveInstance(primitiveInstance)

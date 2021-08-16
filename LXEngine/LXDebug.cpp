@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "LXDebug.h"
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXLogger.h"
 
 void LXDebug::LogFailure(const wchar_t* Expression, const wchar_t* File, int Line)
 {

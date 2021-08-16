@@ -6,10 +6,9 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXQuery.h"
 #include "LXQueryManager.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXQuery::LXQuery()
 {

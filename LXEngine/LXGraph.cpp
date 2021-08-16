@@ -10,8 +10,8 @@
 #include "LXConnection.h"
 #include "LXConnector.h"
 #include "LXGraph.h"
+#include "LXLogger.h"
 #include "LXNode.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXGraph::LXGraph()
 {

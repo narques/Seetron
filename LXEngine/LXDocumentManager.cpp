@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXCommandManager.h"
 #include "LXCore.h"
 #include "LXDocumentManager.h"
@@ -15,8 +15,8 @@
 #include "LXProject.h"
 #include "LXQueryTransform.h"
 #include "LXThread.h"
+#include "LXThreadManager.h"
 #include "LXWindow.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXDocumentManager::LXDocumentManager(void)
 {
@@ -73,7 +73,8 @@ int OpenFunc(void* pData)
 	Project->OnFilesLoaded(bRet);
 	
 	GetEventManager()->PostEvent(new LXEventResult(EEventType::ProjectLoaded, bRet));
-	GetCore().EnqueueInvokeDelegate(&Project->ProjectLoaded);
+	if (bRet) // else Project is destroyed & the delegate is KO when called....
+		GetCore().EnqueueInvokeDelegate(&Project->ProjectLoaded);
 					
 	LoadingThread = 0;
 

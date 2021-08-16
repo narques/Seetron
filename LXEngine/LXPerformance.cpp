@@ -6,9 +6,8 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXPerformance.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXPerformance::LXPerformance(void)
 {

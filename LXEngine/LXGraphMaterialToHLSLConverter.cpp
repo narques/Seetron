@@ -19,6 +19,7 @@
 #include "LXGraphMaterial.h"
 #include "LXShaderFactory.h"
 #include "LXGraphTemplate.h"
+#include "LXLogger.h"
 #include "LXMaterial.h"
 #include "LXMaterialInstance.h"
 #include "LXMaterialUtility.h"

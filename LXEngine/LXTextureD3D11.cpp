@@ -8,12 +8,13 @@
 
 #include "stdafx.h"
 #include "LXTextureD3D11.h"
-#include "LXDirectX11.h"
-#include "LXRenderCommandList.h"
-#include "LXTexture.h"
 #include "LXBitmap.h"
+#include "LXDirectX11.h"
+#include "LXLogger.h"
+#include "LXRenderCommandList.h"
 #include "LXStatistic.h"
-#include "LXMemory.h" // --- Must be the last included ---
+#include "LXTexture.h"
+#include "LXThreadManager.h"
 
 LXTextureD3D11::LXTextureD3D11()
 {

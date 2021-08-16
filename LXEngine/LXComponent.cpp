@@ -13,8 +13,10 @@
 #include "LXActor.h"
 #include "LXCore.h"
 #include "LXMath.h"
+#include "LXLogger.h"
 #include "LXRenderData.h"
 #include "LXRenderer.h"
+#include "LXStatistic.h"
 
 LXComponent::LXComponent(LXActor* actor):
 	_actor(actor)

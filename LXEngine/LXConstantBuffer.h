@@ -8,11 +8,6 @@
 
 #pragma once
 
-#include "LXVec2.h"
-#include "LXVec3.h"
-#include "LXVec4.h"
-#include "LXMatrix.h"
-
 enum class EHLSLType
 {
 	HLSL_float,

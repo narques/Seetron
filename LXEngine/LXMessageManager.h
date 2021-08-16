@@ -10,6 +10,8 @@
 
 #include "LXObject.h"
 
+class LXMutex;
+
 struct LXChannel
 {
 	const LXObject* Sender;

@@ -9,7 +9,6 @@
 #pragma once
 
 class LXPrimitive;
-class LXMatrix;
 class LXMaterialBase;
 class LXWorldPrimitive;
 

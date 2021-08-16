@@ -6,11 +6,10 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXPropertyManager.h"
 #include "LXMaterial.h"
 #include "LXActor.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXPropertyManager::LXPropertyManager()
 {

@@ -6,9 +6,8 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXQueryPickTwoActors.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXQueryPickTwoActors::LXQueryPickTwoActors(LXQueryManager* pQueryManager):
 LXQuery(pQueryManager),

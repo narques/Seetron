@@ -8,7 +8,6 @@
 
 #include "stdafx.h"
 #include "LXMutex.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXMutex::LXMutex()
 {

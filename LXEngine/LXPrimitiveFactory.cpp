@@ -11,7 +11,6 @@
 #include "LXPrimitive.h"
 #include "LXMatrix.h"
 #include "LXMath.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 void InterpolateSmooth2(const float& vStart, const float& vEnd, float t, float& vResult)
 {

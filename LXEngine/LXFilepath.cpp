@@ -6,11 +6,9 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXFilepath.h"
-#include <Windows.h>
 #include <shlwapi.h>
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXString LXFilepath::GetExtension() const
 {

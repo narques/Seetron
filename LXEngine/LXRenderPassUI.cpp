@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -14,9 +14,8 @@
 #include "LXRenderer.h"
 #include "LXRenderPipeline.h"
 #include "LXStatManager.h"
+#include "LXStatistic.h"
 #include "LXViewport.h"
-#include <D2d1_1.h>
-#include "LXMemory.h" // --- Must be the last included ---
 
 //------------------------------------------------------------------------------------------------------
 // Console commands and Settings

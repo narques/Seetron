@@ -6,12 +6,11 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "lxquerylinkchildtofather.h"
 #include "LXActor.h"
 #include "lxquerymanager.h"
 #include "LXProject.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXQueryLinkChildToFather::LXQueryLinkChildToFather(LXQueryManager* pQueryManager):
 LXQueryPickTwoActors(pQueryManager)

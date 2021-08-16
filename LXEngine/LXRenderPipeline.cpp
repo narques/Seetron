@@ -10,7 +10,6 @@
 #include "LXRenderPass.h"
 #include "LXRenderPipeline.h"
 #include "LXConsoleManager.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXRenderPipeline::LXRenderPipeline()
 {

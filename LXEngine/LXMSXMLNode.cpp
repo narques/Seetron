@@ -7,9 +7,6 @@
 #include "stdafx.h"
 #include "LXMSXMLNode.h"
 
-#include <msxml6.h>
-#include <atlcomcli.h>
-
 void LXMSXMLNode::get()
 { 
   if (pos!=-1)

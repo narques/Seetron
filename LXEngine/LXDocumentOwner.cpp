@@ -6,11 +6,10 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXDocumentOwner.h"
 #include "LXProject.h"
 #include "LXQueryManager.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXDocumentOwner::LXDocumentOwner():
 _pDocument(NULL)

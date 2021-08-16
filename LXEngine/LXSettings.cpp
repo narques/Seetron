@@ -6,13 +6,11 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LXSettings.h"
 #include "LXCore.h"
 #include "LXLogger.h"
 #include "LXDirectory.h"
-#include <windows.h>
-#include "LXMemory.h" // --- Must be the last included ---
 
 enum LXERenderer
 {

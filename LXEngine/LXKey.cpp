@@ -8,7 +8,6 @@
 
 #include "stdafx.h"
 #include "LXKey.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXKey::LXKey(LXTrack* pTrack, LXVariant* Variant):_pTrack(pTrack),_pVariant(Variant)
 {

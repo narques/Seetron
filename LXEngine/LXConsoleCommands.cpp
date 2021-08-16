@@ -10,9 +10,10 @@
 #include "LXConsoleCommands.h"
 #include "LXConsoleManager.h"
 #include "LXCore.h"
+#include "LXLogger.h"
 #include "LXViewport.h"
+
 #include <commdlg.h>
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXConsoleCommands::LXConsoleCommands()
 {

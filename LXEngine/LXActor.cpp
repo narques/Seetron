@@ -11,10 +11,12 @@
 #include "LXActorFactory.h"
 #include "LXComponent.h"
 #include "LXCore.h"
+#include "LXLogger.h"
 #include "LXMSXMLNode.h"
 #include "LXMath.h"
 #include "LXRenderData.h"
 #include "LXRenderer.h"
+#include "LXStatistic.h"
 #include "LXScene.h"
 
 LXActor::LXActor()

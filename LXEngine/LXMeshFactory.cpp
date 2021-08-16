@@ -12,7 +12,6 @@
 #include "LXCore.h"
 #include "LXPrimitive.h"
 #include "LXPrimitiveFactory.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXMeshFactory::LXMeshFactory()
 {

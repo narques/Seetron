@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "LXExports.h"
+
 class LXCORE_API LXDebug
 {
 

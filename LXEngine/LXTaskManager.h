@@ -10,6 +10,7 @@
 
 #include "LXObject.h"
 
+class LXMutex;
 class LXTask;
 
 class LXTaskManager : public LXObject
