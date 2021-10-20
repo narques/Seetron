@@ -75,7 +75,7 @@ bool LXAnimationManager::Update(double dFrameTime)
 {
 	bool bRet = false;
 
-	if (GetCore().GetPlayMode())
+	if (GetEngine().GetPlayMode())
 	{
 		_activeAnimation->Update(dFrameTime);
 	}
@@ -106,7 +106,7 @@ bool LXAnimationManager::Update(double dFrameTime)
 	 
 	bRet = _listVolatileAnimations.size() ? true : false;
 	
-	if (GetCore().GetPlayMode())
+	if (GetEngine().GetPlayMode())
 	{
 		bRet |= _setSceneObjectToUpdate.size() ? true : false;
 		bRet |= _activeAnimation ? true : false;

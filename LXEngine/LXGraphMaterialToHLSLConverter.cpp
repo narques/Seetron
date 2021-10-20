@@ -14,7 +14,7 @@
 #include "LXConstantBuffer.h"
 #include "LXConnection.h"
 #include "LXConnector.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXFile.h"
 #include "LXGraphMaterial.h"
 #include "LXShaderFactory.h"

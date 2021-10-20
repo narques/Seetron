@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "LXAsset.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXProject.h"
 #include "LXSettings.h"
 #include "LXLogger.h"
@@ -71,7 +71,7 @@ LXString LXAsset::GetRelativeFilename() const
 	}
 	else if (Owner == EResourceOwner::LXResourceOwner_Project)
 	{
-		return GetCore().GetProject()->GetAssetFolder().GetRelativeFilepath(_filepath);
+		return GetEngine().GetProject()->GetAssetFolder().GetRelativeFilepath(_filepath);
 	}
 	else
 	{

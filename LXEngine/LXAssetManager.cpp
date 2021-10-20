@@ -37,10 +37,10 @@ const std::shared_ptr<LXAsset> emptyAsset;
 
 LXConsoleCommand1S CCCreateNewMaterial(L"Asset.CreateMaterial", [](const LXString& inMaterialName)
 {
-	LXProject* Project = GetCore().GetProject();
+	LXProject* Project = GetEngine().GetProject();
 	if (!Project)
 	{
-		LogW(Core, L"No project");
+		LogW(Engine, L"No project");
 	}
 	else
 	{
@@ -48,15 +48,15 @@ LXConsoleCommand1S CCCreateNewMaterial(L"Asset.CreateMaterial", [](const LXStrin
 	}
 }, []()
 {
-	return GetCore().GetProject() != nullptr;
+	return GetEngine().GetProject() != nullptr;
 });
 
 LXConsoleCommand1S CCCreateNewTexture(L"Asset.CreateTexture", [](const LXString& inTextureName)
 {
-	LXProject* Project = GetCore().GetProject();
+	LXProject* Project = GetEngine().GetProject();
 	if (!Project)
 	{
-		LogW(Core, L"No project");
+		LogW(Engine, L"No project");
 	}
 	else
 	{
@@ -64,15 +64,15 @@ LXConsoleCommand1S CCCreateNewTexture(L"Asset.CreateTexture", [](const LXString&
 	}
 }, []()
 {
-	return GetCore().GetProject() != nullptr;
+	return GetEngine().GetProject() != nullptr;
 });
 
 LXConsoleCommand1S CCCreateNewShader(L"Asset.CreateShader", [](const LXString& inShaderName)
 {
-	LXProject* Project = GetCore().GetProject();
+	LXProject* Project = GetEngine().GetProject();
 	if (!Project)
 	{
-		LogW(Core, L"No project");
+		LogW(Engine, L"No project");
 	}
 	else
 	{
@@ -80,15 +80,15 @@ LXConsoleCommand1S CCCreateNewShader(L"Asset.CreateShader", [](const LXString& i
 	}
 }, []()
 {
-	return GetCore().GetProject() != nullptr;
+	return GetEngine().GetProject() != nullptr;
 });
 
 LXConsoleCommand1S CCCreateNewAnimation(L"Asset.CreateAnimation", [](const LXString& inAnimationName)
 {
-	LXProject* Project = GetCore().GetProject();
+	LXProject* Project = GetEngine().GetProject();
 	if (!Project)
 	{
-		LogW(Core, L"No project");
+		LogW(Engine, L"No project");
 	}
 	else
 	{
@@ -96,7 +96,7 @@ LXConsoleCommand1S CCCreateNewAnimation(L"Asset.CreateAnimation", [](const LXStr
 	}
 }, []()
 {
-	return GetCore().GetProject() != nullptr;
+	return GetEngine().GetProject() != nullptr;
 });
 
 LXConsoleCommandT<bool> CSet_MonitorAssetFiles(L"Engine.ini", L"AssetManager", L"MonitorAssetFiles", L"false");
@@ -110,7 +110,7 @@ LXAssetManager::LXAssetManager(LXProject* Project) :_pDocument(Project)
 	CHK(IsMainThread());
 
 	_graphMaterialTemplate = std::make_unique<LXGraphTemplate>();
-	VRF(_graphMaterialTemplate->LoadWithMSXML(GetSettings().GetCoreFolder() + L"/GraphMaterialTemplate.xml"));
+	VRF(_graphMaterialTemplate->LoadWithMSXML(GetSettings().GetEngineFolder() + L"/GraphMaterialTemplate.xml"));
 				
 	_ListAssetExtentions.push_back(LX_MATERIAL_EXT);
 	_ListAssetExtentions.push_back(LX_TEXTURE_EXT);
@@ -258,7 +258,7 @@ void LXAssetManager::AddAsset(std::shared_ptr<LXAsset> asset)
 	afi.FullFileName = asset->GetFilepath();
 	afi.Owner = asset->Owner;
 	afi.Asset = asset;
-	const LXFilepath AssetFolderpath = GetCore().GetProject()->GetAssetFolder();
+	const LXFilepath AssetFolderpath = GetEngine().GetProject()->GetAssetFolder();
 	const LXFilepath relativeAssetFilepath = AssetFolderpath.GetRelativeFilepath(afi.FullFileName);
 	LXString key = BuildKey(asset->Owner, relativeAssetFilepath);
 	_MapAssets[key] = afi;
@@ -266,7 +266,7 @@ void LXAssetManager::AddAsset(std::shared_ptr<LXAsset> asset)
 
 const std::shared_ptr<LXMaterial> LXAssetManager::CreateNewMaterial(const LXString& MaterialName, const LXString& RelativeAssetFolder)
 {
-	LXFilepath AssetFolderpath = GetCore().GetProject()->GetAssetFolder();
+	LXFilepath AssetFolderpath = GetEngine().GetProject()->GetAssetFolder();
 	LXFilepath MaterialFilepath;
 	
 	if (MaterialName.IsEmpty())
@@ -306,7 +306,7 @@ const std::shared_ptr<LXMaterial> LXAssetManager::CreateNewMaterial(const LXStri
 
 const std::shared_ptr<LXShader> LXAssetManager::CreateNewShader(const LXString& ShaderName, const LXString& RelativeAssetFolder)
 {
-	LXFilepath AssetFolderpath = GetCore().GetProject()->GetAssetFolder();
+	LXFilepath AssetFolderpath = GetEngine().GetProject()->GetAssetFolder();
 	LXFilepath ShaderFilepath;
 
 	if (ShaderName.IsEmpty())
@@ -346,7 +346,7 @@ const std::shared_ptr<LXShader> LXAssetManager::CreateNewShader(const LXString& 
 
 const std::shared_ptr<LXTexture> LXAssetManager::CreateNewTexture(const LXString& MaterialName, const LXString& RelativeAssetFolder)
 {
-	LXFilepath AssetFolderpath = GetCore().GetProject()->GetAssetFolder();
+	LXFilepath AssetFolderpath = GetEngine().GetProject()->GetAssetFolder();
 	LXFilepath TextureFilepath;
 
 	if (MaterialName.IsEmpty())
@@ -387,7 +387,7 @@ const std::shared_ptr<LXTexture> LXAssetManager::CreateNewTexture(const LXString
 
 const std::shared_ptr<LXAnimation> LXAssetManager::CreateNewAnimation(const LXString& AnimationName, const LXString& RelativeAssetFolder)
 {
-	LXFilepath AssetFolderpath = GetCore().GetProject()->GetAssetFolder();
+	LXFilepath AssetFolderpath = GetEngine().GetProject()->GetAssetFolder();
 	LXFilepath AnimationFilepath;
 
 	if (AnimationName.IsEmpty())
@@ -429,7 +429,7 @@ const std::shared_ptr<LXAsset> LXAssetManager::Import(const LXFilepath& Filepath
 {
 	LXString Extension = Filepath.GetExtension().MakeLower();
 
-	LXFilepath AssetFolderpath = GetCore().GetProject()->GetAssetFolder();
+	LXFilepath AssetFolderpath = GetEngine().GetProject()->GetAssetFolder();
 	LXFilepath RelativeSourceFilepath = AssetFolderpath.GetRelativeFilepath(Filepath);
 
 	bool FileAlreadyInAssetFolder = false;
@@ -493,7 +493,7 @@ const std::shared_ptr<LXAsset> LXAssetManager::Import(const LXFilepath& Filepath
 		LogI(AssetManager, L"Successful import %s", Filepath.GetBuffer());
 		return pTexture;
 	}
-	else if (LXImporter* Importer = GetCore().GetPlugin(_pDocument, Extension))
+	else if (LXImporter* Importer = GetEngine().GetPlugin(_pDocument, Extension))
 	{
 		std::shared_ptr<LXAssetMesh> AssetMesh;
 		std::shared_ptr<LXMesh> Mesh = Importer->Load(Filepath);
@@ -692,7 +692,7 @@ void LXAssetManager::OnAssetRenamed(const LXString& Path, const LXString& OldNam
 	
 	if (ResourceOwner == EResourceOwner::LXResourceOwner_Project)
 	{
-		LXProject* Project = GetCore().GetProject();
+		LXProject* Project = GetEngine().GetProject();
 		AssetFolderpath = Project->GetAssetFolder();
 	}
 	else if (ResourceOwner == EResourceOwner::LXResourceOwner_Engine)

@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "LXStatistic.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXLogger.h"
 #include "LXStatManager.h"
 
@@ -16,7 +16,7 @@
 
 LXCounter::LXCounter(const LXString& expression):_expression(expression)
 {
-	GetCore().GetCounters().push_back(this);
+	GetEngine().GetCounters().push_back(this);
 }
 
 LXCounter::~LXCounter(void)

@@ -10,7 +10,7 @@
 #include "LXRenderCommandList.h"
 #include "LXConsoleManager.h"
 #include "LXConstantBufferD3D11.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXDirectX11.h"
 #include "LXLogger.h"
 #include "LXPrimitiveD3D11.h"
@@ -550,7 +550,7 @@ EXECUTE(GenerateMips)
 
 EXECUTE(EnqueueInvokeDelegate)
 {
-	GetCore().EnqueueInvokeDelegate(delegate);
+	GetEngine().EnqueueInvokeDelegate(delegate);
 }
 
 EXECUTE(InvokeDelegate)

@@ -8,7 +8,7 @@
 
 #include "StdAfx.h"
 #include "LXCommandManager.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXProject.h"
 #include "LXSelectionManager.h"
 #include "LXQueryManager.h"
@@ -50,54 +50,54 @@ bool LXCommandManager::SaveFile( LXSmartObject* smartObject )
 
 void LXCommandManager::ClearSelection( )
 {
-	if (GetCore().GetProject())
-		GetCore().GetProject()->GetSelectionManager().ClearSelection();
+	if (GetEngine().GetProject())
+		GetEngine().GetProject()->GetSelectionManager().ClearSelection();
 }
 
 void LXCommandManager::SetSelection(LXSmartObject* smartObject)
 {
-	if (GetCore().GetProject())
-		GetCore().GetProject()->GetSelectionManager().SetSelection(smartObject);
+	if (GetEngine().GetProject())
+		GetEngine().GetProject()->GetSelectionManager().SetSelection(smartObject);
 }
 
 void LXCommandManager::AddToSelection( LXSmartObject* smartObject )
 {
-	if (GetCore().GetProject())
-		GetCore().GetProject()->GetSelectionManager().AddToSelection(smartObject);
+	if (GetEngine().GetProject())
+		GetEngine().GetProject()->GetSelectionManager().AddToSelection(smartObject);
 }
 
 void LXCommandManager::RemoveToSelection( LXSmartObject* smartObject)
 {
-	if (GetCore().GetProject())
-		GetCore().GetProject()->GetSelectionManager().RemoveToSelection(smartObject);
+	if (GetEngine().GetProject())
+		GetEngine().GetProject()->GetSelectionManager().RemoveToSelection(smartObject);
 }
 
 void LXCommandManager::AddToSelection2( LXSmartObject* pActor, uint64 nFlags)
 {
-	if (GetCore().GetProject())
-		GetCore().GetProject()->GetSelectionManager().Submit(pActor, nFlags);
+	if (GetEngine().GetProject())
+		GetEngine().GetProject()->GetSelectionManager().Submit(pActor, nFlags);
 }
 
 void LXCommandManager::AddToSelection2( const SetSmartObjects& setPropServers, uint64 nFlags)
 {
-	if(GetCore().GetProject())
-		GetCore().GetProject()->GetSelectionManager().Submit(setPropServers, nFlags);
+	if(GetEngine().GetProject())
+		GetEngine().GetProject()->GetSelectionManager().Submit(setPropServers, nFlags);
 }
 
 void LXCommandManager::SelectAll()
 {
-	if (!GetCore().GetProject())
+	if (!GetEngine().GetProject())
 		return;
 
 	SetSmartObjects setSmartObjects;
-	GetCore().GetProject()->GetGroups(setSmartObjects);
+	GetEngine().GetProject()->GetGroups(setSmartObjects);
 		
 	AddToSelection2(setSmartObjects, 0);
 }
 
 void LXCommandManager::Select() 
 {
-	if (!GetCore().GetProject())
+	if (!GetEngine().GetProject())
 		return;
 	
 	SetSmartObjects setSmartObjects;
@@ -106,7 +106,7 @@ void LXCommandManager::Select()
 	item.first = LXPropertyID::MESH_LAYER;
 	item.second = new LXVariantT<int>(1);
 
-	GetCore().GetProject()->GetGroups(setSmartObjects, item);
+	GetEngine().GetProject()->GetGroups(setSmartObjects, item);
 
 	AddToSelection2(setSmartObjects, 0);
 }
@@ -125,7 +125,7 @@ void LXCommandManager::PushCommand(LXCommand* command)
 
 	_listCommands.push_back(command);
 	
-	if (_listCommands.size() > GetCore().GetUndoStackSize())
+	if (_listCommands.size() > GetEngine().GetUndoStackSize())
 	{
 		delete *_listCommands.begin();
 		_listCommands.pop_front();
@@ -173,9 +173,9 @@ void LXCommandManager::HideActors(const SetActors& setActors)
 
 	ChangeProperties(listProperties, false);
 
-	if (GetCore().GetProject())
+	if (GetEngine().GetProject())
 	{
-		GetCore().GetProject()->GetSelectionManager().ClearSelection();
+		GetEngine().GetProject()->GetSelectionManager().ClearSelection();
 	}
 }
 
@@ -202,7 +202,7 @@ void LXCommandManager::DeleteActors(const SetActors& setActors)
 
 	// Remove objects from selection
 	for(LXSmartObject* pObject:setActors)
-		GetCore().GetProject()->GetSelectionManager().RemoveToSelection(pObject);
+		GetEngine().GetProject()->GetSelectionManager().RemoveToSelection(pObject);
 
 	PushCommand(command);
 }
@@ -218,7 +218,7 @@ void LXCommandManager::DeleteMaterials( const SetMaterials& setMaterials )
 
 	// Remove objects from selection
 	for (LXSmartObject* smartObject : setMaterials)
-		GetCore().GetProject()->GetSelectionManager().RemoveToSelection(smartObject);
+		GetEngine().GetProject()->GetSelectionManager().RemoveToSelection(smartObject);
 		
 	PushCommand(command);
 }
@@ -234,7 +234,7 @@ void LXCommandManager::DeleteKeys(const SetKeys& setKeys)
 
 	// Remove objects from selection
 	for (LXSmartObject* smartObject : setKeys)
-		GetCore().GetProject()->GetSelectionManager().RemoveToSelection(smartObject);
+		GetEngine().GetProject()->GetSelectionManager().RemoveToSelection(smartObject);
 	
 	PushCommand(command);
 }
@@ -320,9 +320,9 @@ void	LXCommandManager::ChangeProperties( const ListProperties& listProperties, c
 
 	// Animation
 	SetKeys setKeys;
-	if (GetCore().GetAutoKey())
+	if (GetEngine().GetAutoKey())
 	{
-		LXAnimation* pAnimation = GetCore().GetProject()->GetAnimationManager().GetAnimation();
+		LXAnimation* pAnimation = GetEngine().GetProject()->GetAnimationManager().GetAnimation();
 		double time = pAnimation->GetPosition();
 		for (LXProperty* property : listProperties)
 		{
@@ -359,7 +359,7 @@ void LXCommandManager::PushQuery( LXQuery* query )
 	if (!query)
 		return;
 
-	LXProject* project = GetCore().GetProject();
+	LXProject* project = GetEngine().GetProject();
 	CHK(project);
 	if (!project)
 		return;
@@ -369,7 +369,7 @@ void LXCommandManager::PushQuery( LXQuery* query )
 
 void LXCommandManager::ActivateView( LXViewState* viewState )
 {
-	LXProject* project = GetCore().GetProject();
+	LXProject* project = GetEngine().GetProject();
 	CHK(project);
 	if (!project)
 		return;
@@ -379,6 +379,6 @@ void LXCommandManager::ActivateView( LXViewState* viewState )
 
 void LXCommandManager::SaveSelection( const LXString& name )
 {
-	if (GetCore().GetProject())
-		GetCore().GetProject()->GetSelectionManager().SaveSelection(name);
+	if (GetEngine().GetProject())
+		GetEngine().GetProject()->GetSelectionManager().SaveSelection(name);
 }

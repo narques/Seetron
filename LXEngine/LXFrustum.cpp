@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "LXFrustum.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXMatrix.h"
 #include "LXTexture.h" // LEFT RIGHT ...
 

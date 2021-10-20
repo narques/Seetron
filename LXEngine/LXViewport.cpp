@@ -13,7 +13,7 @@
 #include "LXAssetMesh.h"
 #include "LXCommandManager.h"
 #include "LXConsoleManager.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXEventManager.h"
 #include "LXFrustum.h"
 #include "LXActorLine.h"
@@ -62,13 +62,13 @@ LXViewport::LXViewport():
 	// To manager
 	//
 
-	GetCore().GetViewportManager().AddViewport(this);
+	GetEngine().GetViewportManager().AddViewport(this);
 }
 
 LXViewport::~LXViewport(void)
 {
 	delete m_pCamManip;
-	GetCore().GetViewportManager().RemoveViewport(this);
+	GetEngine().GetViewportManager().RemoveViewport(this);
 }
 
 //
@@ -148,16 +148,16 @@ void LXViewport::OnLButtonUp(uint64 nFlags, LXPoint pntWnd)
 	{
 		if (ActorPicked && ActorPicked->IsPickable())
 		{
-			switch (GetCore().GetSelectionMode())
+			switch (GetEngine().GetSelectionMode())
 			{
-			case ESelectionMode::SelectionModeActor: GetCore().GetCommandManager().AddToSelection2(ActorPicked, nFlags); break;
-			case ESelectionMode::SelectionModePrimitive: GetCore().GetCommandManager().AddToSelection2(PrimitivePicked, nFlags); break;
-			case ESelectionMode::SelectionModeMaterial: GetCore().GetCommandManager().AddToSelection2(PrimitivePicked ? PrimitivePicked->GetMaterial().get(): nullptr, nFlags); break;
+			case ESelectionMode::SelectionModeActor: GetEngine().GetCommandManager().AddToSelection2(ActorPicked, nFlags); break;
+			case ESelectionMode::SelectionModePrimitive: GetEngine().GetCommandManager().AddToSelection2(PrimitivePicked, nFlags); break;
+			case ESelectionMode::SelectionModeMaterial: GetEngine().GetCommandManager().AddToSelection2(PrimitivePicked ? PrimitivePicked->GetMaterial().get(): nullptr, nFlags); break;
 			default:CHK(0);
 			}
 		}
 		else
-			GetCore().GetCommandManager().AddToSelection2(NULL, nFlags );
+			GetEngine().GetCommandManager().AddToSelection2(NULL, nFlags );
 
 		// TEST SPLIT LINE
 		if(0)
@@ -247,7 +247,7 @@ void LXViewport::OnLButtonUp(uint64 nFlags, LXPoint pntWnd)
 				setActors.insert(pActor);			
 		}
 
-		GetCore().GetCommandManager().AddToSelection2(setActors, nFlags);
+		GetEngine().GetCommandManager().AddToSelection2(setActors, nFlags);
 	}
 }
 
@@ -295,7 +295,7 @@ void LXViewport::OnRButtonUp(uint64 nFlags, LXPoint pntWnd)
 	{
 		LXActor* pActor = PickActor(pntWnd.x, pntWnd.y);
 		if (!_pDocument->GetSelectionManager().IsSelected(pActor))
-			GetCore().GetCommandManager().AddToSelection2(pActor, nFlags);
+			GetEngine().GetCommandManager().AddToSelection2(pActor, nFlags);
 	}
 }
 
@@ -341,7 +341,7 @@ void LXViewport::OnMouseMove(uint64 nFlags, LXPoint pntWnd)
 // 			m_pPointedPrimitive = pPrimitive;
 //  			m_pPointedMesh = pMesh;
 //  			m_pRenderer->Invalidate(LX_INVALIDATE_HIGHTING);
-//  			GetCore().GetCommandManager().ChangeHighlight(pMesh);
+//  			GetEngine().GetCommandManager().ChangeHighlight(pMesh);
 //  		}
 	}
 
@@ -481,7 +481,7 @@ void LXViewport::OnChar(uint64 Character)
 
 void LXViewport::DropFile(const LXFilepath& Filename)
 {
-	GetCore().LoadFile(Filename);
+	GetEngine().LoadFile(Filename);
 }
 
 void LXViewport::OnKeyDown(uint64 nChar, uint nRepCnt, uint nFlags)
@@ -644,7 +644,7 @@ bool LXViewport::DropMaterial( std::shared_ptr<LXMaterial>& pMaterial, LXPoint p
 		CHK(pProp);
 		if (pProp)
 		{
-			GetCore().GetCommandManager().ChangeProperty(pProp, (LXAssetPtr)pMaterial);
+			GetEngine().GetCommandManager().ChangeProperty(pProp, (LXAssetPtr)pMaterial);
 			return true;
 		}
 	}

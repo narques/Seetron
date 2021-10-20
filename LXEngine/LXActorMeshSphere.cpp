@@ -9,7 +9,7 @@
 #include "stdafx.h"
 #include "LXActorMeshSphere.h"
 #include "LXAsset.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXMesh.h"
 #include "LXMeshFactory.h"
 #include "LXMemory.h" // --- Must be the last included ---
@@ -96,7 +96,7 @@ void LXActorMeshCylinder::OnPropertyChanged(LXProperty* Property)
 
 //------------------------------------------------------------------------------------------------------
 
-LXActorMeshCone::LXActorMeshCone():LXActorMesh(GetCore().GetProject())
+LXActorMeshCone::LXActorMeshCone():LXActorMesh(GetEngine().GetProject())
 {
 	SetName(L"Cone");
 

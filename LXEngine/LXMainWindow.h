@@ -13,14 +13,14 @@ class LXRenderer;
 class LXConsoleCommand;
 class LXProperty;
 
-class LXENGINE_API LXCoreWindow : public LXWindow 
+class LXENGINE_API LXEngineWindow : public LXWindow 
 {
 
 public:
 
-	LXCoreWindow();
-	LXCoreWindow(HWND hWND);
-	virtual ~LXCoreWindow();
+	LXEngineWindow();
+	LXEngineWindow(HWND hWND);
+	virtual ~LXEngineWindow();
 
 	LXViewport*	GetViewport() const { return _Viewport; }
 	LXRenderer* GetRenderer() const { return _Renderer; }
@@ -62,7 +62,7 @@ private:
 	std::map<uint, std::pair<LXProperty*, uint>> _MenuProperties;
 };
 
-class LXENGINE_API LXMainWindow : public LXCoreWindow
+class LXENGINE_API LXMainWindow : public LXEngineWindow
 {
 
 public:
@@ -73,7 +73,7 @@ public:
 
 };
 
-class LXENGINE_API LXChildWindow : public LXCoreWindow
+class LXENGINE_API LXChildWindow : public LXEngineWindow
 {
 
 public:

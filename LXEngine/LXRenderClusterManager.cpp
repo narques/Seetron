@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "LXActorType.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXDeviceResourceManager.h"
 #include "LXLogger.h"
 #include "LXMaterial.h"
@@ -220,7 +220,7 @@ LXRenderCluster* LXRenderClusterManager::CreateRenderCluster(LXRenderData* rende
 	
 	if (Material == nullptr)
 	{
-		Material = GetCore().GetDefaultMaterial();
+		Material = GetEngine().GetDefaultMaterial();
 		CHK(Material);
 	}
 

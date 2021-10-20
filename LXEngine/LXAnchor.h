@@ -9,7 +9,7 @@
 #pragma once
 
 #include "LXActorMesh.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 
 #if LX_ANCHOR
 
@@ -23,7 +23,7 @@ public:
 
 	// Overridden from LXActor
 	virtual bool	ParticipateToSceneBBox() const override{ return false; }
-	virtual bool	IsVisible() const override { return _bVisible && !GetCore().GetPlayMode(); }
+	virtual bool	IsVisible() const override { return _bVisible && !GetEngine().GetPlayMode(); }
 
 	int Id() const { return _id; }
 	void Id(int val) { _id = val; }

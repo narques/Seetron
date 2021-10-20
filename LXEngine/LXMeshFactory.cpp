@@ -9,7 +9,7 @@
 #include "stdafx.h"
 #include "LXMeshFactory.h"
 #include "LXMesh.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXPrimitive.h"
 #include "LXPrimitiveFactory.h"
 

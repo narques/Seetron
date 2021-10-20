@@ -321,7 +321,7 @@ LXProperty* LXTrackT<T>::GetProperty()
 { 
 	if (!_pProperty)
 	{
-		LXSmartObject* pSmartObject = GetCore().GetProject()->GetObjectFromUID(_objectUID);
+		LXSmartObject* pSmartObject = GetEngine().GetProject()->GetObjectFromUID(_objectUID);
 		CHK(pSmartObject);
 		if (pSmartObject)
 			_pProperty = dynamic_cast<LXPropertyT<T>*>(pSmartObject->GetProperty(_propertyName));

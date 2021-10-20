@@ -12,7 +12,7 @@
 // Seetron
 #include "LXActorMesh.h"
 #include "LXComponentMesh.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXMesh.h"
 #include "LXPrimitive.h"
 #include "LXPrimitiveInstance.h"

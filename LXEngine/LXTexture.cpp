@@ -91,7 +91,7 @@ bool LXTexture::LoadSource()
 	if (Owner == EResourceOwner::LXResourceOwner_Engine)
 		strFilename = GetSettings().GetDataFolder() + _SourceFilepath;
 	else if (Owner == EResourceOwner::LXResourceOwner_Project)
-		strFilename = GetCore().GetProject()->GetAssetFolder() + _SourceFilepath;
+		strFilename = GetEngine().GetProject()->GetAssetFolder() + _SourceFilepath;
 	else
 		CHK(0);
 		

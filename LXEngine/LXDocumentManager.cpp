@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "LXCommandManager.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXDocumentManager.h"
 #include "LXEventManager.h"
 #include "LXLogger.h"
@@ -30,7 +30,7 @@ LXDocumentManager::LXDocumentManager(void)
 		}
 		else
 		{
-			GetCore().CloseProject();
+			GetEngine().CloseProject();
 		}
 	});
 }
@@ -49,7 +49,7 @@ int OpenFunc(void* pData)
 {
 	LoadingThread = GetCurrentThreadId();
 
-	LXCore& core = GetCore();
+	LXEngine& engine = GetEngine();
 	
 	LXDocumentManager* pDocumentManager = (LXDocumentManager*)pData;
 	LXProject* Project = pDocumentManager->GetDocument();
@@ -74,7 +74,7 @@ int OpenFunc(void* pData)
 	
 	GetEventManager()->PostEvent(new LXEventResult(EEventType::ProjectLoaded, bRet));
 	if (bRet) // else Project is destroyed & the delegate is KO when called....
-		GetCore().EnqueueInvokeDelegate(&Project->ProjectLoaded);
+		GetEngine().EnqueueInvokeDelegate(&Project->ProjectLoaded);
 					
 	LoadingThread = 0;
 

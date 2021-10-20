@@ -7,7 +7,7 @@
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXManager.h"
 #include "LXMaterial.h"
 #include "LXSettings.h"

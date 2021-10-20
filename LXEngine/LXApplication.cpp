@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "LXApplication.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 
 LXApplication::LXApplication(LXWindow* windowBase):LXApplicationBase(windowBase)
 {
@@ -20,5 +20,5 @@ LXApplication::~LXApplication()
 
 void LXApplication::Run()
 {
-	GetCore().Run();
+	GetEngine().Run();
 }

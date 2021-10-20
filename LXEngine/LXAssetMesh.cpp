@@ -14,7 +14,7 @@
 #include "LXFile.h"
 #include "LXPrimitive.h"
 #include "LXAssetManager.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXProject.h"
 #include "LXMaterial.h"
 #include "LXShader.h"

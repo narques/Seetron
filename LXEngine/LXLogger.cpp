@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "LXLogger.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXConsoleManager.h"
 #include "LXFile.h"
 #include "LXMutex.h"
@@ -38,7 +38,7 @@ void LXLogger::PrintToConsoles(ELogType LogType, const LXString& msg)
 	logEntry += L":" + LXString::Format(L"%02d", st.wMinute);
 	logEntry += L":" + LXString::Format(L"%02d", st.wSecond);
 	logEntry += L"." + LXString::Format(L"%03d", st.wMilliseconds) + L"]";
-	logEntry += L"[" + LXString::Number(LXCore::FrameNumber) + L"]";
+	logEntry += L"[" + LXString::Number(LXEngine::FrameNumber) + L"]";
 	
 	switch (LogType)
 	{
@@ -72,12 +72,12 @@ void LXLogger::Tick()
 		const double logBudget = 2.;
 		double time = 0.;
 
-		bool logToFile = _file && _file->Open(LXCore::GetAppPath() + L"/" + kLogFilename, L"a");
+		bool logToFile = _file && _file->Open(LXEngine::GetAppPath() + L"/" + kLogFilename, L"a");
 
 		while (_logs.size() && time < logBudget)
 		{
 #if LX_LOG_OUTPUT_FRAME
-			LXString logEntry = L"[" + LXString::Number(GetCore().Frame) + L"]";
+			LXString logEntry = L"[" + LXString::Number(GetEngine().Frame) + L"]";
 			logEntry += _logs.front();
 #else
 			const LXString& logEntry = _logs.front();
@@ -86,7 +86,7 @@ void LXLogger::Tick()
 			//if (LogModes & ELogMode::LogMode_OSConsole)
 			std::wcout << logEntry.GetBuffer() << std::endl;
 
-			if (LogModes & ELogMode::LogMode_CoreConsole)
+			if (LogModes & ELogMode::LogMode_EngineConsole)
 			{
 				for (auto It : MapCallbacks)
 					It.second(/*LogType*/ELogType::LogType_Info, logEntry);
@@ -229,11 +229,11 @@ LXLogger::LXLogger()
 	{
 		_file = new LXFile();
 		// Clear the existing file.
-		_file->Open(LXCore::GetAppPath() + L"/" + kLogFilename, L"wt");
+		_file->Open(LXEngine::GetAppPath() + L"/" + kLogFilename, L"wt");
 		_file->Close();
 	}
 
-	LogModes = (ELogMode)(LogMode_DebuggerConsole | LogMode_CoreConsole);
+	LogModes = (ELogMode)(LogMode_DebuggerConsole | LogMode_EngineConsole);
 }
 
 LXLogger::~LXLogger()
@@ -279,15 +279,15 @@ void LXLogger::LogConfigurationAndPlatform()
 {
  #ifdef _WIN64
  #ifdef _DEBUG
-	LogI(Core, L"x64 Debug");
+	LogI(Engine, L"x64 Debug");
  #else
-	LogI(Core, L"x64 Release");
+	LogI(Engine, L"x64 Release");
 #endif
 #else
 #ifdef _DEBUG
-	LogI(Core, L"win32 Debug");
+	LogI(Engine, L"win32 Debug");
 #else
-	LogI(Core, L"win32 Release");
+	LogI(Engine, L"win32 Release");
 #endif
 #endif
 }
@@ -295,5 +295,5 @@ void LXLogger::LogConfigurationAndPlatform()
 void LXLogger::LogDateAndTime()
 {
 	LXString str = LXPlatform::GetCurrentDate() + L" " + LXPlatform::GetCurTime();
-	LogI(Core, L"%s", str.GetBuffer());
+	LogI(Engine, L"%s", str.GetBuffer());
 }

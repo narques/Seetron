@@ -66,7 +66,7 @@ std::shared_ptr<LXTextureD3D11> LXTextureManager::CreateTexture(const LXTexture*
 	else if (Texture->TextureSource == ETextureSource::TextureSourceMaterial)
 	{
 		CHK(0); // Find a more generic way to access the rendered texture
-		//TextureD3D11 = GetCore().GetRenderer()->RenderPassDynamicTexture->AddGraph(Texture);
+		//TextureD3D11 = GetEngine().GetRenderer()->RenderPassDynamicTexture->AddGraph(Texture);
 	}
 	else
 	{

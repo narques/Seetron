@@ -10,7 +10,7 @@
 #include "LXConsoleManager.h"
 #include "LXSettings.h"
 #include "LXLogger.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXEventManager.h"
 #include "LXEvent.h"
 #include "LXMemory.h" // --- Must be the last included ---
@@ -135,7 +135,7 @@ void LXConsoleCommandT<T>::ReadValueFromPrivateProfile()
 {
 	CHK(_privateProfile);
 	wchar_t str[256] = { 0 };
-	LXString Filepath = GetSettings().GetCoreFolder() + _privateProfile->File;
+	LXString Filepath = GetSettings().GetEngineFolder() + _privateProfile->File;
 	CHK(GetPrivateProfileString(_privateProfile->Section, _privateProfile->Name, _privateProfile->DefaultValue, str, 256, Filepath));
 	SetValueFromString(str);
 }

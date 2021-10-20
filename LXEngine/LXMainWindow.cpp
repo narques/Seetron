@@ -11,7 +11,7 @@
 #include "LXMainWindow.h"
 #include "LXViewport.h"
 #include "LXRenderer.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXConsoleManager.h"
 #include "LXConsoleCommands.h"
 #include "LXEventManager.h"
@@ -25,18 +25,18 @@ namespace
 
 }
 
-LXCoreWindow::LXCoreWindow()
+LXEngineWindow::LXEngineWindow()
 {
 	Create(nullptr);
 	Init();
 }
 
-LXCoreWindow::LXCoreWindow(HWND hWND):LXWindow(hWND)
+LXEngineWindow::LXEngineWindow(HWND hWND):LXWindow(hWND)
 {
 	Init();
 }
 
-void LXCoreWindow::Init()
+void LXEngineWindow::Init()
 {
 	CHK(_hWND);
 	_Viewport = new LXViewport();
@@ -47,11 +47,11 @@ void LXCoreWindow::Init()
 	_Viewport->SetViewportSize(Rect.right - Rect.left, Rect.bottom - Rect.top);
 }
 
-LXCoreWindow::~LXCoreWindow()
+LXEngineWindow::~LXEngineWindow()
 {
 }
 
-void LXCoreWindow::OnCreate()
+void LXEngineWindow::OnCreate()
 {
 	BuildMenu();
 		
@@ -84,7 +84,7 @@ void LXCoreWindow::OnCreate()
 	});
 }
 
-void LXCoreWindow::OnClose()
+void LXEngineWindow::OnClose()
 {
 	if (!_bAttachedToExistingHWND)
 	{
@@ -92,98 +92,98 @@ void LXCoreWindow::OnClose()
 		GetEventManager()->UnregisterEventFunc(EEventType::ProjectClosed, this);
 	}
 
-	GetCore().CloseProject();
+	GetEngine().CloseProject();
 
 	LX_SAFE_DELETE(_Renderer);
 	LX_SAFE_DELETE(_Viewport);
 	LXWindow::OnClose();
 }
 
-void LXCoreWindow::OnPaint()
+void LXEngineWindow::OnPaint()
 {
 	if (_Viewport)
 		_Viewport->OnPaint();
 }
 
-void LXCoreWindow::OnSize(int width, int height)
+void LXEngineWindow::OnSize(int width, int height)
 {
 	if (_Viewport)
 		_Viewport->SetViewportSize(width, height);
 }
 
-void LXCoreWindow::OnLButtonDblClk(uint64 nFlags, LXPoint pntWnd)
+void LXEngineWindow::OnLButtonDblClk(uint64 nFlags, LXPoint pntWnd)
 {
 	if (_Viewport)
 		_Viewport->OnLButtonDblClk(nFlags, pntWnd);
 }
 
-void LXCoreWindow::OnLButtonDown(uint64 nFlags, LXPoint pntWnd)
+void LXEngineWindow::OnLButtonDown(uint64 nFlags, LXPoint pntWnd)
 {
 	if (_Viewport)
 		_Viewport->OnLButtonDown(nFlags, pntWnd);
 }
 
-void LXCoreWindow::OnLButtonUp(uint64 nFlags, LXPoint pntWnd)
+void LXEngineWindow::OnLButtonUp(uint64 nFlags, LXPoint pntWnd)
 {
 	if (_Viewport)
 		_Viewport->OnLButtonUp(nFlags, pntWnd);
 }
 
-void LXCoreWindow::OnMButtonDown(uint64 nFlags, LXPoint pntWnd)
+void LXEngineWindow::OnMButtonDown(uint64 nFlags, LXPoint pntWnd)
 {
 	if (_Viewport)
 		_Viewport->OnMButtonDown(nFlags, pntWnd);
 }
 
-void LXCoreWindow::OnMButtonUp(uint64 nFlags, LXPoint pntWnd)
+void LXEngineWindow::OnMButtonUp(uint64 nFlags, LXPoint pntWnd)
 {
 	if (_Viewport)
 		_Viewport->OnMButtonUp(nFlags, pntWnd);
 }
 
-void LXCoreWindow::OnRButtonDown(uint64 nFlags, LXPoint pntWnd)
+void LXEngineWindow::OnRButtonDown(uint64 nFlags, LXPoint pntWnd)
 {
 	if (_Viewport)
 		_Viewport->OnRButtonDown(nFlags, pntWnd);
 }
 
-void LXCoreWindow::OnRButtonUp(uint64 nFlags, LXPoint pntWnd)
+void LXEngineWindow::OnRButtonUp(uint64 nFlags, LXPoint pntWnd)
 {
 	if (_Viewport)
 		_Viewport->OnRButtonUp(nFlags, pntWnd);
 }
 
-void LXCoreWindow::OnMouseWheel(uint16 nFlags, short zDelta, LXPoint pntWnd)
+void LXEngineWindow::OnMouseWheel(uint16 nFlags, short zDelta, LXPoint pntWnd)
 {
 	if (_Viewport)
 		_Viewport->OnMouseWheel(nFlags, zDelta, pntWnd);
 }
 
-void LXCoreWindow::OnMouseMove(uint64 nFlags, LXPoint pntWnd)
+void LXEngineWindow::OnMouseMove(uint64 nFlags, LXPoint pntWnd)
 {
 	if (_Viewport)
 		_Viewport->OnMouseMove(nFlags, pntWnd);
 }
 
-void LXCoreWindow::OnKeyUp(uint64 KeyCode)
+void LXEngineWindow::OnKeyUp(uint64 KeyCode)
 {
 	if (_Viewport)
 		_Viewport->OnKeyUp(KeyCode, 0, 0);
 }
 
-void LXCoreWindow::OnKeyDown(uint64 KeyCode)
+void LXEngineWindow::OnKeyDown(uint64 KeyCode)
 {
 	if (_Viewport)
 		_Viewport->OnKeyDown(KeyCode, 0, 0);
 }
 
-void LXCoreWindow::OnChar(uint64 CharacterCode)
+void LXEngineWindow::OnChar(uint64 CharacterCode)
 {
 	if (_Viewport)
 		_Viewport->OnChar(CharacterCode);
 }
 
-bool LXCoreWindow::OnCommand(UINT CommandID)
+bool LXEngineWindow::OnCommand(UINT CommandID)
 {
 // 	switch (CommandID)
 // 	{
@@ -217,7 +217,7 @@ bool LXCoreWindow::OnCommand(UINT CommandID)
 	return true;
 }
 
-void LXCoreWindow::BuildMenu()
+void LXEngineWindow::BuildMenu()
 {
 	HMENU hMenu = ::CreateMenu();
 
@@ -252,7 +252,7 @@ void LXCoreWindow::BuildMenu()
 	::SetMenu(_hWND, hMenu);
 }
 
-void LXCoreWindow::AppendMenu(HMENU hMenu, const wchar_t* Caption, LXConsoleCommand* ConsoleCommand)
+void LXEngineWindow::AppendMenu(HMENU hMenu, const wchar_t* Caption, LXConsoleCommand* ConsoleCommand)
 {
 	static uint i = ConsoleCommandStartID;
 	::AppendMenu(hMenu, MF_ENABLED | MF_STRING, i, Caption);
@@ -261,7 +261,7 @@ void LXCoreWindow::AppendMenu(HMENU hMenu, const wchar_t* Caption, LXConsoleComm
 	i++;
 }
 
-void  LXCoreWindow::AppendMenu(HMENU hMenu, const wchar_t* Caption, LXProperty* Property, uint UserData)
+void  LXEngineWindow::AppendMenu(HMENU hMenu, const wchar_t* Caption, LXProperty* Property, uint UserData)
 {
 	static uint i = PropertyStartID;
 	::AppendMenu(hMenu, MF_ENABLED | MF_STRING, i, Caption);
@@ -275,7 +275,7 @@ LXMainWindow::LXMainWindow()
 {
 }
 
-LXMainWindow::LXMainWindow(HWND hWND) :LXCoreWindow(hWND)
+LXMainWindow::LXMainWindow(HWND hWND) :LXEngineWindow(hWND)
 {
 }
 
@@ -285,7 +285,7 @@ LXMainWindow::~LXMainWindow()
 
 //-------------------------------------------------------------------------
 
-LXChildWindow::LXChildWindow(HWND hWND):LXCoreWindow(hWND)
+LXChildWindow::LXChildWindow(HWND hWND):LXEngineWindow(hWND)
 {
 }
 

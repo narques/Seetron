@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "LXRenderPassDepthOfField.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXInputElementDescD3D11Factory.h"
 #include "LXProject.h"
 #include "LXRenderCommandList.h"

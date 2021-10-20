@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "LXScript.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXLogger.h"
 #include "LXPropertyManager.h"
 #include "LXActor.h"

@@ -10,7 +10,7 @@
 #include "LXMaterialBase.h"
 
 // Seetron
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXRenderer.h"
 
 LXMaterialBase::LXMaterialBase()

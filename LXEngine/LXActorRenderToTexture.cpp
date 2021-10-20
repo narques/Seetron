@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "LXActorRenderToTexture.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXMaterial.h"
 #include "LXMesh.h"
 #include "LXMeshFactory.h"

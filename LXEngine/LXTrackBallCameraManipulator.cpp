@@ -12,7 +12,7 @@
 #include "LXAnimation.h"
 #include "LXAnimationManager.h"
 #include "LXCommandManager.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXMath.h"
 #include "LXProject.h"
 #include "LXViewport.h"
@@ -44,7 +44,7 @@ LXTrackBallCameraManipulator::~LXTrackBallCameraManipulator(void)
 
 LXActorCamera* LXTrackBallCameraManipulator::GetCamera()
 {
-	LXProject* project = GetCore().GetProject();
+	LXProject* project = GetEngine().GetProject();
 	if (!project)
 		return nullptr;
 	
@@ -386,7 +386,7 @@ bool LXTrackBallCameraManipulator::RotateCamera( double dFrameTime )
 
 		vec3f rotation = pCamera->GetRotation() + vec3f(0.f, ry, -rx);
 		LXProperty* propertyRotation = pCamera->GetProperty(LXPropertyID::ROTATION);
-		GetCore().GetCommandManager().PreviewChangeProperty(propertyRotation, rotation);
+		GetEngine().GetCommandManager().PreviewChangeProperty(propertyRotation, rotation);
 		
 		if (GetAsyncKeyState(VK_CONTROL) & 0x8000)
 		{
@@ -410,7 +410,7 @@ bool LXTrackBallCameraManipulator::RotateCamera( double dFrameTime )
 		newPosition += _vPickedPoint;
 
 		LXProperty* propertyPosition = pCamera->GetProperty(LXPropertyID::POSITION);
-		GetCore().GetCommandManager().PreviewChangeProperty(propertyPosition, newPosition);
+		GetEngine().GetCommandManager().PreviewChangeProperty(propertyPosition, newPosition);
 		
 		return true;
 	}
@@ -456,7 +456,7 @@ bool LXTrackBallCameraManipulator::PanCamera( double dFrameTime )
 		CHK(IsValid(Pos));
 
 		LXProperty* propertyPosition = pCamera->GetProperty(LXPropertyID::POSITION);
-		GetCore().GetCommandManager().PreviewChangeProperty(propertyPosition, Pos);
+		GetEngine().GetCommandManager().PreviewChangeProperty(propertyPosition, Pos);
 
 		_vPickedPointPan = vPickedPoint;
 		

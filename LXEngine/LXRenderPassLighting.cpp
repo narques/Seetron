@@ -207,7 +207,7 @@ void LXRenderPassLighting::RenderIBL(LXRenderCommandList* r, const LXRenderPipel
 
 	r->BeginEvent(L"IBL");
 
-	const LXActorSceneCapture* SceneCapture = GetCore().GetProject()->GetSceneCapture() ? GetCore().GetProject()->GetSceneCapture() : nullptr;
+	const LXActorSceneCapture* SceneCapture = GetEngine().GetProject()->GetSceneCapture() ? GetEngine().GetProject()->GetSceneCapture() : nullptr;
 	ConstantBufferDataIBL->AmbientIntensity = SceneCapture ? SceneCapture->GetIntensity() : 1.f;
 	
 	_shaderProgramIBLLight->Render(r);

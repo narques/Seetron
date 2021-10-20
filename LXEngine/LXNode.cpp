@@ -10,7 +10,7 @@
 #include "LXNode.h"
 #include "LXAssetManager.h"
 #include "LXConnector.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXGraph.h"
 #include "LXGraphTemplate.h"
 #include "LXMSXMLNode.h"

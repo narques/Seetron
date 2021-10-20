@@ -11,7 +11,7 @@
 
 // Seetron
 #include "LXAssetMesh.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXLogger.h"
 #include "LXMesh.h"
 #include "LXMeshBase.h"

@@ -11,7 +11,7 @@
 #include "LXQueryManager.h"
 #include "LXProject.h"
 #include "LXPropertyManager.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXCommandManager.h"
 #include "LXActorCamera.h"
 #include "LXLogger.h"
@@ -38,7 +38,7 @@ void LXQueryTransform::OnLButtonDown(uint64 nFlags, LXPoint pntWnd, LXActor* Act
 	if (!Actor)
 		return;
 
-	_PickedWT = GetCore().GetViewport()->WorldTransformation;
+	_PickedWT = GetEngine().GetViewport()->WorldTransformation;
 
 	_StartPosition = vec2f((float)pntWnd.x, (float)pntWnd.y);
 
@@ -80,10 +80,10 @@ void LXQueryTransform::OnMouseMove(uint64 nFlags, LXPoint pntWnd)
 
 		// Axis
 		LXAxis axis;
-		_PickedWT = GetCore().GetViewport()->WorldTransformation;
+		_PickedWT = GetEngine().GetViewport()->WorldTransformation;
 
-		float xScale = _PickedWT.Width() / GetCore().GetViewport()->GetWidth();
-		float yScale = _PickedWT.Height() / GetCore().GetViewport()->GetHeight();
+		float xScale = _PickedWT.Width() / GetEngine().GetViewport()->GetWidth();
+		float yScale = _PickedWT.Height() / GetEngine().GetViewport()->GetHeight();
 		_PickedWT.GetPickAxis(axis, _EndPosition.x * xScale, _EndPosition.y * yScale);
 
 		for (auto It = _listActors.begin(); It != _listActors.end(); It++)
@@ -98,7 +98,7 @@ void LXQueryTransform::OnMouseMove(uint64 nFlags, LXPoint pntWnd)
 // 				plane.SetOrigin(m_vPickedPoint);
 // 				
 // 
-// 				LXActorCamera* pCamera = GetCore().GetProject()->GetActiveView()->GetCamera();
+// 				LXActorCamera* pCamera = GetEngine().GetProject()->GetActiveView()->GetCamera();
 // 				CHK(pCamera);
 //  				if (pCamera)
 //  					plane.SetVector(pCamera->GetViewVector());
@@ -222,7 +222,7 @@ void LXQueryTransform::OnMouseMove(uint64 nFlags, LXPoint pntWnd)
 // 			{
 // 				LXPropertyVec3f* pProperty = dynamic_cast<LXPropertyVec3f*>(pMesh->GetProperty(LXPropertyID::POSITION));
 // 				CHK(pProperty);
-// 				GetCore().GetCommandManager().PreviewChangeProperty(pProperty, matLCS.GetOrigin());
+// 				GetEngine().GetCommandManager().PreviewChangeProperty(pProperty, matLCS.GetOrigin());
 // 			}
 		}
 
@@ -249,7 +249,7 @@ void LXQueryTransform::OnLButtonUp(uint64 nFlags, LXPoint pntWnd)
 			{
 				LXPropertyVec3f* pProperty = dynamic_cast<LXPropertyVec3f*>(Actor->GetProperty(LXPropertyID::POSITION));
 				CHK(pProperty);
-				GetCore().GetCommandManager().ChangeProperty(pProperty, Actor->GetPosition());
+				GetEngine().GetCommandManager().ChangeProperty(pProperty, Actor->GetPosition());
 			}
 		}
 	}

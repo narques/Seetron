@@ -13,7 +13,7 @@
 #include "LXActorLight.h"
 #include "LXCamera.h"
 #include "LXConstantBufferD3D11.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXDeviceResourceManager.h"
 #include "LXDirectX11.h"
 #include "LXLogger.h"
@@ -86,7 +86,7 @@ bool LXRenderCluster::UpdateDeviceMaterialAndShaders(ERenderPass renderPass)
 {
 	CHK(IsRenderThread());
 	
-	LXRenderer* renderer = GetCore().GetRenderer();
+	LXRenderer* renderer = GetEngine().GetRenderer();
 	   	   
 #if LX_BUILD_SHADERS_FOR_ALL_PASSES 
 	for (auto i = 0; i < (int)ERenderPass::Last; i++)
@@ -128,7 +128,7 @@ bool LXRenderCluster::GetDeviceMaterialAndShaders(ERenderPass renderPass, const 
 {
 	CHK(IsRenderThread());
 
-	LXRenderer* renderer = GetCore().GetRenderer();
+	LXRenderer* renderer = GetEngine().GetRenderer();
 
 	// Resources
 	const std::shared_ptr<LXMaterialD3D11> materialD3D11 = renderer->GetDeviceResourceManager()->GetShaderResources(renderPass, material);

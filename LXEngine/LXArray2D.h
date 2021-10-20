@@ -6,29 +6,23 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
-#include "LXTask.h"
-#include "LXTaskManager.h"
-#include "LXEngine.h"
+#pragma once
 
-LXTask::LXTask()
+// Simple Static Two-Dimensional Array 
+template <class T, int X, int Y>
+class LXArray2D
 {
-}
- 
-LXTask::~LXTask()
-{
-}
- 
-LXTaskCallBack::LXTaskCallBack(std::function <void()> function):_function(function)
-{
-}
+public:
 
-LXTaskCallBack::~LXTaskCallBack()
-{
+	const T& GetAt(int x, int y) const
+	{ 
+		return Data[x][y];
+	}
 
-}
+	T& GetAt(int x, int y)
+	{
+		return Data[x][y];
+	}
 
-void LXTaskCallBack::Run()
-{
-	_function();
-}
+	T Data[X][Y];
+};

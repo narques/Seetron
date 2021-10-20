@@ -10,7 +10,7 @@
 #include "LXDeviceResourceManager.h"
 
 // Seetron
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXMaterialBase.h"
 #include "LXMaterialD3D11.h"
 #include "LXPrimitive.h"
@@ -52,7 +52,7 @@ const std::shared_ptr<LXMaterialD3D11>& LXDeviceResourceManager::GetShaderResour
 	{
 		std::shared_ptr<LXMaterialD3D11> materialD3D11 = LXMaterialD3D11::CreateFromMaterial(material);
 		_shaderResources[key] = materialD3D11;
-		GetCore().EnqueueInvokeDelegate(&material->Compiled);
+		GetEngine().EnqueueInvokeDelegate(&material->Compiled);
 		return _shaderResources[key];
 	}
 }

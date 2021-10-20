@@ -9,7 +9,7 @@
 #include "stdafx.h"
 #include "LXRenderPassUI.h"
 #include "LXConsoleManager.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXDirectX11.h"
 #include "LXRenderer.h"
 #include "LXRenderPipeline.h"
@@ -101,7 +101,7 @@ void LXRenderPassUI::DrawStats()
 	const int LineHeight = LXPlatform::GetFontSize();
 
 	float PositionY = 0.f;
-	ArrayCounters& arrayCounters = GetCore().GetCounters();
+	ArrayCounters& arrayCounters = GetEngine().GetCounters();
 	for (LXCounter* Counter : arrayCounters)
 	{
 		float Top = (float)PositionY;

@@ -9,7 +9,7 @@
 #include "stdafx.h"
 #include "LXAssetManager.h"
 #include "LXAssetMesh.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXMSXMLNode.h"
 #include "LXMaterial.h"
 #include "LXMesh.h"
@@ -306,7 +306,7 @@ void LXMesh::InvalidateBounds()
 
 void LXMesh::SetMaterial(const LXString& key)
 {
-	LXAssetManager& rm = GetCore().GetProject()->GetAssetManager();
+	LXAssetManager& rm = GetEngine().GetProject()->GetAssetManager();
 	std::shared_ptr<LXMaterialBase> Material = rm.GetMaterial(key);
 	SetMaterial(Material);
 }

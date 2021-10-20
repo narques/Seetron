@@ -10,7 +10,7 @@
 #include "LXActor.h"
 #include "LXActorFactory.h"
 #include "LXComponent.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXLogger.h"
 #include "LXMSXMLNode.h"
 #include "LXMath.h"
@@ -22,7 +22,7 @@
 LXActor::LXActor()
 {
 	LX_COUNTSCOPEINC(LXActor);
-	_Project = GetCore().GetProject();
+	_Project = GetEngine().GetProject();
 	_nCID = LX_NODETYPE_ACTOR;
 	DefineProperties();
 }
@@ -54,7 +54,7 @@ void LXActor::MarkForDelete()
 {
 	CHK(GetParent() == nullptr);
 	CHK(GetChildren().size() == 0);
-	GetCore().AddObjectForDestruction(this);
+	GetEngine().AddObjectForDestruction(this);
 }
 
 void LXActor::AddComponent(LXComponent* component)

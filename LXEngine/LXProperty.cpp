@@ -9,7 +9,7 @@
 #include "stdafx.h"
 #include "LXAsset.h"
 #include "LXAssetManager.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXGraphMaterial.h"
 #include "LXLogger.h"
 #include "LXMSXMLNode.h"
@@ -690,7 +690,7 @@ void LXPropertyT<LXAssetPtr>::GetValueFromXML2(const TLoadContext& LoadContext)
 	GetValueFromXML(node, strFilename);
 	if (!strFilename.IsEmpty())
 	{
-		LXProject* Project = GetCore().GetProject();
+		LXProject* Project = GetEngine().GetProject();
 		CHK(Project);
 		if (Project)
 		{

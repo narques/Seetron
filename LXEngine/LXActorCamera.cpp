@@ -7,7 +7,7 @@
 //------------------------------------------------------------------------------------------------------
 
 #include "StdAfx.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXActorCamera.h"
 #include "LXProject.h"
 #include "LXPropertyManager.h"

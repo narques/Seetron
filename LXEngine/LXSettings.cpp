@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "LXSettings.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXLogger.h"
 #include "LXDirectory.h"
 
@@ -20,7 +20,7 @@ enum LXERenderer
 
 LXSettings& GetSettings()
 {
-	return *GetCore().GetSettings();
+	return *GetEngine().GetSettings();
 }
 
 LXSettings::LXSettings(void)
@@ -40,7 +40,7 @@ bool LXSettings::IsFolder(const LXString& strPath)
 
 void LXSettings::Load()
 {
-	LXFilepath strAppPath = LXCore::GetAppPath();
+	LXFilepath strAppPath = LXEngine::GetAppPath();
 
 	_DataFolder = strAppPath + L"Data/";
  
@@ -88,8 +88,8 @@ void LXSettings::InitPaths()
 	_ModelsFolder     = _DataFolder + L"Models/";
 	_ShadersFolder    = _DataFolder + L"Shaders/";
 	_ProjectsFolder   = _DataFolder + L"../Projects/";
-	_CoreFolder		  = _DataFolder + L"Core/";
-	_PluginsFolder    = LXCore::GetAppPath();
+	_EngineFolder		  = _DataFolder + L"Engine/";
+	_PluginsFolder    = LXEngine::GetAppPath();
 	_Scripts		  = _DataFolder + L"Scripts/";
 
 	ConcatPath(_DataFolder);
@@ -98,11 +98,11 @@ void LXSettings::InitPaths()
 	ConcatPath(_ModelsFolder);
 	ConcatPath(_ShadersFolder);
 	ConcatPath(_ProjectsFolder);
-	ConcatPath(_CoreFolder);
+	ConcatPath(_EngineFolder);
 	ConcatPath(_PluginsFolder);
 
 	CHK(IsFolder(_TexturesFolder));
 	CHK(IsFolder(_ShadersFolder));
-	CHK(IsFolder(_CoreFolder));
+	CHK(IsFolder(_EngineFolder));
 	CHK(IsFolder(_PluginsFolder));
 }

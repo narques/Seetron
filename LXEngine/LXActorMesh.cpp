@@ -9,13 +9,13 @@
 #include "StdAfx.h"
 #include "LXActorMesh.h"
 #include "LXAssetMesh.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXLogger.h"
 #include "LXMesh.h"
 #include "LXStatistic.h"
 
 LXActorMesh::LXActorMesh():
-LXActor(GetCore().GetProject())
+LXActor(GetEngine().GetProject())
 {
 	LX_COUNTSCOPEINC(LXActorMesh);
 	_nCID |= LX_NODETYPE_MESH;

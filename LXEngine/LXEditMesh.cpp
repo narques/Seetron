@@ -9,7 +9,7 @@
 #include "stdafx.h"
 #include "LXEditMesh.h"
 #include "LXMeshTopology.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXMath.h"
 
 LXEditMesh::LXEditMesh(void):
@@ -63,7 +63,7 @@ void LXEditMesh::ComputeNormals( bool bFlipped )
 			c = m_PositionIndices[i][2];
 		}
 
-		if(1)//!GetCore().GetSSE())
+		if(1)//!GetEngine().GetSSE())
 		{
 			vec3f v0 = m_arrayPositions[a];
 			vec3f v1 = m_arrayPositions[b];

@@ -11,7 +11,7 @@
 #include "LXVec3.h"
 #include "LXColor.h"
 #include "LXActorMesh.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 
 class LXRenderer;
 class LXActorCamera;
@@ -46,7 +46,7 @@ public:
 
 	// Overridden from LXActor
 	virtual bool	ParticipateToSceneBBox( ) const override { return false; };
-	virtual bool	IsVisible			( ) const override { return _bVisible && !GetCore().GetPlayMode(); }
+	virtual bool	IsVisible			( ) const override { return _bVisible && !GetEngine().GetPlayMode(); }
 
 #if LX_ANCHOR
 	// Overridden from LXActor

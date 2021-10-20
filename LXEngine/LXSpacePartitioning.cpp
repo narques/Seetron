@@ -9,7 +9,7 @@
 #include "stdafx.h"
 #include "LXSpacePartitioning.h"
 #include "LXTraverserCallBack.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 
 LXSpacePartitioning::LXSpacePartitioning()
 {

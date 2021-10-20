@@ -23,7 +23,7 @@ enum class ELogType
 
 enum ELogMode
 {
-	LogMode_CoreConsole = LX_BIT(0),
+	LogMode_EngineConsole = LX_BIT(0),
 	LogMode_OSConsole = LX_BIT(1),
 	LogMode_DebuggerConsole = LX_BIT(2),
 	LogMode_File = LX_BIT(3),

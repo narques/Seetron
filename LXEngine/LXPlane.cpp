@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "LXPlane.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 
 LXPlane::LXPlane(void)
 {

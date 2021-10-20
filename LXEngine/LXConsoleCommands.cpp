@@ -9,7 +9,7 @@
 #include "stdafx.h"
 #include "LXConsoleCommands.h"
 #include "LXConsoleManager.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXLogger.h"
 #include "LXViewport.h"
 
@@ -34,16 +34,16 @@ LXConsoleCommandNoArg CCGetOpenFileName(FileOpenCommandName, []()
 	ofn.hwndOwner = ::GetActiveWindow();
 	if (GetOpenFileName(&ofn))
 	{
-		GetCore().LoadFile(FileName);
+		GetEngine().LoadFile(FileName);
 	}
 });
 
 LXConsoleCommandNoArg CCClose(FileCloseCommandName, []()
 {
-	GetCore().CloseProject();
+	GetEngine().CloseProject();
 },[]()
 {
-	return GetCore().GetProject() != nullptr;
+	return GetEngine().GetProject() != nullptr;
 });
 
 LXConsoleCommandNoArg CCQuit(FileQuitCommandName, []()
@@ -59,18 +59,18 @@ LXConsoleCommandNoArg CCOpenConsole(L"OpenConsole", []()
 
 LXConsoleCommandNoArg CCShowBounds(L"View.ShowBounds", []()
 {
-	GetCore().GetViewport()->ToggleShowBBoxes();
+	GetEngine().GetViewport()->ToggleShowBBoxes();
 }, []()
 {
-	return GetCore().GetProject() != nullptr;
+	return GetEngine().GetProject() != nullptr;
 });
 
 LXConsoleCommandNoArg CCShowPrimtitiveBounds(L"View.ShowPrimitiveBounds", []()
 	{
-		GetCore().GetViewport()->ToggleShowPrimitiveBBoxes();
+		GetEngine().GetViewport()->ToggleShowPrimitiveBBoxes();
 	}, []()
 	{
-		return GetCore().GetProject() != nullptr;
+		return GetEngine().GetProject() != nullptr;
 	});
 
 LXConsoleCommandNoArg CCTraceObject(L"Debug.DumpObject", []()

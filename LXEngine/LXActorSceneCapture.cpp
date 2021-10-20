@@ -8,10 +8,10 @@
 
 #include "stdafx.h"
 #include "LXActorSceneCapture.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXMemory.h" // --- Must be the last included ---
 
-LXActorSceneCapture::LXActorSceneCapture():LXActor(GetCore().GetProject())
+LXActorSceneCapture::LXActorSceneCapture():LXActor(GetEngine().GetProject())
 {
 	SetName(L"SceneCapture");
 

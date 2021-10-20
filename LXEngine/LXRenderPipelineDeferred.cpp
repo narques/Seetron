@@ -236,10 +236,10 @@ void LXRenderPipelineDeferred::BuildRenderClusterLists()
 	_CBViewProjectionData.ViewInv = Transpose(WorldTransformation->GetMatrixViewInv());
 	_CBViewProjectionData.CameraPosition = vec4f(Camera->GetPosition(), 0.f);
 	_CBViewProjectionData.RendererSize = vec2f((float)_Renderer->Width, (float)_Renderer->Height);
-	_CBViewProjectionData.Time = (float)GetCore().Time.Time();
-	_CBViewProjectionData.DeltaTime = (float)GetCore().Time.DeltaTime();
+	_CBViewProjectionData.Time = (float)GetEngine().Time.Time();
+	_CBViewProjectionData.DeltaTime = (float)GetEngine().Time.DeltaTime();
 
-	if (const LXActorSceneCapture* SceneCapture = GetCore().GetProject()->GetSceneCapture())
+	if (const LXActorSceneCapture* SceneCapture = GetEngine().GetProject()->GetSceneCapture())
 	{
 		RenderPassTransparent->CBImageBaseLightingData.Intensity = SceneCapture->GetIntensity();
 	}

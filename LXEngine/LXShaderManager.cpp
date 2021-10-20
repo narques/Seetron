@@ -9,7 +9,7 @@
 #include "stdafx.h"
 #include "LXShaderManager.h"
 #include "LXConsoleManager.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXDirectX11.h"
 #include "LXFile.h"
 #include "LXFileWatcher.h"

@@ -55,19 +55,19 @@ enum class ESelectionMode
 	SelectionModeMaterial
 };
 
-class LXENGINE_API LXCore : public LXDocumentBase // In order to load/save setting TODO LXSmartObject[File|Data|...]
+class LXENGINE_API LXEngine : public LXDocumentBase // In order to load/save setting TODO LXSmartObject[File|Data|...]
 {
 
 private:
 
-	LXCore(void);  
+	LXEngine(void);  
 	void Init();
-	virtual ~LXCore();
+	virtual ~LXEngine();
 
 public:
 	
-	static LXCore*		CreateCore();
-	static LXCore&		GetCore();
+	static LXEngine*		CreateEngine();
+	static LXEngine&		GetEngine();
 	
 	void BeginShutdown();
 	bool IsShutdown() const { return _shutdown; }
@@ -199,7 +199,7 @@ private:
 
 // Global functions
 
-LXENGINE_API LXCore& GetCore();
+LXENGINE_API LXEngine& GetEngine();
 LXENGINE_API LXProject* GetProject();
 LXENGINE_API LXScene* GetScene();
 LXENGINE_API LXAssetManager* GetAssetManager();

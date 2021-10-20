@@ -12,11 +12,11 @@
 #include "LXActorMesh.h"
 #include "LXSettings.h"
 #include "LXActor.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXKey.h"
 #include "LXMSXMLNode.h"
 #include "LXMaterial.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXProject.h"
 #include "LXScene.h"
 
@@ -241,7 +241,7 @@ LXBBox LXSelectionManager::GetBBoxWorld()
 	
 	if (!BBox.IsValid())
 	{
-		BBox = GetCore().GetProject()->GetScene()->GetBBoxWorld();
+		BBox = GetEngine().GetProject()->GetScene()->GetBBoxWorld();
 	}
 	return BBox;
 

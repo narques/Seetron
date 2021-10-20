@@ -9,7 +9,7 @@
 #include "stdafx.h"
 #include "LXActorMeshPlane.h"
 #include "LXAsset.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXMesh.h"
 #include "LXMeshFactory.h"
 #include "LXMemory.h" // --- Must be the last included ---

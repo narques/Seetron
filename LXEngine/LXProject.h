@@ -9,7 +9,7 @@
 #pragma once
 
 #include "LXDocumentBase.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 
 class LXActor;
 class LXActorCamera;

@@ -10,7 +10,7 @@
 #include "LXSmartObject.h"
 #include "LXSettings.h"
 #include "LXProperty.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXLogger.h"
 #include "LXPerformance.h"
 #include "LXPropertyManager.h"
@@ -375,7 +375,7 @@ bool LXSmartObject::Load(const TLoadContext& loadContext, LXString* pName)
 		{
 			OnLoaded();
 		});
-		GetCore().EnqueueTask(task);
+		GetEngine().EnqueueTask(task);
 	}
 
 	return true;
@@ -797,7 +797,7 @@ LXString* LXSmartObject::GetUID(bool bBuild) const
 		*_pUID = LXPlatform::CreateUuid();
 		// Use only data1 (ulong)
 		*_pUID = _pUID->Left(L"-");
-		//LogI(Core, L"Generated UID for object \"%s\" (%s)", GetName().GetBuffer(), GetObjectName().GetBuffer());
+		//LogI(Engine, L"Generated UID for object \"%s\" (%s)", GetName().GetBuffer(), GetObjectName().GetBuffer());
 	}
 	return _pUID;
 }

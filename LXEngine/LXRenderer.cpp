@@ -12,7 +12,7 @@
 #include "LXBitmap.h"
 #include "LXConsoleManager.h"
 #include "LXConstantBufferD3D11.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXDeviceResourceManager.h"
 #include "LXLogger.h"
 #include "LXMaterialBase.h"
@@ -65,7 +65,7 @@ LXConsoleCommandT<bool> CCToogleDrawImmediate(L"ToggleDrawImmediate", &gToogleDr
 // Retrieve the viewport resolution
 LXConsoleCommandNoArg CCResolution(L"Resolution", []()
 {
-	LogI(Viewport, L"Viewport size: %ix%i", GetCore().GetViewport()->GetWidth(), GetCore().GetViewport()->GetHeight());
+	LogI(Viewport, L"Viewport size: %ix%i", GetEngine().GetViewport()->GetWidth(), GetEngine().GetViewport()->GetHeight());
 });
 
 bool LXRenderer::gUseRenderThread = true;
@@ -91,7 +91,7 @@ LXRenderer::LXRenderer(HWND hWND):_hWND(hWND)
 		Thread->Run(&RenderFunc, this);
 	}
 
-	GetCore().SetRenderer(this);
+	GetEngine().SetRenderer(this);
 	GetLogger().Register(nullptr, [this](ELogType LogType, const wchar_t* Messsage)
 	{
 		ConsoleBuffer.push_back(Messsage);
@@ -103,7 +103,7 @@ LXRenderer::LXRenderer(HWND hWND):_hWND(hWND)
 LXRenderer::~LXRenderer()
 {
 	GetLogger().Unregister(nullptr);
-	GetCore().SetRenderer(nullptr);
+	GetEngine().SetRenderer(nullptr);
 	if (gUseRenderThread)
 	{
 		ExitRenderThread = true;
@@ -266,7 +266,7 @@ void LXRenderer::Run()
 
 		if (!init)
 		{
-			CHK(LXCore::FrameNumber == 0);
+			CHK(LXEngine::FrameNumber == 0);
 			LXPerformance perf;
 			Init();
 			init = true;
@@ -369,7 +369,7 @@ void LXRenderer::Render()
 {
 	LX_PERFOSCOPE(RenderThread_Render);
 
-	const LXTime& time = GetCore().Time;
+	const LXTime& time = GetEngine().Time;
 
 	// If project changed
 	if (_Project != _NewProject)
@@ -494,7 +494,7 @@ void LXRenderer::Render()
 	LX_COUNT(L"PixelShaders : %f", (int)ShaderManager->PixelShaders.size());
 
 	// Frame
-	LX_COUNT(L"Frame : %f", (double)LXCore::FrameNumber);
+	LX_COUNT(L"Frame : %f", (double)LXEngine::FrameNumber);
 	
 	_RenderPipeline->PostRender();
 
@@ -600,8 +600,8 @@ void LXRenderer::CreateDeviceTexture_RT(LXTexture* texture)
 	{
 		_enqueuedTexture.erase(texture);
 	});
-	GetCore().EnqueueInvokeDelegate(&texture->DeviceCreated);
-	GetCore().EnqueueTask(task);
+	GetEngine().EnqueueInvokeDelegate(&texture->DeviceCreated);
+	GetEngine().EnqueueTask(task);
 }
 
 void LXRenderer::ReleaseDeviceTexture(LXTexture* texture)
@@ -707,7 +707,7 @@ void LXRenderer::CopyDeviceTexture_RT(LXTexture* texture)
  
 	D3D11Texture2D->Release();
 	texture->CopyDeviceToBitmapEnqueued = false;
-	GetCore().EnqueueInvokeDelegate(&texture->BitmapChanged);
+	GetEngine().EnqueueInvokeDelegate(&texture->BitmapChanged);
 }
 
 void LXRenderer::ReleaseDeviceMaterials(LXMaterialBase* material)
@@ -768,7 +768,7 @@ void LXRenderer::ReleaseRenderData_RT()
 		
 		// Give object destruction to the MainThread
 		// TODO: could be done on the _mainTasks instead of the _syncTasks
-		GetCore().AddObjectForDestruction(renderData);
+		GetEngine().AddObjectForDestruction(renderData);
 	}
 
 	_toRelease.Out->clear();

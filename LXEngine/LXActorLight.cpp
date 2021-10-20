@@ -178,7 +178,7 @@ void LXActorLight::OnAnchorMove(LXAnchor* pAnchor, const LXMatrix& lcs)
 void LXActorLight::OnAnchorReleased(LXAnchor* pAnchors)
 {
 	LXPropertyMatrix* pProperty = dynamic_cast<LXPropertyMatrix*>(GetProperty(LXPropertyID::TRANSFORMATION));
-	GetCore().GetCommandManager().ChangeProperty(pProperty);
+	GetEngine().GetCommandManager().ChangeProperty(pProperty);
 }
 
 #endif

@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "LXActorForest.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXScene.h"
 #include "LXTerrain.h"
 #include "LXActorTree.h"
@@ -28,7 +28,7 @@ LXConsoleCommandNoArg CCGenerateForest(L"GenerateForest", []()
 	}
 }, []()
 {
-	return GetCore().GetProject() != nullptr;
+	return GetEngine().GetProject() != nullptr;
 });
 
 LXActorForest::LXActorForest()

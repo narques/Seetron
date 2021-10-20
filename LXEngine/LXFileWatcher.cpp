@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "LXFileWatcher.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXDirectory.h"
 #include "LXMessageManager.h"
 #include "LXMutex.h"

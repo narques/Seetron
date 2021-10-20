@@ -10,7 +10,7 @@
 #include "LXActor.h"
 #include "LXBBox.h"
 #include "LXCamera.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXFrustum.h"
 #include "LXActorLight.h"
 #include "LXProject.h"

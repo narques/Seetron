@@ -9,7 +9,7 @@
 #include "StdAfx.h"
 #include "LXCommandDeleteActor.h"
 #include "LXActor.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXProject.h"
 #include "LXAssetManager.h"
 #include "LXAnimationManager.h"
@@ -134,7 +134,7 @@ bool LXCommandDeleteKey::Do()
 	for (SetKeys::iterator It = _setKeys.begin(); It != _setKeys.end(); It++)
 	{
 		LXKey* pKey = *It;
-		GetCore().GetProject()->GetAnimationManager().Remove(pKey);
+		GetEngine().GetProject()->GetAnimationManager().Remove(pKey);
 	}
 
 	return true;
@@ -145,7 +145,7 @@ bool LXCommandDeleteKey::Undo()
 	for (SetKeys::iterator It = _setKeys.begin(); It != _setKeys.end(); It++)
 	{
 		LXKey* pKey = *It;
-		GetCore().GetProject()->GetAnimationManager().Add(pKey);
+		GetEngine().GetProject()->GetAnimationManager().Add(pKey);
 	}
 	return true;
 }

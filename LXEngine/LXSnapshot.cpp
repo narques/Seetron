@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "LXSnapshot.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXSnapshotManager.h"
 #include "LXProject.h"
 #include "LXActorCamera.h"
@@ -16,7 +16,7 @@
 
 LXSnapshot::LXSnapshot()
 {
-	LXProject* Project = GetCore().GetProject();
+	LXProject* Project = GetEngine().GetProject();
 	LX_CHK_RET(Project);
 	Project->GetSnapshotManager().AddSnapshot(this);
 	static int cpt = 0;
@@ -26,7 +26,7 @@ LXSnapshot::LXSnapshot()
 
 LXSnapshot::~LXSnapshot()
 {
-	LXProject* Project = GetCore().GetProject();
+	LXProject* Project = GetEngine().GetProject();
 	LX_CHK_RET(Project);
 	Project->GetSnapshotManager().RemoveSnapshot(this);
 }

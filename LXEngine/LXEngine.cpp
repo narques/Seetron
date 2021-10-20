@@ -7,7 +7,7 @@
 //------------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXActorFactory.h"
 #include "LXAnimationManager.h"
 #include "LXAssetManager.h"
@@ -49,7 +49,7 @@ LXConsoleCommandNoArg CCListAllCommands(L"ListAllCommands", []()
 	for (const LXConsoleCommand* ConsoleCommand : GetConsoleManager().ListCommands)
 	{
 		LXString Msg = L"- " + ConsoleCommand->Name;
-		LogI(Core,L"%s", Msg.GetBuffer());
+		LogI(Engine,L"%s", Msg.GetBuffer());
 	}
 });
 
@@ -65,44 +65,44 @@ LXConsoleCommandNoArg CCListProjects(L"ListProjects", []()
 	auto& list = dir.GetListFileNames();
 	for (auto& It : list)
 	{
-		LogI(Core, L"%s", It.FileName.c_str());
+		LogI(Engine, L"%s", It.FileName.c_str());
 	}
 });
 
 LXConsoleCommand2S CCCreateNewProject(L"CreateNewProject", [](const LXString& ProjectName, const LXString& FolderPath)
 {
-	GetCore().CreateNewProject(ProjectName, FolderPath);
+	GetEngine().CreateNewProject(ProjectName, FolderPath);
 });
 
 LXConsoleCommandNoArg CCSaveProject(L"SaveProject", []()
 {
-	if (GetCore().GetProject() == nullptr)
+	if (GetEngine().GetProject() == nullptr)
 	{
-		LogW(Core, L"No project");
+		LogW(Engine, L"No project");
 		return;
 	}
 
-	if (GetCore().GetProject()->SaveFile() == true)
-		LogI(Core, L"Saved project %s", GetCore().GetProject()->GetFilepath().GetBuffer())
+	if (GetEngine().GetProject()->SaveFile() == true)
+		LogI(Engine, L"Saved project %s", GetEngine().GetProject()->GetFilepath().GetBuffer())
 	else
-		LogE(Core, L"Failed to save project %s", GetCore().GetProject()->GetFilepath().GetBuffer())
+		LogE(Engine, L"Failed to save project %s", GetEngine().GetProject()->GetFilepath().GetBuffer())
 });
 
 LXConsoleCommand2S CCLoadProject(L"LoadProject", [](const LXString& ProjectName, const LXString& FolderPath)
 {
-	GetCore().LoadProject(ProjectName);
+	GetEngine().LoadProject(ProjectName);
 });
 
 //------------------------------------------------------------------------------------------------------
 
 namespace
 {
-	LXCore* gCore = nullptr;
+	LXEngine* gEngine = nullptr;
 }
 
-__int64 LXCore::FrameNumber = -1;
+__int64 LXEngine::FrameNumber = -1;
 
-LXCore::LXCore()
+LXEngine::LXEngine()
 {
 #ifdef LX_DEBUGFLAG
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -110,7 +110,7 @@ LXCore::LXCore()
 }
 
 /*virtual*/
-LXCore::~LXCore()
+LXEngine::~LXEngine()
 {
 	delete m_commandManager;  
 	delete m_documentManager;
@@ -120,16 +120,16 @@ LXCore::~LXCore()
 
 	LXConsoleManager::DeleteSingleton();
 		
-	LogI(Core,L"------ Core deleted ------");
+	LogI(Engine,L"------ Engine deleted ------");
 }
 
-void LXCore::Init()
+void LXEngine::Init()
 {
 	MainThread = GetCurrentThreadId();
 
 	_settings = std::make_unique<LXSettings>();
 
-	LogI(Core, L"------ Seetron Engine ------");
+	LogI(Engine, L"------ Seetron Engine ------");
 
 	StatManager = new LXStatManager();
 	
@@ -166,7 +166,7 @@ void LXCore::Init()
 }
 
 /*virtual*/
-void LXCore::DefineProperties( ) 
+void LXEngine::DefineProperties( ) 
 {
 	//--------------------------------------------------------------------------------------------------------------------------------
 	LXProperty::SetCurrentGroup(L"Misc");
@@ -174,7 +174,7 @@ void LXCore::DefineProperties( )
 
 	// Selection Mode
 	{
-		LXPropertyEnum* p = DefinePropertyEnum( L"SelectionMode", LXPropertyID::CORE_SELECTIONMODE, (uint*)&m_eSelectionMode );
+		LXPropertyEnum* p = DefinePropertyEnum( L"SelectionMode", LXPropertyID::ENGINE_SELECTIONMODE, (uint*)&m_eSelectionMode );
 		p->AddChoice(L"Mesh", (uint)ESelectionMode::SelectionModeActor);
 		p->AddChoice(L"Primitive", (uint)ESelectionMode::SelectionModePrimitive);
 		p->AddChoice(L"Material", (uint)ESelectionMode::SelectionModeMaterial);
@@ -183,7 +183,7 @@ void LXCore::DefineProperties( )
 
 	// Undo
 	{
-		LXPropertyUint* pPropUint = DefinePropertyUint( L"UndoStackSize", LXPropertyID::CORE_UNDOSTACKSIZE, &m_nUndo);
+		LXPropertyUint* pPropUint = DefinePropertyUint( L"UndoStackSize", LXPropertyID::ENGINE_UNDOSTACKSIZE, &m_nUndo);
 		pPropUint->SetMinMax(0, 256);
 	}
 
@@ -191,51 +191,51 @@ void LXCore::DefineProperties( )
 	LXProperty::SetCurrentGroup(L"Import");
 	//--------------------------------------------------------------------------------------------------------------------------------
 
-	DefinePropertyBool(L"ImportMaterials", LXPropertyID::CORE_IMPORTMATERIALS, &m_bImportMaterials);
-	DefinePropertyBool(L"ImportTextures", LXPropertyID::CORE_IMPORTTEXTURES, &m_bImportTextures);
+	DefinePropertyBool(L"ImportMaterials", LXPropertyID::ENGINE_IMPORTMATERIALS, &m_bImportMaterials);
+	DefinePropertyBool(L"ImportTextures", LXPropertyID::ENGINE_IMPORTTEXTURES, &m_bImportTextures);
 }
 
-LXCore& LXCore::GetCore()
+LXEngine& LXEngine::GetEngine()
 {
-	CHK(gCore != nullptr);
-	return *gCore;
+	CHK(gEngine != nullptr);
+	return *gEngine;
 }
 
-LXCore*	LXCore::CreateCore()
+LXEngine*	LXEngine::CreateEngine()
 {
-	CHK(gCore == nullptr);
-	gCore = new LXCore();
-	gCore->Init();
-	return gCore;
+	CHK(gEngine == nullptr);
+	gEngine = new LXEngine();
+	gEngine->Init();
+	return gEngine;
 }
 
-void LXCore::BeginShutdown()
+void LXEngine::BeginShutdown()
 {
 	CHK(!_shutdowning);
-	LogI(Core, L"BeginShutdown");
+	LogI(Engine, L"BeginShutdown");
 	CloseProject();
 	_shutdowning = true;
 }
 
-void LXCore::EndShutdow()
+void LXEngine::EndShutdow()
 {
-	LogI(Core, L"EndShutdown");
+	LogI(Engine, L"EndShutdown");
 	_shutdowning = false;
 	_shutdown = true;
 	EngineShutdown.Invoke();
 }
 
-void LXCore::Destroy()
+void LXEngine::Destroy()
 {
 	CHK(_shutdown && !_shutdowning);
-	LogI(Core, L"Destroy");
-	gCore = nullptr;
+	LogI(Engine, L"Destroy");
+	gEngine = nullptr;
 	delete this;
 	LXObject::TraceAll();
 	LXLogger::DeleteSingleton();
 }
 
-void LXCore::EnumPlugins()
+void LXEngine::EnumPlugins()
 {
 	LXString str = _settings->GetPluginsFolder() + "LXImporter*.dll";
 	LXDirectory dir(str);
@@ -246,7 +246,7 @@ void LXCore::EnumPlugins()
 		RegisterPlugin(It.FileName.c_str());
 }
 
-void LXCore::RegisterPlugin(const LXFilepath& strFilepath)
+void LXEngine::RegisterPlugin(const LXFilepath& strFilepath)
 {
 	LXLibrary library;
 
@@ -270,27 +270,27 @@ void LXCore::RegisterPlugin(const LXFilepath& strFilepath)
 					for (ListStrings::iterator It = listExtensions.begin(); It!= listExtensions.end(); It++)
 					{
 						m_mapExtension2Plugin[*It] = strFilepath;
-						LogI(Core, L"Loaded %s", strFilepath.GetBuffer());
+						LogI(Engine, L"Loaded %s", strFilepath.GetBuffer());
 					}
 				}
 				else
-					LogW(Core,L"No extensions");
+					LogW(Engine,L"No extensions");
 			}
 		}
 		else
 		{
-			LogW(Core,L"Entry point not found : GetImporter");
+			LogW(Engine,L"Entry point not found : GetImporter");
 		}
 		
 		library.Release();
 	}
 	else
 	{
-		LogW(Core, L"Failed to load %s", strFilepath.GetBuffer());
+		LogW(Engine, L"Failed to load %s", strFilepath.GetBuffer());
 	}
 }
 
-LXImporter* LXCore::GetPlugin(LXProject* Project, const LXString& strExtension)
+LXImporter* LXEngine::GetPlugin(LXProject* Project, const LXString& strExtension)
 {
 	CHK(Project);
 	if (!Project)
@@ -315,30 +315,30 @@ LXImporter* LXCore::GetPlugin(LXProject* Project, const LXString& strExtension)
 	}
 	else
 	{
-		LogW(Core, L"No plugin for extension %s", strExtension.GetBuffer());
+		LogW(Engine, L"No plugin for extension %s", strExtension.GetBuffer());
 	}
 	return NULL;
 }
 
 /*static*/
-LXFilepath LXCore::GetAppPath( )
+LXFilepath LXEngine::GetAppPath( )
 {
 	LXFilepath str = LXPlatform::GetApplicationFileName().c_str();
 	str.ReplaceAll(L"\\", L"/");
 	return str.GetFilepath();
 }
 
-LXProject*	LXCore::GetProject( ) const
+LXProject*	LXEngine::GetProject( ) const
 { 
 	return m_documentManager->GetDocument(); 
 }
 
-LXViewport*	LXCore::GetViewport( ) const
+LXViewport*	LXEngine::GetViewport( ) const
 { 
 	return m_viewportManager->GetViewport(); 
 }
 
-void LXCore::BuildOpenDialogFilter(LXString& filter)
+void LXEngine::BuildOpenDialogFilter(LXString& filter)
 {
 	filter = "Seetron Projects (*.seproj);;";
 	for (auto el : m_mapExtension2Plugin)
@@ -349,7 +349,7 @@ void LXCore::BuildOpenDialogFilter(LXString& filter)
 	filter += "All Files (*.*)";
 }
 
-ECreateProjectResult LXCore::CreateNewProject(const LXString& Name, const LXString& FolderPath )
+ECreateProjectResult LXEngine::CreateNewProject(const LXString& Name, const LXString& FolderPath )
 {
 	ECreateProjectResult result = ECreateProjectResult::Error_Unknown;
 	bool CreateProject = false;
@@ -368,7 +368,7 @@ ECreateProjectResult LXCore::CreateNewProject(const LXString& Name, const LXStri
 		}
 		else
 		{
-			LogE(Core,L"Folder %s is not empty", ValidatedFolder.GetBuffer());
+			LogE(Engine,L"Folder %s is not empty", ValidatedFolder.GetBuffer());
 			result = ECreateProjectResult::Error_FolderNoEmpty;
 		}
 	}
@@ -376,7 +376,7 @@ ECreateProjectResult LXCore::CreateNewProject(const LXString& Name, const LXStri
 	{
 		if (CreateDirectory(ValidatedFolder, NULL) == TRUE)
 		{
-			LogI(Core,L"Created folder %s", ValidatedFolder.GetBuffer());
+			LogI(Engine,L"Created folder %s", ValidatedFolder.GetBuffer());
 			CreateDirectory(ValidatedFolder + L"Assets/", NULL);
 			CreateDirectory(ValidatedFolder + L"Assets/Textures/", NULL);
 			CreateDirectory(ValidatedFolder + L"Assets/Materials/", NULL);
@@ -396,9 +396,9 @@ ECreateProjectResult LXCore::CreateNewProject(const LXString& Name, const LXStri
 			auto Error = GetLastError();
 			switch (Error)
 			{
-			case ERROR_ALREADY_EXISTS: LogE(Core, L"Failed to create folder %s (ERROR_ALREADY_EXISTS)", ValidatedFolder.GetBuffer()); break;
-			case ERROR_PATH_NOT_FOUND: LogE(Core, L"Failed to create folder %s (ERROR_PATH_NOT_FOUND)", ValidatedFolder.GetBuffer()); break;
-			default: LogE(Core,L"Failed to create folder %s", ValidatedFolder.GetBuffer());
+			case ERROR_ALREADY_EXISTS: LogE(Engine, L"Failed to create folder %s (ERROR_ALREADY_EXISTS)", ValidatedFolder.GetBuffer()); break;
+			case ERROR_PATH_NOT_FOUND: LogE(Engine, L"Failed to create folder %s (ERROR_PATH_NOT_FOUND)", ValidatedFolder.GetBuffer()); break;
+			default: LogE(Engine,L"Failed to create folder %s", ValidatedFolder.GetBuffer());
 			}
 			
 			result = ECreateProjectResult::Error_FailedToCreateFolder;
@@ -421,7 +421,7 @@ ECreateProjectResult LXCore::CreateNewProject(const LXString& Name, const LXStri
 	return result;
 }
 
-bool LXCore::LoadProject(const LXString& ProjectName)
+bool LXEngine::LoadProject(const LXString& ProjectName)
 {
 	LXFilepath Filepath = ProjectName;
 	if (!Filepath.IsFileExist())
@@ -434,12 +434,12 @@ bool LXCore::LoadProject(const LXString& ProjectName)
 	}
 	else
 	{
-		LogW(Core, L"Project file %s does not exist", Filepath.GetBuffer());
+		LogW(Engine, L"Project file %s does not exist", Filepath.GetBuffer());
 		return false;
 	}
 }
 
-bool LXCore::LoadFile(const LXString& Filename)
+bool LXEngine::LoadFile(const LXString& Filename)
 {
 	// Close the current project
 	CloseProject();
@@ -448,7 +448,7 @@ bool LXCore::LoadFile(const LXString& Filename)
 	return Project ? true : false;
 }
 
-void LXCore::CloseProject()
+void LXEngine::CloseProject()
 {
 	LXProject* Project = m_documentManager->GetDocument();
 	SetDocument(nullptr);
@@ -456,30 +456,30 @@ void LXCore::CloseProject()
 	GetEventManager()->BroadCastEvent(EEventType::ProjectClosed);
 }
 
-void LXCore::SetPlayMode(bool bPlay)
+void LXEngine::SetPlayMode(bool bPlay)
 {
 	m_bPlay = bPlay;
 	if (GetProject())
 		GetProject()->GetAnimationManager().Play(m_bPlay);
 }
 
-void LXCore::SetRenderer(LXRenderer* Renderer)
+void LXEngine::SetRenderer(LXRenderer* Renderer)
 {
 	_Renderer = Renderer;
 }
 
-LXRenderer* LXCore::GetRenderer() const
+LXRenderer* LXEngine::GetRenderer() const
 {
 	return _Renderer;
 }
 
-void LXCore::EnqueueTask(LXTask* task)
+void LXEngine::EnqueueTask(LXTask* task)
 {
 	CHK(!IsMainThread());
 	_mainTasks->EnqueueTask(task);
 }
 
-void LXCore::EnqueueInvokeDelegate(LXDelegate<>* delegate)
+void LXEngine::EnqueueInvokeDelegate(LXDelegate<>* delegate)
 {
 	LXTask* task = new LXTaskCallBack([delegate]()
 	{
@@ -488,7 +488,7 @@ void LXCore::EnqueueInvokeDelegate(LXDelegate<>* delegate)
 	_mainTasks->EnqueueTask(task);
 }
 
-void LXCore::EnqueueInvokeDelegate(const LXDelegate<>* delegate)
+void LXEngine::EnqueueInvokeDelegate(const LXDelegate<>* delegate)
 {
 	LXTask* task = new LXTaskCallBack([delegate]()
 	{
@@ -497,7 +497,7 @@ void LXCore::EnqueueInvokeDelegate(const LXDelegate<>* delegate)
 	_mainTasks->EnqueueTask(task);
 }
 
-void LXCore::AddObjectForDestruction(LXObject* object)
+void LXEngine::AddObjectForDestruction(LXObject* object)
 {
 	LXTask* task = new LXTaskCallBack([object]()
 	{
@@ -506,7 +506,7 @@ void LXCore::AddObjectForDestruction(LXObject* object)
 	_syncTasks->EnqueueTask(task);
 }
 
-void LXCore::SetDocument(LXProject* Document)
+void LXEngine::SetDocument(LXProject* Document)
 {
 	CHK(!LoadingThread);
 
@@ -520,7 +520,7 @@ void LXCore::SetDocument(LXProject* Document)
 	if (LXViewport* Viewport = GetViewportManager().GetViewport())
 		Viewport->SetDocument(Document);
 
-	GetCore().GetDocumentManager().SetDocument(Document);
+	GetEngine().GetDocumentManager().SetDocument(Document);
 
 	if (_Renderer)
 	{
@@ -533,7 +533,7 @@ void LXCore::SetDocument(LXProject* Document)
 	}
 }
 
-void LXCore::Run()
+void LXEngine::Run()
 {
 	if (_shutdown)
 		return;
@@ -606,7 +606,7 @@ void LXCore::Run()
 	// Logs
 	GetLogger().Tick();
 
-	// Dispatch Core Messages
+	// Dispatch Engine Messages
 	GetMessageManager()->Run();
 
 	// Broadcast events posted outside the MainThread
@@ -635,7 +635,7 @@ void LXCore::Run()
 	}
 }
 
-LXMaterial* LXCore::GetDefaultMaterial() const
+LXMaterial* LXEngine::GetDefaultMaterial() const
 {
 	if (GetProject())
 		return GetProject()->GetAssetManager().GetDefaultMaterial().get();
@@ -643,7 +643,7 @@ LXMaterial* LXCore::GetDefaultMaterial() const
 		return nullptr;
 }
 
-LXTexture* LXCore::GetDefaultTexture() const
+LXTexture* LXEngine::GetDefaultTexture() const
 { 
 	if (GetProject())
 		return GetProject()->GetAssetManager().GetDefaultTexture().get();
@@ -651,7 +651,7 @@ LXTexture* LXCore::GetDefaultTexture() const
 		return nullptr;
 }
 
-void LXCore::ResetShaders()
+void LXEngine::ResetShaders()
 {
 	if (_Renderer)
 		_Renderer->ResetShaders();
@@ -659,14 +659,14 @@ void LXCore::ResetShaders()
 
 //------------------------------------------------------------------------------------------------------
 
-LXCore& GetCore()
+LXEngine& GetEngine()
 {
-	return LXCore::GetCore();
+	return LXEngine::GetEngine();
 }
 
 LXProject* GetProject()
 {
-	return GetCore().GetProject();
+	return GetEngine().GetProject();
 }
 
 LXScene* GetScene()
@@ -691,12 +691,12 @@ LXPrimitiveFactory* GetPrimitiveFactory()
 
 LXActorFactory* GetActorFactory()
 {
-	return GetCore().GetActorFactory();
+	return GetEngine().GetActorFactory();
 }
 
 LXStatManager* GetStatManager()
 {
-	return gCore ? gCore->GetStatManager() : nullptr;
+	return gEngine ? gEngine->GetStatManager() : nullptr;
 }
 
 LXEventManager* GetEventManager()
@@ -713,7 +713,7 @@ LXMessageManager* GetMessageManager()
 
 LXRenderer* GetRenderer()
 {
-	return GetCore().GetRenderer();
+	return GetEngine().GetRenderer();
 }
 
 LXMeshFactory* GetMeshFactory()

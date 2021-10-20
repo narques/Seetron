@@ -10,7 +10,7 @@
 #include "LXActorCamera.h"
 #include "LXActorMeshGizmo.h"
 #include "LXCommandManager.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXEventManager.h"
 #include "LXLogger.h"
 #include "LXMesh.h"
@@ -223,12 +223,12 @@ void LXActorMeshGizmo::OnPositionChanged()
 		{
 			if (LXProperty* property = actor->GetProperty(LXPropertyID::POSITION))
 			{
-				GetCore().GetCommandManager().PreviewChangeProperty(property, GetPosition());
+				GetEngine().GetCommandManager().PreviewChangeProperty(property, GetPosition());
 			}
 
 			if (LXProperty* property = actor->GetProperty(LXPropertyID::ROTATION))
 			{
-				GetCore().GetCommandManager().PreviewChangeProperty(property, GetRotation());
+				GetEngine().GetCommandManager().PreviewChangeProperty(property, GetRotation());
 			}
 		}
 	}

@@ -20,7 +20,7 @@
 #include "LXMSXMLNode.h"
 #include "LXMemory.h" // --- Must be the last included ---
 #include "LXRenderPipeline.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 
 LXViewState::LXViewState(LXProject* pDocument):
 _Project(pDocument),

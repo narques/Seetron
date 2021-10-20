@@ -25,7 +25,7 @@ public:
 	const LXFilepath&	GetShadersFolder			  ( ) { return _ShadersFolder; }
 	const LXFilepath&   GetDataFolder				  ( ) { return _DataFolder; }
 	const LXFilepath&	GetProjectsFolder			  ( ) { return _ProjectsFolder; }
-	const LXFilepath&	GetCoreFolder				  ( ) { return _CoreFolder; }
+	const LXFilepath&	GetEngineFolder				  ( ) { return _EngineFolder; }
 	const LXFilepath&	GetPluginsFolder			  ( ) { return _PluginsFolder; }
 	const LXFilepath&   GetScriptsFolder			  ( ) { return _Scripts; }
 
@@ -42,7 +42,7 @@ private:
 	LXFilepath			_ModelsFolder;            
 	LXFilepath			_ShadersFolder;			
 	LXFilepath			_ProjectsFolder;
-	LXFilepath			_CoreFolder;
+	LXFilepath			_EngineFolder;
 	LXFilepath			_PluginsFolder;
 	LXFilepath			_Scripts;
 };

@@ -36,7 +36,7 @@ bool LXDocumentBase::SaveDefaultProperties()
 		return false;
 
 	LXFilepath strFilepath = GetObjectName() + L"." + LX_DEFAULT_EXT;
-	return SaveFile(GetSettings().GetCoreFolder() + strFilepath, false);
+	return SaveFile(GetSettings().GetEngineFolder() + strFilepath, false);
 }
 
 bool LXDocumentBase::LoadDefaultProperties()
@@ -47,7 +47,7 @@ bool LXDocumentBase::LoadDefaultProperties()
 
 	LXFilepath strFilepath = GetObjectName() + L"." + LX_DEFAULT_EXT;
 
-	return Load(GetSettings().GetCoreFolder() + strFilepath, false);
+	return Load(GetSettings().GetEngineFolder() + strFilepath, false);
 }
 
 bool LXDocumentBase::SaveFile(bool bSaveSystem /*=false*/)

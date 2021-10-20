@@ -28,17 +28,17 @@ const LXString LXPropertyManager::GetPropertyLabel(LXPropertyID id)
 	//
 	case LXPropertyID::BACKGROUND_BOTTOMCOLOR: return L"Bottom color";
 	//
-	// Core
+	// Engine
 	//
-	case LXPropertyID::CORE_MIRROR_TEXTURE_SIZE: return L"Mirror Texture Size";
-	case LXPropertyID::CORE_SELECTIONMODE: return L"Selection mode";
-	case LXPropertyID::CORE_UNDOSTACKSIZE: return L"UndoStackSize";
-	case LXPropertyID::CORE_IMPORTMATERIALS: return L"Import materials";
-	case LXPropertyID::CORE_IMPORTTEXTURES: return L"Import textures";
-	case LXPropertyID::CORE_IMPORTMERGEMATERIALS: return L"Merge materials";
-	case LXPropertyID::CORE_IMPORTMERGEPRIMITIVES: return L"Merge primitives";
+	case LXPropertyID::ENGINE_MIRROR_TEXTURE_SIZE: return L"Mirror Texture Size";
+	case LXPropertyID::ENGINE_SELECTIONMODE: return L"Selection mode";
+	case LXPropertyID::ENGINE_UNDOSTACKSIZE: return L"UndoStackSize";
+	case LXPropertyID::ENGINE_IMPORTMATERIALS: return L"Import materials";
+	case LXPropertyID::ENGINE_IMPORTTEXTURES: return L"Import textures";
+	case LXPropertyID::ENGINE_IMPORTMERGEMATERIALS: return L"Merge materials";
+	case LXPropertyID::ENGINE_IMPORTMERGEPRIMITIVES: return L"Merge primitives";
 	case LXPropertyID::MSAA: return L"MSAA";
-	case LXPropertyID::CORE_SHOWBBOX: return L"Show BBox";
+	case LXPropertyID::ENGINE_SHOWBBOX: return L"Show BBox";
 	//
 	// ViewState
 	//

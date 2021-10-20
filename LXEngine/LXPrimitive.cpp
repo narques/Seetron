@@ -9,7 +9,7 @@
 #include "stdafx.h"
 #include "LXPrimitive.h"
 #include "LXActorMesh.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXProject.h"
 #include "LXSettings.h"
 #include "LXFile.h"
@@ -316,7 +316,7 @@ void LXPrimitive::SetMaterial( std::shared_ptr<LXMaterialBase>& pMaterial )
 
 void LXPrimitive::SetMaterial(const LXString& Filename)
 {
-	LXAssetManager& rm = GetCore().GetProject()->GetAssetManager();
+	LXAssetManager& rm = GetEngine().GetProject()->GetAssetManager();
 	std::shared_ptr<LXMaterial> material = rm.GetMaterial(Filename);
 	std::shared_ptr<LXMaterialBase> materialBase = std::static_pointer_cast<LXMaterialBase>(material);
 	SetMaterial(materialBase);

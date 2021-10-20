@@ -53,7 +53,7 @@ LXProject::LXProject(const LXFilepath& filepath)
 	m_strFilepath = filepath;
 
 	// Refers to DocManager: Done first because some project managers can be use the link in their constructors
-	GetCore().GetDocumentManager().SetDocument(this);
+	GetEngine().GetDocumentManager().SetDocument(this);
 
 	// Managers
 	m_pSelectionManager = new LXSelectionManager(this);
@@ -88,7 +88,7 @@ LXProject::LXProject(const LXFilepath& filepath)
 	m_pScene->AddChild(ActorMeshGizmo);
 	
 	// To manipulate Anchor or Gizmo
-	GetCore().GetCommandManager().PushQuery(new LXQueryTransform());
+	GetEngine().GetCommandManager().PushQuery(new LXQueryTransform());
 
 	// Properties
 	DefineProperty(L"DepthOfField", LXPropertyID::VIEWSTATE_DEPTHOFFIELD, &DepthOfField);
@@ -116,7 +116,7 @@ LXProject::~LXProject(void)
 	LogI(Project, L"Project deleted");
 
 	// Unregister from the manager
-	GetCore().GetDocumentManager().SetDocument(NULL);
+	GetEngine().GetDocumentManager().SetDocument(NULL);
 }
 
 bool LXProject::InitializeNewProject( const LXString& strName )

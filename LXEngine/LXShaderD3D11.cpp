@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "LXShaderD3D11.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXDirectX11.h"
 #include "LXLogger.h"
 #include "LXPrimitiveD3D11.h"

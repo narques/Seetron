@@ -9,7 +9,7 @@
 #include "stdafx.h"
 #include "LXSelection.h"
 #include "LXProperty.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXProject.h"
 #include "LXMSXMLNode.h"
 
@@ -43,7 +43,7 @@ const SetSmartObjects& LXSelection::Get( )
 	if (m_listUID.size())
 	{
 		CHK(m_setSmartObjects.size()==0);
-		GetCore().GetProject()->GetGroups(m_listUID, m_setSmartObjects);
+		GetEngine().GetProject()->GetGroups(m_listUID, m_setSmartObjects);
 		m_listUID.clear();
 	}
 	

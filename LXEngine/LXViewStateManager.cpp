@@ -8,7 +8,7 @@
 
 #include "StdAfx.h"
 #include "LXViewState.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXCommandManager.h"
 #include "LXViewStateManager.h"
 #include "LXProject.h"

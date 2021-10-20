@@ -35,7 +35,7 @@ LXConsoleCommandNoArg CCCreateActor(L"Create.Actor", []()
 		}
 	}, []()
 	{
-		return GetCore().GetProject() != nullptr;
+		return GetEngine().GetProject() != nullptr;
 	});
 
 LXConsoleCommandNoArg CCCreateCylinder(L"Create.Cylinder", []()
@@ -47,7 +47,7 @@ LXConsoleCommandNoArg CCCreateCylinder(L"Create.Cylinder", []()
 	}
 }, []()
 {
-	return GetCore().GetProject() != nullptr;
+	return GetEngine().GetProject() != nullptr;
 });
 
 LXConsoleCommandNoArg CCCreateCube(L"Create.Cube", []()
@@ -59,7 +59,7 @@ LXConsoleCommandNoArg CCCreateCube(L"Create.Cube", []()
 	}
 }, []()
 {
-	return GetCore().GetProject() != nullptr;
+	return GetEngine().GetProject() != nullptr;
 });
 
 LXConsoleCommandNoArg CCCreateCone(L"Create.Cone", []()
@@ -71,7 +71,7 @@ LXConsoleCommandNoArg CCCreateCone(L"Create.Cone", []()
 	}
 }, []()
 {
-	return GetCore().GetProject() != nullptr;
+	return GetEngine().GetProject() != nullptr;
 });
 
 LXConsoleCommandNoArg CCCreateSphere(L"Create.Sphere", []()
@@ -83,7 +83,7 @@ LXConsoleCommandNoArg CCCreateSphere(L"Create.Sphere", []()
 	}
 }, []()
 {
-	return GetCore().GetProject() != nullptr;
+	return GetEngine().GetProject() != nullptr;
 });
 
 LXConsoleCommandNoArg CCCreatePlane(L"Create.Plane", []()
@@ -95,7 +95,7 @@ LXConsoleCommandNoArg CCCreatePlane(L"Create.Plane", []()
 	}
 }, []()
 {
-	return GetCore().GetProject() != nullptr;
+	return GetEngine().GetProject() != nullptr;
 });
 
 LXConsoleCommandNoArg CCCreateLight(L"Create.Light", []()
@@ -107,7 +107,7 @@ LXConsoleCommandNoArg CCCreateLight(L"Create.Light", []()
 	}
 }, []()
 {
-	return GetCore().GetProject() != nullptr;
+	return GetEngine().GetProject() != nullptr;
 });
 
 LXConsoleCommandNoArg CCCreateSceneCapture(L"Create.SceneCapture", []()
@@ -119,7 +119,7 @@ LXConsoleCommandNoArg CCCreateSceneCapture(L"Create.SceneCapture", []()
 	}
 }, []()
 {
-	return GetCore().GetProject() != nullptr;
+	return GetEngine().GetProject() != nullptr;
 });
 
 LXConsoleCommandNoArg CCCreateRenderToTexture(L"Create.RenderToTexture", []()
@@ -131,7 +131,7 @@ LXConsoleCommandNoArg CCCreateRenderToTexture(L"Create.RenderToTexture", []()
 	}
 }, []()
 {
-	return GetCore().GetProject() != nullptr;
+	return GetEngine().GetProject() != nullptr;
 });
 
 LXConsoleCommandNoArg CCCreateTerrain(L"Create.Terrain", []()
@@ -143,7 +143,7 @@ LXConsoleCommandNoArg CCCreateTerrain(L"Create.Terrain", []()
 	}
 }, []()
 {
-	return GetCore().GetProject() != nullptr;
+	return GetEngine().GetProject() != nullptr;
 });
 
 LXConsoleCommandNoArg CCCreateForest(L"Create.Forest", []()
@@ -155,7 +155,7 @@ LXConsoleCommandNoArg CCCreateForest(L"Create.Forest", []()
 	}
 }, []()
 {
-	return GetCore().GetProject() != nullptr;
+	return GetEngine().GetProject() != nullptr;
 });
 
 LXActorFactory::LXActorFactory()

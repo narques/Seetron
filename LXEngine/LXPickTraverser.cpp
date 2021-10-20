@@ -16,7 +16,7 @@
 #include "LXComponent.h"
 #include "LXComponentMesh.h"
 #include "LXPerformance.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXActorLine.h"
 #include "LXScene.h"
 #include "LXActorLight.h"

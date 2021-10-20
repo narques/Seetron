@@ -11,7 +11,7 @@
 
 // Seetron
 #include "LXActor.h"
-#include "LXCore.h"
+#include "LXEngine.h"
 #include "LXMath.h"
 #include "LXLogger.h"
 #include "LXRenderData.h"
@@ -40,7 +40,7 @@ LXComponent::~LXComponent(void)
 
 void LXComponent::MarkForDelete()
 {
-	GetCore().AddObjectForDestruction(this);
+	GetEngine().AddObjectForDestruction(this);
 }
 
 void LXComponent::DefineProperties()
