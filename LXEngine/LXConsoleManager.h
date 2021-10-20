@@ -12,7 +12,7 @@
 
 class LXConsoleCommand;
 
-class LXCORE_API LXConsoleManager : public LXObject
+class LXENGINE_API LXConsoleManager : public LXObject
 {
 public:
 
@@ -30,13 +30,13 @@ public:
 	std::list<LXConsoleCommand*> ListCommands;
 };
 
-LXCORE_API LXConsoleManager& GetConsoleManager();
+LXENGINE_API LXConsoleManager& GetConsoleManager();
 
 //------------------------------------------------------------------------------------------------------
 // ConsoleCommand base class
 //------------------------------------------------------------------------------------------------------
 
-class LXCORE_API LXConsoleCommand : public LXObject
+class LXENGINE_API LXConsoleCommand : public LXObject
 {
 
 public:
@@ -58,7 +58,7 @@ public:
 //------------------------------------------------------------------------------------------------------
 
 template<typename T>
-class LXCORE_API LXConsoleCommandT : public LXConsoleCommand
+class LXENGINE_API LXConsoleCommandT : public LXConsoleCommand
 {
 public:
 
@@ -95,7 +95,7 @@ private:
 //------------------------------------------------------------------------------------------------------
 
 template<typename FunctionSignature>
-class LXCORE_API LXConsoleCommandCall2 : public LXConsoleCommand
+class LXENGINE_API LXConsoleCommandCall2 : public LXConsoleCommand
 {
 
 public:

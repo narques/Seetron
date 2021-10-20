@@ -18,7 +18,7 @@ class LXThread;
 
 typedef std::stack<LXFilepath> StackFilepath;
 
-class LXCORE_API LXDocumentManager : public LXObject
+class LXENGINE_API LXDocumentManager : public LXObject
 {
 	
 public:

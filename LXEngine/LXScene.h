@@ -14,7 +14,7 @@ typedef std::vector<class LXActorLight*> ArrayLights;
 class LXActorCamera;
 class LXEvent;
 
-class LXCORE_API LXScene : public LXActor
+class LXENGINE_API LXScene : public LXActor
 {
 
 	friend class LXActor;

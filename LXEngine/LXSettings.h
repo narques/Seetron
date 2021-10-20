@@ -11,7 +11,7 @@
 #include "LXObject.h"
 #include "LXFilepath.h"
 
-class LXCORE_API LXSettings : public LXObject
+class LXENGINE_API LXSettings : public LXObject
 {
 public:
 
@@ -47,4 +47,4 @@ private:
 	LXFilepath			_Scripts;
 };
 
-LXCORE_API LXSettings& GetSettings();
+LXENGINE_API LXSettings& GetSettings();

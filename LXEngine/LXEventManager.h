@@ -10,7 +10,7 @@
 
 #include "LXEvent.h"
 
-class LXCORE_API LXEventManager
+class LXENGINE_API LXEventManager
 {
 
 public:

@@ -13,7 +13,7 @@
 class LXViewport;
 class LXRenderer;
 
-class LXCORE_API LXWindowViewport : public LXWindow
+class LXENGINE_API LXWindowViewport : public LXWindow
 {
 
 public:

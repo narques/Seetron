@@ -25,7 +25,7 @@ typedef std::list<LXMesh*> ListMeshes;
 class LXPrimitiveInstance;
 typedef std::vector <std::shared_ptr<LXPrimitiveInstance>> VectorPrimitiveInstances;
 
-class LXCORE_API LXMesh : public LXMeshBase
+class LXENGINE_API LXMesh : public LXMeshBase
 {
 	friend class LXActorMesh;
 

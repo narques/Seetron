@@ -54,7 +54,7 @@ struct TLoadContext
 
 LXPropertyID GetAutomaticPropertyID();
 
-class LXCORE_API LXSmartObject : public virtual LXObject
+class LXENGINE_API LXSmartObject : public virtual LXObject
 {
 
 public:
@@ -248,7 +248,7 @@ private:
 };
 
 // For UI Purpose
-class LXCORE_API LXSmartObjectContainer : public virtual LXObject
+class LXENGINE_API LXSmartObjectContainer : public virtual LXObject
 {
 
 public:

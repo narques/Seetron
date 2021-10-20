@@ -17,7 +17,7 @@ enum class EMaterialType // ! DataModel
 	MaterialTypeTexture
 };
 
-class LXCORE_API LXMaterialBase : public LXAsset, public std::enable_shared_from_this<LXMaterialBase>
+class LXENGINE_API LXMaterialBase : public LXAsset, public std::enable_shared_from_this<LXMaterialBase>
 {
 
 public:

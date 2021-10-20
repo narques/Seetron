@@ -42,7 +42,7 @@ enum class ELoadingStatus
 	Loaded
 };
 
-class LXCORE_API LXProject : public LXSmartObjectContainer, public LXDocumentBase
+class LXENGINE_API LXProject : public LXSmartObjectContainer, public LXDocumentBase
 {
 
 public:

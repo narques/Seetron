@@ -15,7 +15,7 @@ class LXQuery;
 class LXQueryManager;
 class LXSelectionManager;
 
-class LXCORE_API LXDocumentOwner : public virtual LXObject
+class LXENGINE_API LXDocumentOwner : public virtual LXObject
 {
 
 public:

@@ -11,7 +11,7 @@
 #include "LXObject.h"
 #include "LXVec3.h"
 
-class LXCORE_API LXFile : public LXObject
+class LXENGINE_API LXFile : public LXObject
 {
 
 public:

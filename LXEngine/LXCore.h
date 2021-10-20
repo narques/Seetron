@@ -55,7 +55,7 @@ enum class ESelectionMode
 	SelectionModeMaterial
 };
 
-class LXCORE_API LXCore : public LXDocumentBase // In order to load/save setting TODO LXSmartObject[File|Data|...]
+class LXENGINE_API LXCore : public LXDocumentBase // In order to load/save setting TODO LXSmartObject[File|Data|...]
 {
 
 private:
@@ -199,15 +199,15 @@ private:
 
 // Global functions
 
-LXCORE_API LXCore& GetCore();
-LXCORE_API LXProject* GetProject();
-LXCORE_API LXScene* GetScene();
-LXCORE_API LXAssetManager* GetAssetManager();
-LXCORE_API LXSelectionManager* GetSelectionManager();
-LXCORE_API LXActorFactory* GetActorFactory();
-LXCORE_API LXPrimitiveFactory* GetPrimitiveFactory();
-LXCORE_API LXRenderer* GetRenderer();
-LXCORE_API LXStatManager* GetStatManager();
-LXCORE_API LXEventManager* GetEventManager();
-LXCORE_API LXMessageManager* GetMessageManager();
-LXCORE_API LXMeshFactory* GetMeshFactory();
+LXENGINE_API LXCore& GetCore();
+LXENGINE_API LXProject* GetProject();
+LXENGINE_API LXScene* GetScene();
+LXENGINE_API LXAssetManager* GetAssetManager();
+LXENGINE_API LXSelectionManager* GetSelectionManager();
+LXENGINE_API LXActorFactory* GetActorFactory();
+LXENGINE_API LXPrimitiveFactory* GetPrimitiveFactory();
+LXENGINE_API LXRenderer* GetRenderer();
+LXENGINE_API LXStatManager* GetStatManager();
+LXENGINE_API LXEventManager* GetEventManager();
+LXENGINE_API LXMessageManager* GetMessageManager();
+LXENGINE_API LXMeshFactory* GetMeshFactory();

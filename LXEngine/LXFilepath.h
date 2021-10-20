@@ -10,7 +10,7 @@
 
 #include "LXString.h"
 
-class LXCORE_API LXFilepath : public LXString
+class LXENGINE_API LXFilepath : public LXString
 {
 
 public:

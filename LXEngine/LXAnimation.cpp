@@ -190,16 +190,16 @@ void LXAnimation::Add(LXKey* pKey)
 }
 
 // Explicit method Instantiation
-template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const bool& newValue, DWORD dwTime);
-template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const float& newValue, DWORD dwTime);
-template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const double& newValue, DWORD dwTime);
-template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const uint& newValue, DWORD dwTime);
-template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const int& newValue, DWORD dwTime);
-template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const LXString& newValue, DWORD dwTime);
-template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const LXFilepath& newValue, DWORD dwTime);
-template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const vec2f& newValue, DWORD dwTime);
-template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const vec3f& newValue, DWORD dwTime);
-template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const vec4f& newValue, DWORD dwTime);
-template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const LXColor4f& newValue, DWORD dwTime);
-template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const LXMatrix& newValue, DWORD dwTime);
-template LXCORE_API void LXAnimation::AddKey(LXProperty* pProp, const LXAssetPtr& newValue, DWORD dwTime);
+template LXENGINE_API void LXAnimation::AddKey(LXProperty* pProp, const bool& newValue, DWORD dwTime);
+template LXENGINE_API void LXAnimation::AddKey(LXProperty* pProp, const float& newValue, DWORD dwTime);
+template LXENGINE_API void LXAnimation::AddKey(LXProperty* pProp, const double& newValue, DWORD dwTime);
+template LXENGINE_API void LXAnimation::AddKey(LXProperty* pProp, const uint& newValue, DWORD dwTime);
+template LXENGINE_API void LXAnimation::AddKey(LXProperty* pProp, const int& newValue, DWORD dwTime);
+template LXENGINE_API void LXAnimation::AddKey(LXProperty* pProp, const LXString& newValue, DWORD dwTime);
+template LXENGINE_API void LXAnimation::AddKey(LXProperty* pProp, const LXFilepath& newValue, DWORD dwTime);
+template LXENGINE_API void LXAnimation::AddKey(LXProperty* pProp, const vec2f& newValue, DWORD dwTime);
+template LXENGINE_API void LXAnimation::AddKey(LXProperty* pProp, const vec3f& newValue, DWORD dwTime);
+template LXENGINE_API void LXAnimation::AddKey(LXProperty* pProp, const vec4f& newValue, DWORD dwTime);
+template LXENGINE_API void LXAnimation::AddKey(LXProperty* pProp, const LXColor4f& newValue, DWORD dwTime);
+template LXENGINE_API void LXAnimation::AddKey(LXProperty* pProp, const LXMatrix& newValue, DWORD dwTime);
+template LXENGINE_API void LXAnimation::AddKey(LXProperty* pProp, const LXAssetPtr& newValue, DWORD dwTime);

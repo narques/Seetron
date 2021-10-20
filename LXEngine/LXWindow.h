@@ -11,7 +11,7 @@
 #include "LXPlatform.h"
 #include "LXPoint.h"
 
-class LXCORE_API LXWindow
+class LXENGINE_API LXWindow
 {
 
 public:

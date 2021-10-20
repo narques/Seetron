@@ -263,33 +263,33 @@ bool LXCommandManager::SetParent(LXMesh* parent, LXMesh* child)
 
 // Explicit method Instantiation
 
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const float&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const double&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const uint&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const int&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXString&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXFilepath&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const bool&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const vec2f&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const vec3f&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const vec4f&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXColor4f&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXMatrix&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXAssetPtr&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const float&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const double&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const uint&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const int&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXString&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXFilepath&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const bool&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const vec2f&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const vec3f&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const vec4f&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXColor4f&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXMatrix&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperties(const ListProperties& listProperties, const LXAssetPtr&, bool supportUndo);
 
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<float>*, const float&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<double>*, const double&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<uint>*, const uint&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<int>*, const int&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXString>*, const LXString&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXFilepath>*, const LXFilepath&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<bool>*, const bool&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<vec2f>*, const vec2f&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<vec3f>*, const vec3f&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<vec4f>*, const vec4f&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXColor4f>*, const LXColor4f&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXMatrix>*, const LXMatrix&, bool supportUndo);
-template LXCORE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXAssetPtr>*, const LXAssetPtr&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperty(LXPropertyT<float>*, const float&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperty(LXPropertyT<double>*, const double&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperty(LXPropertyT<uint>*, const uint&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperty(LXPropertyT<int>*, const int&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXString>*, const LXString&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXFilepath>*, const LXFilepath&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperty(LXPropertyT<bool>*, const bool&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperty(LXPropertyT<vec2f>*, const vec2f&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperty(LXPropertyT<vec3f>*, const vec3f&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperty(LXPropertyT<vec4f>*, const vec4f&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXColor4f>*, const LXColor4f&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXMatrix>*, const LXMatrix&, bool supportUndo);
+template LXENGINE_API void LXCommandManager::ChangeProperty(LXPropertyT<LXAssetPtr>*, const LXAssetPtr&, bool supportUndo);
 
 
 template <class T>

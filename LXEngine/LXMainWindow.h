@@ -13,7 +13,7 @@ class LXRenderer;
 class LXConsoleCommand;
 class LXProperty;
 
-class LXCORE_API LXCoreWindow : public LXWindow 
+class LXENGINE_API LXCoreWindow : public LXWindow 
 {
 
 public:
@@ -62,7 +62,7 @@ private:
 	std::map<uint, std::pair<LXProperty*, uint>> _MenuProperties;
 };
 
-class LXCORE_API LXMainWindow : public LXCoreWindow
+class LXENGINE_API LXMainWindow : public LXCoreWindow
 {
 
 public:
@@ -73,7 +73,7 @@ public:
 
 };
 
-class LXCORE_API LXChildWindow : public LXCoreWindow
+class LXENGINE_API LXChildWindow : public LXCoreWindow
 {
 
 public:

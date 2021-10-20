@@ -17,7 +17,7 @@ enum class EResourceOwner
 	LXResourceOwner_Project,
 };
 
-class LXCORE_API LXAsset : public virtual LXSmartObject
+class LXENGINE_API LXAsset : public virtual LXSmartObject
 {
 
 public:

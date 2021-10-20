@@ -20,7 +20,7 @@ typedef std::vector<char> ArrayChar;
 
 class LXStringA;
 
-class LXCORE_API LXString
+class LXENGINE_API LXString
 {
 
 public:
@@ -174,7 +174,7 @@ public:
 //Explicit class Instantiation
 template class std::basic_string < wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> > ;
 
-class LXCORE_API LXStringA
+class LXENGINE_API LXStringA
 {
 
 public:

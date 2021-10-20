@@ -12,7 +12,7 @@
 
 class LXFrustum;
 
-class LXCORE_API LXTraverserFrustumCulling : public LXTraverser
+class LXENGINE_API LXTraverserFrustumCulling : public LXTraverser
 {
 
 public:

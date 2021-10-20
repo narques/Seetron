@@ -13,7 +13,7 @@
 
 class LXTexture;
 
-class LXCORE_API LXMaterialInstance : public LXMaterialBase, public LXOverride<LXMaterial>
+class LXENGINE_API LXMaterialInstance : public LXMaterialBase, public LXOverride<LXMaterial>
 {
 
 public:

@@ -20,10 +20,10 @@ public:
 	
 };
 
-LXCORE_API extern DWORD MainThread;
-LXCORE_API extern DWORD RenderThread;
-LXCORE_API extern DWORD LoadingThread;
-LXCORE_API extern bool IsSyncPoint;
+LXENGINE_API extern DWORD MainThread;
+LXENGINE_API extern DWORD RenderThread;
+LXENGINE_API extern DWORD LoadingThread;
+LXENGINE_API extern bool IsSyncPoint;
 
 static bool IsMainThread()	{ return ::GetCurrentThreadId() == MainThread; }
 static bool IsRenderThread() { return ::GetCurrentThreadId() == RenderThread; }

@@ -29,7 +29,7 @@ enum ELogMode
 	LogMode_File = LX_BIT(3),
 };
 
-class LXCORE_API LXLogger : public LXObject
+class LXENGINE_API LXLogger : public LXObject
 {
 
 public:
@@ -59,11 +59,11 @@ private:
 
 };
 
-LXCORE_API LXLogger& GetLogger();
+LXENGINE_API LXLogger& GetLogger();
 
-LXCORE_API void Log2(ELogType LogType, const wchar_t* section, const wchar_t* Format, ...);
-LXCORE_API void Log2(ELogType LogType, const wchar_t* section, const char* Format, ...);
-LXCORE_API void Output(ELogType LogType, const wchar_t* section, const wchar_t* Format, ...);
+LXENGINE_API void Log2(ELogType LogType, const wchar_t* section, const wchar_t* Format, ...);
+LXENGINE_API void Log2(ELogType LogType, const wchar_t* section, const char* Format, ...);
+LXENGINE_API void Output(ELogType LogType, const wchar_t* section, const wchar_t* Format, ...);
 
 #define LogI(section, message, ...) Log2(ELogType::LogType_Info, L#section, message, __VA_ARGS__);
 #define LogW(section, message, ...) Log2(ELogType::LogType_Warning, L#section, message, __VA_ARGS__);

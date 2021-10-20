@@ -10,7 +10,7 @@
 
 #include "LXExports.h"
 
-class LXCORE_API LXDebug
+class LXENGINE_API LXDebug
 {
 
 public:

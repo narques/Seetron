@@ -20,7 +20,7 @@ struct LXChannel
 	std::function<void()> Callback;
 };
 
-class LXCORE_API LXMessageManager : public LXObject
+class LXENGINE_API LXMessageManager : public LXObject
 {
 public:
 

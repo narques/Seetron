@@ -8,13 +8,13 @@
 
 #pragma once
 
-#ifdef LX_CORE_STATIC
-#define LXCORE_API
+#ifdef LX_ENGINE_STATIC
+#define LXENGINE_API
 #else
-#ifdef LXCORE_EXPORTS
-#define LXCORE_API __declspec(dllexport)
+#ifdef LXENGINE_EXPORTS
+#define LXENGINE_API __declspec(dllexport)
 #else
-#define LXCORE_API __declspec(dllimport)
-#endif // LXCORE_EXPORTS
-#endif // LX_CORE_STATIC
+#define LXENGINE_API __declspec(dllimport)
+#endif // LXENGINE_EXPORTS
+#endif // LX_ENGINE_STATIC
 

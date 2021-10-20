@@ -32,5 +32,5 @@ void LXColor4<float>::SetHexa(const LXStringA& str)
 }
 
 // Explicit class Instantiation
-template class LXCORE_API LXColor3<float>;
-template class LXCORE_API LXColor4<float>;
+template class LXENGINE_API LXColor3<float>;
+template class LXENGINE_API LXColor4<float>;

@@ -16,7 +16,7 @@
 
 #define LX_COUNTERS_PRIMITIVE
 
-class LXCORE_API LXCounter : public LXObject
+class LXENGINE_API LXCounter : public LXObject
 {
 		
 public:
@@ -37,7 +37,7 @@ typedef std::vector<LXCounter*> ArrayCounters;
 
 #endif
 
-class LXCORE_API LXPerformanceLogger : protected LXPerformance
+class LXENGINE_API LXPerformanceLogger : protected LXPerformance
 {
 
 public:
@@ -50,7 +50,7 @@ private:
 	std::wstring _name;
 };
 
-class LXCORE_API LXPerformanceScope : protected LXPerformance
+class LXENGINE_API LXPerformanceScope : protected LXPerformance
 {
 
 public:

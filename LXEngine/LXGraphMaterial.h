@@ -14,7 +14,7 @@ class LXNode;
 class LXNodeTemplate;
 class LXTexture;
 
-class LXCORE_API LXGraphMaterial : public LXGraph
+class LXENGINE_API LXGraphMaterial : public LXGraph
 {
 
 public:

@@ -13,7 +13,7 @@
 struct IXMLDOMDocument;
 class LXMSXMLNode;
 
-class LXCORE_API LXXMLDocument
+class LXENGINE_API LXXMLDocument
 {
 
 public:

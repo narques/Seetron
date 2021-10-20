@@ -16,7 +16,7 @@ class LXComponentMesh;
 class LXScene;
 class LXWorldPrimitive;
 
-class LXCORE_API LXTraverser : public LXObject
+class LXENGINE_API LXTraverser : public LXObject
 {
 
 public:

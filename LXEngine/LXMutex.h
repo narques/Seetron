@@ -8,7 +8,7 @@
 
 #pragma once
 
-class LXCORE_API LXMutex
+class LXENGINE_API LXMutex
 {
 
 public:

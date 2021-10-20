@@ -14,7 +14,7 @@
 class LXProject;
 class LXMaterial;
 
-class LXCORE_API LXManager : public LXDocumentOwner
+class LXENGINE_API LXManager : public LXDocumentOwner
 {
 
 public:
@@ -25,7 +25,7 @@ public:
 
 //----------------------------------------------------------------------------------//
 
-class LXCORE_API LXManager2 : public LXSmartObject
+class LXENGINE_API LXManager2 : public LXSmartObject
 {
 
 public:

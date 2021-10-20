@@ -26,7 +26,7 @@ enum LXBackgroundType /* DataModel : The new items must be added to the end */
 	LX_BGTYPE_SUN
 };
 
-class LXCORE_API LXBackground : public LXSmartObject
+class LXENGINE_API LXBackground : public LXSmartObject
 {
 
 public:

@@ -376,26 +376,26 @@ void LXPropertyT<T>::SetValue( const T& value, bool InvokeOnProperyChanged )
 }
 
 // Explicit class Instantiation
-template class LXCORE_API LXPropertyT<bool>;
-template class LXCORE_API LXPropertyT<int>;
-template class LXCORE_API LXPropertyT<uint>;
-template class LXCORE_API LXPropertyT<float>;
-template class LXCORE_API LXPropertyT<double>;
-template class LXCORE_API LXPropertyT<vec2f>;
-template class LXCORE_API LXPropertyT<vec3f>;
-template class LXCORE_API LXPropertyT<vec4f>;
-template class LXCORE_API LXPropertyT<LXColor4f>;
-template class LXCORE_API LXPropertyT<LXString>;
-template class LXCORE_API LXPropertyT<LXFilepath>;
-template class LXCORE_API LXPropertyT<LXMatrix>;
-template class LXCORE_API LXPropertyT<LXAssetPtr>;
-template class LXCORE_API LXPropertyT<ArraySmartObjects>;
-template class LXCORE_API LXPropertyT<ListSmartObjects>;
-template class LXCORE_API LXPropertyT<ArrayVec3f>;
-template class LXCORE_API LXPropertyT<LXSmartObject>;
-template class LXCORE_API LXPropertyT<std::shared_ptr<LXSmartObject>>;
-template class LXCORE_API LXPropertyT<LXReference<LXSmartObject>>;
-template class LXCORE_API LXPropertyT<ListSharedObjects>;
+template class LXENGINE_API LXPropertyT<bool>;
+template class LXENGINE_API LXPropertyT<int>;
+template class LXENGINE_API LXPropertyT<uint>;
+template class LXENGINE_API LXPropertyT<float>;
+template class LXENGINE_API LXPropertyT<double>;
+template class LXENGINE_API LXPropertyT<vec2f>;
+template class LXENGINE_API LXPropertyT<vec3f>;
+template class LXENGINE_API LXPropertyT<vec4f>;
+template class LXENGINE_API LXPropertyT<LXColor4f>;
+template class LXENGINE_API LXPropertyT<LXString>;
+template class LXENGINE_API LXPropertyT<LXFilepath>;
+template class LXENGINE_API LXPropertyT<LXMatrix>;
+template class LXENGINE_API LXPropertyT<LXAssetPtr>;
+template class LXENGINE_API LXPropertyT<ArraySmartObjects>;
+template class LXENGINE_API LXPropertyT<ListSmartObjects>;
+template class LXENGINE_API LXPropertyT<ArrayVec3f>;
+template class LXENGINE_API LXPropertyT<LXSmartObject>;
+template class LXENGINE_API LXPropertyT<std::shared_ptr<LXSmartObject>>;
+template class LXENGINE_API LXPropertyT<LXReference<LXSmartObject>>;
+template class LXENGINE_API LXPropertyT<ListSharedObjects>;
 
 //
 // --- float ---

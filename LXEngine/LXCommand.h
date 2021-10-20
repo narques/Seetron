@@ -11,7 +11,7 @@
 #include "LXObject.h"
 #include "LXProperty.h"
 
-class LXCORE_API LXCommand : public LXObject
+class LXENGINE_API LXCommand : public LXObject
 {
 
 public:

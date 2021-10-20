@@ -12,7 +12,7 @@
 #include "LXFace.h"
 #include "LXVec3.h"
 
-class LXCORE_API LXTopoVertex : public LXObject
+class LXENGINE_API LXTopoVertex : public LXObject
 {
 public:
 	virtual ~LXTopoVertex() {}

@@ -13,7 +13,7 @@
 #include "LXVec3.h"
 #include "LXVec4.h"
 
-class LXCORE_API LXBBox : public LXObject
+class LXENGINE_API LXBBox : public LXObject
 {
 
 public:

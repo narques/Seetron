@@ -12,7 +12,7 @@
 #include "LXActor.h"
 #include "LXMaterial.h"
 
-class LXCORE_API LXCommandDeleteActor : public LXCommand
+class LXENGINE_API LXCommandDeleteActor : public LXCommand
 {
 
 public:
@@ -33,7 +33,7 @@ private:
 
 };
 
-class LXCORE_API LXCommandDeleteMaterial : public LXCommand
+class LXENGINE_API LXCommandDeleteMaterial : public LXCommand
 {
 
 public:
@@ -55,7 +55,7 @@ private:
 };
 
 
-class LXCORE_API LXCommandDeleteKey : public LXCommand
+class LXENGINE_API LXCommandDeleteKey : public LXCommand
 {
 
 public:

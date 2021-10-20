@@ -34,7 +34,7 @@ enum LXDistributionFunction
 	GGX
 };
 
-class LXCORE_API LXRenderingLayer : public LXSmartObject
+class LXENGINE_API LXRenderingLayer : public LXSmartObject
 {
 
 public:
@@ -58,7 +58,7 @@ public:
 	//LX_DAE_PTR(LXMaterial, _material, NULL, Material, LXPropertyID::RENDERING_MATERIAL);
 };
 
-class LXCORE_API LXViewState : public LXSmartObject
+class LXENGINE_API LXViewState : public LXSmartObject
 {
 
 public:

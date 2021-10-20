@@ -65,7 +65,7 @@ public:
 // LXProperty
 //--------------------------------------------------------------------------
 
-class LXCORE_API LXProperty// : public LXObject
+class LXENGINE_API LXProperty// : public LXObject
 {
 	friend class LXCommandManager;
 	friend class LXCommandProperty;
@@ -157,7 +157,7 @@ protected:
 //--------------------------------------------------------------------------
 
 template<class T> 
-class LXCORE_API LXPropertyT : public LXProperty
+class LXENGINE_API LXPropertyT : public LXProperty
 {
 
 public:
@@ -254,7 +254,7 @@ private:
 // LXPropertyEnum
 //--------------------------------------------------------------------------
 
-class LXCORE_API LXPropertyEnum : public LXPropertyT<uint>
+class LXENGINE_API LXPropertyEnum : public LXPropertyT<uint>
 {
 
 public:

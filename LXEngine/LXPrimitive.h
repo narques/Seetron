@@ -87,7 +87,7 @@ struct TFileTag
 	uint					nCount;
 };
 
-class LXCORE_API LXPrimitive : public LXSmartObject
+class LXENGINE_API LXPrimitive : public LXSmartObject
 {
 
 	friend class LXTriStripper;

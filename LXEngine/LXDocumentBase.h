@@ -10,7 +10,7 @@
 
 #include "LXSmartObject.h"
 
-class LXCORE_API LXDocumentBase : public virtual LXSmartObject
+class LXENGINE_API LXDocumentBase : public virtual LXSmartObject
 {
 
 public:

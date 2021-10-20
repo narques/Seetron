@@ -14,34 +14,34 @@
 #include "LXMemory.h" // --- Must be the last included ---
 
 // Explicit class Instantiation
-template class LXCORE_API LXCommandPropertyT<float>;
-template class LXCORE_API LXCommandPropertyT<double>;
-template class LXCORE_API LXCommandPropertyT<uint>;
-template class LXCORE_API LXCommandPropertyT<int>;
-template class LXCORE_API LXCommandPropertyT<LXString>;
-template class LXCORE_API LXCommandPropertyT<LXFilepath>;
-template class LXCORE_API LXCommandPropertyT<bool>;
-template class LXCORE_API LXCommandPropertyT<vec2f>;
-template class LXCORE_API LXCommandPropertyT<vec3f>;
-template class LXCORE_API LXCommandPropertyT<vec4f>;
-template class LXCORE_API LXCommandPropertyT<LXColor4f>;
-template class LXCORE_API LXCommandPropertyT<LXMatrix>;
-template class LXCORE_API LXCommandPropertyT<LXAssetPtr>;
+template class LXENGINE_API LXCommandPropertyT<float>;
+template class LXENGINE_API LXCommandPropertyT<double>;
+template class LXENGINE_API LXCommandPropertyT<uint>;
+template class LXENGINE_API LXCommandPropertyT<int>;
+template class LXENGINE_API LXCommandPropertyT<LXString>;
+template class LXENGINE_API LXCommandPropertyT<LXFilepath>;
+template class LXENGINE_API LXCommandPropertyT<bool>;
+template class LXENGINE_API LXCommandPropertyT<vec2f>;
+template class LXENGINE_API LXCommandPropertyT<vec3f>;
+template class LXENGINE_API LXCommandPropertyT<vec4f>;
+template class LXENGINE_API LXCommandPropertyT<LXColor4f>;
+template class LXENGINE_API LXCommandPropertyT<LXMatrix>;
+template class LXENGINE_API LXCommandPropertyT<LXAssetPtr>;
 
 // Explicit class Instantiation
-template class LXCORE_API LXCommandPropertiesT<float>;
-template class LXCORE_API LXCommandPropertiesT<double>;
-template class LXCORE_API LXCommandPropertiesT<uint>;
-template class LXCORE_API LXCommandPropertiesT<int>;
-template class LXCORE_API LXCommandPropertiesT<LXString>;
-template class LXCORE_API LXCommandPropertiesT<LXFilepath>;
-template class LXCORE_API LXCommandPropertiesT<bool>;
-template class LXCORE_API LXCommandPropertiesT<vec2f>;
-template class LXCORE_API LXCommandPropertiesT<vec3f>;
-template class LXCORE_API LXCommandPropertiesT<vec4f>;
-template class LXCORE_API LXCommandPropertiesT<LXColor4f>;
-template class LXCORE_API LXCommandPropertiesT<LXMatrix>;
-template class LXCORE_API LXCommandPropertiesT<LXAssetPtr>;
+template class LXENGINE_API LXCommandPropertiesT<float>;
+template class LXENGINE_API LXCommandPropertiesT<double>;
+template class LXENGINE_API LXCommandPropertiesT<uint>;
+template class LXENGINE_API LXCommandPropertiesT<int>;
+template class LXENGINE_API LXCommandPropertiesT<LXString>;
+template class LXENGINE_API LXCommandPropertiesT<LXFilepath>;
+template class LXENGINE_API LXCommandPropertiesT<bool>;
+template class LXENGINE_API LXCommandPropertiesT<vec2f>;
+template class LXENGINE_API LXCommandPropertiesT<vec3f>;
+template class LXENGINE_API LXCommandPropertiesT<vec4f>;
+template class LXENGINE_API LXCommandPropertiesT<LXColor4f>;
+template class LXENGINE_API LXCommandPropertiesT<LXMatrix>;
+template class LXENGINE_API LXCommandPropertiesT<LXAssetPtr>;
 
 LXCommandProperty::LXCommandProperty(void)
 {

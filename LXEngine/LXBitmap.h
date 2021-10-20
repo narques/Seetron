@@ -12,7 +12,7 @@
 #include "LXFilepath.h"
 #include "LXFormats.h"
 
-class LXCORE_API LXBitmap : public LXObject
+class LXENGINE_API LXBitmap : public LXObject
 {
 
 public:

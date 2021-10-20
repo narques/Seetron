@@ -18,7 +18,7 @@ class LXMesh;
 	virtual std::shared_ptr<LXMesh> Load ( const LXFilepath& strFilename ) override; \
 	virtual void GetExtensions( ListStrings& listExtensions ) override; \
 
-class LXCORE_API LXImporter : public LXObject
+class LXENGINE_API LXImporter : public LXObject
 {
 
 public:

@@ -20,7 +20,7 @@ class LXPrimitive;
 class LXAssetMesh;
 class LXAsset;
 
-class LXCORE_API LXViewport : public LXMouseEventHandler, public LXDocumentOwner
+class LXENGINE_API LXViewport : public LXMouseEventHandler, public LXDocumentOwner
 {
 	friend class LXViewportManager;
 

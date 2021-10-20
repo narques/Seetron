@@ -12,7 +12,7 @@
 
 class LXProject;
 
-class LXCORE_API LXActorMeshSphere : public LXActorMesh
+class LXENGINE_API LXActorMeshSphere : public LXActorMesh
 {
 
 public:
@@ -34,7 +34,7 @@ private:
 
 //------------------------------------------------------------------------------------------------------
 
-class LXCORE_API LXActorMeshCylinder : public LXActorMesh
+class LXENGINE_API LXActorMeshCylinder : public LXActorMesh
 {
 
 public:
@@ -56,7 +56,7 @@ private:
 
 //------------------------------------------------------------------------------------------------------
 
-class LXCORE_API LXActorMeshCone : public LXActorMesh
+class LXENGINE_API LXActorMeshCone : public LXActorMesh
 {
 
 public:

@@ -16,7 +16,7 @@ class LXRenderCommandList;
 class LXBitmap;
 class LXTexture;
 
-class LXCORE_API LXTextureD3D11 : public LXObject
+class LXENGINE_API LXTextureD3D11 : public LXObject
 {
 
 public:

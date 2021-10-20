@@ -22,7 +22,7 @@ enum class EPrimitiveLayout
 	PNABTI = (LX_PRIMITIVE_POSITIONS | LX_PRIMITIVE_NORMALS | LX_PRIMITIVE_TANGENTS | LX_PRIMITIVE_BINORMALS | LX_PRIMITIVE_TEXCOORDS | LX_PRIMITIVE_INSTANCEPOSITIONS)
 };
 
-class LXCORE_API LXInputElementDescD3D11Factory
+class LXENGINE_API LXInputElementDescD3D11Factory
 {
 
 public:
@@ -39,5 +39,5 @@ private:
 
 };
 
-LXCORE_API LXInputElementDescD3D11Factory& GetInputElementDescD3D11Factory();
+LXENGINE_API LXInputElementDescD3D11Factory& GetInputElementDescD3D11Factory();
 

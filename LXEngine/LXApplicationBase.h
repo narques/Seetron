@@ -12,7 +12,7 @@
 
 class LXWindow;
 
-class LXCORE_API LXApplicationBase
+class LXENGINE_API LXApplicationBase
 {
 
 public:

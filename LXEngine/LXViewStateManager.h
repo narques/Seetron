@@ -11,7 +11,7 @@
 #include "LXManager.h"
 #include "LXViewState.h"
 
-class LXCORE_API LXViewStateManager : public LXManager2
+class LXENGINE_API LXViewStateManager : public LXManager2
 {
 
 public:

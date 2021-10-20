@@ -13,7 +13,7 @@
 
 #if LX_ANCHOR
 
-class LXCORE_API LXAnchor : public LXActorMesh
+class LXENGINE_API LXAnchor : public LXActorMesh
 {
 
 public:

@@ -36,7 +36,7 @@ typedef std::map<LXString, LXAssetFileInfo> MapAssets;
 #define LX_DEFAULT_TEXTURE_FOLDER	L"Textures/"
 #define LX_DEFAULT_ANIMATION_FOLDER L"Animations/"
 
-class LXCORE_API LXAssetManager : public LXSmartObject
+class LXENGINE_API LXAssetManager : public LXSmartObject
 {
 
 public:

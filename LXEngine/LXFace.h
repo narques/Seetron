@@ -9,7 +9,7 @@
 #pragma once
 
 template<class T>
-class LXCORE_API ivec3
+class LXENGINE_API ivec3
 {
 
 public:
@@ -27,4 +27,4 @@ typedef std::list<CFace3*>		ListFaces;
 
 // Explicit class Instantiation
 
-template class LXCORE_API ivec3<uint>;
+template class LXENGINE_API ivec3<uint>;

@@ -11,7 +11,7 @@
 #include "LXObject.h"
 #include <Windows.h>
 
-class LXCORE_API LXPerformance : public LXObject
+class LXENGINE_API LXPerformance : public LXObject
 {
 
 public:

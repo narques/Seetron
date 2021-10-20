@@ -34,7 +34,7 @@ class LXScene;
 class LXProject;
 class LXViewport;
 
-class LXCORE_API LXTrackBallCameraManipulator : public LXObject
+class LXENGINE_API LXTrackBallCameraManipulator : public LXObject
 {
 
 public:

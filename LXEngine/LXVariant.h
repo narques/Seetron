@@ -11,7 +11,7 @@
 #include "LXObject.h"
 #include "LXVec3.h"
 
-class LXCORE_API LXVariant
+class LXENGINE_API LXVariant
 {
 
 public:
@@ -22,7 +22,7 @@ public:
 };
 
 template <class T>
-class LXCORE_API LXVariantT : public LXVariant
+class LXENGINE_API LXVariantT : public LXVariant
 {
 
 public:

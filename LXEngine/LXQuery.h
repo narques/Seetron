@@ -14,7 +14,7 @@
 
 class LXQueryManager;
 
-class LXCORE_API LXQuery : public LXMouseEventHandler
+class LXENGINE_API LXQuery : public LXMouseEventHandler
 {
 
 	friend class LXQueryManager;

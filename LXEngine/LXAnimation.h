@@ -14,7 +14,7 @@
 
 typedef std::map<LXProperty*, LXTrack*> MapPropertyTrack;
 
-class LXCORE_API LXAnimation : public LXAsset
+class LXENGINE_API LXAnimation : public LXAsset
 {
 
 public:

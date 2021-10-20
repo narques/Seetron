@@ -12,7 +12,7 @@
 
 class LXNodeTemplate;
 
-class LXCORE_API LXGraphTemplate : public LXSmartObject
+class LXENGINE_API LXGraphTemplate : public LXSmartObject
 {
 
 public:

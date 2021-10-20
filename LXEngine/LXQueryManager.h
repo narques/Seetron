@@ -16,7 +16,7 @@ class LXProject;
 class LXGizmo;
 class LXViewport;
 
-class LXCORE_API LXQueryManager : public LXMouseEventHandler, public LXManager
+class LXENGINE_API LXQueryManager : public LXMouseEventHandler, public LXManager
 {
 
   friend class LXQuery;

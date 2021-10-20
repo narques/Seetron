@@ -12,7 +12,7 @@
 
 class LXRenderer;
 
-class LXCORE_API LXRectangularSelectionTraverser : public LXTraverserFrustumCulling
+class LXENGINE_API LXRectangularSelectionTraverser : public LXTraverserFrustumCulling
 {
 
 public:

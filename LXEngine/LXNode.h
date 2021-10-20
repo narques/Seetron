@@ -23,7 +23,7 @@ enum class ENodeType
 	Function
 };
 
-class LXCORE_API LXNode : public LXSmartObject
+class LXENGINE_API LXNode : public LXSmartObject
 {
 
 public:
@@ -76,7 +76,7 @@ struct LXVariableTemplate
 	LXString Declaration;
 };
 
-class LXCORE_API LXNodeTemplate : public LXSmartObject
+class LXENGINE_API LXNodeTemplate : public LXSmartObject
 {
 
 public:

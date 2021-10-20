@@ -23,7 +23,7 @@ enum LXSelectionLevel
 	LX_SELECTION_LEVEL_ENTITY
 };
 
-class LXCORE_API LXSelectionManager : public LXManager2
+class LXENGINE_API LXSelectionManager : public LXManager2
 {
 
 	friend class LXCommandManager;

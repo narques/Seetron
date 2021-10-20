@@ -13,7 +13,7 @@
 
 class LXActor;
 
-class LXCORE_API LXScript : public LXAsset
+class LXENGINE_API LXScript : public LXAsset
 {
 
 public:

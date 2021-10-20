@@ -17,7 +17,7 @@ class LXMeshBase;
 class LXRenderCluster;
 class LXPrimitive;
 
-class LXCORE_API LXComponentMesh : public LXComponent
+class LXENGINE_API LXComponentMesh : public LXComponent
 {
 
 public:

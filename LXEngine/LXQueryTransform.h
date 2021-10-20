@@ -13,7 +13,7 @@
 
 class LXActor;
 
-class LXCORE_API LXQueryTransform : public LXQuery
+class LXENGINE_API LXQueryTransform : public LXQuery
 {
 public:
 	

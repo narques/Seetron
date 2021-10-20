@@ -132,7 +132,7 @@ LRESULT LXWindow::Run(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 
 bool LXWindow::Create(HWND hWndParent)
 {
-#ifdef LX_CORE_STATIC
+#ifdef LX_ENGINE_STATIC
 	HINSTANCE hInstance = GetModuleHandle(nullptr);
 #else
 	HINSTANCE hInstance = GetModuleHandle(L"LXEngine.dll");

@@ -14,7 +14,7 @@
 class LXProperty;
 typedef std::list<LXProperty*>	ListProperties;
 
-class LXCORE_API LXPropertyManager : public LXObject
+class LXENGINE_API LXPropertyManager : public LXObject
 {
 
 public:

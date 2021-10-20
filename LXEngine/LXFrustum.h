@@ -30,7 +30,7 @@ enum class EViewFrustumPlane
 	Down
 };
 
-class LXCORE_API LXFrustum : public LXObject
+class LXENGINE_API LXFrustum : public LXObject
 {
 
 public:

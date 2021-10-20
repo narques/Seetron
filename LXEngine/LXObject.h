@@ -8,7 +8,7 @@
 
 #pragma once
 
-class LXCORE_API LXObject
+class LXENGINE_API LXObject
 {
 
 public:

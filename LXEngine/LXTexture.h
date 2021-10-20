@@ -29,7 +29,7 @@ enum class ETextureSource // !DataModel
 	TextureSourceMaterial
 };
 
-class LXCORE_API LXTexture : public LXAsset, public std::enable_shared_from_this<LXTexture>
+class LXENGINE_API LXTexture : public LXAsset, public std::enable_shared_from_this<LXTexture>
 {
 
 public:

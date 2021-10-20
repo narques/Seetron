@@ -21,7 +21,7 @@ enum LXColor
 };
 
 template<class T> 
-class LXCORE_API LXColor3
+class LXENGINE_API LXColor3
 {
 
 public:
@@ -50,7 +50,7 @@ public:
 
 
 template<class T> 
-class LXCORE_API LXColor4
+class LXENGINE_API LXColor4
 {
 
 public:

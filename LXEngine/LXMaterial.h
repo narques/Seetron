@@ -22,7 +22,7 @@ enum class EMaterialLightingModel
 	Transparent
 };
 
-class LXCORE_API LXMaterial : public LXMaterialBase
+class LXENGINE_API LXMaterial : public LXMaterialBase
 {
 
 public:

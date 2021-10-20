@@ -21,7 +21,7 @@ enum class EConnectorRole
 	Output
 };
 
-class LXCORE_API LXConnector : public LXSmartObject
+class LXENGINE_API LXConnector : public LXSmartObject
 {
 
 public:
@@ -51,7 +51,7 @@ private:
 	LXNode* _owner;
 };
 
-class LXCORE_API LXConnectorTemplate : public LXSmartObject
+class LXENGINE_API LXConnectorTemplate : public LXSmartObject
 {
 
 public:

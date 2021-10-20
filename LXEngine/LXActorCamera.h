@@ -16,7 +16,7 @@ class LXPrimitive;
 class LXScene;
 class LXViewState;
 
-class LXCORE_API LXActorCamera : public LXActor
+class LXENGINE_API LXActorCamera : public LXActor
 {
 
 public:

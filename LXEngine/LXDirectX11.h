@@ -21,9 +21,9 @@
 #include <D2d1_1.h>
 #endif
 
-extern LXCORE_API bool NoOverwriteConstantBuffer; // TODO under LX_USE_D3D11_1 ?
+extern LXENGINE_API bool NoOverwriteConstantBuffer; // TODO under LX_USE_D3D11_1 ?
 
-class LXCORE_API LXDirectX11
+class LXENGINE_API LXDirectX11
 {
 
 public:

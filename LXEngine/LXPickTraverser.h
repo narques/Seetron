@@ -27,7 +27,7 @@ struct LXPOI // Point of intersection
 
 typedef std::map<float, LXPOI> MapIntersection;
 
-class LXCORE_API LXPickTraverser : public LXTraverser
+class LXENGINE_API LXPickTraverser : public LXTraverser
 {
 
 public:

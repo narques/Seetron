@@ -11,7 +11,7 @@
 #include "LXTypes.h"
 
 template<class T>
-struct LXCORE_API LXFlags
+struct LXENGINE_API LXFlags
 {
 
 public:

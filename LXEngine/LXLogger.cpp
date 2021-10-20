@@ -168,7 +168,7 @@ void Log2(ELogType LogType, const wchar_t* section, const wchar_t* Format, ...)
 	SetWhite();
 }
 
-LXCORE_API void Log2(ELogType LogType, const wchar_t* section, const char* Format, ...)
+LXENGINE_API void Log2(ELogType LogType, const wchar_t* section, const char* Format, ...)
 {
 	va_list arguments;
 	va_start(arguments, Format);

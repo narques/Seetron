@@ -16,7 +16,7 @@ class LXQuery;
 class LXViewState;
 class LXMesh;
 
-class LXCORE_API LXCommandManager : public LXObject
+class LXENGINE_API LXCommandManager : public LXObject
 {
 
 public:

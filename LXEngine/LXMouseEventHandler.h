@@ -16,7 +16,7 @@ class LXActor;
 class LXPrimitive;
 class LXActorMesh;
 
-class LXCORE_API LXMouseEventHandler : public virtual LXObject
+class LXENGINE_API LXMouseEventHandler : public virtual LXObject
 {
 
 public:

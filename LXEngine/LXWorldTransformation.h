@@ -16,7 +16,7 @@ class LXAxis;
 class LXBBox;
 class LXCamera;
 	
-class LXCORE_API LXWorldTransformation : public LXObject
+class LXENGINE_API LXWorldTransformation : public LXObject
 {
 
 public:

@@ -16,7 +16,7 @@
 class LXRenderData;
 class LXTransformation;
 
-class LXCORE_API LXComponent : public LXSmartObject
+class LXENGINE_API LXComponent : public LXSmartObject
 {
 	
 public:
@@ -133,7 +133,7 @@ __forceinline T* LXCast(LXComponent* actor)
 }
 
 template <typename T>
-class LXCORE_API LXComponentRawPtr : public LXComponent
+class LXENGINE_API LXComponentRawPtr : public LXComponent
 {
 
 public:
@@ -150,7 +150,7 @@ private:
 };
 
 template <typename T>
-class LXCORE_API LXComponentSharedPtr : public LXComponent
+class LXENGINE_API LXComponentSharedPtr : public LXComponent
 {
 
 public:

@@ -10,7 +10,7 @@
 #include <msxml6.h>
 #include <atlcomcli.h>
 
-class LXCORE_API LXMSXMLNode
+class LXENGINE_API LXMSXMLNode
 {
 
 public:

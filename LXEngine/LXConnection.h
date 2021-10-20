@@ -12,7 +12,7 @@
 
 class LXConnector;
 
-class LXCORE_API LXConnection : public LXSmartObject
+class LXENGINE_API LXConnection : public LXSmartObject
 {
 
 public:

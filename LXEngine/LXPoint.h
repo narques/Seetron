@@ -10,7 +10,7 @@
 
 #include "LXPlatform.h"
 
-class LXCORE_API LXPoint
+class LXENGINE_API LXPoint
 {
 
 public:

@@ -21,7 +21,7 @@ struct LXFileInfo
 
 typedef std::list<LXFileInfo> ListFileInfos;
 
-class LXCORE_API LXDirectory
+class LXENGINE_API LXDirectory
 {
 
 public:

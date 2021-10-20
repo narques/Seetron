@@ -14,7 +14,7 @@
 #include "LXCommandModifyProperty.h"
 #include "LXAnimation.h"
 
-class LXCORE_API LXAnimationManager : public LXSmartObject
+class LXENGINE_API LXAnimationManager : public LXSmartObject
 {
 
 public:

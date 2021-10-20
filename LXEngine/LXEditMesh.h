@@ -13,7 +13,7 @@
 #include "LXMaterial.h"
 #include "LXPrimitive.h"
 
-class LXCORE_API LXEditFace : public LXObject
+class LXENGINE_API LXEditFace : public LXObject
 {
 public:
 	virtual ~LXEditFace() {};
@@ -33,7 +33,7 @@ struct CIndexVTN
 // LXEditMesh : MultiIndexed
 //--------------------------------------------------------------------------------
 
-class LXCORE_API LXEditMesh : public LXObject
+class LXENGINE_API LXEditMesh : public LXObject
 {
 
 public:

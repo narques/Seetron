@@ -891,23 +891,23 @@ LXPropertyID GetAutomaticPropertyID()
 
 // Explicit method Instantiation
 
-template LXCORE_API LXPropertyInt* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, int* pInt, int min, int max);
-template LXCORE_API LXPropertyFloat* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, float* pFloat, float, float);
-template LXCORE_API LXPropertyDouble* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, double* pDouble);
-template LXCORE_API LXPropertyArraySmartObjects* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, ArraySmartObjects* pArraySmartObjects);
-template LXCORE_API LXPropertyListSmartObjects* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, ListSmartObjects* pListSmartObjects);
-template LXCORE_API LXPropertyListSharedObjects* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, ListSharedObjects* pListSmartObjects);
-template LXCORE_API LXPropertyAssetPtr* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXAssetPtr* pMaterialInput);
-template LXCORE_API LXPropertySmartObject* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXSmartObject* smartObject);
-template LXCORE_API LXPropertySharedObject* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, std::shared_ptr<LXSmartObject>* smartObject);
-template LXCORE_API LXPropertyReferenceObject* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXReference<LXSmartObject>* smartObject);
+template LXENGINE_API LXPropertyInt* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, int* pInt, int min, int max);
+template LXENGINE_API LXPropertyFloat* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, float* pFloat, float, float);
+template LXENGINE_API LXPropertyDouble* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, double* pDouble);
+template LXENGINE_API LXPropertyArraySmartObjects* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, ArraySmartObjects* pArraySmartObjects);
+template LXENGINE_API LXPropertyListSmartObjects* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, ListSmartObjects* pListSmartObjects);
+template LXENGINE_API LXPropertyListSharedObjects* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, ListSharedObjects* pListSmartObjects);
+template LXENGINE_API LXPropertyAssetPtr* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXAssetPtr* pMaterialInput);
+template LXENGINE_API LXPropertySmartObject* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXSmartObject* smartObject);
+template LXENGINE_API LXPropertySharedObject* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, std::shared_ptr<LXSmartObject>* smartObject);
+template LXENGINE_API LXPropertyReferenceObject* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXReference<LXSmartObject>* smartObject);
 
-template LXCORE_API LXPropertyInt* LXSmartObject::CreateUserProperty(const LXString& name, const int& var);
-template LXCORE_API LXPropertyFloat* LXSmartObject::CreateUserProperty(const LXString& name, const float& var);
-template LXCORE_API LXPropertyVec2f* LXSmartObject::CreateUserProperty(const LXString& name, const vec2f& var);
-template LXCORE_API LXPropertyVec3f* LXSmartObject::CreateUserProperty(const LXString& name, const vec3f& var);
-template LXCORE_API LXPropertyVec4f* LXSmartObject::CreateUserProperty(const LXString& name, const vec4f& var);
-template LXCORE_API LXPropertyArrayVec3f* LXSmartObject::CreateUserProperty(const LXString& name, const ArrayVec3f& var);
-template LXCORE_API LXPropertyAssetPtr* LXSmartObject::CreateUserProperty(const LXString& name, const LXAssetPtr& var);
-template LXCORE_API LXPropertyString* LXSmartObject::CreateUserProperty(const LXString& name, const LXString& var);
+template LXENGINE_API LXPropertyInt* LXSmartObject::CreateUserProperty(const LXString& name, const int& var);
+template LXENGINE_API LXPropertyFloat* LXSmartObject::CreateUserProperty(const LXString& name, const float& var);
+template LXENGINE_API LXPropertyVec2f* LXSmartObject::CreateUserProperty(const LXString& name, const vec2f& var);
+template LXENGINE_API LXPropertyVec3f* LXSmartObject::CreateUserProperty(const LXString& name, const vec3f& var);
+template LXENGINE_API LXPropertyVec4f* LXSmartObject::CreateUserProperty(const LXString& name, const vec4f& var);
+template LXENGINE_API LXPropertyArrayVec3f* LXSmartObject::CreateUserProperty(const LXString& name, const ArrayVec3f& var);
+template LXENGINE_API LXPropertyAssetPtr* LXSmartObject::CreateUserProperty(const LXString& name, const LXAssetPtr& var);
+template LXENGINE_API LXPropertyString* LXSmartObject::CreateUserProperty(const LXString& name, const LXString& var);
 

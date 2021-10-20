@@ -18,7 +18,7 @@
 #include "LXSmartObject.h"
 
 template <typename T>
-class LXCORE_API LXOverride : public virtual LXSmartObject
+class LXENGINE_API LXOverride : public virtual LXSmartObject
 {
 
 public:

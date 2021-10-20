@@ -17,7 +17,7 @@
 // Get all Actors
 //
 
-class LXCORE_API LXSelectionTraverser : public LXTraverser
+class LXENGINE_API LXSelectionTraverser : public LXTraverser
 {
 
 public:
@@ -38,7 +38,7 @@ private:
 // Get all SmartObject
 //
 
-class LXCORE_API LXSelectionTraverser2 : public LXTraverser
+class LXENGINE_API LXSelectionTraverser2 : public LXTraverser
 {
 
 public:
@@ -61,7 +61,7 @@ private:
 // Get all Meshes
 //
 
-class LXCORE_API LXSelectionTraverser3 : public LXTraverser
+class LXENGINE_API LXSelectionTraverser3 : public LXTraverser
 {
 
 public:
@@ -84,7 +84,7 @@ private:
 // Get visible Meshes
 //
 
-class LXCORE_API LXSelectionTraverser4 : public LXTraverser
+class LXENGINE_API LXSelectionTraverser4 : public LXTraverser
 {
 
 public:
@@ -109,7 +109,7 @@ private:
 // Traverser with Lambda callback
 //
 
-class LXCORE_API LXSelectionTraverserCB : public LXTraverser
+class LXENGINE_API LXSelectionTraverserCB : public LXTraverser
 {
 
 public:

@@ -37,7 +37,7 @@ enum class EConstraint
 	Local_Rotate_Z
 };
 
-class LXCORE_API LXActor : public LXSmartObject, public LXTreeNode<LXActor>
+class LXENGINE_API LXActor : public LXSmartObject, public LXTreeNode<LXActor>
 {
 	friend LXRenderData;
 

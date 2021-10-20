@@ -14,7 +14,7 @@
 
 //--------------------------------------------------------------------------
 
-class LXCORE_API LXCommandProperty : public LXCommand
+class LXENGINE_API LXCommandProperty : public LXCommand
 {
 
 public:
@@ -28,7 +28,7 @@ public:
 //--------------------------------------------------------------------------
 
 template<class T> 
-class LXCORE_API LXCommandPropertyT : public LXCommandProperty
+class LXENGINE_API LXCommandPropertyT : public LXCommandProperty
 {
 
 public:
@@ -64,7 +64,7 @@ protected:
 
 //--------------------------------------------------------------------------
 
-class LXCORE_API LXCommandProperties : public LXCommand
+class LXENGINE_API LXCommandProperties : public LXCommand
 {
 
 public:
@@ -82,7 +82,7 @@ protected:
 //--------------------------------------------------------------------------
 
 template<class T> 
-class LXCORE_API LXCommandPropertiesT : public LXCommandProperties
+class LXENGINE_API LXCommandPropertiesT : public LXCommandProperties
 {
 public:
 

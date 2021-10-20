@@ -12,7 +12,7 @@
 
 class LXProject;
 
-class LXCORE_API LXSnapshot : public LXSmartObject
+class LXENGINE_API LXSnapshot : public LXSmartObject
 {
 
 public:

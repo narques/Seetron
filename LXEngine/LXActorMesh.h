@@ -16,7 +16,7 @@ class LXMaterialBase;
 class LXMesh;
 class LXRenderCluster;
 
-class LXCORE_API LXActorMesh : public LXActor
+class LXENGINE_API LXActorMesh : public LXActor
 {
 
 public:

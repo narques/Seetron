@@ -10,7 +10,7 @@
 
 #include "LXPlatform.h"
 
-class LXCORE_API LXLibrary
+class LXENGINE_API LXLibrary
 {
 
 public:

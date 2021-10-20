@@ -16,7 +16,7 @@
 class LXAxis;
 class LXBBox;
 
-LX_ALIGN(16) class LXCORE_API LXMatrix
+LX_ALIGN(16) class LXENGINE_API LXMatrix
 {
 	
 	friend LXMatrix Inverse(const LXMatrix& matrix);

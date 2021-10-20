@@ -15,7 +15,7 @@ class LXConnection;
 class LXConnector;
 class LXNode;
 
-class LXCORE_API LXGraph : public LXSmartObject
+class LXENGINE_API LXGraph : public LXSmartObject
 {
 
 public:

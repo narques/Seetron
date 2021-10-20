@@ -10,7 +10,7 @@
 
 #include "LXActorMesh.h"
 
-class LXCORE_API LXActorMeshPlane : public LXActorMesh
+class LXENGINE_API LXActorMeshPlane : public LXActorMesh
 {
 
 public:

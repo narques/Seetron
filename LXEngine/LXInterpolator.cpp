@@ -54,37 +54,37 @@ void LXInterpolator::InterpolateCubic(const T& v0, const T& v1, const T& v2, con
 }
 
 // Explicit method Instantiation
-template LXCORE_API void LXInterpolator::InterpolateLinear(const float& v0, const float& v1, double t, float& result);
-template LXCORE_API void LXInterpolator::InterpolateSmooth(const float& v0, const float& v1, double t, float& result);
-template LXCORE_API void LXInterpolator::InterpolateCubic(const float& v0, const float& v1, const float& v2, const float& v3, double t, float& result);
+template LXENGINE_API void LXInterpolator::InterpolateLinear(const float& v0, const float& v1, double t, float& result);
+template LXENGINE_API void LXInterpolator::InterpolateSmooth(const float& v0, const float& v1, double t, float& result);
+template LXENGINE_API void LXInterpolator::InterpolateCubic(const float& v0, const float& v1, const float& v2, const float& v3, double t, float& result);
 
-template LXCORE_API void LXInterpolator::InterpolateLinear(const double& v0, const double& v1, double t, double& result);
-template LXCORE_API void LXInterpolator::InterpolateSmooth(const double& v0, const double& v1, double t, double& result);
-template LXCORE_API void LXInterpolator::InterpolateCubic(const double& v0, const double& v1, const double& v2, const double& v3, double t, double& result);
+template LXENGINE_API void LXInterpolator::InterpolateLinear(const double& v0, const double& v1, double t, double& result);
+template LXENGINE_API void LXInterpolator::InterpolateSmooth(const double& v0, const double& v1, double t, double& result);
+template LXENGINE_API void LXInterpolator::InterpolateCubic(const double& v0, const double& v1, const double& v2, const double& v3, double t, double& result);
 
-template LXCORE_API void LXInterpolator::InterpolateLinear(const uint& v0, const uint& v1, double t, uint& result);
-template LXCORE_API void LXInterpolator::InterpolateSmooth(const uint& v0, const uint& v1, double t, uint& result);
-template LXCORE_API void LXInterpolator::InterpolateCubic(const uint& v0, const uint& v1, const uint& v2, const uint& v3, double t, uint& result);
+template LXENGINE_API void LXInterpolator::InterpolateLinear(const uint& v0, const uint& v1, double t, uint& result);
+template LXENGINE_API void LXInterpolator::InterpolateSmooth(const uint& v0, const uint& v1, double t, uint& result);
+template LXENGINE_API void LXInterpolator::InterpolateCubic(const uint& v0, const uint& v1, const uint& v2, const uint& v3, double t, uint& result);
 
-template LXCORE_API void LXInterpolator::InterpolateLinear(const int& v0, const int& v1, double t, int& result);
-template LXCORE_API void LXInterpolator::InterpolateSmooth(const int& v0, const int& v1, double t, int& result);
-template LXCORE_API void LXInterpolator::InterpolateCubic(const int& v0, const int& v1, const int& v2, const int& v3, double t, int& result);
+template LXENGINE_API void LXInterpolator::InterpolateLinear(const int& v0, const int& v1, double t, int& result);
+template LXENGINE_API void LXInterpolator::InterpolateSmooth(const int& v0, const int& v1, double t, int& result);
+template LXENGINE_API void LXInterpolator::InterpolateCubic(const int& v0, const int& v1, const int& v2, const int& v3, double t, int& result);
 
-template LXCORE_API void LXInterpolator::InterpolateLinear(const vec2f& v0, const vec2f& v1, double t, vec2f& result);
-template LXCORE_API void LXInterpolator::InterpolateSmooth(const vec2f& v0, const vec2f& v1, double t, vec2f& result);
-template LXCORE_API void LXInterpolator::InterpolateCubic(const vec2f& v0, const vec2f& v1, const vec2f& v2, const vec2f& v3, double t, vec2f& result);
+template LXENGINE_API void LXInterpolator::InterpolateLinear(const vec2f& v0, const vec2f& v1, double t, vec2f& result);
+template LXENGINE_API void LXInterpolator::InterpolateSmooth(const vec2f& v0, const vec2f& v1, double t, vec2f& result);
+template LXENGINE_API void LXInterpolator::InterpolateCubic(const vec2f& v0, const vec2f& v1, const vec2f& v2, const vec2f& v3, double t, vec2f& result);
 
-template LXCORE_API void LXInterpolator::InterpolateLinear(const vec3f& v0, const vec3f& v1, double t, vec3f& result);
-template LXCORE_API void LXInterpolator::InterpolateSmooth(const vec3f& v0, const vec3f& v1, double t, vec3f& result);
-template LXCORE_API void LXInterpolator::InterpolateCubic(const vec3f& v0, const vec3f& v1, const vec3f& v2, const vec3f& v3, double t, vec3f& result);
+template LXENGINE_API void LXInterpolator::InterpolateLinear(const vec3f& v0, const vec3f& v1, double t, vec3f& result);
+template LXENGINE_API void LXInterpolator::InterpolateSmooth(const vec3f& v0, const vec3f& v1, double t, vec3f& result);
+template LXENGINE_API void LXInterpolator::InterpolateCubic(const vec3f& v0, const vec3f& v1, const vec3f& v2, const vec3f& v3, double t, vec3f& result);
 
-template LXCORE_API void LXInterpolator::InterpolateLinear(const vec4f& v0, const vec4f& v1, double t, vec4f& result);
-template LXCORE_API void LXInterpolator::InterpolateSmooth(const vec4f& v0, const vec4f& v1, double t, vec4f& result);
-template LXCORE_API void LXInterpolator::InterpolateCubic(const vec4f& v0, const vec4f& v1, const vec4f& v2, const vec4f& v3, double t, vec4f& result);
+template LXENGINE_API void LXInterpolator::InterpolateLinear(const vec4f& v0, const vec4f& v1, double t, vec4f& result);
+template LXENGINE_API void LXInterpolator::InterpolateSmooth(const vec4f& v0, const vec4f& v1, double t, vec4f& result);
+template LXENGINE_API void LXInterpolator::InterpolateCubic(const vec4f& v0, const vec4f& v1, const vec4f& v2, const vec4f& v3, double t, vec4f& result);
 
-template LXCORE_API void LXInterpolator::InterpolateLinear(const LXColor4f& v0, const LXColor4f& v1, double t, LXColor4f& result);
-template LXCORE_API void LXInterpolator::InterpolateSmooth(const LXColor4f& v0, const LXColor4f& v1, double t, LXColor4f& result);
-template LXCORE_API void LXInterpolator::InterpolateCubic(const LXColor4f& v0, const LXColor4f& v1, const LXColor4f& v2, const LXColor4f& v3, double t, LXColor4f& result);
+template LXENGINE_API void LXInterpolator::InterpolateLinear(const LXColor4f& v0, const LXColor4f& v1, double t, LXColor4f& result);
+template LXENGINE_API void LXInterpolator::InterpolateSmooth(const LXColor4f& v0, const LXColor4f& v1, double t, LXColor4f& result);
+template LXENGINE_API void LXInterpolator::InterpolateCubic(const LXColor4f& v0, const LXColor4f& v1, const LXColor4f& v2, const LXColor4f& v3, double t, LXColor4f& result);
 
 //------------------------------------------------------------------------------------------------------
 // Specializations

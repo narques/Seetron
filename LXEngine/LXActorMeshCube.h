@@ -12,7 +12,7 @@
 
 class LXProject;
 
-class LXCORE_API LXActorMeshCube : public LXActorMesh
+class LXENGINE_API LXActorMeshCube : public LXActorMesh
 {
 
 public:

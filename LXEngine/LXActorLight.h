@@ -25,7 +25,7 @@ enum class ELightType
 	Omnidirectional
 };
 
-class LXCORE_API LXActorLight : public LXActorMesh
+class LXENGINE_API LXActorLight : public LXActorMesh
 {
 
 private:

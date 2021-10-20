@@ -11,7 +11,7 @@
 #include "LXObject.h"
 #include "LXViewport.h"
 
-class LXCORE_API LXViewportManager : public LXObject
+class LXENGINE_API LXViewportManager : public LXObject
 {
 
 	friend class LXViewport;

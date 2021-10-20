@@ -180,7 +180,7 @@ void LXConsoleCommandT<bool>::Execute(const std::vector<LXString>& Arguments)
 }
 
 // Explicit class Instantiation
-template class LXCORE_API LXConsoleCommandT<bool>;
+template class LXENGINE_API LXConsoleCommandT<bool>;
 
 //------------------------------------------------------------------------------------------------------
 // LXConsoleCommandCall2
@@ -250,9 +250,9 @@ void LXConsoleCommandCall2<void(const LXString&, const LXString&, const LXString
 }
 
 // Explicit class Instantiation
-template class LXCORE_API LXConsoleCommandCall2<void()>;
-template class LXCORE_API LXConsoleCommandCall2<void(const LXString&)>;
-template class LXCORE_API LXConsoleCommandCall2<void(const LXString&, const LXString&)>;
-template class LXCORE_API LXConsoleCommandCall2<void(const LXString&, const LXString&, const LXString&)>;
+template class LXENGINE_API LXConsoleCommandCall2<void()>;
+template class LXENGINE_API LXConsoleCommandCall2<void(const LXString&)>;
+template class LXENGINE_API LXConsoleCommandCall2<void(const LXString&, const LXString&)>;
+template class LXENGINE_API LXConsoleCommandCall2<void(const LXString&, const LXString&, const LXString&)>;
 
 

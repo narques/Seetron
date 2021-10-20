@@ -13,7 +13,7 @@
 
 class LXSmartObject;
 
-class LXCORE_API LXTransformation
+class LXENGINE_API LXTransformation
 {
 
 public:

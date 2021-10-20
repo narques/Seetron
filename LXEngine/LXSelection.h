@@ -12,7 +12,7 @@
 
 typedef std::list<LXString> ListUID;
 
-class LXCORE_API LXSelection : public LXSmartObject
+class LXENGINE_API LXSelection : public LXSmartObject
 {
 
 public:

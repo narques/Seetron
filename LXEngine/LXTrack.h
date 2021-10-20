@@ -14,7 +14,7 @@
 
 class LXActorMeshPath;
 
-class LXCORE_API LXTrack : public LXSmartObject
+class LXENGINE_API LXTrack : public LXSmartObject
 {
 
 public:
@@ -68,7 +68,7 @@ protected:
 };
 
 template <class T>
-class  LXCORE_API LXTrackT : public LXTrack
+class  LXENGINE_API LXTrackT : public LXTrack
 {
 
 public:

@@ -13,7 +13,7 @@
 class LXProject;
 class LXScene;
 
-class LXCORE_API LXPlugin 
+class LXENGINE_API LXPlugin 
 {
 
 public:
