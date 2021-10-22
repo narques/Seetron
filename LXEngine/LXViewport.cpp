@@ -33,7 +33,6 @@
 #include "LXViewport.h"
 #include "LXViewportManager.h"
 #include "LXWorldTransformation.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 namespace
 {

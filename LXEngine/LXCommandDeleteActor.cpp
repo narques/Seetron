@@ -14,7 +14,6 @@
 #include "LXAssetManager.h"
 #include "LXAnimationManager.h"
 #include "LXKey.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXCommandDeleteActor::LXCommandDeleteActor(const SetActors& setActors)
 {

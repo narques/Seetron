@@ -13,7 +13,6 @@
 #include "LXPropertyManager.h"
 #include "LXScene.h"
 #include "LXViewState.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXActorCamera::LXActorCamera(LXProject* pDocument):
 LXActor(pDocument),

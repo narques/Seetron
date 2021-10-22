@@ -14,7 +14,6 @@
 #include "LXActor.h"
 #include "LXProject.h"
 #include "LXCommandManager.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXScript::LXScript()
 {

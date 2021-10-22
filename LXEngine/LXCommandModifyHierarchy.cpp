@@ -11,7 +11,6 @@
 #include "LXActor.h"
 #include "LXMesh.h"
 #include "LXLogger.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXCommandModifyActorHierarchy::LXCommandModifyActorHierarchy(LXActor* InParent, LXActor* InChild):
 	_Parent(InParent), 

@@ -9,7 +9,6 @@
 #include "stdafx.h"
 #include "LXActorSceneCapture.h"
 #include "LXEngine.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXActorSceneCapture::LXActorSceneCapture():LXActor(GetEngine().GetProject())
 {

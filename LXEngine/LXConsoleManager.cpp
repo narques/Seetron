@@ -13,7 +13,6 @@
 #include "LXEngine.h"
 #include "LXEventManager.h"
 #include "LXEvent.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXConsoleManager& GetConsoleManager()
 {

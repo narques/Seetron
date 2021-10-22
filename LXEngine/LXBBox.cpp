@@ -9,7 +9,6 @@
 #include "StdAfx.h"
 #include "LXBbox.h"
 #include "LXMath.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXBBox::LXBBox(void)
 {

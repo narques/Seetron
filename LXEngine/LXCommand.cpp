@@ -9,7 +9,6 @@
 #include "StdAfx.h"
 #include "LXCommand.h"
 #include "LXProperty.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXCommand::LXCommand(void)
 {

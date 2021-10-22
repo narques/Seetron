@@ -14,7 +14,6 @@
 #include "LXVec4.h"
 #include "LXAxis.h"
 #include "LXLogger.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXWorldTransformation::LXWorldTransformation(void):
 m_bValid(false)

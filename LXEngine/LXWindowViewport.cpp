@@ -10,7 +10,6 @@
 #include "LXWindowViewport.h"
 #include "LXViewport.h"
 #include "LXRenderer.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXWindowViewport::LXWindowViewport(void* hWndParent)
 {

@@ -11,7 +11,6 @@
 #include "LXProject.h"
 #include "LXPrimitive.h"
 #include "LXPrimitiveFactory.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXActorTree::LXActorTree()
 {

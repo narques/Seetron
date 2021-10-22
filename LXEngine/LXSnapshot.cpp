@@ -12,7 +12,6 @@
 #include "LXSnapshotManager.h"
 #include "LXProject.h"
 #include "LXActorCamera.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXSnapshot::LXSnapshot()
 {

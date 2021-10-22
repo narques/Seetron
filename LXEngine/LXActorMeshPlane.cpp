@@ -12,7 +12,6 @@
 #include "LXEngine.h"
 #include "LXMesh.h"
 #include "LXMeshFactory.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXActorMeshPlane::LXActorMeshPlane(LXProject* pDocument):
 LXActorMesh(pDocument)

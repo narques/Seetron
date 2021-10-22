@@ -11,7 +11,6 @@
 #include "LXProject.h"
 #include "LXMath.h"
 #include "LXMeshFactory.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXActorLight::LXActorLight(LXProject* pDocument):
 LXActorMesh(pDocument)

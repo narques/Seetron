@@ -16,7 +16,6 @@
 #include "LXMath.h"
 #include "LXProject.h"
 #include "LXViewport.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 #define MK_LBUTTON          0x0001
 #define MK_RBUTTON          0x0002

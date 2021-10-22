@@ -14,7 +14,6 @@
 #include "LXMSXMLNode.h"
 #include "LXEventManager.h"
 #include "LXSelectionManager.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXAnimationManager::LXAnimationManager(const LXProject* pDocument)
 {

@@ -21,7 +21,6 @@
 #include "LXProject.h"
 #include "LXProperty.h"
 #include "LXSettings.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 #define LX_DECLARE_GETTEMPLATETYPE(nativeType, enumType)			\
 template<>													\

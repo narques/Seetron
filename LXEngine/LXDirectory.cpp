@@ -9,7 +9,6 @@
 #include "stdafx.h"
 #include "LXDirectory.h"
 #include <windows.h>
-#include "LXMemory.h" // --- Must be the last included ---
 
 std::wstring GetFolderFromPartialFilepath(const std::wstring& partialFilepath)
 {

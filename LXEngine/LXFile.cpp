@@ -11,7 +11,6 @@
 #include <fstream>
 #include <string>
 #include <fileapi.h>
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXFile::LXFile(void):
 m_pFile(NULL)

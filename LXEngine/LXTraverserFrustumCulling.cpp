@@ -10,7 +10,6 @@
 #include "LXTraverserFrustumCulling.h"
 #include "LXFrustum.h"
 #include "LXActorMesh.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXTraverserFrustumCulling::LXTraverserFrustumCulling()
 {

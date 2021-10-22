@@ -11,7 +11,6 @@
 #include "LXActor.h"
 #include "LXProject.h"
 #include "LXSettings.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 #if LX_ANCHOR
 

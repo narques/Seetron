@@ -9,7 +9,6 @@
 #include "stdafx.h"
 #include "LXColor.h"
 #include "LXString.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 template<>
 LXColor4<float>::LXColor4(const LXStringA& strHexa)

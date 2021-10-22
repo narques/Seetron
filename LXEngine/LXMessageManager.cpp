@@ -9,7 +9,6 @@
 #include "stdafx.h"
 #include "LXMessageManager.h"
 #include "LXMutex.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXMessageManager::LXMessageManager()
 {

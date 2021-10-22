@@ -14,7 +14,6 @@
 #include "LXProject.h"
 #include "LXScene.h"
 #include "LXMSXMLNode.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXViewStateManager::LXViewStateManager(LXProject* pDocument):
 _Project(pDocument)

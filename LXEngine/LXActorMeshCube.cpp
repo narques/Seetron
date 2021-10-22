@@ -12,7 +12,6 @@
 #include "LXEngine.h"
 #include "LXMesh.h"
 #include "LXMeshFactory.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXActorMeshCube::LXActorMeshCube(LXProject* pDocument):LXActorMesh(pDocument)
 {

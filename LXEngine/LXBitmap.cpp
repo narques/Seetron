@@ -10,7 +10,6 @@
 #include "LXBitmap.h"
 #include "LXLogger.h"
 #include "FreeImage3170/FreeImage.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 #pragma comment(lib, "freeimage.lib")
 

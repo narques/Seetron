@@ -8,7 +8,6 @@
 
 #include "StdAfx.h"
 #include "LXViewportManager.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 #define FOR_EACH_VIEWPORT(code)																			\
 	for (ListViewports::iterator It = _listViewports.begin(); It!= _listViewports.end(); It++)		\

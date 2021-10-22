@@ -11,7 +11,6 @@
 #include "LXScene.h"
 #include "LXActorMesh.h"
 #include "LXPrimitiveInstance.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXTraverserLambda::LXTraverserLambda(LXScene* pScene)
 {

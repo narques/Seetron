@@ -19,7 +19,6 @@
 #include "LXProject.h"
 #include "LXSelectionManager.h"
 #include "LXViewport.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXActorMeshGizmo::LXActorMeshGizmo()
 {

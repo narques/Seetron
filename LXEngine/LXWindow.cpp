@@ -13,7 +13,6 @@
 #include "resource.h"
 #include "LXConsoleManager.h"
 #include "LXConsoleCommands.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXWindow* pWindowBase = nullptr;
 

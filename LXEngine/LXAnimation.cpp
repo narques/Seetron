@@ -11,7 +11,6 @@
 #include "LXAnimation.h"
 #include "LXStatistic.h"
 #include "LXMSXMLNode.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXAnimation::LXAnimation()
 {

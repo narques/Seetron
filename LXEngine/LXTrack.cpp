@@ -14,7 +14,6 @@
 #include "LXLogger.h"
 #include "LXMatrix.h"
 #include "LXMSXMLNode.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXTrack::LXTrack()
 {

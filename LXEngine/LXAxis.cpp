@@ -2,14 +2,13 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "StdAfx.h"
 #include "LXAxis.h"
 #include "LXMath.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXAxis::LXAxis()
 {

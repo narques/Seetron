@@ -14,7 +14,6 @@
 #include "LXGraph.h"
 #include "LXGraphTemplate.h"
 #include "LXMSXMLNode.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXNode::LXNode(LXGraph* graph): Graph(graph)
 {

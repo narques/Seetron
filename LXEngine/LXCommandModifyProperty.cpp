@@ -11,7 +11,6 @@
 #include "LXCommandModifyProperty.h"
 #include "LXSmartObject.h"
 #include "LXMath.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 // Explicit class Instantiation
 template class LXENGINE_API LXCommandPropertyT<float>;

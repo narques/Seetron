@@ -18,7 +18,6 @@
 #include "LXActorLight.h"
 #include "LXAnimation.h"
 #include "LXMSXMLNode.h"
-#include "LXMemory.h" // --- Must be the last included ---
 #include "LXRenderPipeline.h"
 #include "LXEngine.h"
 

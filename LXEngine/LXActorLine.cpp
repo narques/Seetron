@@ -13,7 +13,6 @@
 #include "LXVec3.h"
 #include "LXAssetManager.h"
 #include "LXPrimitive.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXActorLine::LXActorLine(LXProject* pDocument):LXActorMesh(pDocument),_nPickedID(-1)
 {

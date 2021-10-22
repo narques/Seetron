@@ -16,7 +16,6 @@
 #include "LXRenderPassDynamicTexture.h"
 #include "LXRenderPipelineDeferred.h"
 #include "LXTexture.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXActorRenderToTexture::LXActorRenderToTexture(LXProject* project):
 	LXActorMesh(project)

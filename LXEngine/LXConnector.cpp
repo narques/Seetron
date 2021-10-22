@@ -10,7 +10,6 @@
 #include "LXConnection.h"
 #include "LXConnector.h"
 #include "LXNode.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXConnector::LXConnector(LXNode* owner, EConnectorRole role)
 {
