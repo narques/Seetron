@@ -1,0 +1,151 @@
+//------------------------------------------------------------------------------------------------------
+//
+// This is a part of Seetron Engine
+//
+// Copyright (c) Nicolas Arques. All rights reserved.
+//
+//------------------------------------------------------------------------------------------------------
+
+#include "stdafx.h"
+#include "LXTextureSampler.h"
+
+LXTextureSampler::LXTextureSampler()
+{
+	LXPropertyEnum* propertyEnumFilter = DefinePropertyEnum("Filter", (uint*)&_filter);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MIN_MAG_MIP_POINT", 0);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR", 0x1);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MIN_POINT_MAG_LINEAR_MIP_POINT", 0x4);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MIN_POINT_MAG_MIP_LINEAR", 0x5);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MIN_LINEAR_MAG_MIP_POINT", 0x10);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MIN_LINEAR_MAG_POINT_MIP_LINEAR", 0x11);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT", 0x14);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MIN_MAG_MIP_LINEAR", 0x15);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_ANISOTROPIC", 0x55);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_COMPARISON_MIN_MAG_MIP_POINT", 0x80);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_COMPARISON_MIN_MAG_POINT_MIP_LINEAR", 0x81);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_COMPARISON_MIN_POINT_MAG_LINEAR_MIP_POINT", 0x84);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_COMPARISON_MIN_POINT_MAG_MIP_LINEAR", 0x85);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_COMPARISON_MIN_LINEAR_MAG_MIP_POINT", 0x90);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_COMPARISON_MIN_LINEAR_MAG_POINT_MIP_LINEAR", 0x91);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT", 0x94);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR", 0x95);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_COMPARISON_ANISOTROPIC", 0xd5);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MINIMUM_MIN_MAG_MIP_POINT", 0x100);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MINIMUM_MIN_MAG_POINT_MIP_LINEAR", 0x101);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MINIMUM_MIN_POINT_MAG_LINEAR_MIP_POINT", 0x104);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MINIMUM_MIN_POINT_MAG_MIP_LINEAR", 0x105);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MINIMUM_MIN_LINEAR_MAG_MIP_POINT", 0x110);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MINIMUM_MIN_LINEAR_MAG_POINT_MIP_LINEAR", 0x111);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MINIMUM_MIN_MAG_LINEAR_MIP_POINT", 0x114);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MINIMUM_MIN_MAG_MIP_LINEAR", 0x115);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MINIMUM_ANISOTROPIC", 0x155);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MAXIMUM_MIN_MAG_MIP_POINT", 0x180);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MAXIMUM_MIN_MAG_POINT_MIP_LINEAR", 0x181);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MAXIMUM_MIN_POINT_MAG_LINEAR_MIP_POINT", 0x184);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MAXIMUM_MIN_POINT_MAG_MIP_LINEAR", 0x185);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MAXIMUM_MIN_LINEAR_MAG_MIP_POINT", 0x190);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MAXIMUM_MIN_LINEAR_MAG_POINT_MIP_LINEAR", 0x191);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MAXIMUM_MIN_MAG_LINEAR_MIP_POINT", 0x194);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MAXIMUM_MIN_MAG_MIP_LINEAR", 0x195);
+	propertyEnumFilter->AddChoice(L"D3D11_FILTER_MAXIMUM_ANISOTROPIC", 0x1d5);
+
+	LXPropertyEnum* propertyAddressU = DefinePropertyEnum("AddressU", (uint*)&_addressU);
+	propertyAddressU->AddChoice(L"D3D11_TEXTURE_ADDRESS_WRAP", (uint)ETextureAddressMode::D3D11_TEXTURE_ADDRESS_WRAP);
+	propertyAddressU->AddChoice(L"D3D11_TEXTURE_ADDRESS_MIRROR", (uint)ETextureAddressMode::D3D11_TEXTURE_ADDRESS_MIRROR);
+	propertyAddressU->AddChoice(L"D3D11_TEXTURE_ADDRESS_CLAMP", (uint)ETextureAddressMode::D3D11_TEXTURE_ADDRESS_CLAMP);
+	propertyAddressU->AddChoice(L"D3D11_TEXTURE_ADDRESS_BORDER", (uint)ETextureAddressMode::D3D11_TEXTURE_ADDRESS_BORDER);
+	propertyAddressU->AddChoice(L"D3D11_TEXTURE_ADDRESS_MIRROR_ONCE", (uint)ETextureAddressMode::D3D11_TEXTURE_ADDRESS_MIRROR_ONCE);
+
+	LXPropertyEnum* propertyAddressV = DefinePropertyEnum("AddressV", (uint*)&_addressV);
+	propertyAddressV->AddChoice(L"D3D11_TEXTURE_ADDRESS_WRAP", (uint)ETextureAddressMode::D3D11_TEXTURE_ADDRESS_WRAP);
+	propertyAddressV->AddChoice(L"D3D11_TEXTURE_ADDRESS_MIRROR", (uint)ETextureAddressMode::D3D11_TEXTURE_ADDRESS_MIRROR);
+	propertyAddressV->AddChoice(L"D3D11_TEXTURE_ADDRESS_CLAMP", (uint)ETextureAddressMode::D3D11_TEXTURE_ADDRESS_CLAMP);
+	propertyAddressV->AddChoice(L"D3D11_TEXTURE_ADDRESS_BORDER", (uint)ETextureAddressMode::D3D11_TEXTURE_ADDRESS_BORDER);
+	propertyAddressV->AddChoice(L"D3D11_TEXTURE_ADDRESS_MIRROR_ONCE", (uint)ETextureAddressMode::D3D11_TEXTURE_ADDRESS_MIRROR_ONCE);
+
+	LXPropertyEnum* propertyAddressW = DefinePropertyEnum("AddressW", (uint*)&_addressW);
+	propertyAddressW->AddChoice(L"D3D11_TEXTURE_ADDRESS_WRAP", (uint)ETextureAddressMode::D3D11_TEXTURE_ADDRESS_WRAP);
+	propertyAddressW->AddChoice(L"D3D11_TEXTURE_ADDRESS_MIRROR", (uint)ETextureAddressMode::D3D11_TEXTURE_ADDRESS_MIRROR);
+	propertyAddressW->AddChoice(L"D3D11_TEXTURE_ADDRESS_CLAMP", (uint)ETextureAddressMode::D3D11_TEXTURE_ADDRESS_CLAMP);
+	propertyAddressW->AddChoice(L"D3D11_TEXTURE_ADDRESS_BORDER", (uint)ETextureAddressMode::D3D11_TEXTURE_ADDRESS_BORDER);
+	propertyAddressW->AddChoice(L"D3D11_TEXTURE_ADDRESS_MIRROR_ONCE", (uint)ETextureAddressMode::D3D11_TEXTURE_ADDRESS_MIRROR_ONCE);
+}
+
+LXTextureSampler::~LXTextureSampler()
+{
+
+}
+
+LXStringA LXTextureSampler::GetFilterName() const
+{
+	switch (_filter)
+	{
+	case EFilter::D3D11_FILTER_MIN_MAG_MIP_POINT: return"MIN_MAG_MIP_POINT";
+	case EFilter::D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR: return"MIN_MAG_POINT_MIP_LINEAR";
+	case EFilter::D3D11_FILTER_MIN_POINT_MAG_LINEAR_MIP_POINT: return"MIN_POINT_MAG_LINEAR_MIP_POINT";
+	case EFilter::D3D11_FILTER_MIN_POINT_MAG_MIP_LINEAR: return"MIN_POINT_MAG_MIP_LINEAR";
+	case EFilter::D3D11_FILTER_MIN_LINEAR_MAG_MIP_POINT: return"MIN_LINEAR_MAG_MIP_POINT";
+	case EFilter::D3D11_FILTER_MIN_LINEAR_MAG_POINT_MIP_LINEAR: return"MIN_LINEAR_MAG_POINT_MIP_LINEAR";
+	case EFilter::D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT: return"MIN_MAG_LINEAR_MIP_POINT";
+	case EFilter::D3D11_FILTER_MIN_MAG_MIP_LINEAR: return"MIN_MAG_MIP_LINEAR";
+	case EFilter::D3D11_FILTER_ANISOTROPIC: return"ANISOTROPIC";
+	case EFilter::D3D11_FILTER_COMPARISON_MIN_MAG_MIP_POINT: return"COMPARISON_MIN_MAG_MIP_POINT";
+	case EFilter::D3D11_FILTER_COMPARISON_MIN_MAG_POINT_MIP_LINEAR: return"COMPARISON_MIN_MAG_POINT_MIP_LINEAR";
+	case EFilter::D3D11_FILTER_COMPARISON_MIN_POINT_MAG_LINEAR_MIP_POINT: return"COMPARISON_MIN_POINT_MAG_LINEAR_MIP_POINT";
+	case EFilter::D3D11_FILTER_COMPARISON_MIN_POINT_MAG_MIP_LINEAR: return"COMPARISON_MIN_POINT_MAG_MIP_LINEAR";
+	case EFilter::D3D11_FILTER_COMPARISON_MIN_LINEAR_MAG_MIP_POINT: return"COMPARISON_MIN_LINEAR_MAG_MIP_POINT";
+	case EFilter::D3D11_FILTER_COMPARISON_MIN_LINEAR_MAG_POINT_MIP_LINEAR: return"COMPARISON_MIN_LINEAR_MAG_POINT_MIP_LINEAR";
+	case EFilter::D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT: return"COMPARISON_MIN_MAG_LINEAR_MIP_POINT";
+	case EFilter::D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR: return"COMPARISON_MIN_MAG_MIP_LINEAR";
+	case EFilter::D3D11_FILTER_COMPARISON_ANISOTROPIC: return"COMPARISON_ANISOTROPIC";
+	case EFilter::D3D11_FILTER_MINIMUM_MIN_MAG_MIP_POINT: return"MINIMUM_MIN_MAG_MIP_POINT";
+	case EFilter::D3D11_FILTER_MINIMUM_MIN_MAG_POINT_MIP_LINEAR: return"MINIMUM_MIN_MAG_POINT_MIP_LINEAR";
+	case EFilter::D3D11_FILTER_MINIMUM_MIN_POINT_MAG_LINEAR_MIP_POINT: return"MINIMUM_MIN_POINT_MAG_LINEAR_MIP_POINT";
+	case EFilter::D3D11_FILTER_MINIMUM_MIN_POINT_MAG_MIP_LINEAR: return"MINIMUM_MIN_POINT_MAG_MIP_LINEAR";
+	case EFilter::D3D11_FILTER_MINIMUM_MIN_LINEAR_MAG_MIP_POINT: return"MINIMUM_MIN_LINEAR_MAG_MIP_POINT";
+	case EFilter::D3D11_FILTER_MINIMUM_MIN_LINEAR_MAG_POINT_MIP_LINEAR: return"MINIMUM_MIN_LINEAR_MAG_POINT_MIP_LINEAR";
+	case EFilter::D3D11_FILTER_MINIMUM_MIN_MAG_LINEAR_MIP_POINT: return"MINIMUM_MIN_MAG_LINEAR_MIP_POINT";
+	case EFilter::D3D11_FILTER_MINIMUM_MIN_MAG_MIP_LINEAR: return"MINIMUM_MIN_MAG_MIP_LINEAR";
+	case EFilter::D3D11_FILTER_MINIMUM_ANISOTROPIC: return"MINIMUM_ANISOTROPIC";
+	case EFilter::D3D11_FILTER_MAXIMUM_MIN_MAG_MIP_POINT: return"MAXIMUM_MIN_MAG_MIP_POINT";
+	case EFilter::D3D11_FILTER_MAXIMUM_MIN_MAG_POINT_MIP_LINEAR: return"MAXIMUM_MIN_MAG_POINT_MIP_LINEAR";
+	case EFilter::D3D11_FILTER_MAXIMUM_MIN_POINT_MAG_LINEAR_MIP_POINT: return"MAXIMUM_MIN_POINT_MAG_LINEAR_MIP_POINT";
+	case EFilter::D3D11_FILTER_MAXIMUM_MIN_POINT_MAG_MIP_LINEAR: return"MAXIMUM_MIN_POINT_MAG_MIP_LINEAR";
+	case EFilter::D3D11_FILTER_MAXIMUM_MIN_LINEAR_MAG_MIP_POINT: return"MAXIMUM_MIN_LINEAR_MAG_MIP_POINT";
+	case EFilter::D3D11_FILTER_MAXIMUM_MIN_LINEAR_MAG_POINT_MIP_LINEAR: return"MAXIMUM_MIN_LINEAR_MAG_POINT_MIP_LINEAR";
+	case EFilter::D3D11_FILTER_MAXIMUM_MIN_MAG_LINEAR_MIP_POINT: return"MAXIMUM_MIN_MAG_LINEAR_MIP_POINT";
+	case EFilter::D3D11_FILTER_MAXIMUM_MIN_MAG_MIP_LINEAR: return"MAXIMUM_MIN_MAG_MIP_LINEAR";
+	case EFilter::D3D11_FILTER_MAXIMUM_ANISOTROPIC: return"MAXIMUM_ANISOTROPIC";
+	default:CHK(0); return "";
+	}
+}
+
+LXStringA GetAddressName(ETextureAddressMode addresseMode)
+{
+	switch (addresseMode)
+	{
+	case ETextureAddressMode::D3D11_TEXTURE_ADDRESS_WRAP: return "Wrap";
+	case ETextureAddressMode::D3D11_TEXTURE_ADDRESS_MIRROR: return "Mirror";
+	case ETextureAddressMode::D3D11_TEXTURE_ADDRESS_CLAMP: return "Clamp";
+	case ETextureAddressMode::D3D11_TEXTURE_ADDRESS_BORDER: return "Border";
+	case ETextureAddressMode::D3D11_TEXTURE_ADDRESS_MIRROR_ONCE: return "MirrorOnce";
+	default: CHK(0); return "";
+	}
+}
+
+LXStringA LXTextureSampler::GetAddessUName() const
+{
+	return GetAddressName(_addressU);
+}
+
+LXStringA LXTextureSampler::GetAddessVName() const
+{
+	return GetAddressName(_addressV);
+}
+
+LXStringA LXTextureSampler::GetAddessWName() const
+{
+	return GetAddressName(_addressW);
+}
+
+
