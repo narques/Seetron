@@ -15,7 +15,6 @@
 #include "LXTexture.h"
 #include "LXPropertyManager.h"
 #include "LXActorLight.h"
-#include "LXMemory.h" // --- Must be the last included ---
 
 LXBackground::LXBackground(LXProject* pDocument):
 m_eType(LX_BGTYPE_GRADIENT),
