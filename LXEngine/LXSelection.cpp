@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXSelection.h"
 #include "LXProperty.h"
 #include "LXEngine.h"

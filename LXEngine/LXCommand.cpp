@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "pch.h"
 #include "LXCommand.h"
 #include "LXProperty.h"
 

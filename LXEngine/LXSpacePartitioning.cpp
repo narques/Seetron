@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXSpacePartitioning.h"
 #include "LXTraverserCallBack.h"
 #include "LXEngine.h"

@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXRenderTarget.h"
 #include "LXTextureD3D11.h"
 #include "LXRenderTargetViewD3D11.h"

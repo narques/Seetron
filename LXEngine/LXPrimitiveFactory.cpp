@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXPrimitiveFactory.h"
 #include "LXPrimitive.h"
 #include "LXMatrix.h"

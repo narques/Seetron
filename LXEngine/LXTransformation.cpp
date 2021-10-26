@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXTransformation.h"
 #include "LXSmartObject.h"
 #include "LXMath.h"

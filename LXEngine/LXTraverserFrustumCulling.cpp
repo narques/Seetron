@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "pch.h"
 #include "LXTraverserFrustumCulling.h"
 #include "LXFrustum.h"
 #include "LXActorMesh.h"

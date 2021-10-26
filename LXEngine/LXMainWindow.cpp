@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "resource.h"
 #include "LXMainWindow.h"
 #include "LXViewport.h"

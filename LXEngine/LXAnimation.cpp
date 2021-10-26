@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXMatrix.h"
 #include "LXAnimation.h"
 #include "LXStatistic.h"

@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXTexture.h"
 #include "LXBitmap.h"
 #include "LXLogger.h"

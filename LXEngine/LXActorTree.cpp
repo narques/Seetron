@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------*
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXActorTree.h"
 #include "LXProject.h"
 #include "LXPrimitive.h"

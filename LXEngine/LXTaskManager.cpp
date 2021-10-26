@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXMutex.h"
 #include "LXPerformance.h"
 #include "LXTaskManager.h"

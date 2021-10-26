@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXSamplerStateD3D11.h"
 #include "LXStatistic.h"
 #include "LXTextureSampler.h"

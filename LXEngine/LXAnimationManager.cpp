@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "pch.h"
 #include "LXAnimationManager.h"
 #include "LXProject.h"
 #include "LXAnimation.h"

@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXRenderPassDepthOfField.h"
 #include "LXEngine.h"
 #include "LXInputElementDescD3D11Factory.h"

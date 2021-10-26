@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXActorLine.h"
 #include "LXProject.h"
 #include "LXAnchor.h"

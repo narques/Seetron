@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXPropertyType.h"
 #include "LXLogger.h"
 #include "LXMacros.h"

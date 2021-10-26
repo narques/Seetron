@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "lxquerylinkchildtofather.h"
 #include "LXActor.h"
 #include "lxquerymanager.h"

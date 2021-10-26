@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "pch.h"
 #include "LXBitmap.h"
 #include "LXLogger.h"
 #include "FreeImage3170/FreeImage.h"

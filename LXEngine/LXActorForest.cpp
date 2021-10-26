@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXActorForest.h"
 #include "LXEngine.h"
 #include "LXScene.h"

@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXQueryTransform.h"
 #include "LXQueryManager.h"
 #include "LXProject.h"

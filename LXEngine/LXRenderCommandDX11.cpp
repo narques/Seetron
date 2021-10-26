@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXRenderCommandDX11.h"
 
 LXRenderCommandDX11::LXRenderCommandDX11()

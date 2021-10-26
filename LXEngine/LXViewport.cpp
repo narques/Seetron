@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "pch.h"
 #include "LXActorMesh.h"
 #include "LXActorMeshGizmo.h"
 #include "LXAnchor.h"

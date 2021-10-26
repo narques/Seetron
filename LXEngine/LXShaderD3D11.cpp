@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXShaderD3D11.h"
 #include "LXEngine.h"
 #include "LXDirectX11.h"

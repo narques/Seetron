@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXLODSystem.h"
 
 void LXLODSystem::AddLOD(std::shared_ptr<LXPrimitive> primitive)

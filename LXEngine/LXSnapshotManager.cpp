@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXSnapshotManager.h"
 #include "LXSnapshot.h"
 #include "LXSmartObject.h"

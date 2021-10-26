@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXSelectionmanager.h"
 #include "LXEventManager.h"
 #include "LXActorMesh.h"

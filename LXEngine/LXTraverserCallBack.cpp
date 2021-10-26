@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "pch.h"
 #include "LXTraverserCallBack.h"
 #include "LXScene.h"
 #include "LXActorMesh.h"

@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXKey.h"
 
 LXKey::LXKey(LXTrack* pTrack, LXVariant* Variant):_pTrack(pTrack),_pVariant(Variant)

@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXRenderPassDynamicTexture.h"
 #include "LXActorRenderToTexture.h"
 #include "LXMaterial.h"

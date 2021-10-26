@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXRenderPassTransparency.h"
 #include "LXConstantBufferD3D11.h"
 #include "LXRenderer.h"

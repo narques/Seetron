@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "pch.h"
 #include "LXCommandDeleteActor.h"
 #include "LXActor.h"
 #include "LXEngine.h"

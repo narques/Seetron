@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXCamera.h"
 
 const LXMatrix& LXCamera::GetMatrixView()

@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXActorCamera.h"
 #include "LXFrustum.h"
 #include "LXProject.h"

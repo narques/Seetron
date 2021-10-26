@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXEvent.h"
 
 LXEvent::LXEvent(EEventType EventType) : EventType(EventType)

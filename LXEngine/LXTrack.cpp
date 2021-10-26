@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXTrack.h"
 #include "LXProperty.h"
 #include "LXInterpolator.h"

@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXMaterialD3D11.h"
 #include "LXConstantBufferD3D11.h"
 #include "LXGraphMaterialToHLSLConverter.h"

@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXShader.h"
 #include "LXLogger.h"
 #include "LXPlatform.h"

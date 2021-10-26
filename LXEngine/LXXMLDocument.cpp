@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXXMLDocument.h"
 #include "LXMSXMLNode.h"
 #include "LXLogger.h"

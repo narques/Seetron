@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXGraphNodeMaterial.h"
 
 LXGraphNodeTextureSampler::LXGraphNodeTextureSampler(LXGraph* graph) : LXNode(graph)

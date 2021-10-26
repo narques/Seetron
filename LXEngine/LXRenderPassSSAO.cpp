@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXRenderPassSSAO.h"
 #include "LXInputElementDescD3D11Factory.h"
 #include "LXProject.h"

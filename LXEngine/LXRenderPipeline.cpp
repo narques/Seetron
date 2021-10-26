@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXRenderPass.h"
 #include "LXRenderPipeline.h"
 #include "LXConsoleManager.h"

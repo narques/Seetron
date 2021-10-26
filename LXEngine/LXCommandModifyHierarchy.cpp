@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXCommandModifyHierarchy.h"
 #include "LXActor.h"
 #include "LXMesh.h"

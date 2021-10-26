@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXRenderPassLighting.h"
 #include "LXActorLight.h"
 #include "LXActorSceneCapture.h"

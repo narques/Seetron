@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXMeshData.h"
 
 LXMeshDataLegacy::~LXMeshDataLegacy()

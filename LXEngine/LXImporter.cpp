@@ -6,7 +6,7 @@
 //
 //------------------------------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "pch.h"
 #include "LXImporter.h"
 
 LXImporter::LXImporter(LXProject* Project)
