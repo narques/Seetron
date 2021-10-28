@@ -95,11 +95,8 @@ public:
 	static void						UnregisterCB_OnPropertiesChanged(LXObject* Listener);
 
 	// Generic CallBack mechanism (Deprecated)
-	[[deprecated]]
 	void							RegisterCB(LXSmartObject* Listerner, const LXString& FunctionName, std::function<void(LXSmartObject*)>);
-	[[deprecated]]
 	void							UnregisterCB(LXSmartObject* Listener, const LXString& FunctionName);
-	[[deprecated]]
 	void							InvokeCB(const LXString& functionn);
 
 	//------------------------------------------------------------------------------------------------------

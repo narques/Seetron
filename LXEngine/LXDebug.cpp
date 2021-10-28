@@ -24,7 +24,7 @@ void LXDebug::LogFailure(const char* Expression, const char* File, int Line)
 {
 	LogE(LXDebug, "Expression %s failed in %s:%i. Continue ?", Expression, File, Line);
 	char Message[256];
-	sprintf(Message, "Expression %s failed in %s:%i. Continue ?", Expression, File, Line);
+	sprintf_s(Message, "Expression %s failed in %s:%i. Continue ?", Expression, File, Line);
 	int Resultt = MessageBoxA(nullptr, Message, "Assertion failed", MB_YESNO);
 	if (Resultt == IDNO)
 		exit(0);

@@ -136,7 +136,7 @@ void LXRenderClusterManager::AddActor(LXRenderData* renderData, LXFlagsRenderClu
 
 			LXMatrix MatrixScale, MatrixTranslation;
 			// Max/1.f to avoid a 0 scale value ( possible with the "flat" geometries )
-			MatrixScale.SetScale(std::max(BBoxWorld.GetSizeX(), 1.f), std::max(BBoxWorld.GetSizeY(), 1.f), std::max(BBoxWorld.GetSizeZ(), 1.f));
+			MatrixScale.SetScale(std::max<float>(BBoxWorld.GetSizeX(), 1.f), std::max<float>(BBoxWorld.GetSizeY(), 1.f), std::max<float>(BBoxWorld.GetSizeZ(), 1.f));
 			MatrixTranslation.SetTranslation(BBoxWorld.GetCenter());
 			LXPrimitive* primitive = GetPrimitiveFactory()->GetWireframeCube().get();
 			std::vector<LXPrimitive*> primitiveLODs;

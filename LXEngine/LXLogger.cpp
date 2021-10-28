@@ -173,7 +173,7 @@ LXENGINE_API void Log2(ELogType LogType, const wchar_t* section, const char* For
 	va_list arguments;
 	va_start(arguments, Format);
 	char out[1024];
-	vsprintf(out, Format, arguments);
+	vsprintf_s(out, Format, arguments);
 	va_end(arguments);
 
 	if (GetLogger().GetMode() & LogMode_OSConsole)
@@ -272,7 +272,8 @@ void LXLogger::CreateOSConsole()
 {
 	AllocConsole();
 	AttachConsole(GetCurrentProcessId());
-	freopen("CON", "w", stdout);
+	FILE* file;
+	freopen_s(&file, "CON", "w", stdout);
 }
 
 void LXLogger::LogConfigurationAndPlatform()

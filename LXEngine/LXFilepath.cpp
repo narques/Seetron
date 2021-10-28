@@ -2,13 +2,15 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "pch.h"
 #include "LXFilepath.h"
 #include <shlwapi.h>
+
+#pragma comment(lib, "Shlwapi.lib")
 
 LXString LXFilepath::GetExtension() const
 {

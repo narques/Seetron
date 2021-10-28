@@ -8,7 +8,6 @@
 
 #include "pch.h"
 #include "LXThread.h"
-#include "targetver.h"
 
 LXThread::LXThread() 
 {

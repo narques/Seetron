@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{092df78b-8fa2-4886-8c32-ad87593d961c}</ProjectGuid>
+    <RootNamespace>LXEngine</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Seetron.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Seetron.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <TargetName>LXEngine</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <TargetName>LXEngine</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;LXENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;LXENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h" />
+    <ClInclude Include="LXActor.h" />
+    <ClInclude Include="LXActorCamera.h" />
+    <ClInclude Include="LXActorFactory.h" />
+    <ClInclude Include="LXActorForest.h" />
+    <ClInclude Include="LXActorLight.h" />
+    <ClInclude Include="LXActorLine.h" />
+    <ClInclude Include="LXActorMesh.h" />
+    <ClInclude Include="LXActorMeshCube.h" />
+    <ClInclude Include="LXActorMeshGizmo.h" />
+    <ClInclude Include="LXActorMeshPlane.h" />
+    <ClInclude Include="LXActorMeshSphere.h" />
+    <ClInclude Include="LXActorRenderToTexture.h" />
+    <ClInclude Include="LXActorSceneCapture.h" />
+    <ClInclude Include="LXActorTree.h" />
+    <ClInclude Include="LXActorType.h" />
+    <ClInclude Include="LXAnchor.h" />
+    <ClInclude Include="LXAnimation.h" />
+    <ClInclude Include="LXAnimationManager.h" />
+    <ClInclude Include="LXApplication.h" />
+    <ClInclude Include="LXApplicationBase.h" />
+    <ClInclude Include="LXArray2D.h" />
+    <ClInclude Include="LXAsset.h" />
+    <ClInclude Include="LXAssetManager.h" />
+    <ClInclude Include="LXAssetMesh.h" />
+    <ClInclude Include="LXAssetType.h" />
+    <ClInclude Include="LXAxis.h" />
+    <ClInclude Include="LXBackground.h" />
+    <ClInclude Include="LXBBox.h" />
+    <ClInclude Include="LXBitmap.h" />
+    <ClInclude Include="LXCamera.h" />
+    <ClInclude Include="LXColor.h" />
+    <ClInclude Include="LXCommand.h" />
+    <ClInclude Include="LXCommandDeleteActor.h" />
+    <ClInclude Include="LXCommandManager.h" />
+    <ClInclude Include="LXCommandModifyHierarchy.h" />
+    <ClInclude Include="LXCommandModifyProperty.h" />
+    <ClInclude Include="LXComponent.h" />
+    <ClInclude Include="LXComponentMesh.h" />
+    <ClInclude Include="LXComponentMetaPatch.h" />
+    <ClInclude Include="LXComponentTerrainGenerator.h" />
+    <ClInclude Include="LXConfig.h" />
+    <ClInclude Include="LXConnection.h" />
+    <ClInclude Include="LXConnector.h" />
+    <ClInclude Include="LXConsoleCommands.h" />
+    <ClInclude Include="LXConsoleManager.h" />
+    <ClInclude Include="LXConstantBuffer.h" />
+    <ClInclude Include="LXConstantBufferD3D11.h" />
+    <ClInclude Include="LXDebug.h" />
+    <ClInclude Include="LXDelegate.h" />
+    <ClInclude Include="LXDeviceResourceManager.h" />
+    <ClInclude Include="LXDirectory.h" />
+    <ClInclude Include="LXDirectX11.h" />
+    <ClInclude Include="LXDocumentBase.h" />
+    <ClInclude Include="LXDocumentManager.h" />
+    <ClInclude Include="LXDocumentOwner.h" />
+    <ClInclude Include="LXEditMesh.h" />
+    <ClInclude Include="LXEngine.h" />
+    <ClInclude Include="LXEvent.h" />
+    <ClInclude Include="LXEventManager.h" />
+    <ClInclude Include="LXExports.h" />
+    <ClInclude Include="LXFace.h" />
+    <ClInclude Include="LXFile.h" />
+    <ClInclude Include="LXFilepath.h" />
+    <ClInclude Include="LXFileWatcher.h" />
+    <ClInclude Include="LXFlags.h" />
+    <ClInclude Include="LXFormats.h" />
+    <ClInclude Include="LXFrustum.h" />
+    <ClInclude Include="LXFunction.h" />
+    <ClInclude Include="LXGraph.h" />
+    <ClInclude Include="LXGraphMaterial.h" />
+    <ClInclude Include="LXGraphMaterialToHLSLConverter.h" />
+    <ClInclude Include="LXGraphNodeMaterial.h" />
+    <ClInclude Include="LXGraphTemplate.h" />
+    <ClInclude Include="LXImporter.h" />
+    <ClInclude Include="LXInclude.h" />
+    <ClInclude Include="LXInputElementDescD3D11Factory.h" />
+    <ClInclude Include="LXInterpolator.h" />
+    <ClInclude Include="LXKey.h" />
+    <ClInclude Include="LXLibrary.h" />
+    <ClInclude Include="LXLODSystem.h" />
+    <ClInclude Include="LXLogger.h" />
+    <ClInclude Include="LXLogTypes.h" />
+    <ClInclude Include="LXMacros.h" />
+    <ClInclude Include="LXMainWindow.h" />
+    <ClInclude Include="LXManager.h" />
+    <ClInclude Include="LXMaterial.h" />
+    <ClInclude Include="LXMaterialBase.h" />
+    <ClInclude Include="LXMaterialD3D11.h" />
+    <ClInclude Include="LXMaterialInstance.h" />
+    <ClInclude Include="LXMaterialNode.h" />
+    <ClInclude Include="LXMaterialUtility.h" />
+    <ClInclude Include="LXMath.h" />
+    <ClInclude Include="LXMatrix.h" />
+    <ClInclude Include="LXMesh.h" />
+    <ClInclude Include="LXMeshBase.h" />
+    <ClInclude Include="LXMeshData.h" />
+    <ClInclude Include="LXMeshFactory.h" />
+    <ClInclude Include="LXMeshTopology.h" />
+    <ClInclude Include="LXMessageManager.h" />
+    <ClInclude Include="LXMouseEventHandler.h" />
+    <ClInclude Include="LXMSXMLNode.h" />
+    <ClInclude Include="LXMutex.h" />
+    <ClInclude Include="LXNode.h" />
+    <ClInclude Include="LXObject.h" />
+    <ClInclude Include="LXObjectFactory.h" />
+    <ClInclude Include="LXOverride.h" />
+    <ClInclude Include="LXPerformance.h" />
+    <ClInclude Include="LXPickTraverser.h" />
+    <ClInclude Include="LXPlane.h" />
+    <ClInclude Include="LXPlatform.h" />
+    <ClInclude Include="LXPlugin.h" />
+    <ClInclude Include="LXPoint.h" />
+    <ClInclude Include="LXPrimitive.h" />
+    <ClInclude Include="LXPrimitiveD3D11.h" />
+    <ClInclude Include="LXPrimitiveFactory.h" />
+    <ClInclude Include="LXPrimitiveInstance.h" />
+    <ClInclude Include="LXProceduralTexture.h" />
+    <ClInclude Include="LXProject.h" />
+    <ClInclude Include="LXProperty.h" />
+    <ClInclude Include="LXPropertyIdentifiers.h" />
+    <ClInclude Include="LXPropertyManager.h" />
+    <ClInclude Include="LXPropertyType.h" />
+    <ClInclude Include="LXQuery.h" />
+    <ClInclude Include="LXQueryLinkChildToFather.h" />
+    <ClInclude Include="LXQueryManager.h" />
+    <ClInclude Include="LXQueryPickTwoActors.h" />
+    <ClInclude Include="LXQueryTransform.h" />
+    <ClInclude Include="LXRectangularSelectionTraverser.h" />
+    <ClInclude Include="LXReference.h" />
+    <ClInclude Include="LXRenderBatch.h" />
+    <ClInclude Include="LXRenderBatching.h" />
+    <ClInclude Include="LXRenderCluster.h" />
+    <ClInclude Include="LXRenderClusterManager.h" />
+    <ClInclude Include="LXRenderClusterType.h" />
+    <ClInclude Include="LXRenderCommand.h" />
+    <ClInclude Include="LXRenderCommandDX11.h" />
+    <ClInclude Include="LXRenderCommandList.h" />
+    <ClInclude Include="LXRenderData.h" />
+    <ClInclude Include="LXRenderer.h" />
+    <ClInclude Include="LXRenderPass.h" />
+    <ClInclude Include="LXRenderPassAux.h" />
+    <ClInclude Include="LXRenderPassDepth.h" />
+    <ClInclude Include="LXRenderPassDepthOfField.h" />
+    <ClInclude Include="LXRenderPassDownsample.h" />
+    <ClInclude Include="LXRenderPassDynamicTexture.h" />
+    <ClInclude Include="LXRenderPassGBuffer.h" />
+    <ClInclude Include="LXRenderPassLighting.h" />
+    <ClInclude Include="LXRenderPassShadow.h" />
+    <ClInclude Include="LXRenderPassSSAO.h" />
+    <ClInclude Include="LXRenderPassToneMapping.h" />
+    <ClInclude Include="LXRenderPassTransparency.h" />
+    <ClInclude Include="LXRenderPassType.h" />
+    <ClInclude Include="LXRenderPassUI.h" />
+    <ClInclude Include="LXRenderPipeline.h" />
+    <ClInclude Include="LXRenderPipelineDeferred.h" />
+    <ClInclude Include="LXRenderTarget.h" />
+    <ClInclude Include="LXRenderTargetViewD3D11.h" />
+    <ClInclude Include="LXSamplerStateD3D11.h" />
+    <ClInclude Include="LXScene.h" />
+    <ClInclude Include="LXScript.h" />
+    <ClInclude Include="LXSelection.h" />
+    <ClInclude Include="LXSelectionManager.h" />
+    <ClInclude Include="LXSelectionTraverser.h" />
+    <ClInclude Include="LXSettings.h" />
+    <ClInclude Include="LXShader.h" />
+    <ClInclude Include="LXShaderD3D11.h" />
+    <ClInclude Include="LXShaderFactory.h" />
+    <ClInclude Include="LXShaderIdentifiers.h" />
+    <ClInclude Include="LXShaderManager.h" />
+    <ClInclude Include="LXShaderProgramD3D11.h" />
+    <ClInclude Include="LXShaderResources.h" />
+    <ClInclude Include="LXSmartObject.h" />
+    <ClInclude Include="LXSnapshot.h" />
+    <ClInclude Include="LXSnapshotManager.h" />
+    <ClInclude Include="LXSpacePartitioning.h" />
+    <ClInclude Include="LXStatistic.h" />
+    <ClInclude Include="LXStatManager.h" />
+    <ClInclude Include="LXString.h" />
+    <ClInclude Include="LXSyncEvent.h" />
+    <ClInclude Include="LXSynchronisable.h" />
+    <ClInclude Include="LXTask.h" />
+    <ClInclude Include="LXTaskManager.h" />
+    <ClInclude Include="LXTerrain.h" />
+    <ClInclude Include="LXTexture.h" />
+    <ClInclude Include="LXTextureD3D11.h" />
+    <ClInclude Include="LXTextureManager.h" />
+    <ClInclude Include="LXTextureSampler.h" />
+    <ClInclude Include="LXThread.h" />
+    <ClInclude Include="LXThreadManager.h" />
+    <ClInclude Include="LXTime.h" />
+    <ClInclude Include="LXTimeD3D11.h" />
+    <ClInclude Include="LXTrack.h" />
+    <ClInclude Include="LXTrackBallCameraManipulator.h" />
+    <ClInclude Include="LXTransformation.h" />
+    <ClInclude Include="LXTraverser.h" />
+    <ClInclude Include="LXTraverserCallBack.h" />
+    <ClInclude Include="LXTraverserFrustumCulling.h" />
+    <ClInclude Include="LXTree.h" />
+    <ClInclude Include="LXTypes.h" />
+    <ClInclude Include="LXVariant.h" />
+    <ClInclude Include="LXVec2.h" />
+    <ClInclude Include="LXVec3.h" />
+    <ClInclude Include="LXVec4.h" />
+    <ClInclude Include="LXViewport.h" />
+    <ClInclude Include="LXViewportManager.h" />
+    <ClInclude Include="LXViewState.h" />
+    <ClInclude Include="LXViewStateManager.h" />
+    <ClInclude Include="LXWindow.h" />
+    <ClInclude Include="LXWindowViewport.h" />
+    <ClInclude Include="LXWorldTransformation.h" />
+    <ClInclude Include="LXXMLDocument.h" />
+    <ClInclude Include="pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="LXActor.cpp" />
+    <ClCompile Include="LXActorCamera.cpp" />
+    <ClCompile Include="LXActorFactory.cpp" />
+    <ClCompile Include="LXActorForest.cpp" />
+    <ClCompile Include="LXActorLight.cpp" />
+    <ClCompile Include="LXActorLine.cpp" />
+    <ClCompile Include="LXActorMesh.cpp" />
+    <ClCompile Include="LXActorMeshCube.cpp" />
+    <ClCompile Include="LXActorMeshGizmo.cpp" />
+    <ClCompile Include="LXActorMeshPlane.cpp" />
+    <ClCompile Include="LXActorMeshSphere.cpp" />
+    <ClCompile Include="LXActorRenderToTexture.cpp" />
+    <ClCompile Include="LXActorSceneCapture.cpp" />
+    <ClCompile Include="LXActorTree.cpp" />
+    <ClCompile Include="LXAnchor.cpp" />
+    <ClCompile Include="LXAnimation.cpp" />
+    <ClCompile Include="LXAnimationManager.cpp" />
+    <ClCompile Include="LXApplication.cpp" />
+    <ClCompile Include="LXApplicationBase.cpp" />
+    <ClCompile Include="LXAsset.cpp" />
+    <ClCompile Include="LXAssetManager.cpp" />
+    <ClCompile Include="LXAssetMesh.cpp" />
+    <ClCompile Include="LXAxis.cpp" />
+    <ClCompile Include="LXBackground.cpp" />
+    <ClCompile Include="LXBBox.cpp" />
+    <ClCompile Include="LXBitmap.cpp" />
+    <ClCompile Include="LXCamera.cpp" />
+    <ClCompile Include="LXColor.cpp" />
+    <ClCompile Include="LXCommand.cpp" />
+    <ClCompile Include="LXCommandDeleteActor.cpp" />
+    <ClCompile Include="LXCommandManager.cpp" />
+    <ClCompile Include="LXCommandModifyHierarchy.cpp" />
+    <ClCompile Include="LXCommandModifyProperty.cpp" />
+    <ClCompile Include="LXComponent.cpp" />
+    <ClCompile Include="LXComponentMesh.cpp" />
+    <ClCompile Include="LXComponentMetaPatch.cpp" />
+    <ClCompile Include="LXComponentTerrainGenerator.cpp" />
+    <ClCompile Include="LXConnection.cpp" />
+    <ClCompile Include="LXConnector.cpp" />
+    <ClCompile Include="LXConsoleCommands.cpp" />
+    <ClCompile Include="LXConsoleManager.cpp" />
+    <ClCompile Include="LXConstantBuffer.cpp" />
+    <ClCompile Include="LXConstantBufferD3D11.cpp" />
+    <ClCompile Include="LXDebug.cpp" />
+    <ClCompile Include="LXDeviceResourceManager.cpp" />
+    <ClCompile Include="LXDirectory.cpp" />
+    <ClCompile Include="LXDirectX11.cpp" />
+    <ClCompile Include="LXDocumentBase.cpp" />
+    <ClCompile Include="LXDocumentManager.cpp" />
+    <ClCompile Include="LXDocumentOwner.cpp" />
+    <ClCompile Include="LXEditMesh.cpp" />
+    <ClCompile Include="LXEngine.cpp" />
+    <ClCompile Include="LXEvent.cpp" />
+    <ClCompile Include="LXEventManager.cpp" />
+    <ClCompile Include="LXFile.cpp" />
+    <ClCompile Include="LXFilepath.cpp" />
+    <ClCompile Include="LXFileWatcher.cpp" />
+    <ClCompile Include="LXFrustum.cpp" />
+    <ClCompile Include="LXGraph.cpp" />
+    <ClCompile Include="LXGraphMaterial.cpp" />
+    <ClCompile Include="LXGraphMaterialToHLSLConverter.cpp" />
+    <ClCompile Include="LXGraphNodeMaterial.cpp" />
+    <ClCompile Include="LXGraphTemplate.cpp" />
+    <ClCompile Include="LXImporter.cpp" />
+    <ClCompile Include="LXInputElementDescD3D11Factory.cpp" />
+    <ClCompile Include="LXInterpolator.cpp" />
+    <ClCompile Include="LXKey.cpp" />
+    <ClCompile Include="LXLibrary.cpp" />
+    <ClCompile Include="LXLODSystem.cpp" />
+    <ClCompile Include="LXLogger.cpp" />
+    <ClCompile Include="LXMainWindow.cpp" />
+    <ClCompile Include="LXManager.cpp" />
+    <ClCompile Include="LXMaterial.cpp" />
+    <ClCompile Include="LXMaterialBase.cpp" />
+    <ClCompile Include="LXMaterialD3D11.cpp" />
+    <ClCompile Include="LXMaterialInstance.cpp" />
+    <ClCompile Include="LXMaterialUtility.cpp" />
+    <ClCompile Include="LXMath.cpp" />
+    <ClCompile Include="LXMatrix.cpp" />
+    <ClCompile Include="LXMesh.cpp" />
+    <ClCompile Include="LXMeshBase.cpp" />
+    <ClCompile Include="LXMeshData.cpp" />
+    <ClCompile Include="LXMeshFactory.cpp" />
+    <ClCompile Include="LXMeshTopology.cpp" />
+    <ClCompile Include="LXMessageManager.cpp" />
+    <ClCompile Include="LXMouseEventHandler.cpp" />
+    <ClCompile Include="LXMSXMLNode.cpp" />
+    <ClCompile Include="LXMutex.cpp" />
+    <ClCompile Include="LXNode.cpp" />
+    <ClCompile Include="LXObject.cpp" />
+    <ClCompile Include="LXObjectFactory.cpp" />
+    <ClCompile Include="LXOverride.cpp" />
+    <ClCompile Include="LXPerformance.cpp" />
+    <ClCompile Include="LXPickTraverser.cpp" />
+    <ClCompile Include="LXPlane.cpp" />
+    <ClCompile Include="LXPlatform.cpp" />
+    <ClCompile Include="LXPlugin.cpp" />
+    <ClCompile Include="LXPoint.cpp" />
+    <ClCompile Include="LXPrimitive.cpp" />
+    <ClCompile Include="LXPrimitiveD3D11.cpp" />
+    <ClCompile Include="LXPrimitiveFactory.cpp" />
+    <ClCompile Include="LXPrimitiveInstance.cpp" />
+    <ClCompile Include="LXProceduralTexture.cpp" />
+    <ClCompile Include="LXProject.cpp" />
+    <ClCompile Include="LXProperty.cpp" />
+    <ClCompile Include="LXPropertyManager.cpp" />
+    <ClCompile Include="LXPropertyType.cpp" />
+    <ClCompile Include="LXQuery.cpp" />
+    <ClCompile Include="LXQueryLinkChildToFather.cpp" />
+    <ClCompile Include="LXQueryManager.cpp" />
+    <ClCompile Include="LXQueryPickTwoActors.cpp" />
+    <ClCompile Include="LXQueryTransform.cpp" />
+    <ClCompile Include="LXRectangularSelectionTraverser.cpp" />
+    <ClCompile Include="LXReference.cpp" />
+    <ClCompile Include="LXRenderBatch.cpp" />
+    <ClCompile Include="LXRenderBatching.cpp" />
+    <ClCompile Include="LXRenderCluster.cpp" />
+    <ClCompile Include="LXRenderClusterManager.cpp" />
+    <ClCompile Include="LXRenderCommand.cpp" />
+    <ClCompile Include="LXRenderCommandDX11.cpp" />
+    <ClCompile Include="LXRenderCommandList.cpp" />
+    <ClCompile Include="LXRenderData.cpp" />
+    <ClCompile Include="LXRenderer.cpp" />
+    <ClCompile Include="LXRenderPass.cpp" />
+    <ClCompile Include="LXRenderPassAux.cpp" />
+    <ClCompile Include="LXRenderPassDepth.cpp" />
+    <ClCompile Include="LXRenderPassDepthOfField.cpp" />
+    <ClCompile Include="LXRenderPassDownsample.cpp" />
+    <ClCompile Include="LXRenderPassDynamicTexture.cpp" />
+    <ClCompile Include="LXRenderPassGBuffer.cpp" />
+    <ClCompile Include="LXRenderPassLighting.cpp" />
+    <ClCompile Include="LXRenderPassShadow.cpp" />
+    <ClCompile Include="LXRenderPassSSAO.cpp" />
+    <ClCompile Include="LXRenderPassToneMapping.cpp" />
+    <ClCompile Include="LXRenderPassTransparency.cpp" />
+    <ClCompile Include="LXRenderPassUI.cpp" />
+    <ClCompile Include="LXRenderPipeline.cpp" />
+    <ClCompile Include="LXRenderPipelineDeferred.cpp" />
+    <ClCompile Include="LXRenderTarget.cpp" />
+    <ClCompile Include="LXRenderTargetViewD3D11.cpp" />
+    <ClCompile Include="LXSamplerStateD3D11.cpp" />
+    <ClCompile Include="LXScene.cpp" />
+    <ClCompile Include="LXScript.cpp" />
+    <ClCompile Include="LXSelection.cpp" />
+    <ClCompile Include="LXSelectionManager.cpp" />
+    <ClCompile Include="LXSelectionTraverser.cpp" />
+    <ClCompile Include="LXSettings.cpp" />
+    <ClCompile Include="LXShader.cpp" />
+    <ClCompile Include="LXShaderD3D11.cpp" />
+    <ClCompile Include="LXShaderFactory.cpp" />
+    <ClCompile Include="LXShaderManager.cpp" />
+    <ClCompile Include="LXShaderProgramD3D11.cpp" />
+    <ClCompile Include="LXShaderResources.cpp" />
+    <ClCompile Include="LXSmartObject.cpp" />
+    <ClCompile Include="LXSnapshot.cpp" />
+    <ClCompile Include="LXSnapshotManager.cpp" />
+    <ClCompile Include="LXSpacePartitioning.cpp" />
+    <ClCompile Include="LXStatistic.cpp" />
+    <ClCompile Include="LXStatManager.cpp" />
+    <ClCompile Include="LXString.cpp" />
+    <ClCompile Include="LXSyncEvent.cpp" />
+    <ClCompile Include="LXTask.cpp" />
+    <ClCompile Include="LXTaskManager.cpp" />
+    <ClCompile Include="LXTerrain.cpp" />
+    <ClCompile Include="LXTexture.cpp" />
+    <ClCompile Include="LXTextureD3D11.cpp" />
+    <ClCompile Include="LXTextureManager.cpp" />
+    <ClCompile Include="LXTextureSampler.cpp" />
+    <ClCompile Include="LXThread.cpp" />
+    <ClCompile Include="LXThreadManager.cpp" />
+    <ClCompile Include="LXTime.cpp" />
+    <ClCompile Include="LXTimeD3D11.cpp" />
+    <ClCompile Include="LXTrack.cpp" />
+    <ClCompile Include="LXTrackBallCameraManipulator.cpp" />
+    <ClCompile Include="LXTransformation.cpp" />
+    <ClCompile Include="LXTraverser.cpp" />
+    <ClCompile Include="LXTraverserCallBack.cpp" />
+    <ClCompile Include="LXTraverserFrustumCulling.cpp" />
+    <ClCompile Include="LXVariant.cpp" />
+    <ClCompile Include="LXViewport.cpp" />
+    <ClCompile Include="LXViewportManager.cpp" />
+    <ClCompile Include="LXViewState.cpp" />
+    <ClCompile Include="LXViewStateManager.cpp" />
+    <ClCompile Include="LXWindow.cpp" />
+    <ClCompile Include="LXWindowViewport.cpp" />
+    <ClCompile Include="LXWorldTransformation.cpp" />
+    <ClCompile Include="LXXMLDocument.cpp" />
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

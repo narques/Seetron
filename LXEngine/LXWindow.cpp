@@ -10,7 +10,7 @@
 #include "LXWindow.h"
 #include <strsafe.h>
 #include <winuser.h>
-#include "resource.h"
+//#include "resource.h"
 #include "LXConsoleManager.h"
 #include "LXConsoleCommands.h"
 
@@ -56,7 +56,7 @@ ATOM registerClass(HINSTANCE hInstance)
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = 0;
 	wcex.hInstance = hInstance;
-	wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
+	wcex.hIcon = 0;// LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
 	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	wcex.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
 #pragma message("Remove IDR_MAINMENU form resource")

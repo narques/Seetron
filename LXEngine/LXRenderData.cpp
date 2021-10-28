@@ -160,7 +160,7 @@ void LXRenderData::ComputePrimitiveWorldMatrices()
 			{
 				const LXBBox& BBox = _bboxWorld;
 				LXMatrix matrixScale, matrixTranslation;
-				matrixScale.SetScale(std::max(BBox.GetSizeX(), 1.f), std::max(BBox.GetSizeY(), 1.f), std::max(BBox.GetSizeZ(), 1.f));
+				matrixScale.SetScale(std::max<float>(BBox.GetSizeX(), 1.f), std::max<float>(BBox.GetSizeY(), 1.f), std::max<float>(BBox.GetSizeZ(), 1.f));
 				matrixTranslation.SetTranslation(BBox.GetCenter());
 				renderCluster->SetMatrix(matrixTranslation * matrixScale);
 				renderCluster->SetBBoxWorld(BBox);

@@ -51,19 +51,20 @@ LXString LXString::Right(const wchar_t* pszSub) const
 
 LXStringA LXString::ToStringA() const
 {
-	int len = (int)m_str.size();
-	char* sz = new char[len + 1];
-	int size = (int)wcstombs(sz, m_str.c_str(), len + 1);
-	sz[size] = '\0';
+	size_t size = m_str.size();
+	char* sz = new char[size + 1];
+	size_t numOfCharConverted = 0;
+	wcstombs_s(&numOfCharConverted,  sz, size + 1, m_str.c_str(), size);
+	CHK(numOfCharConverted == size + 1);
 	LXStringA str(sz);
-	delete sz;
+	delete[] sz;
 	return str;
 }
 
 LXString LXString::Number(int i)
 {
 	wchar_t sz[256];
-	 _itow(i, sz, 10);
+	 _itow_s(i, sz, 10);
 	return LXString(sz);
 }
 
@@ -85,7 +86,7 @@ LXString LXString::Number(double d)
 LXString LXString::NumberToHexa(unsigned __int64 u)
 {
 	wchar_t sz[256];
-	_ui64tow(u, sz, 16);
+	_ui64tow_s(u, sz, 256, 16);
 	return LXString(sz);
 }
 
@@ -120,7 +121,7 @@ LXStringA LXStringA::Format(const char* Format, ...)
 	va_list arguments;
 	va_start(arguments, Format);
 	char out[256];
-	vsprintf(out, Format, arguments);
+	vsprintf_s(out, Format, arguments);
 	va_end(arguments);
 	return LXStringA(out);
 }

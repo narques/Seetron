@@ -128,21 +128,13 @@ std::string LXMSXMLNode::valA() const
 	if (!elem) return "";
 	CComVariant val(VT_EMPTY);
 	elem->get_nodeTypedValue(&val);
-	//USES_CONVERSION;
+	
 	if (val.vt==VT_BSTR) 
 	{
-		//return wstringA(OLE2A(val.bstrVal));
-		int size = lstrlenW(val.bstrVal);// + 1;
-		
+		size_t size = lstrlenW(val.bstrVal);// + 1;
 		char* toto = new char[size];
-		int gkgk = (int)wcstombs( toto, val.bstrVal, size );
-		
-		/*
-		char* toto2 = new char[size];
-		size_t sizeConverted;
-		wcstombs_s( &sizeConverted, toto2, size, val.bstrVal, size );
-		*/
-		
+		size_t numOfCharConverted;
+		int gkgk = (int)wcstombs_s(&numOfCharConverted, toto, size, val.bstrVal, size - 1);
 		return std::string(toto);
 	}
 	return "";

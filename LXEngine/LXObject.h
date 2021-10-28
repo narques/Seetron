@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "LXExports.h"
+
 class LXENGINE_API LXObject
 {
 

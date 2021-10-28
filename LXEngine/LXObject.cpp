@@ -65,7 +65,8 @@ LXObject::~LXObject(void)
 LXString LXObject::GetObjectName() const
 {
 	wchar_t dest[256];
-	mbstowcs(dest, typeid(*this).name(), 256);
+	size_t numOfCharConverted;
+	mbstowcs_s(&numOfCharConverted, dest, typeid(*this).name(), 256);
 	LXString strName(dest);
 	strName.TrimLeft(L"class ");
 	return strName;

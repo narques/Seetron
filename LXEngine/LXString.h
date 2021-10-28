@@ -34,7 +34,8 @@ public:
 	{ 
 		CHK(strlen(sz) < LX_MAX_NUMBER_OF_CHAR);
 		wchar_t l_wchart[LX_MAX_NUMBER_OF_CHAR];
-		mbstowcs(l_wchart, sz, LX_MAX_NUMBER_OF_CHAR);
+		size_t numOfCharConverted;
+		mbstowcs_s(&numOfCharConverted, l_wchart, sz, LX_MAX_NUMBER_OF_CHAR);
 		m_str = l_wchart;
 	}
 
@@ -330,7 +331,7 @@ static LXString Number(int i)
 	return LXString(sz);
 #else
 	wchar_t sz[256];
-	_itow(i, sz, 10);
+	_itow_s(i, sz, 10);
 	return LXString(sz);
 #endif
 }

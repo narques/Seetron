@@ -10,7 +10,6 @@
 
 //  Seetron
 #include "LXWindow.h"
-#include "targetver.h"
 
 #pragma comment(lib, "Rpcrt4.lib") // For CreateUuid()
 

@@ -416,8 +416,8 @@ void LXRenderer::Render()
 	// Resize if needed
 	if (Width != Viewport->GetWidth() || Height != Viewport->GetHeight())
 	{
-		Width = std::max(Viewport->GetWidth(), (uint)32);
-		Height = std::max(Viewport->GetHeight(), (uint)32);
+		Width = std::max<uint>(Viewport->GetWidth(), (uint)32);
+		Height = std::max<uint>(Viewport->GetHeight(), (uint)32);
 
 		DirectX11->Resize(Width, Height);
 						
