@@ -195,7 +195,6 @@
     <ClInclude Include="LXMSXMLNode.h" />
     <ClInclude Include="LXMutex.h" />
     <ClInclude Include="LXNode.h" />
-    <ClInclude Include="LXObject.h" />
     <ClInclude Include="LXObjectFactory.h" />
     <ClInclude Include="LXOverride.h" />
     <ClInclude Include="LXPerformance.h" />
@@ -269,7 +268,6 @@
     <ClInclude Include="LXSpacePartitioning.h" />
     <ClInclude Include="LXStatistic.h" />
     <ClInclude Include="LXStatManager.h" />
-    <ClInclude Include="LXString.h" />
     <ClInclude Include="LXSyncEvent.h" />
     <ClInclude Include="LXSynchronisable.h" />
     <ClInclude Include="LXTask.h" />
@@ -396,7 +394,6 @@
     <ClCompile Include="LXMSXMLNode.cpp" />
     <ClCompile Include="LXMutex.cpp" />
     <ClCompile Include="LXNode.cpp" />
-    <ClCompile Include="LXObject.cpp" />
     <ClCompile Include="LXObjectFactory.cpp" />
     <ClCompile Include="LXOverride.cpp" />
     <ClCompile Include="LXPerformance.cpp" />
@@ -466,7 +463,6 @@
     <ClCompile Include="LXSpacePartitioning.cpp" />
     <ClCompile Include="LXStatistic.cpp" />
     <ClCompile Include="LXStatManager.cpp" />
-    <ClCompile Include="LXString.cpp" />
     <ClCompile Include="LXSyncEvent.cpp" />
     <ClCompile Include="LXTask.cpp" />
     <ClCompile Include="LXTaskManager.cpp" />
@@ -498,6 +494,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LXCore\LXCore.vcxproj">
+      <Project>{41f29272-b89e-412f-858b-83559e349ae0}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "LXObject.h"
+#include "LXCore/LXObject.h"
 
 class LXPrimitiveInstance;
 typedef std::vector <std::shared_ptr<LXPrimitiveInstance>> VectorPrimitiveInstances;

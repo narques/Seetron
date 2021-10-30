@@ -65,7 +65,7 @@
 // --- Features ---
 // ---------------------------------------------------------------------------------
 
-#define LX_TRACE_OBJECTS 1						
+#define LX_TRACE_OBJECTS 0						
 #define LX_ANCHOR 0
 
 // ---------------------------------------------------------------------------------
@@ -97,8 +97,10 @@
 #define LX_LOG_OUTPUT_FRAME 0
 
 #ifdef _DEBUG
-#define LX_DEBUGFLAG     
+#define LX_DEBUGFLAG 0
 //#define LX_VLD
+#else
+#define LX_DEBUGFLAG 0
 #endif
 
 // Add a "Visible" volatile property to LXPrimitive object.

@@ -7,7 +7,7 @@
 //------------------------------------------------------------------------------------------------------
 
 #pragma once
-#include "LXObject.h"
+#include "LXCore/LXObject.h"
 
 class LXConstantBuffer;
 class LXConnector;

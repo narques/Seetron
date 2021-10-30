@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "LXObject.h"
+#include "LXCore/LXObject.h"
 #include "LXDirectX11.h"
 
 typedef std::pair<std::string, std::string> LXShaderMacro;

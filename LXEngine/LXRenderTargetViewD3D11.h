@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "LXObject.h"
+#include "LXCore/LXObject.h"
 
 class LXTextureD3D11;
 struct ID3D11RenderTargetView;

@@ -8,10 +8,11 @@
 
 #include "pch.h"
 #include "LXObject.h"
-#include "LXMutex.h"
-#include "LXLogger.h"
 
 #if LX_TRACE_OBJECTS
+
+#include "LXMutex.h"
+#include "LXLogger.h"
 
 namespace
 {
@@ -72,10 +73,9 @@ LXString LXObject::GetObjectName() const
 	return strName;
 }
 
-#if LX_TRACE_OBJECTS
-
 void LXObject::TraceAll()
 {
+#if LX_TRACE_OBJECTS
 	MapObjects mapObjects;
 	MapObjects::iterator It2;
 	std::set<LXObject*>::iterator It;
@@ -99,8 +99,5 @@ void LXObject::TraceAll()
 		LogD(LXObject, L"%s %i", It2->first.GetBuffer(), It2->second);
 	}
 	mapObjects.clear();
+#endif	
 }
-
-#endif
-
-

@@ -8,22 +8,20 @@
 
 #pragma once
 
-#include "LXCore/LXObject.h"
+//
+// STD
+//
 
-class LXENGINE_API LXSyncEvent : public LXObject
-{
-public:
+#include <algorithm>
+#include <list>
+#include <map>
+#include <set>
+#include <sstream>
+#include <string>
+#include <vector>
 
-	LXSyncEvent(bool initialState);
-	virtual ~LXSyncEvent();
+//
+// Seetron
+//
 
-	void SetEvent();
-	void Wait();
-	void Reset();
-
-private:
-
-	HANDLE _handle = nullptr;
-
-};
-
+#include "LXString.h"

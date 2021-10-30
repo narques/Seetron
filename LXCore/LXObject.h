@@ -9,8 +9,9 @@
 #pragma once
 
 #include "LXExports.h"
+#include "LXString.h"
 
-class LXENGINE_API LXObject
+class LXCORE_API LXObject
 {
 
 public:
@@ -22,10 +23,7 @@ public:
 
 	LXString GetObjectName( ) const;
 
-#if LX_TRACE_OBJECTS
 	static void	TraceAll( );
-#endif
-
 };
 
 typedef std::list<LXObject*> ListObjects;

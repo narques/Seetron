@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "LXObject.h"
+#include "LXCore/LXObject.h"
 #include "LXRenderClusterType.h"
 #include "LXShaderProgramD3D11.h"
 #include "LXSynchronisable.h"

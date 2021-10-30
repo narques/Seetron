@@ -7,7 +7,7 @@
 //------------------------------------------------------------------------------------------------------
 
 #pragma once
-#include "LXObject.h"
+#include "LXCore/LXObject.h"
 
 class LXTask : public LXObject
 {

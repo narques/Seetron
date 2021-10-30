@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "LXString.h"
+#include "LXCore/LXString.h"
 
 class LXENGINE_API LXFilepath : public LXString
 {

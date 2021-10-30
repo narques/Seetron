@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -38,14 +38,14 @@ LXStringA LXStringA::NumberToHexa(unsigned __int64 u)
 LXString LXString::Left(const wchar_t* pszSub) const
 {
 	int i = Find(pszSub);
-	CHK(i != -1);
+	//CHK(i != -1);
 	return Left(i);
 }
 
 LXString LXString::Right(const wchar_t* pszSub) const
 {
 	int i = Find(pszSub) + (int)wcslen(pszSub);
-	CHK(i != -1);
+	//CHK(i != -1);
 	return LXString(m_str.substr(i, m_str.size() - i).c_str());
 }
 
@@ -55,7 +55,7 @@ LXStringA LXString::ToStringA() const
 	char* sz = new char[size + 1];
 	size_t numOfCharConverted = 0;
 	wcstombs_s(&numOfCharConverted,  sz, size + 1, m_str.c_str(), size);
-	CHK(numOfCharConverted == size + 1);
+	//CHK(numOfCharConverted == size + 1);
 	LXStringA str(sz);
 	delete[] sz;
 	return str;

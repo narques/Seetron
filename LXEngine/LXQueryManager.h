@@ -9,7 +9,7 @@
 #pragma once
 
 #include "LXManager.h"
-#include "LXObject.h"
+#include "LXCore/LXObject.h"
 #include "LXQuery.h"
 
 class LXProject;

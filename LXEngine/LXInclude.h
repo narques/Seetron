@@ -10,20 +10,18 @@
 
 #include "LXConfig.h"
 
+// LXCore
+#include "LXCore/LXInclude.h"
+
 //
 // STD
 //
 
-#include <algorithm>
 #include <atomic>
 #include <functional>
-#include <list>
-#include <map>
 #include <memory>
-#include <set>
 #include <stack>
 #include <unordered_map>
-#include <vector>
 
 //
 // Misc 
@@ -32,7 +30,6 @@
 #include <assert.h>
 #include <iosfwd>
 #include <iostream>
-#include <sstream>
 #include <string>
 #include <windows.h>
 #include <wchar.h>
@@ -47,7 +44,6 @@
 #include "LXReference.h"
 #include "LXTypes.h"
 #include "LXAssetType.h"
-#include "LXString.h"
 #include "LXVec2.h"
 #include "LXVec3.h"
 #include "LXVec4.h"
@@ -87,7 +83,7 @@
 // Memory Leak Detection
 //
 
-#ifdef LX_DEBUGFLAG
+#if LX_DEBUGFLAG
 
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>

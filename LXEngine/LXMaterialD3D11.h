@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "LXObject.h"
+#include "LXCore/LXObject.h"
 #include "LXConstantBuffer.h"
 #include "LXRenderPassType.h"
 

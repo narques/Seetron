@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "LXObject.h"
+#include "LXCore/LXObject.h"
 #include "LXProperty.h"
 
 class LXENGINE_API LXCommand : public LXObject

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "LXObject.h"
+#include "LXCore/LXObject.h"
 #include "LXTypes.h"
 #include "LXVec3.h"
 #include "LXVec4.h"

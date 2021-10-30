@@ -2,13 +2,12 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) 2018 Nicolas Arques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
 #include "pch.h"
 #include "LXColor.h"
-#include "LXString.h"
 
 template<>
 LXColor4<float>::LXColor4(const LXStringA& strHexa)

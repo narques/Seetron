@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "LXObject.h"
+#include "LXCore/LXObject.h"
 #include "LXViewport.h"
 
 class LXENGINE_API LXViewportManager : public LXObject

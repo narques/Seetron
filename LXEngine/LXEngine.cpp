@@ -104,7 +104,7 @@ __int64 LXEngine::FrameNumber = -1;
 
 LXEngine::LXEngine()
 {
-#ifdef LX_DEBUGFLAG
+#if LX_DEBUGFLAG
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 }

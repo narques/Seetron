@@ -8,22 +8,8 @@
 
 #pragma once
 
-#include "LXCore/LXObject.h"
-
-class LXENGINE_API LXSyncEvent : public LXObject
-{
-public:
-
-	LXSyncEvent(bool initialState);
-	virtual ~LXSyncEvent();
-
-	void SetEvent();
-	void Wait();
-	void Reset();
-
-private:
-
-	HANDLE _handle = nullptr;
-
-};
-
+#ifdef LXCORE_EXPORTS
+#define LXCORE_API __declspec(dllexport)
+#else
+#define LXCORE_API __declspec(dllimport)
+#endif

@@ -10,7 +10,8 @@
 
 #pragma warning( disable : 4251 )  
 
-#include "LXMacros.h"
+#include "LXExports.h"
+//#include "LXMacros.h"
 
 typedef std::vector<char> ArrayChar;
 
@@ -20,19 +21,19 @@ typedef std::vector<char> ArrayChar;
 
 class LXStringA;
 
-class LXENGINE_API LXString
+class LXCORE_API LXString
 {
 
 public:
 
 	// Constructors
-	LXString(void)														{ }
-	LXString(const LXString& sz):m_str(sz.m_str.c_str())				{ }
-	LXString(const std::wstring& sz):m_str(sz)								{ }
-	LXString(const wchar_t* sz)											{ if (sz) m_str = sz; }
+	LXString(){}
+	LXString(const LXString& sz):m_str(sz.m_str.c_str()){}
+	LXString(const std::wstring& sz):m_str(sz){}
+	LXString(const wchar_t* sz){ if (sz) m_str = sz; }
 	LXString(const char* sz)											
 	{ 
-		CHK(strlen(sz) < LX_MAX_NUMBER_OF_CHAR);
+		//CHK(strlen(sz) < LX_MAX_NUMBER_OF_CHAR);
 		wchar_t l_wchart[LX_MAX_NUMBER_OF_CHAR];
 		size_t numOfCharConverted;
 		mbstowcs_s(&numOfCharConverted, l_wchart, sz, LX_MAX_NUMBER_OF_CHAR);
@@ -72,7 +73,7 @@ public:
 
 	int			GetLength( ) const										{ return (int)m_str.size(); }
 	bool		IsEmpty( ) const 										{ return( GetLength() == 0 ); 	}
-	LXString&	MakeLower( )											{ transform(m_str.begin(), m_str.end(), m_str.begin(), ::tolower); return( *this ); }
+	LXString&	MakeLower( )											{ std::transform(m_str.begin(), m_str.end(), m_str.begin(), ::tolower); return( *this ); }
 	LXString	ToLower( ) const 										{ LXString str = *this; return str.MakeLower(); }
 	const wchar_t*	GetBuffer( ) const									{ return m_str.c_str(); } // WARNING const
 	LXStringA   ToStringA( ) const;
@@ -175,7 +176,7 @@ public:
 //Explicit class Instantiation
 template class std::basic_string < wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> > ;
 
-class LXENGINE_API LXStringA
+class LXCORE_API LXStringA
 {
 
 public:
@@ -356,7 +357,7 @@ static LXString Number(int i)
  }
 
  // Return a tab string "\t\t\t..."
- LXString GetTab(int Count);
+ LXCORE_API LXString GetTab(int Count);
  
  typedef std::vector<LXString> ArrayStrings;
  typedef std::list<LXString> ListStrings;

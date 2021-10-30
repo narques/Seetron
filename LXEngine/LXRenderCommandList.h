@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "LXObject.h"
+#include "LXCore/LXObject.h"
 #include "LXDelegate.h"
 #include "LXRenderCommandDX11.h"
 #include "LXMatrix.h"

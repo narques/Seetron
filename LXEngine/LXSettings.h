@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "LXObject.h"
+#include "LXCore/LXObject.h"
 #include "LXFilepath.h"
 
 class LXENGINE_API LXSettings : public LXObject
