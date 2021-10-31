@@ -10,7 +10,7 @@
 
 #include "LXCore/LXObject.h"
 #include "LXFilepath.h"
-#include "LXProperty.h"
+#include "LXPropertyTemplate.h"
 #include "LXPropertyManager.h"
 
 class LXMSXMLNode;

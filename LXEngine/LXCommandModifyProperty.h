@@ -9,7 +9,7 @@
 #pragma once
 
 #include "LXCommand.h"
-#include "LXProperty.h"
+#include "LXPropertyTemplate.h"
 #include "LXMatrix.h"
 
 //--------------------------------------------------------------------------
