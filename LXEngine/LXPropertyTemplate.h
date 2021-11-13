@@ -17,6 +17,17 @@
 #include "LXVec3.h"
 #include "LXVec4.h"
 
+class LXMSXMLNode;
+
+class LXPropertyHelper
+{
+public:
+	static void GetValueFromXML(const LXMSXMLNode& node, vec2f& value);
+	static void GetValueFromXML(const LXMSXMLNode& node, vec3f& value);
+	static void GetValueFromXML(const LXMSXMLNode& node, LXString& value);
+	static void SaveXML(const TSaveContext& saveContext, const LXString& strXMLName, const LXString& value);
+};
+
 template<class T>
 class LXENGINE_API LXPropertyT : public LXProperty
 {
@@ -44,8 +55,7 @@ public:
 	// Misc
 	void				SetLambdaOnGet(std::function<T()> eval) { _funcOnGet = eval; }
 	void				SetLambdaOnSet(std::function<void(const T&)> eval) { CHK(!_Var); _funcOnSet = eval; }
-	virtual void		SetLambdaOnChange(std::function<void(LXPropertyT*)> eval) { _funcOnChange = eval; }
-
+	
 	void				SetVarPtr(T* pVar) { CHK(!_funcOnSet); _Var = pVar; }
 	void* GetVarPtr() const override { return _Var; }
 
@@ -103,7 +113,6 @@ private:
 
 private:
 
-	std::function<void(LXPropertyT*)>	_funcOnChange;
 	std::function<T()>					_funcOnGet;
 	std::function<void(const T&)>		_funcOnSet;
 

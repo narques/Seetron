@@ -63,7 +63,7 @@ LXMesh::LXMesh(LXAssetMesh* InOwner):_Owner(InOwner)
 	});
 
 	LXPropertyBool* property = DefineProperty(L"Visible", &_visible);
-	property->SetLambdaOnChange([this](LXProperty* pProperty)
+	property->ValueChanged.AttachMemberLambda([this](LXProperty*)
 	{
 		if (_Owner != nullptr)
 		{

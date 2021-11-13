@@ -23,8 +23,9 @@ LXActorMesh(pDocument)
 
 	LXPropertyAssetPtr* pPropMaterial = DefinePropertyAsset(L"Material", LXPropertyID::PRIMITIVE_MATERIAL, (std::shared_ptr<LXAsset>*)&_Material);
 	pPropMaterial->SetName(L"Material");
-	pPropMaterial->SetLambdaOnChange([this](LXPropertyAssetPtr* PropertyAsset)
+	pPropMaterial->ValueChanged.AttachMemberLambda([this](LXProperty* property)
 	{
+		LXPropertyAssetPtr* PropertyAsset = static_cast<LXPropertyAssetPtr*>(property);
 		if (LXAsset* Asset = PropertyAsset->GetValue().get())
 		{
 			LXString Key = PropertyAsset->GetValue()->GetRelativeFilename();

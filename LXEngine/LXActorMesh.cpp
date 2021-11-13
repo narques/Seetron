@@ -60,7 +60,7 @@ void LXActorMesh::DefineProperties( )
 
 	//Asset
 	auto PropAssetMesh = DefineProperty(L"AssetMesh", (std::shared_ptr<LXAsset>*)&_AssetMesh);
-	PropAssetMesh->SetLambdaOnChange([this](LXPropertyAssetPtr* Property)
+	PropAssetMesh->ValueChanged.AttachMemberLambda([this](LXProperty*)
 	{
 		UpdateAssetMeshCallbacks();
 		UpdateMesh();

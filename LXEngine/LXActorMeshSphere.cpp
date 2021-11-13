@@ -26,8 +26,9 @@ LXActorMeshSphere::LXActorMeshSphere(LXProject* pDocument) :LXActorMesh(pDocumen
 
 	LXPropertyAssetPtr* pPropMaterial = DefinePropertyAsset(L"Material", LXPropertyID::PRIMITIVE_MATERIAL, (std::shared_ptr<LXAsset>*)&_material);
 	pPropMaterial->SetName(L"Material");
-	pPropMaterial->SetLambdaOnChange([this](LXPropertyAssetPtr* PropertyAsset)
+	pPropMaterial->ValueChanged.AttachMemberLambda([this](LXProperty* property)
 	{
+		LXPropertyAssetPtr* PropertyAsset = static_cast<LXPropertyAssetPtr*>(property);
 		if (LXAsset* Asset = PropertyAsset->GetValue().get())
 		{
 			LXString Key = PropertyAsset->GetValue()->GetRelativeFilename();
@@ -67,8 +68,9 @@ LXActorMeshCylinder::LXActorMeshCylinder(LXProject* pDocument) :LXActorMesh(pDoc
 
 	LXPropertyAssetPtr* pPropMaterial = DefinePropertyAsset(L"Material", LXPropertyID::PRIMITIVE_MATERIAL, (std::shared_ptr<LXAsset>*)&_material);
 	pPropMaterial->SetName(L"Material");
-	pPropMaterial->SetLambdaOnChange([this](LXPropertyAssetPtr* PropertyAsset)
+	pPropMaterial->ValueChanged.AttachMemberLambda([this](LXProperty* property)
 	{
+		LXPropertyAssetPtr* PropertyAsset = static_cast<LXPropertyAssetPtr*>(property);
 		if (LXAsset* Asset = PropertyAsset->GetValue().get())
 		{
 			LXString Key = PropertyAsset->GetValue()->GetRelativeFilename();
@@ -108,8 +110,9 @@ LXActorMeshCone::LXActorMeshCone():LXActorMesh(GetEngine().GetProject())
 
 	LXPropertyAssetPtr* pPropMaterial = DefinePropertyAsset(L"Material", LXPropertyID::PRIMITIVE_MATERIAL, (std::shared_ptr<LXAsset>*)&_material);
 	pPropMaterial->SetName(L"Material");
-	pPropMaterial->SetLambdaOnChange([this](LXPropertyAssetPtr* PropertyAsset)
+	pPropMaterial->ValueChanged.AttachMemberLambda([this](LXProperty* property)
 	{
+		LXPropertyAssetPtr* PropertyAsset = static_cast<LXPropertyAssetPtr*>(property);
 		if (LXAsset* Asset = PropertyAsset->GetValue().get())
 		{
 			LXString Key = PropertyAsset->GetValue()->GetRelativeFilename();

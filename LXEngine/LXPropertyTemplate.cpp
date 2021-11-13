@@ -11,29 +11,22 @@
 
 // Seetron
 #include "LXAssetManager.h"
-#include "LXGraphMaterial.h"
 #include "LXLogger.h"
 #include "LXMSXMLNode.h"
-#include "LXMaterial.h"
-#include "LXMaterialNode.h"
 #include "LXMatrix.h"
 #include "LXNode.h"
 #include "LXObjectFactory.h"
 #include "LXProject.h"
 #include "LXSettings.h"
 
-//--------------------------------------------------------------------------
-// Local Functions
-//--------------------------------------------------------------------------
-
-void GetValueFromXML(const LXMSXMLNode& node, vec2f& value)
+void LXPropertyHelper::GetValueFromXML(const LXMSXMLNode& node, vec2f& value)
 {
 	float x = node.attrFloat(L"X", 1.f);
 	float y = node.attrFloat(L"Y", 1.f);
 	value.Set(x, y);
 }
 
-void GetValueFromXML(const LXMSXMLNode& node, vec3f& value)
+void LXPropertyHelper::GetValueFromXML(const LXMSXMLNode& node, vec3f& value)
 {
 	float x = node.attrFloat(L"X", 1.f);
 	float y = node.attrFloat(L"Y", 1.f);
@@ -41,12 +34,12 @@ void GetValueFromXML(const LXMSXMLNode& node, vec3f& value)
 	value.Set(x, y, z);
 }
 
-void GetValueFromXML(const LXMSXMLNode& node, LXString& value)
+void LXPropertyHelper::GetValueFromXML(const LXMSXMLNode& node, LXString& value)
 {
 	value = node.attr(L"Value");
 }
 
-void SaveXML(const TSaveContext& saveContext, const LXString& strXMLName, const LXString& value)
+void LXPropertyHelper::SaveXML(const TSaveContext& saveContext, const LXString& strXMLName, const LXString& value)
 {
 	CHK(!strXMLName.IsEmpty());
 	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
@@ -75,7 +68,6 @@ LXPropertyT<T>::LXPropertyT(const LXPropertyT& prop) :LXProperty(prop._Type)
 	*_PropInfo = *prop._PropInfo;
 	_Owner = prop._Owner;
 
-	_funcOnChange = prop._funcOnChange;
 	ValueChanging = prop.ValueChanging;
 	ValueChanged = prop.ValueChanged;
 	_funcOnGet = prop._funcOnGet;
@@ -262,9 +254,6 @@ void LXPropertyT<T>::SetValue(const T& value, bool InvokeOnProperyChanged)
 	}
 
 	// Event (By Property)
-	if (_funcOnChange)
-		_funcOnChange(this);
-
 	ValueChanged.Invoke(this);
 
 	// Event (By Object & By App)
@@ -474,13 +463,13 @@ void LXPropertyT<LXMatrix>::GetValueFromXML2(const TLoadContext& LoadContext)
 	for (LXMSXMLNode e = node.begin(); e != node.end(); e++)
 	{
 		if (e.name() == L"Origin")
-			::GetValueFromXML(e, vo);
+			LXPropertyHelper::GetValueFromXML(e, vo);
 		else if (e.name() == L"VX")
-			::GetValueFromXML(e, vx);
+			LXPropertyHelper::GetValueFromXML(e, vx);
 		else if (e.name() == L"VY")
-			::GetValueFromXML(e, vy);
+			LXPropertyHelper::GetValueFromXML(e, vy);
 		else if (e.name() == L"VZ")
-			::GetValueFromXML(e, vz);
+			LXPropertyHelper::GetValueFromXML(e, vz);
 		else
 			CHK(0);
 	}
@@ -588,7 +577,7 @@ void LXPropertyT<LXAssetPtr>::GetValueFromXML2(const TLoadContext& LoadContext)
 	LXString strFilename;
 	LXAssetPtr value = nullptr;
 
-	GetValueFromXML(node, strFilename);
+	LXPropertyHelper::GetValueFromXML(node, strFilename);
 	if (!strFilename.IsEmpty())
 	{
 		LXProject* Project = GetEngine().GetProject();
@@ -610,7 +599,7 @@ void LXPropertyT<LXAssetPtr>::SaveXML2(const TSaveContext& saveContext, const LX
 	LXString strFilename;
 	if (v)
 		strFilename = v->GetRelativeFilename();
-	::SaveXML(saveContext, strXMLName, strFilename);
+	LXPropertyHelper::SaveXML(saveContext, strXMLName, strFilename);
 }
 
 template<>
@@ -884,7 +873,7 @@ void LXPropertyT<ArrayVec3f>::GetValueFromXML2(const TLoadContext& LoadContext)
 		if (e.name() == L"Vector3f")
 		{
 			vec3f v;
-			GetValueFromXML(e, v);
+			LXPropertyHelper::GetValueFromXML(e, v);
 			value.push_back(v);
 		}
 		else

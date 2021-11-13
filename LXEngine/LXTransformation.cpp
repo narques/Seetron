@@ -27,21 +27,21 @@ void LXTransformation::DefineProperties(LXSmartObject* SmartObject)
 	// Position
 	LXPropertyVec3f* pPropPosition = SmartObject->DefineProperty(L"Position", LXPropertyID::POSITION, &_Translation);
 	pPropPosition->SetAnimatable(true);
-	pPropPosition->SetLambdaOnChange([this](LXProperty*)
+	pPropPosition->ValueChanged.AttachMemberLambda([this](LXProperty* property)
 	{
 		InvalidateMatrixLocal();
 	});
 
 	// Rotation
 	LXPropertyVec3f* pPropRotation = SmartObject->DefineProperty(L"Rotation", LXPropertyID::ROTATION, &_Rotation);
-	pPropRotation->SetLambdaOnChange([this](LXProperty*)
+	pPropRotation->ValueChanged.AttachMemberLambda([this](LXProperty* property)
 	{
 		InvalidateMatrixLocal();
 	});
 
 	// Scale
 	LXPropertyVec3f* pPropScale = SmartObject->DefineProperty(L"Scale", LXPropertyID::SCALE, &_Scale);
-	pPropScale->SetLambdaOnChange([this](LXProperty*)
+	pPropScale->ValueChanged.AttachMemberLambda([this](LXProperty* property)
 	{
 		InvalidateMatrixLocal();
 	});

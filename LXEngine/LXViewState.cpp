@@ -208,7 +208,7 @@ void LXViewState::DefineProperties( )
 		prop->AddChoice(L"Gaussian V1", GaussianV1); 
 		prop->AddChoice(L"Gaussian V2", GaussianV2);
 		prop->AddChoice(L"GGX", GGX);
-		prop->SetLambdaOnChange([this](LXProperty*)
+		prop->ValueChanged.AttachMemberLambda([this](LXProperty* property)
 		{
 			
 		});
