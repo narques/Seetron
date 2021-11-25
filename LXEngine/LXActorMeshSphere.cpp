@@ -24,7 +24,7 @@ LXActorMeshSphere::LXActorMeshSphere(LXProject* pDocument) :LXActorMesh(pDocumen
 	DefineProperty("Slices", &Slices, 1, 64);
 	DefineProperty("Stacks", &Stacks, 1, 64);
 
-	LXPropertyAssetPtr* pPropMaterial = DefinePropertyAsset(L"Material", LXPropertyID::PRIMITIVE_MATERIAL, (std::shared_ptr<LXAsset>*)&_material);
+	LXPropertyAssetPtr* pPropMaterial = LXPropertyAsset::Create(this, L"Material", LXPropertyID::PRIMITIVE_MATERIAL, (std::shared_ptr<LXAsset>*)&_material);
 	pPropMaterial->SetName(L"Material");
 	pPropMaterial->ValueChanged.AttachMemberLambda([this](LXProperty* property)
 	{
@@ -66,7 +66,7 @@ LXActorMeshCylinder::LXActorMeshCylinder(LXProject* pDocument) :LXActorMesh(pDoc
 	DefineProperty("Slices", &Slices, 1, 64);
 	DefineProperty("Stacks", &Stacks, 1, 64);
 
-	LXPropertyAssetPtr* pPropMaterial = DefinePropertyAsset(L"Material", LXPropertyID::PRIMITIVE_MATERIAL, (std::shared_ptr<LXAsset>*)&_material);
+	LXPropertyAssetPtr* pPropMaterial = LXPropertyAsset::Create(this, L"Material", LXPropertyID::PRIMITIVE_MATERIAL, (std::shared_ptr<LXAsset>*)&_material);
 	pPropMaterial->SetName(L"Material");
 	pPropMaterial->ValueChanged.AttachMemberLambda([this](LXProperty* property)
 	{
@@ -108,7 +108,7 @@ LXActorMeshCone::LXActorMeshCone():LXActorMesh(GetEngine().GetProject())
 	DefineProperty("Slices", &Slices, 1, 64);
 	DefineProperty("Stacks", &Stacks, 1, 64);
 
-	LXPropertyAssetPtr* pPropMaterial = DefinePropertyAsset(L"Material", LXPropertyID::PRIMITIVE_MATERIAL, (std::shared_ptr<LXAsset>*)&_material);
+	LXPropertyAssetPtr* pPropMaterial = LXPropertyAsset::Create(this, L"Material", LXPropertyID::PRIMITIVE_MATERIAL, (std::shared_ptr<LXAsset>*)&_material);
 	pPropMaterial->SetName(L"Material");
 	pPropMaterial->ValueChanged.AttachMemberLambda([this](LXProperty* property)
 	{

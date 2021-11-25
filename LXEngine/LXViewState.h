@@ -48,7 +48,7 @@ public:
 	void DefineProperties() 
 	{
 		DefinePropertyBool(L"Outlines", LXPropertyID::RENDERING_OUTLINES, &_outlines);
-		DefinePropertyAsset(L"Material", LXPropertyID::RENDERING_MATERIAL, (std::shared_ptr<LXAsset>*)&_material);
+		LXPropertyAsset::Create(this, L"Material", LXPropertyID::RENDERING_MATERIAL, (std::shared_ptr<LXAsset>*) & _material);
 	}
 
 	std::shared_ptr<LXMaterial> _material;

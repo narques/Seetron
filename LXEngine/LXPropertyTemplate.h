@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) NicolasArques. All rights reserved.
+// Copyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -33,11 +33,6 @@ class LXENGINE_API LXPropertyT : public LXProperty
 {
 
 public:
-
-	// Types
-
-	typedef void		(LXSmartObject::* LXSETFUNC)	(const T&);
-	typedef const T& (LXSmartObject::* LXGETFUNC)	() const;
 
 	// Constructors & Destructor
 
@@ -79,14 +74,6 @@ public:
 		return pVariant;
 	}
 
-	virtual void 		SetValue(const LXVariant& variant, bool InvokeOnPropertyChanged = true)
-	{
-		const LXVariantT<T>* pVariantTyped = dynamic_cast<const LXVariantT<T>*>(&variant);
-		CHK(pVariantTyped);
-		SetValue(pVariantTyped->GetValue(), InvokeOnPropertyChanged);
-	}
-
-	int GetDataSize() const override { return sizeof(T); }
 
 	//
 	// ListSmartObjects specifics
@@ -182,7 +169,6 @@ typedef LXPropertyT<LXColor4f>					LXPropertyLXColor4f;
 typedef LXPropertyT<LXString>					LXPropertyString;
 typedef LXPropertyT<LXFilepath>					LXPropertyFilepath;
 typedef LXPropertyT<LXMatrix>					LXPropertyMatrix;
-typedef LXPropertyT<std::shared_ptr<LXAsset>>		LXPropertyAssetPtr;
 typedef LXPropertyT<ArraySmartObjects>			LXPropertyArraySmartObjects;
 typedef LXPropertyT<ListSmartObjects>			LXPropertyListSmartObjects;
 typedef LXPropertyT<ArrayVec3f>					LXPropertyArrayVec3f;

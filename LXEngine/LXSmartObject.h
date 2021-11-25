@@ -12,6 +12,7 @@
 #include "LXFilepath.h"
 #include "LXPropertyTemplate.h"
 #include "LXPropertyManager.h"
+#include "LXPropertyAsset.h"
 
 class LXMSXMLNode;
 class LXSmartObject;
@@ -46,7 +47,7 @@ struct TSaveContext
 
 struct TLoadContext
 {
-	TLoadContext(const LXMSXMLNode& xmlNode) :node(xmlNode){ }
+	explicit TLoadContext(const LXMSXMLNode& xmlNode) :node(xmlNode) { }
 	const LXMSXMLNode& node;
 	LXFilepath filepath;
 	LXSmartObject* pOwner;
@@ -166,6 +167,8 @@ public:
 
 	bool							AddProperty(LXProperty* pProperty);
 	bool							RemoveProperty(LXProperty* property);
+
+	void							AddVariant(LXVariant* variant);
 	
 protected:
 
@@ -186,7 +189,6 @@ protected:
 	LXPropertyVec4f*				DefinePropertyVec4f(const LXString& name, const LXPropertyID& PID, vec4f* pVec4f);
 	LXPropertyLXColor4f*			DefinePropertyColor4f(const LXString& name, const LXPropertyID& PID, LXColor4f* pLXColor4f);
 	LXPropertyMatrix*				DefinePropertyMatrix(const LXString& name, const LXPropertyID& PID, LXMatrix* pMatrix);
-	LXPropertyAssetPtr*				DefinePropertyAsset(const LXString& name, const LXPropertyID& PID, std::shared_ptr<LXAsset>* pAsset);
 	LXPropertyBool*					DefinePropertyBool(const LXString& name, const LXPropertyID& PID, bool* pBool);
 	LXPropertyBool*					DefinePropertyBool(const LXString& name, const LXString& strID, const LXPropertyID& PID, bool* pBool);
 	LXPropertyEnum*					DefinePropertyEnum(const LXString& name, uint* pEnum);

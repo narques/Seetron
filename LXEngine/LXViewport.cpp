@@ -643,7 +643,10 @@ bool LXViewport::DropMaterial( std::shared_ptr<LXMaterial>& pMaterial, LXPoint p
 		CHK(pProp);
 		if (pProp)
 		{
-			GetEngine().GetCommandManager().ChangeProperty(pProp, (LXAssetPtr)pMaterial);
+			//GetEngine().GetCommandManager().ChangeProperty(pProp, (LXAssetPtr)pMaterial);
+			// TODO :
+			// LXCommand* command = LXCommandHelper::CreateUpdatePropertyCommand(pProp, pMaterial);
+			// GetEngine().GetCommandManager().PushAndDoCommand(command); 
 			return true;
 		}
 	}

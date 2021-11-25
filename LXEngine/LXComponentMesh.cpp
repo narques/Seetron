@@ -42,7 +42,7 @@ void LXComponentMesh::DefineProperties()
 	DefinePropertyBool(L"CastShadows", GetAutomaticPropertyID(), &_castShadows);
 
 	//Asset
-	auto PropAssetMesh = DefineProperty(L"AssetMesh", (std::shared_ptr<LXAsset>*) & _assetMesh);
+	auto PropAssetMesh = LXPropertyAsset::Create(this, L"AssetMesh", (std::shared_ptr<LXAsset>*) & _assetMesh);
 	PropAssetMesh->ValueChanged.AttachMemberLambda([this](LXProperty* property)
 	{
 		UpdateAssetMeshCallbacks();

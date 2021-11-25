@@ -162,7 +162,7 @@ void LXPrimitive::DefineProperties( )
 	pPropBool->SetReadOnly(true);
 	pPropBool->SetLambdaOnGet([this] { return HasBiNormals(); });
 	
-	LXPropertyAssetPtr* pPropMaterial = DefinePropertyAsset(L"Material", LXPropertyID::PRIMITIVE_MATERIAL, (std::shared_ptr<LXAsset>*)&m_pMaterial);
+	LXPropertyAssetPtr* pPropMaterial = LXPropertyAsset::Create(this, L"Material", LXPropertyID::PRIMITIVE_MATERIAL, (std::shared_ptr<LXAsset>*)&m_pMaterial);
 	pPropMaterial->SetName(L"Material");
 	pPropMaterial->SetUserData((int64)EAssetType::Material);
 	pPropMaterial->SetPersistent(false);

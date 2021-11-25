@@ -27,11 +27,11 @@ LXActorRenderToTexture::LXActorRenderToTexture(LXProject* project):
 
 	LXProperty::SetCurrentGroup(L"RenderToTexture");
 
-	LXPropertyAssetPtr* propertyMaterial = DefineProperty("Material", (std::shared_ptr<LXAsset>*)&_material);
+	LXPropertyAssetPtr* propertyMaterial = LXPropertyAsset::Create(this, "Material", (std::shared_ptr<LXAsset>*)&_material);
 	propertyMaterial->SetName(L"Material");
 	propertyMaterial->ValueChanged.AttachMemberLambda([this](LXProperty*) { MaterialChanged(); });
 	
-	LXPropertyAssetPtr* pPropTexture = DefinePropertyAsset(L"Texture", GetAutomaticPropertyID(), (std::shared_ptr<LXAsset>*)&_texture);
+	LXPropertyAssetPtr* pPropTexture = LXPropertyAsset::Create(this, L"Texture", GetAutomaticPropertyID(), (std::shared_ptr<LXAsset>*)&_texture);
 	pPropTexture->SetName(L"Texture");
 }
 

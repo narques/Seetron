@@ -58,10 +58,10 @@ void LXBackground::DefineProperties( )
 	// --------------------------------------------------------------------------------------------------------------
 
 	// Environment 
-	DefineProperty(L"Environment", LXPropertyID::BACKGROUND_TEXTURE, (LXAssetPtr*)&_pTexture);
+	LXPropertyAsset::Create(this, L"Environment", LXPropertyID::BACKGROUND_TEXTURE, (LXAssetPtr*)&_pTexture);
 
 	// Environment 
-	DefineProperty(L"Irradiance", LXPropertyID::BACKGROUND_TEXTURE_IRRADIANCE, (LXAssetPtr*)&_pTextureIrradiance);
+	LXPropertyAsset::Create(this, L"Irradiance", LXPropertyID::BACKGROUND_TEXTURE_IRRADIANCE, (LXAssetPtr*)&_pTextureIrradiance);
 
 	// Mapping
 	{

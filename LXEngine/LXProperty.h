@@ -121,16 +121,14 @@ public:
 	static void				SetCurrentGroup	( const LXString& strGroup );
 	static int				GetGroupPosition( const LXString& strGroup );
 	
-	virtual	LXVariant*		CreateVariant	( ) = 0;
-	virtual void			SetValue		( const LXVariant& variant, bool InvokeOnPropertyChanged ) = 0;
+	virtual	LXVariant*		CreateVariant() { CHK(0); return nullptr; }
 	virtual void*			GetVarPtr		( ) const = 0;
 
 	// User property tools
 	virtual	LXString		GetTypeName() = 0;
-	virtual LXString		GetMinXMLAttribute() = 0;
-	virtual LXString		GetMaxXMLAttribute() = 0;
-	virtual int				GetDataSize() const = 0;
-
+	virtual LXString		GetMinXMLAttribute() { CHK(0); return L""; }
+	virtual LXString		GetMaxXMLAttribute() { CHK(0); return L""; }
+	
 	template<class T>
 	static EPropertyType	GetTemplateType();
 

@@ -341,7 +341,6 @@ template<> const LXString LXTrackT<LXColor4f>::GetTypeString() const { return L"
 template<> const LXString LXTrackT<LXMatrix>::GetTypeString() const { return L" Type=\"matrix\""; }
 template<> const LXString LXTrackT<LXString>::GetTypeString() const { return L" Type=\"string\""; }
 template<> const LXString LXTrackT<LXFilepath>::GetTypeString() const { return L" Type=\"filepath\""; }
-template<> const LXString LXTrackT<LXAssetPtr>::GetTypeString() const { return L" Type=\"asset\""; }
 
 //Explicit class Instantiation
 template class LXTrackT < bool >;
@@ -356,4 +355,3 @@ template class LXTrackT < LXColor4f >;
 template class LXTrackT < LXMatrix >;
 template class LXTrackT < LXString >;
 template class LXTrackT < LXFilepath >;
-template class LXTrackT < LXAssetPtr >;

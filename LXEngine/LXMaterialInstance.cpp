@@ -93,7 +93,7 @@ bool LXMaterialInstance::SetPropertyTextureByName(const LXString& textureName, c
 
 		if (!propertyOverride)
 		{
-			propertyOverride = CreateUserProperty<LXAssetPtr>(textureName, propertyTexture->GetValue());
+			propertyOverride = LXPropertyAsset::CreateUserProperty(this, textureName, propertyTexture->GetValue());
 		}
 
 		propertyOverride->SetValue(texture, false);

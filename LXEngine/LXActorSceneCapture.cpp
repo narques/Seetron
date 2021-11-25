@@ -17,7 +17,7 @@ LXActorSceneCapture::LXActorSceneCapture():LXActor(GetEngine().GetProject())
 	// --------------------------------------------------------------------------------------------------------------
 	LXProperty::SetCurrentGroup(L"ActorSceneCapture");
 	// --------------------------------------------------------------------------------------------------------------
-	LXPropertyAssetPtr* propertyAsset = DefineProperty(L"CubeMap", (std::shared_ptr<LXAsset>*)&_Texture);
+	LXPropertyAssetPtr* propertyAsset = LXPropertyAsset::Create(this, L"CubeMap", (std::shared_ptr<LXAsset>*)&_Texture);
 	propertyAsset->SetUserData((int64)EAssetType::Texture);
 
 	LXPropertyFloat* propertyFloat = DefinePropertyFloat("Intensity", LXPropertyID::LIGHT_INTENSITY, &_Intensity);

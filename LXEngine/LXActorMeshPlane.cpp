@@ -21,7 +21,7 @@ LXActorMesh(pDocument)
 
 	LXProperty::SetCurrentGroup(L"Plane");
 
-	LXPropertyAssetPtr* pPropMaterial = DefinePropertyAsset(L"Material", LXPropertyID::PRIMITIVE_MATERIAL, (std::shared_ptr<LXAsset>*)&_Material);
+	LXPropertyAssetPtr* pPropMaterial = LXPropertyAsset::Create(this, L"Material", LXPropertyID::PRIMITIVE_MATERIAL, (std::shared_ptr<LXAsset>*)&_Material);
 	pPropMaterial->SetName(L"Material");
 	pPropMaterial->ValueChanged.AttachMemberLambda([this](LXProperty* property)
 	{

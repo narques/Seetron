@@ -177,7 +177,7 @@ void LXViewState::DefineProperties( )
 	pPropBrightness->SetAnimatable(true);
 
 	// Texture
-	DefineProperty(L"Texture", (LXPropertyID)554, (LXAssetPtr*)&_texture);
+	LXPropertyAsset::Create(this, L"Texture", (LXPropertyID)554, (LXAssetPtr*)&_texture);
 	
 	
 	//--------------------------------------------------------------------------------------------------------------

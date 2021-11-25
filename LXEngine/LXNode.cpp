@@ -2,7 +2,7 @@
 //
 // This is a part of Seetron Engine
 //
-// Copyright (c) Nicolas Arques. All rights reserved.
+// C²opyright (c) Nicolas Arques. All rights reserved.
 //
 //------------------------------------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ LXNode::LXNode(LXGraph* graph, const LXNodeTemplate* nodeTemplate): Graph(graph)
 		case EPropertyType::Float2: CreateUserProperty<vec2f>(L"Value", vec2f(0.0, 0.0)); break;
 		case EPropertyType::Float3: CreateUserProperty<vec3f>(L"Value", vec3f(0.0, 0.0, 0.0)); break;
 		case EPropertyType::Float4: CreateUserProperty<vec4f>(L"Value", vec4f(0.0, 0.0, 0.0, 0.0)); break;
-		case EPropertyType::AssetPtr: CreateUserProperty<LXAssetPtr>(L"Value", nullptr); break;
+		case EPropertyType::AssetPtr: LXPropertyAsset::CreateUserProperty(this, L"Value", nullptr); break;
 		default: CHK(0);
 		}
 	}
@@ -69,7 +69,7 @@ LXNode::LXNode(LXGraph* graph, const LXNodeTemplate* nodeTemplate): Graph(graph)
 	{
 		EditableInputs = true;
 		CreateUserProperty<LXString>(L"Function", L"MyFunction");
-		CreateUserProperty<LXAssetPtr>(L"Shader", nullptr);
+		LXPropertyAsset::CreateUserProperty(this, L"Shader", nullptr);
 	}
 }
 

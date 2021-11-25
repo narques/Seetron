@@ -10,7 +10,6 @@
 #include "LXPropertyTemplate.h"
 
 // Seetron
-#include "LXAssetManager.h"
 #include "LXLogger.h"
 #include "LXMSXMLNode.h"
 #include "LXMatrix.h"
@@ -274,7 +273,6 @@ template class LXENGINE_API LXPropertyT<LXColor4f>;
 template class LXENGINE_API LXPropertyT<LXString>;
 template class LXENGINE_API LXPropertyT<LXFilepath>;
 template class LXENGINE_API LXPropertyT<LXMatrix>;
-template class LXENGINE_API LXPropertyT<LXAssetPtr>;
 template class LXENGINE_API LXPropertyT<ArraySmartObjects>;
 template class LXENGINE_API LXPropertyT<ListSmartObjects>;
 template class LXENGINE_API LXPropertyT<ArrayVec3f>;
@@ -564,51 +562,6 @@ void LXPropertyT<vec4f>::SaveXML2(const TSaveContext& saveContext, const LXStrin
 {
 	fwprintf(saveContext.pXMLFile, L"%s", GetTab(saveContext.Indent).GetBuffer());
 	fwprintf(saveContext.pXMLFile, L"<%s X=\"%f\" Y=\"%f\" Z=\"%f\" W=\"%f\"/>\n", strXMLName.GetBuffer(), v.x, v.y, v.z, v.w);
-}
-
-//
-// --- LXAssetPtr ---
-//
-
-template<>
-void LXPropertyT<LXAssetPtr>::GetValueFromXML2(const TLoadContext& LoadContext)
-{
-	const LXMSXMLNode& node = LoadContext.node;
-	LXString strFilename;
-	LXAssetPtr value = nullptr;
-
-	LXPropertyHelper::GetValueFromXML(node, strFilename);
-	if (!strFilename.IsEmpty())
-	{
-		LXProject* Project = GetEngine().GetProject();
-		CHK(Project);
-		if (Project)
-		{
-			LXAssetManager& mm = Project->GetAssetManager();
-			value = mm.GetAsset(strFilename);
-			CHK(value);
-		}
-	}
-
-	SetValue(value, false);
-}
-
-template<>
-void LXPropertyT<LXAssetPtr>::SaveXML2(const TSaveContext& saveContext, const LXString& strXMLName, const LXAssetPtr& v)
-{
-	LXString strFilename;
-	if (v)
-		strFilename = v->GetRelativeFilename();
-	LXPropertyHelper::SaveXML(saveContext, strXMLName, strFilename);
-}
-
-template<>
-void LXPropertyT<LXAssetPtr>::LoadValue(const LXAssetPtr& value)
-{
-	if (value)
-	{
-		value->Load();
-	}
 }
 
 std::map<LXString, int> groupPositions;
@@ -1032,7 +985,6 @@ LX_DECLARE_GETTEMPLATETYPE(int, EPropertyType::Int)
 LX_DECLARE_GETTEMPLATETYPE(uint, EPropertyType::Uint)
 LX_DECLARE_GETTEMPLATETYPE(LXString, EPropertyType::String)
 LX_DECLARE_GETTEMPLATETYPE(LXFilepath, EPropertyType::Filepath)
-LX_DECLARE_GETTEMPLATETYPE(LXAssetPtr, EPropertyType::AssetPtr)
 LX_DECLARE_GETTEMPLATETYPE(LXColor4f, EPropertyType::Color)
 LX_DECLARE_GETTEMPLATETYPE(std::vector<LXSmartObject*>, EPropertyType::ArraySmartObject)
 LX_DECLARE_GETTEMPLATETYPE(std::list<LXSmartObject*>, EPropertyType::ListSmartObject)
@@ -1066,7 +1018,6 @@ template<> LXString LXPropertyT<float>::GetTypeName() { return L"float"; }
 template<> LXString LXPropertyT<vec2f>::GetTypeName() { return L"float2"; }
 template<> LXString LXPropertyT<vec3f>::GetTypeName() { return L"float3"; }
 template<> LXString LXPropertyT<vec4f>::GetTypeName() { return L"float4"; }
-template<> LXString LXPropertyT<LXAssetPtr>::GetTypeName() { return L"LXAssetPtr"; }
 template<> LXString LXPropertyT<LXString>::GetTypeName() { return L"LXString"; }
 template<class T>
 LXString LXPropertyT<T>::GetTypeName()

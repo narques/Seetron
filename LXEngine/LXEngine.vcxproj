@@ -213,6 +213,7 @@
     <ClInclude Include="LXPropertyIdentifiers.h" />
     <ClInclude Include="LXPropertyManager.h" />
     <ClInclude Include="LXPropertyTemplate.h" />
+    <ClInclude Include="LXPropertyAsset.h" />
     <ClInclude Include="LXPropertyType.h" />
     <ClInclude Include="LXQuery.h" />
     <ClInclude Include="LXQueryLinkChildToFather.h" />
@@ -412,6 +413,7 @@
     <ClCompile Include="LXProperty.cpp" />
     <ClCompile Include="LXPropertyManager.cpp" />
     <ClCompile Include="LXPropertyTemplate.cpp" />
+    <ClCompile Include="LXPropertyAsset.cpp" />
     <ClCompile Include="LXPropertyType.cpp" />
     <ClCompile Include="LXQuery.cpp" />
     <ClCompile Include="LXQueryLinkChildToFather.cpp" />

@@ -305,7 +305,7 @@ bool LXSmartObject::Load(const TLoadContext& loadContext, LXString* pName)
 					if (type == "float")
 					{
 						property = CreateUserProperty<float>(name, 0.f);
-						property->LoadXML(e);
+						property->LoadXML(loadContextChild);
 						if (!min.IsEmpty())
 						{ 
 							((LXPropertyFloat*)property)->SetMin(min.ToFloat());
@@ -319,27 +319,27 @@ bool LXSmartObject::Load(const TLoadContext& loadContext, LXString* pName)
 					else if (type == "float2")
 					{
 						property = CreateUserProperty<vec2f>(name, LX_VEC2F_NULL);
-						property->LoadXML(e);
+						property->LoadXML(loadContextChild);
 					}
 					else if (type == "float3")
 					{
 						property = CreateUserProperty<vec3f>(name, LX_VEC3F_NULL);
-						property->LoadXML(e);
+						property->LoadXML(loadContextChild);
 					}
 					else if (type == "float4")
 					{
 						property = CreateUserProperty<vec4f>(name, LX_VEC4F_NULL);
-						property->LoadXML(e);
+						property->LoadXML(loadContextChild);
 					}
 					else if (type == "LXAssetPtr")
 					{
-						property = CreateUserProperty<LXAssetPtr>(name, nullptr);
-						property->LoadXML(e);
+						property = LXPropertyAsset::CreateUserProperty(this, name, nullptr);
+						property->LoadXML(loadContextChild);
 					}
 					else if (type == "LXString")
 					{
 						property = CreateUserProperty<LXString>(name, L"");
-						property->LoadXML(e);
+						property->LoadXML(loadContextChild);
 					}
 					else
 					{
@@ -572,6 +572,11 @@ bool LXSmartObject::RemoveProperty(LXProperty* property)
 	return false;
 }
 
+void LXSmartObject::AddVariant(LXVariant* variant)
+{
+	_listVariants.push_back(variant);
+}
+
 template<class T>
 LXPropertyT<T>*	LXSmartObject::DefinePropertyEval(const LXString& name, const LXPropertyID& id, std::function<int()> eval, T def)
 {
@@ -679,11 +684,6 @@ LXPropertyLXColor4f* LXSmartObject::DefinePropertyColor4f(const LXString& label,
 LXPropertyMatrix* LXSmartObject::DefinePropertyMatrix(const LXString& label, const LXPropertyID& PID, LXMatrix* pMatrix)
 {
 	return DefineProperty(label, PID, pMatrix);
-}
-
-LXPropertyAssetPtr* LXSmartObject::DefinePropertyAsset(const LXString& label, const LXPropertyID& PID, std::shared_ptr<LXAsset>* pAsset)
-{
-	return DefineProperty(label, PID, pAsset);
 }
 
 template<class T>
@@ -897,7 +897,6 @@ template LXENGINE_API LXPropertyDouble* LXSmartObject::DefineProperty(const LXSt
 template LXENGINE_API LXPropertyArraySmartObjects* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, ArraySmartObjects* pArraySmartObjects);
 template LXENGINE_API LXPropertyListSmartObjects* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, ListSmartObjects* pListSmartObjects);
 template LXENGINE_API LXPropertyListSharedObjects* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, ListSharedObjects* pListSmartObjects);
-template LXENGINE_API LXPropertyAssetPtr* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXAssetPtr* pMaterialInput);
 template LXENGINE_API LXPropertySmartObject* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXSmartObject* smartObject);
 template LXENGINE_API LXPropertySharedObject* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, std::shared_ptr<LXSmartObject>* smartObject);
 template LXENGINE_API LXPropertyReferenceObject* LXSmartObject::DefineProperty(const LXString& name, const LXPropertyID& PID, LXReference<LXSmartObject>* smartObject);
@@ -908,6 +907,5 @@ template LXENGINE_API LXPropertyVec2f* LXSmartObject::CreateUserProperty(const L
 template LXENGINE_API LXPropertyVec3f* LXSmartObject::CreateUserProperty(const LXString& name, const vec3f& var);
 template LXENGINE_API LXPropertyVec4f* LXSmartObject::CreateUserProperty(const LXString& name, const vec4f& var);
 template LXENGINE_API LXPropertyArrayVec3f* LXSmartObject::CreateUserProperty(const LXString& name, const ArrayVec3f& var);
-template LXENGINE_API LXPropertyAssetPtr* LXSmartObject::CreateUserProperty(const LXString& name, const LXAssetPtr& var);
 template LXENGINE_API LXPropertyString* LXSmartObject::CreateUserProperty(const LXString& name, const LXString& var);
 

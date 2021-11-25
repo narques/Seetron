@@ -25,7 +25,6 @@ template class LXENGINE_API LXCommandPropertyT<vec3f>;
 template class LXENGINE_API LXCommandPropertyT<vec4f>;
 template class LXENGINE_API LXCommandPropertyT<LXColor4f>;
 template class LXENGINE_API LXCommandPropertyT<LXMatrix>;
-template class LXENGINE_API LXCommandPropertyT<LXAssetPtr>;
 
 // Explicit class Instantiation
 template class LXENGINE_API LXCommandPropertiesT<float>;
@@ -40,7 +39,6 @@ template class LXENGINE_API LXCommandPropertiesT<vec3f>;
 template class LXENGINE_API LXCommandPropertiesT<vec4f>;
 template class LXENGINE_API LXCommandPropertiesT<LXColor4f>;
 template class LXENGINE_API LXCommandPropertiesT<LXMatrix>;
-template class LXENGINE_API LXCommandPropertiesT<LXAssetPtr>;
 
 LXCommandProperty::LXCommandProperty(void)
 {

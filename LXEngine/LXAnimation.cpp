@@ -201,4 +201,3 @@ template LXENGINE_API void LXAnimation::AddKey(LXProperty* pProp, const vec3f& n
 template LXENGINE_API void LXAnimation::AddKey(LXProperty* pProp, const vec4f& newValue, DWORD dwTime);
 template LXENGINE_API void LXAnimation::AddKey(LXProperty* pProp, const LXColor4f& newValue, DWORD dwTime);
 template LXENGINE_API void LXAnimation::AddKey(LXProperty* pProp, const LXMatrix& newValue, DWORD dwTime);
-template LXENGINE_API void LXAnimation::AddKey(LXProperty* pProp, const LXAssetPtr& newValue, DWORD dwTime);
